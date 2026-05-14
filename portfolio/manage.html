@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Manage Data - Danny Aglinao</title>
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/css/style.css" rel="stylesheet">
+  <style>
+    body { background: #f7f9ff; }
+    .manage-note { border-left: 4px solid #149ddd; background: #eaf5ff; }
+    .section-card { border-radius: 16px; box-shadow: 0 18px 40px rgba(20, 157, 221, 0.08); }
+    .field-label { font-weight: 600; }
+    textarea#raw-json { font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; }
+    .form-help { font-size: 0.95rem; color: #5f6f88; }
+  </style>
+</head>
+
+<body>
+  <main class="container py-5">
+    <div class="mb-4">
+      <h1 class="mb-1">Manage data.json</h1>
+      <p class="text-muted">Edit your site content and download a fresh <code>data.json</code> file for the live site.</p>
+      <div class="p-3 manage-note">
+        <strong>Note:</strong> This page is intentionally not added to the main site navigation.
+      </div>
+    </div>
+
+    <div class="card section-card mb-4">
+      <div class="card-body">
+        <div class="row gy-3">
+          <div class="col-md-3">
+            <button id="reload-json" class="btn btn-outline-primary w-100">Reload data.json</button>
+          </div>
+          <div class="col-md-3">
+            <button id="save-json" class="btn btn-success w-100">Save</button>
+          </div>
+          <div class="col-md-3">
+            <button id="download-json" class="btn btn-primary w-100">Download data.json</button>
+          </div>
+          <div class="col-md-3">
+            <button id="copy-json" class="btn btn-secondary w-100">Copy JSON</button>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-12">
+            <div id="sync-status" class="text-success" style="min-height: 24px;"></div>
+          </div>
+        </div>
+        <p class="form-help mt-3">Use the form fields below to update content. The raw JSON editor is kept in sync automatically.</p>
+      </div>
+    </div>
+
+    <div class="card section-card mb-4">
+      <div class="card-body">
+        <h2 class="h4 mb-3">Hero / Top section</h2>
+        <div class="row gy-3">
+          <div class="col-md-6">
+            <label class="field-label" for="hero-name">Name</label>
+            <input id="hero-name" type="text" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label class="field-label" for="hero-typed">Typed items (comma separated)</label>
+            <input id="hero-typed" type="text" class="form-control" placeholder="Computer Engineer, Graphics Specialist">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card section-card mb-4">
+      <div class="card-body">
+        <h2 class="h4 mb-3">About section</h2>
+        <div class="row gy-3">
+          <div class="col-md-6">
+            <label class="field-label" for="about-title">Title</label>
+            <input id="about-title" type="text" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label class="field-label" for="about-birthday">Birthday</label>
+            <input id="about-birthday" type="text" class="form-control" placeholder="22 May 1997">
+          </div>
+          <div class="col-12">
+            <label class="field-label" for="about-description">Description</label>
+            <textarea id="about-description" class="form-control" rows="3"></textarea>
+          </div>
+          <div class="col-md-4">
+            <label class="field-label" for="about-website">Website</label>
+            <input id="about-website" type="text" class="form-control">
+          </div>
+          <div class="col-md-4">
+            <label class="field-label" for="about-phone">Phone</label>
+            <input id="about-phone" type="text" class="form-control">
+          </div>
+          <div class="col-md-4">
+            <label class="field-label" for="about-city">City</label>
+            <input id="about-city" type="text" class="form-control">
+          </div>
+          <div class="col-md-4">
+            <label class="field-label" for="about-degree">Degree</label>
+            <input id="about-degree" type="text" class="form-control">
+          </div>
+          <div class="col-md-4">
+            <label class="field-label" for="about-email">Email</label>
+            <input id="about-email" type="email" class="form-control">
+          </div>
+          <div class="col-md-4">
+            <label class="field-label" for="about-freelance">Freelance</label>
+            <input id="about-freelance" type="text" class="form-control" placeholder="Available">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card section-card mb-4">
+      <div class="card-body">
+        <h2 class="h4 mb-3">Skills</h2>
+        <div class="row gy-3">
+          <div class="col-md-4">
+            <label class="field-label" for="design-tools">Design tools</label>
+            <input id="design-tools" type="text" class="form-control" placeholder="Canva, Figma, Adobe Illustration, Adobe InDesign">
+          </div>
+          <div class="col-md-4">
+            <label class="field-label" for="office-software">Office software</label>
+            <input id="office-software" type="text" class="form-control" placeholder="Microsoft PowerPoint, Microsoft Excel">
+          </div>
+          <div class="col-md-4">
+            <label class="field-label" for="technical-skills">Other skills</label>
+            <input id="technical-skills" type="text" class="form-control" placeholder="Computer Literate, Basic Troubleshooting, Web Design">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card section-card mb-4">
+      <div class="card-body">
+        <h2 class="h4 mb-3">Portfolio items</h2>
+        <p class="form-help">Edit the portfolio array directly as JSON. Each item must include title, description, link, and thumbnail.</p>
+        <textarea id="portfolio-json" class="form-control" rows="6"></textarea>
+      </div>
+    </div>
+
+    <div class="card section-card mb-4">
+      <div class="card-body">
+        <h2 class="h4 mb-3">Contact section</h2>
+        <div class="row gy-3">
+          <div class="col-md-4">
+            <label class="field-label" for="contact-location">Location</label>
+            <input id="contact-location" type="text" class="form-control">
+          </div>
+          <div class="col-md-4">
+            <label class="field-label" for="contact-email">Email</label>
+            <input id="contact-email" type="email" class="form-control">
+          </div>
+          <div class="col-md-4">
+            <label class="field-label" for="contact-phone">Phone</label>
+            <input id="contact-phone" type="text" class="form-control">
+          </div>
+          <div class="col-12">
+            <label class="field-label" for="contact-map">Google map URL</label>
+            <input id="contact-map" type="text" class="form-control">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card section-card mb-4">
+      <div class="card-body">
+        <h2 class="h4 mb-3">Resume JSON</h2>
+        <p class="form-help">Edit education and experience arrays directly. This is advanced content for the background section.</p>
+        <textarea id="resume-json" class="form-control" rows="10"></textarea>
+      </div>
+    </div>
+
+    <div class="card section-card mb-4">
+      <div class="card-body">
+        <h2 class="h4 mb-3">Live preview</h2>
+        <pre id="live-preview" class="form-control bg-light" style="min-height: 260px; white-space: pre-wrap; word-break: break-word;"></pre>
+      </div>
+    </div>
+    <div class="card section-card mb-4">
+      <div class="card-body">
+        <h2 class="h4 mb-3">Raw JSON view</h2>
+        <textarea id="raw-json" class="form-control" rows="15"></textarea>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const state = {
+      data: null
+    };
+
+    const get = (id) => document.getElementById(id);
+
+    const loadData = () => {
+      fetch('data.json')
+        .then(response => response.json())
+        .then(data => {
+          state.data = data;
+          syncForm();
+          syncRaw();
+        })
+        .catch(error => {
+          alert('Unable to load data.json. Check console for details.');
+          console.error(error);
+        });
+    };
+
+    const safeJson = (value) => {
+      try {
+        return JSON.parse(value);
+      } catch (e) {
+        return null;
+      }
+    };
+
+    const syncForm = () => {
+      if (!state.data) return;
+
+      get('hero-name').value = state.data.hero.name || '';
+      get('hero-typed').value = (state.data.hero.typedItems || []).join(', ');
+      get('about-title').value = state.data.about.title || '';
+      get('about-description').value = state.data.about.description || '';
+      get('about-birthday').value = state.data.about.birthday || '';
+      get('about-website').value = state.data.about.website || '';
+      get('about-phone').value = state.data.about.phone || '';
+      get('about-city').value = state.data.about.city || '';
+      get('about-degree').value = state.data.about.degree || '';
+      get('about-email').value = state.data.about.email || '';
+      get('about-freelance').value = state.data.about.freelance || '';
+      get('design-tools').value = (state.data.skills.designTools || []).join(', ');
+      get('office-software').value = (state.data.skills.officeSoftware || []).join(', ');
+      get('technical-skills').value = (state.data.skills.technicalSkills || []).join(', ');
+      get('portfolio-json').value = JSON.stringify(state.data.portfolio || [], null, 2);
+      get('contact-location').value = state.data.contact.location || '';
+      get('contact-email').value = state.data.contact.email || '';
+      get('contact-phone').value = state.data.contact.phone || '';
+      get('contact-map').value = state.data.contact.mapUrl || '';
+      get('resume-json').value = JSON.stringify(state.data.resume || {}, null, 2);
+    };
+
+    const getStatusElement = () => document.getElementById('sync-status');
+
+    const setStatus = (message, isError = false) => {
+      const element = getStatusElement();
+      if (!element) return;
+      element.textContent = message;
+      element.classList.toggle('text-danger', isError);
+      element.classList.toggle('text-success', !isError);
+      if (!isError) {
+        window.setTimeout(() => {
+          if (element.textContent === message) {
+            element.textContent = '';
+          }
+        }, 3000);
+      }
+    };
+
+    const syncPreview = () => {
+      const data = buildData();
+      if (!data) return;
+      const preview = document.getElementById('live-preview');
+      if (preview) {
+        preview.textContent = JSON.stringify(data, null, 2);
+      }
+    };
+
+    const buildData = () => {
+      const portfolio = safeJson(get('portfolio-json').value);
+      const resume = safeJson(get('resume-json').value);
+      if (!portfolio) {
+        setStatus('Portfolio JSON is invalid. Please fix it.', true);
+        return null;
+      }
+      if (!resume) {
+        setStatus('Resume JSON is invalid. Please fix it.', true);
+        return null;
+      }
+
+      return {
+        hero: {
+          name: get('hero-name').value.trim(),
+          typedItems: get('hero-typed').value.split(',').map(item => item.trim()).filter(Boolean)
+        },
+        about: {
+          title: get('about-title').value.trim(),
+          description: get('about-description').value.trim(),
+          birthday: get('about-birthday').value.trim(),
+          website: get('about-website').value.trim(),
+          phone: get('about-phone').value.trim(),
+          city: get('about-city').value.trim(),
+          degree: get('about-degree').value.trim(),
+          email: get('about-email').value.trim(),
+          freelance: get('about-freelance').value.trim()
+        },
+        skills: {
+          designTools: get('design-tools').value.split(',').map(item => item.trim()).filter(Boolean),
+          officeSoftware: get('office-software').value.split(',').map(item => item.trim()).filter(Boolean),
+          technicalSkills: get('technical-skills').value.split(',').map(item => item.trim()).filter(Boolean)
+        },
+        resume: resume,
+        portfolio: portfolio,
+        contact: {
+          location: get('contact-location').value.trim(),
+          email: get('contact-email').value.trim(),
+          phone: get('contact-phone').value.trim(),
+          mapUrl: get('contact-map').value.trim()
+        }
+      };
+    };
+
+    const syncRaw = () => {
+      const data = buildData();
+      if (!data) return;
+      state.data = data;
+      get('raw-json').value = JSON.stringify(data, null, 2);
+      syncPreview();
+    };
+
+    const saveJson = () => {
+      const data = buildData();
+      if (!data) return;
+      localStorage.setItem('siteData', JSON.stringify(data));
+      setStatus('Data synced successfully.');
+      syncRaw();
+    };
+
+    const downloadJson = () => {
+      const data = buildData();
+      if (!data) return;
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'data.json';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    };
+
+    const copyJson = () => {
+      navigator.clipboard.writeText(get('raw-json').value).then(() => {
+        alert('JSON copied to clipboard.');
+      }).catch(() => {
+        alert('Unable to copy JSON.');
+      });
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadData();
+      ['hero-name', 'hero-typed', 'about-title', 'about-description', 'about-birthday', 'about-website', 'about-phone', 'about-city', 'about-degree', 'about-email', 'about-freelance', 'design-tools', 'office-software', 'technical-skills', 'portfolio-json', 'contact-location', 'contact-email', 'contact-phone', 'contact-map', 'resume-json'].forEach(id => {
+        const field = get(id);
+        if (field) {
+          field.addEventListener('input', syncRaw);
+        }
+      });
+      get('download-json').addEventListener('click', downloadJson);
+      get('copy-json').addEventListener('click', copyJson);
+      get('save-json').addEventListener('click', saveJson);
+      get('reload-json').addEventListener('click', () => {
+        loadData();
+      });
+    });
+  </script>
+</body>
+
+</html>
