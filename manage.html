@@ -59,26 +59,36 @@
     }
 
     header h1 {
-      font-size: 2.5em;
+      font-size: 2.2em;
       margin-bottom: 10px;
       font-weight: 600;
     }
 
     .back-to-index {
-      position: absolute;
-      top: 20px;
+      position: fixed;
+      bottom: 20px;
       right: 20px;
       background: #149ddd;
       color: white;
-      padding: 10px 20px;
+      padding: 12px 20px;
       border-radius: 50px;
       text-decoration: none;
-      font-size: 14px;
-      transition: 0.3s;
+      font-size: 0.9em;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(20, 157, 221, 0.3);
+    }
+
+    .back-to-index:hover {
+      background: #2eafec;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(20, 157, 221, 0.4);
     }
 
     .tab-content h2 {
-      font-size: 28px;
+      font-size: 1.8em;
       font-weight: bold;
       margin-bottom: 20px;
       padding-bottom: 20px;
@@ -118,7 +128,7 @@
       border: none;
       background: transparent;
       cursor: pointer;
-      font-size: 15px;
+      font-size: 0.95em;
       font-weight: 700;
       border-bottom: 3px solid transparent;
       transition: all 0.25s ease;
@@ -173,7 +183,7 @@
       padding: 12px;
       border: 1px solid #ddd;
       border-radius: 5px;
-      font-size: 14px;
+      font-size: 0.95em;
       font-family: inherit;
       transition: border-color 0.3s ease;
     }
@@ -205,7 +215,7 @@
       padding: 12px 24px;
       border: none;
       border-radius: 5px;
-      font-size: 14px;
+      font-size: 0.95em;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -214,11 +224,6 @@
     .btn-primary {
       background: #149ddd;
       color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: all 0.3s ease;
     }
 
     .btn-primary:hover {
@@ -229,11 +234,6 @@
     .btn-secondary {
       background: #6c757d;
       color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: all 0.3s ease;
     }
 
     .btn-secondary:hover {
@@ -243,11 +243,6 @@
     .btn-danger {
       background: #dc3545;
       color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: all 0.3s ease;
     }
 
     .btn-danger:hover {
@@ -256,7 +251,7 @@
 
     .btn-small {
       padding: 8px 12px;
-      font-size: 12px;
+      font-size: 0.85em;
     }
 
     .card {
@@ -437,12 +432,272 @@
       white-space: pre-wrap;
       word-break: break-word;
     }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 8px;
+      padding: 24px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .modal-title {
+      font-size: 1.5em;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: #666;
+      padding: 8px;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background-color 0.3s;
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      background-color: #f0f0f0;
+      color: #333;
+    }
+
+    .modal-body {
+      margin-bottom: 24px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      padding-top: 16px;
+      border-top: 1px solid #eee;
+    }
+
+    /* Responsive Modal */
+    @media (max-width: 768px) {
+      .modal-overlay {
+        padding: 15px;
+      }
+      
+      .modal-content {
+        padding: 20px;
+        max-width: 95vw;
+      }
+      
+      .modal-title {
+        font-size: 1.4em;
+      }
+      
+      .modal-footer {
+        flex-direction: column;
+      }
+      
+      .modal-footer button {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .modal-content {
+        padding: 16px;
+        max-width: 100vw;
+        margin: 10px;
+      }
+      
+      .modal-title {
+        font-size: 1.3em;
+      }
+    }
+
+    /* Additional responsive improvements */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+
+      header {
+        padding: 20px;
+        text-align: center;
+      }
+
+      header h1 {
+        font-size: 2em;
+      }
+
+      .back-to-index {
+        padding: 10px 16px;
+        font-size: 0.85em;
+      }
+
+      .tabs {
+        padding: 0;
+      }
+
+      .tab-btn {
+        font-size: 14px;
+        padding: 12px 16px;
+        min-width: 120px;
+      }
+
+      .tab-content h2 {
+        font-size: 24px;
+        padding-bottom: 15px;
+      }
+
+      .tab-content h2::after {
+        width: 40px;
+      }
+
+      .form-group {
+        margin-bottom: 12px;
+      }
+
+      label {
+        font-size: 14px;
+        margin-bottom: 6px;
+      }
+
+      input, textarea, select {
+        font-size: 16px; /* Prevents zoom on iOS */
+        padding: 10px;
+      }
+
+      button {
+        font-size: 14px;
+        padding: 10px 16px;
+      }
+
+      .btn-small {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+
+      .card {
+        padding: 12px;
+      }
+
+      .list-item {
+        padding: 12px;
+      }
+
+      .card-actions {
+        gap: 6px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header h1 {
+        font-size: 1.8em;
+      }
+
+      .back-to-index {
+        padding: 10px 16px;
+        font-size: 0.8em;
+        bottom: 15px;
+        right: 15px;
+      }
+
+      .tab-btn {
+        min-width: 100px;
+        padding: 10px 12px;
+        font-size: 13px;
+      }
+
+      .tab-content {
+        padding: 15px 12px 20px;
+      }
+
+      .tab-content h2 {
+        font-size: 22px;
+      }
+
+      input, textarea, select {
+        padding: 8px;
+      }
+
+      button {
+        padding: 8px 12px;
+      }
+
+      .list-item-content {
+        font-size: 14px;
+      }
+
+      .card-title {
+        font-size: 14px;
+      }
+    }
+
+    /* Ensure buttons are properly sized on all devices */
+    button:focus {
+      outline: 2px solid #149ddd;
+      outline-offset: 2px;
+    }
+
+    /* Improve touch targets for mobile */
+    @media (hover: none) and (pointer: coarse) {
+      button, .tab-btn {
+        min-height: 44px;
+      }
+
+      .modal-close {
+        width: 44px;
+        height: 44px;
+      }
+    }
   </style>
 </head>
 <body>
+  <a href="index.html" class="back-to-index">← View Portfolio</a>
   <div class="container">
     <header>
-      <a href="index.html" class="back-to-index">← View Portfolio</a>
       <h1>📊 Portfolio Data Manager</h1>
       <p>Manage your portfolio data and sync to index.html</p>
     </header>
@@ -545,75 +800,90 @@
         <button class="btn-primary" onclick="openAddSkillForm()">+ Add Skill</button>
       </div>
       
-      <div id="addSkillForm" style="display: none; background: #f9f9f9; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
-        <h3>Add New Skill</h3>
-        <div class="form-group">
-          <label>Skill Name</label>
-          <input type="text" id="newSkillName" placeholder="e.g., Figma">
-        </div>
-        <div class="form-group">
-          <label>Skill Type</label>
-          <select id="newSkillType">
-            <option value="App">App</option>
-            <option value="Ability">Ability</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-        <div class="form-group" id="newSkillCustomTypeGroup" style="display: none;">
-          <label>Custom Skill Type</label>
-          <input type="text" id="newCustomSkillType" placeholder="e.g., Language, Framework, Tool">
-        </div>
-        <div class="form-group" id="newSkillIconGroup">
-          <label id="iconLabel">Icon URL</label>
-          <input type="text" id="newSkillIcon" placeholder="e.g., https://example.com/icon.svg">
-        </div>
-        <div class="form-group" id="newSkillIconColorGroup">
-          <label>Icon Color</label>
-          <input type="text" id="newSkillIconColor" placeholder="e.g., #f24e1e">
-        </div>
-        <div class="form-group">
-          <label>Description</label>
-          <textarea id="newSkillDescription" rows="3" placeholder="Short description for this item"></textarea>
-        </div>
-        <div class="button-group">
-          <button class="btn-primary" onclick="addSkill()">Add Skill</button>
-          <button class="btn-secondary" onclick="closeAddSkillForm()">Cancel</button>
+      <div id="addSkillModal" class="modal-overlay">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Add New Skill</h3>
+            <button class="modal-close" onclick="closeAddSkillForm()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Skill Name</label>
+              <input type="text" id="newSkillName" placeholder="e.g., Figma">
+            </div>
+            <div class="form-group">
+              <label>Skill Type</label>
+              <select id="newSkillType">
+                <option value="App">App</option>
+                <option value="Ability">Ability</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group" id="newSkillCustomTypeGroup" style="display: none;">
+              <label>Custom Skill Type</label>
+              <input type="text" id="newCustomSkillType" placeholder="e.g., Language, Framework, Tool">
+            </div>
+            <div class="form-group" id="newSkillIconGroup">
+              <label id="iconLabel">Icon URL</label>
+              <input type="text" id="newSkillIcon" placeholder="e.g., https://example.com/icon.svg">
+            </div>
+            <div class="form-group" id="newSkillIconColorGroup">
+              <label>Icon Color</label>
+              <input type="text" id="newSkillIconColor" placeholder="e.g., #f24e1e">
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea id="newSkillDescription" rows="3" placeholder="Short description for this item"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-primary" onclick="addSkill()">Add Skill</button>
+            <button class="btn-secondary" onclick="closeAddSkillForm()">Cancel</button>
+          </div>
         </div>
       </div>
 
-      <div id="editSkillForm" style="display: none; background: #f9f9f9; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
-        <h3>Edit Skill</h3>
-        <div class="form-group">
-          <label>Skill Name</label>
-          <input type="text" id="editSkillName" placeholder="e.g., Figma">
-        </div>
-        <div class="form-group">
-          <label>Skill Type</label>
-          <select id="editSkillType">
-            <option value="App">App</option>
-            <option value="Ability">Ability</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-        <div class="form-group" id="editSkillCustomTypeGroup" style="display: none;">
-          <label>Custom Skill Type</label>
-          <input type="text" id="editCustomSkillType" placeholder="e.g., Language, Framework, Tool">
-        </div>
-        <div class="form-group" id="editSkillIconGroup">
-          <label id="editIconLabel">Icon URL</label>
-          <input type="text" id="editSkillIcon" placeholder="e.g., https://example.com/icon.svg">
-        </div>
-        <div class="form-group" id="editSkillIconColorGroup">
-          <label>Icon Color</label>
-          <input type="text" id="editSkillIconColor" placeholder="e.g., #f24e1e">
-        </div>
-        <div class="form-group">
-          <label>Description</label>
-          <textarea id="editSkillDescription" rows="3" placeholder="Short description for this item"></textarea>
-        </div>
-        <div class="button-group">
-          <button class="btn-primary" onclick="updateSkill()">Update Skill</button>
-          <button class="btn-secondary" onclick="closeEditSkillForm()">Cancel</button>
+      <!-- Edit Skill Modal -->
+      <div id="editSkillModal" class="modal-overlay">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Edit Skill</h3>
+            <button class="modal-close" onclick="closeEditSkillForm()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Skill Name</label>
+              <input type="text" id="editSkillName" placeholder="e.g., Figma">
+            </div>
+            <div class="form-group">
+              <label>Skill Type</label>
+              <select id="editSkillType">
+                <option value="App">App</option>
+                <option value="Ability">Ability</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group" id="editSkillCustomTypeGroup" style="display: none;">
+              <label>Custom Skill Type</label>
+              <input type="text" id="editCustomSkillType" placeholder="e.g., Language, Framework, Tool">
+            </div>
+            <div class="form-group" id="editSkillIconGroup">
+              <label id="editIconLabel">Icon URL</label>
+              <input type="text" id="editSkillIcon" placeholder="e.g., https://example.com/icon.svg">
+            </div>
+            <div class="form-group" id="editSkillIconColorGroup">
+              <label>Icon Color</label>
+              <input type="text" id="editSkillIconColor" placeholder="e.g., #f24e1e">
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea id="editSkillDescription" rows="3" placeholder="Short description for this item"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-primary" onclick="updateSkill()">Update Skill</button>
+            <button class="btn-secondary" onclick="closeEditSkillForm()">Cancel</button>
+          </div>
         </div>
       </div>
 
@@ -627,51 +897,66 @@
         <button class="btn-primary" onclick="openAddEducationForm()">+ Add Education</button>
       </div>
 
-      <div id="addEducationForm" style="display: none; background: #f9f9f9; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
-        <h3>Add New Education</h3>
-        <div class="form-group">
-          <label>Level</label>
-          <input type="text" id="newEducLevel" placeholder="e.g., Tertiary">
-        </div>
-        <div class="form-group">
-          <label>Years</label>
-          <input type="text" id="newEducYears" placeholder="e.g., 2014-2020">
-        </div>
-        <div class="form-group">
-          <label>Degree/School</label>
-          <input type="text" id="newEducDegree" placeholder="e.g., Bachelor of Science in Computer Engineering">
-        </div>
-        <div class="form-group">
-          <label>School/Location</label>
-          <input type="text" id="newEducSchool" placeholder="Enter school/location">
-        </div>
-        <div class="button-group">
-          <button class="btn-primary" onclick="addEducation()">Add Education</button>
-          <button class="btn-secondary" onclick="closeAddEducationForm()">Cancel</button>
+      <div id="addEducationModal" class="modal-overlay">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Add New Education</h3>
+            <button class="modal-close" onclick="closeAddEducationForm()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Level</label>
+              <input type="text" id="newEducLevel" placeholder="e.g., Tertiary">
+            </div>
+            <div class="form-group">
+              <label>Years</label>
+              <input type="text" id="newEducYears" placeholder="e.g., 2014-2020">
+            </div>
+            <div class="form-group">
+              <label>Degree/School</label>
+              <input type="text" id="newEducDegree" placeholder="e.g., Bachelor of Science in Computer Engineering">
+            </div>
+            <div class="form-group">
+              <label>School/Location</label>
+              <input type="text" id="newEducSchool" placeholder="Enter school/location">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-primary" onclick="addEducation()">Add Education</button>
+            <button class="btn-secondary" onclick="closeAddEducationForm()">Cancel</button>
+          </div>
         </div>
       </div>
 
-      <div id="editEducationForm" style="display: none; background: #f9f9f9; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
-        <h3>Edit Education</h3>
-        <div class="form-group">
-          <label>Level</label>
-          <input type="text" id="editEducLevel" placeholder="e.g., Tertiary">
-        </div>
-        <div class="form-group">
-          <label>Years</label>
-          <input type="text" id="editEducYears" placeholder="e.g., 2014-2020">
-        </div>
-        <div class="form-group">
-          <label>Degree/School</label>
-          <input type="text" id="editEducDegree" placeholder="e.g., Bachelor of Science in Computer Engineering">
-        </div>
-        <div class="form-group">
-          <label>School/Location</label>
-          <input type="text" id="editEducSchool" placeholder="Enter school/location">
-        </div>
-        <div class="button-group">
-          <button class="btn-primary" onclick="updateEducation()">Update Education</button>
-          <button class="btn-secondary" onclick="closeEditEducationForm()">Cancel</button>
+      <!-- Edit Education Modal -->
+      <div id="editEducationModal" class="modal-overlay">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Edit Education</h3>
+            <button class="modal-close" onclick="closeEditEducationForm()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Level</label>
+              <input type="text" id="editEducLevel" placeholder="e.g., Tertiary">
+            </div>
+            <div class="form-group">
+              <label>Years</label>
+              <input type="text" id="editEducYears" placeholder="e.g., 2014-2020">
+            </div>
+            <div class="form-group">
+              <label>Degree/School</label>
+              <input type="text" id="editEducDegree" placeholder="e.g., Bachelor of Science in Computer Engineering">
+            </div>
+            <div class="form-group">
+              <label>School/Location</label>
+              <input type="text" id="editEducSchool" placeholder="Enter school/location">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-primary" onclick="updateEducation()">Update Education</button>
+            <button class="btn-secondary" onclick="closeEditEducationForm()">Cancel</button>
+          </div>
         </div>
       </div>
 
@@ -685,53 +970,68 @@
         <button class="btn-primary" onclick="openAddExperienceForm()">+ Add Experience</button>
       </div>
 
-      <div id="addExperienceForm" style="display: none; background: #f9f9f9; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
-        <h3>Add New Experience</h3>
-        <div class="form-group">
-          <label>Position</label>
-          <input type="text" id="newExpPosition" placeholder="e.g., Graphics Specialist">
-        </div>
-        <div class="form-group">
-          <label>Years</label>
-          <input type="text" id="newExpYears" placeholder="e.g., May 21, 2021 - May 14, 2022">
-        </div>
-        <div class="form-group">
-          <label>Company</label>
-          <input type="text" id="newExpCompany" placeholder="e.g., Integreon Managed Solutions">
-        </div>
-        <div class="form-group">
-          <label>Description</label>
-          <div id="newExpDescriptionList" style="margin-bottom: 10px;"></div>
-          <button type="button" class="btn-secondary btn-small" onclick="addExperienceBullet('newExpDescriptionList')">+ Add Bullet</button>
-        </div>
-        <div class="button-group">
-          <button class="btn-primary" onclick="addExperience()">Add Experience</button>
-          <button class="btn-secondary" onclick="closeAddExperienceForm()">Cancel</button>
+      <div id="addExperienceModal" class="modal-overlay">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Add New Experience</h3>
+            <button class="modal-close" onclick="closeAddExperienceForm()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Position</label>
+              <input type="text" id="newExpPosition" placeholder="e.g., Graphics Specialist">
+            </div>
+            <div class="form-group">
+              <label>Years</label>
+              <input type="text" id="newExpYears" placeholder="e.g., May 21, 2021 - May 14, 2022">
+            </div>
+            <div class="form-group">
+              <label>Company</label>
+              <input type="text" id="newExpCompany" placeholder="e.g., Integreon Managed Solutions">
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <div id="newExpDescriptionList" style="margin-bottom: 10px;"></div>
+              <button type="button" class="btn-secondary btn-small" onclick="addExperienceBullet('newExpDescriptionList')">+ Add Bullet</button>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-primary" onclick="addExperience()">Add Experience</button>
+            <button class="btn-secondary" onclick="closeAddExperienceForm()">Cancel</button>
+          </div>
         </div>
       </div>
 
-      <div id="editExperienceForm" style="display: none; background: #f9f9f9; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
-        <h3>Edit Experience</h3>
-        <div class="form-group">
-          <label>Position</label>
-          <input type="text" id="editExpPosition" placeholder="e.g., Graphics Specialist">
-        </div>
-        <div class="form-group">
-          <label>Years</label>
-          <input type="text" id="editExpYears" placeholder="e.g., May 21, 2021 - May 14, 2022">
-        </div>
-        <div class="form-group">
-          <label>Company</label>
-          <input type="text" id="editExpCompany" placeholder="e.g., Integreon Managed Solutions">
-        </div>
-        <div class="form-group">
-          <label>Description</label>
-          <div id="editExpDescriptionList" style="margin-bottom: 10px;"></div>
-          <button type="button" class="btn-secondary btn-small" onclick="addExperienceBullet('editExpDescriptionList')">+ Add Bullet</button>
-        </div>
-        <div class="button-group">
-          <button class="btn-primary" onclick="updateExperience()">Update Experience</button>
-          <button class="btn-secondary" onclick="closeEditExperienceForm()">Cancel</button>
+      <!-- Edit Experience Modal -->
+      <div id="editExperienceModal" class="modal-overlay">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Edit Experience</h3>
+            <button class="modal-close" onclick="closeEditExperienceForm()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Position</label>
+              <input type="text" id="editExpPosition" placeholder="e.g., Graphics Specialist">
+            </div>
+            <div class="form-group">
+              <label>Years</label>
+              <input type="text" id="editExpYears" placeholder="e.g., May 21, 2021 - May 14, 2022">
+            </div>
+            <div class="form-group">
+              <label>Company</label>
+              <input type="text" id="editExpCompany" placeholder="e.g., Integreon Managed Solutions">
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <div id="editExpDescriptionList" style="margin-bottom: 10px;"></div>
+              <button type="button" class="btn-secondary btn-small" onclick="addExperienceBullet('editExpDescriptionList')">+ Add Bullet</button>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-primary" onclick="updateExperience()">Update Experience</button>
+            <button class="btn-secondary" onclick="closeEditExperienceForm()">Cancel</button>
+          </div>
         </div>
       </div>
 
@@ -930,7 +1230,7 @@
     document.getElementById('editSkillType').addEventListener('change', () => updateSkillFormFields('edit'));
 
     function closeAddSkillForm() {
-      document.getElementById('addSkillForm').style.display = 'none';
+      document.getElementById('addSkillModal').classList.remove('show');
       document.getElementById('newSkillName').value = '';
       document.getElementById('newSkillType').value = 'App';
       document.getElementById('newCustomSkillType').value = '';
@@ -939,6 +1239,17 @@
       document.getElementById('newSkillIconColor').value = '';
       document.getElementById('newSkillDescription').value = '';
     }
+
+    function openAddSkillForm() {
+      document.getElementById('addSkillModal').classList.add('show');
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('addSkillModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeAddSkillForm();
+      }
+    });
 
     function addSkill() {
       const name = document.getElementById('newSkillName').value.trim();
@@ -995,13 +1306,12 @@
       document.getElementById('editSkillIcon').value = skill.iconUrl || '';
       document.getElementById('editSkillIconColor').value = skill.iconColor || '';
       document.getElementById('editSkillDescription').value = skill.description || '';
-      document.getElementById('editSkillForm').style.display = 'block';
-      document.getElementById('editSkillForm').dataset.editIndex = index;
-      document.getElementById('addSkillForm').style.display = 'none';
+      document.getElementById('editSkillModal').classList.add('show');
+      document.getElementById('editSkillModal').dataset.editIndex = index;
     }
 
     function updateSkill() {
-      const index = parseInt(document.getElementById('editSkillForm').dataset.editIndex);
+      const index = parseInt(document.getElementById('editSkillModal').dataset.editIndex);
       const name = document.getElementById('editSkillName').value.trim();
       const type = document.getElementById('editSkillType').value;
       const customType = document.getElementById('editCustomSkillType').value.trim();
@@ -1042,7 +1352,7 @@
     }
 
     function closeEditSkillForm() {
-      document.getElementById('editSkillForm').style.display = 'none';
+      document.getElementById('editSkillModal').classList.remove('show');
       document.getElementById('editSkillName').value = '';
       document.getElementById('editSkillType').value = 'App';
       document.getElementById('editCustomSkillType').value = '';
@@ -1050,18 +1360,15 @@
       document.getElementById('editSkillIcon').value = '';
       document.getElementById('editSkillIconColor').value = '';
       document.getElementById('editSkillDescription').value = '';
-      delete document.getElementById('editSkillForm').dataset.editIndex;
+      delete document.getElementById('editSkillModal').dataset.editIndex;
     }
 
-    function closeEditSkillForm() {
-      document.getElementById('editSkillForm').style.display = 'none';
-      document.getElementById('editSkillName').value = '';
-      document.getElementById('editSkillType').value = 'App';
-      document.getElementById('editSkillIcon').value = '';
-      document.getElementById('editSkillIconColor').value = '';
-      document.getElementById('editSkillDescription').value = '';
-      delete document.getElementById('editSkillForm').dataset.editIndex;
-    }
+    // Close modal when clicking outside
+    document.getElementById('editSkillModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeEditSkillForm();
+      }
+    });
 
     function displaySkills() {
       const list = document.getElementById('skillsList');
@@ -1090,16 +1397,23 @@
     }
 
     function openAddEducationForm() {
-      document.getElementById('addEducationForm').style.display = 'block';
+      document.getElementById('addEducationModal').classList.add('show');
     }
 
     function closeAddEducationForm() {
-      document.getElementById('addEducationForm').style.display = 'none';
+      document.getElementById('addEducationModal').classList.remove('show');
       document.getElementById('newEducLevel').value = '';
       document.getElementById('newEducYears').value = '';
       document.getElementById('newEducDegree').value = '';
       document.getElementById('newEducSchool').value = '';
     }
+
+    // Close modal when clicking outside
+    document.getElementById('addEducationModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeAddEducationForm();
+      }
+    });
 
     function addEducation() {
       const level = document.getElementById('newEducLevel').value;
@@ -1126,15 +1440,15 @@
       const edu = data.education[index];
       document.getElementById('editEducLevel').value = edu.level;
       document.getElementById('editEducYears').value = edu.years;
-      document.getElementById('editEducDegree').value = edu.degree;
+      document.getElementById('editEducDegree').value = edu.degree
       document.getElementById('editEducSchool').value = edu.school;
-      document.getElementById('editEducationForm').style.display = 'block';
-      document.getElementById('editEducationForm').dataset.editIndex = index;
-      document.getElementById('addEducationForm').style.display = 'none';
+      document.getElementById('editEducationModal').classList.add('show');
+      document.getElementById('editEducationModal').dataset.editIndex = index;
     }
+    
 
     function updateEducation() {
-      const index = parseInt(document.getElementById('editEducationForm').dataset.editIndex);
+      const index = parseInt(document.getElementById('editEducationModal').dataset.editIndex);
       const level = document.getElementById('editEducLevel').value;
       const years = document.getElementById('editEducYears').value;
       const degree = document.getElementById('editEducDegree').value;
@@ -1155,13 +1469,20 @@
     }
 
     function closeEditEducationForm() {
-      document.getElementById('editEducationForm').style.display = 'none';
+      document.getElementById('editEducationModal').classList.remove('show');
       document.getElementById('editEducLevel').value = '';
       document.getElementById('editEducYears').value = '';
       document.getElementById('editEducDegree').value = '';
       document.getElementById('editEducSchool').value = '';
-      delete document.getElementById('editEducationForm').dataset.editIndex;
+      delete document.getElementById('editEducationModal').dataset.editIndex;
     }
+
+    // Close modal when clicking outside
+    document.getElementById('editEducationModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeEditEducationForm();
+      }
+    });
 
     function displayEducation() {
       const list = document.getElementById('educationList');
@@ -1187,26 +1508,34 @@
     }
 
     function openAddExperienceForm() {
-      document.getElementById('addExperienceForm').style.display = 'block';
-      initializeExperienceBullets('newExpDescriptionList');
+      initializeExperienceBullets('newExpDescriptionList', ['']);
+      document.getElementById('addExperienceModal').classList.add('show');
     }
 
     function closeAddExperienceForm() {
-      document.getElementById('addExperienceForm').style.display = 'none';
+      document.getElementById('addExperienceModal').classList.remove('show');
       document.getElementById('newExpPosition').value = '';
       document.getElementById('newExpYears').value = '';
       document.getElementById('newExpCompany').value = '';
       clearExperienceBullets('newExpDescriptionList');
     }
 
+    // Close modal when clicking outside
+    document.getElementById('addExperienceModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeAddExperienceForm();
+      }
+    });
+
     function addExperienceBullet(listId, value = '') {
       const list = document.getElementById(listId);
       const bulletItem = document.createElement('div');
       bulletItem.style.display = 'flex';
       bulletItem.style.alignItems = 'center';
+      bulletItem.style.gap = '8px';
       bulletItem.style.marginBottom = '8px';
       bulletItem.innerHTML = `
-        <input type="text" class="experience-bullet" value="${value}" placeholder="Bullet text" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-right: 10px;">
+        <input type="text" class="experience-bullet" value="${value}" placeholder="Bullet text" style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 0.95em;">
         <button type="button" class="btn-danger btn-small" onclick="removeExperienceBullet(this)">Remove</button>
       `;
       list.appendChild(bulletItem);
@@ -1263,13 +1592,12 @@
       document.getElementById('editExpCompany').value = exp.company;
       const bullets = Array.isArray(exp.description) ? exp.description : String(exp.description).split(',').map(line => line.trim()).filter(Boolean);
       initializeExperienceBullets('editExpDescriptionList', bullets.length ? bullets : ['']);
-      document.getElementById('editExperienceForm').style.display = 'block';
-      document.getElementById('editExperienceForm').dataset.editIndex = index;
-      document.getElementById('addExperienceForm').style.display = 'none';
+      document.getElementById('editExperienceModal').classList.add('show');
+      document.getElementById('editExperienceModal').dataset.editIndex = index;
     }
 
     function updateExperience() {
-      const index = parseInt(document.getElementById('editExperienceForm').dataset.editIndex);
+      const index = parseInt(document.getElementById('editExperienceModal').dataset.editIndex);
       const position = document.getElementById('editExpPosition').value;
       const years = document.getElementById('editExpYears').value;
       const company = document.getElementById('editExpCompany').value;
@@ -1290,13 +1618,20 @@
     }
 
     function closeEditExperienceForm() {
-      document.getElementById('editExperienceForm').style.display = 'none';
+      document.getElementById('editExperienceModal').classList.remove('show');
       document.getElementById('editExpPosition').value = '';
       document.getElementById('editExpYears').value = '';
       document.getElementById('editExpCompany').value = '';
       clearExperienceBullets('editExpDescriptionList');
-      delete document.getElementById('editExperienceForm').dataset.editIndex;
+      delete document.getElementById('editExperienceModal').dataset.editIndex;
     }
+
+    // Close modal when clicking outside
+    document.getElementById('editExperienceModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeEditExperienceForm();
+      }
+    });
 
     function displayExperience() {
       const list = document.getElementById('experienceList');
