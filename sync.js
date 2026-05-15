@@ -12,7 +12,7 @@ async function loadAndSyncData() {
     if (localDataRaw) {
       try {
         const parsedLocal = JSON.parse(localDataRaw);
-        const isValidLocal = Array.isArray(parsedLocal.skills) && parsedLocal.skills.every(skill => skill && typeof skill.type === 'string');
+        const isValidLocal = Array.isArray(parsedLocal.skills) && parsedLocal.skills.every(skill => skill && typeof skill.type === 'string') && parsedLocal.skills.filter(skill => skill.type === 'App').every(skill => skill.iconUrl);
 
         if (isValidLocal) {
           data = parsedLocal;
@@ -82,12 +82,19 @@ function updateProfileSection(profile) {
   const infoItems = document.querySelectorAll('.about ul li');
   
   // Map data to UI
+  const today = new Date();
+  const birthDate = new Date(profile.birthDate);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
   const updates = {
     'Birthday': profile.birthDate,
     'Website': `<a href="${profile.website}" target="_blank">${profile.website}</a>`,
     'Contact': profile.contact,
     'City': profile.city,
-    'Age': new Date().getFullYear() - new Date(profile.birthDate).getFullYear(),
+    'Age': age,
     'Degree': profile.degree,
     'Email': profile.email,
     'Freelance': profile.freelance
@@ -141,38 +148,36 @@ function updateSkillsSection(skills) {
   const abilities = skills.filter(skill => skill.type !== 'App');
 
   if (apps.length > 0) {
-    const appSection = document.createElement('div');
-    appSection.className = 'skill-section';
-    appSection.innerHTML = '<h3>Apps</h3>';
+      const appSection = document.createElement('div');
+      appSection.className = 'skill-section app-section';
+      appSection.innerHTML = '<h3>Apps</h3>';
 
-    const appGrid = document.createElement('div');
-    appGrid.className = 'skills-grid';
+      const appGrid = document.createElement('div');
+      appGrid.className = 'app-grid';
 
-    apps.forEach((skill, index) => {
-      const skillItem = document.createElement('div');
-      skillItem.className = 'skill-item';
-      skillItem.setAttribute('data-aos', 'fade-up');
-      skillItem.setAttribute('data-aos-delay', (index % 3) * 100);
+      apps.forEach((skill, index) => {
+        const skillItem = document.createElement('div');
+        skillItem.className = 'skill-item';
+        skillItem.setAttribute('data-aos', 'fade-up');
+        skillItem.setAttribute('data-aos-delay', (index % 3) * 100);
 
-      const iconClass = skill.icon && skill.icon.trim().split(/\s+/).some(cls => cls.startsWith('bx'))
-        ? skill.icon.trim()
-        : `bx ${skill.icon || 'bxs-paint'}`;
+        const iconClass = skill.icon && skill.icon.trim().split(/\s+/).some(cls => cls.startsWith('bx'))
+          ? skill.icon.trim()
+          : `bx ${skill.icon || 'bxs-paint'}`;
 
-      skillItem.innerHTML = `
-        <div class="skill-card">
-          <div class="skill-icon-circle" style="background: ${skill.iconColor || '#ecf4ff'}22; border-color: ${skill.iconColor || '#149ddd'}33;">
-            <i class="${iconClass}" style="color: ${skill.iconColor || '#149ddd'}"></i>
+        skillItem.innerHTML = `
+          <div class="app-card">
+            <div class="app-icon">
+              ${skill.iconUrl ? `<img src="${skill.iconUrl}" alt="${skill.name}" style="width: 100%; height: 100%; object-fit: contain;">` : `<i class="${iconClass}" style="color: ${skill.iconColor || '#149ddd'}"></i>`}
+            </div>
           </div>
-          <div class="skill-name">${skill.name}</div>
-        </div>
-      `;
-      appGrid.appendChild(skillItem);
-    });
+        `;
+        appGrid.appendChild(skillItem);
+      });
 
-    appSection.appendChild(appGrid);
-    skillsGrid.appendChild(appSection);
-  }
-
+      appSection.appendChild(appGrid);
+      skillsGrid.appendChild(appSection);
+    }
   if (abilities.length > 0) {
     const abilitySection = document.createElement('div');
     abilitySection.className = 'skill-section ability-section';
@@ -249,7 +254,7 @@ function updateExperienceSection(experience) {
   experience.forEach(exp => {
     const bullets = Array.isArray(exp.description)
       ? exp.description
-      : String(exp.description).split('\n').map(line => line.trim()).filter(Boolean);
+      : String(exp.description).split(',').map(line => line.trim()).filter(Boolean);
 
     const descriptionHtml = bullets.length
       ? `<ul>${bullets.map(bullet => `<li>${bullet}</li>`).join('')}</ul>`

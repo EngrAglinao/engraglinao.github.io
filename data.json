@@ -26,37 +26,37 @@
     {
       "name": "Canva",
       "type": "App",
-      "icon": "bx bxs-paint",
+      "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/0/08/Canva_icon_2021.svg",
       "iconColor": "#00c4cc"
     },
     {
       "name": "Figma",
       "type": "App",
-      "icon": "bx bxl-figma",
+      "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/3/33/Figma-logo.svg",
       "iconColor": "#f24e1e"
     },
     {
       "name": "Microsoft PowerPoint",
       "type": "App",
-      "icon": "bx bxs-file-doc",
+      "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg",
       "iconColor": "#d24726"
     },
     {
       "name": "Microsoft Excel",
       "type": "App",
-      "icon": "bx bxs-spreadsheet",
+      "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg",
       "iconColor": "#217346"
     },
     {
       "name": "Adobe Illustration",
       "type": "App",
-      "icon": "bx bxl-adobe",
+      "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Adobe_Systems_logo_and_wordmark.svg",
       "iconColor": "#ff9a00"
     },
     {
       "name": "Adobe InDesign",
       "type": "App",
-      "icon": "bx bxl-adobe",
+      "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Adobe_Systems_logo_and_wordmark.svg",
       "iconColor": "#ff61f6"
     },
     {
