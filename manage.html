@@ -1440,12 +1440,12 @@
       const edu = data.education[index];
       document.getElementById('editEducLevel').value = edu.level;
       document.getElementById('editEducYears').value = edu.years;
-      document.getElementById('editEducDegree').value = edu.degree;
+      document.getElementById('editEducDegree').value = edu.degree
       document.getElementById('editEducSchool').value = edu.school;
       document.getElementById('editEducationModal').classList.add('show');
       document.getElementById('editEducationModal').dataset.editIndex = index;
     }
-    }
+    
 
     function updateEducation() {
       const index = parseInt(document.getElementById('editEducationModal').dataset.editIndex);
@@ -1594,7 +1594,6 @@
       initializeExperienceBullets('editExpDescriptionList', bullets.length ? bullets : ['']);
       document.getElementById('editExperienceModal').classList.add('show');
       document.getElementById('editExperienceModal').dataset.editIndex = index;
-    }
     }
 
     function updateExperience() {
