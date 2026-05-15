@@ -384,6 +384,47 @@
       }
     }
 
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.85);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .loading-overlay.show {
+      display: flex;
+    }
+
+    .loading-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 18px 22px;
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .loading-spinner {
+      width: 18px;
+      height: 18px;
+      border: 3px solid rgba(20, 157, 221, 0.25);
+      border-top-color: #149ddd;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
     .json-preview {
       background: #f5f5f5;
       border: 1px solid #ddd;
@@ -416,6 +457,12 @@
     </div>
 
     <div class="success-message" id="successMessage"></div>
+    <div id="loadingOverlay" class="loading-overlay" aria-live="polite" aria-busy="false">
+      <div class="loading-card">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Updating...</div>
+      </div>
+    </div>
 
     <!-- About Me Tab -->
     <div class="tab-content active" id="about">
@@ -509,13 +556,18 @@
           <select id="newSkillType">
             <option value="App">App</option>
             <option value="Ability">Ability</option>
+            <option value="Other">Other</option>
           </select>
         </div>
-        <div class="form-group">
-          <label>Icon Class (Boxicons)</label>
-          <input type="text" id="newSkillIcon" placeholder="e.g., bx bxl-figma">
+        <div class="form-group" id="newSkillCustomTypeGroup" style="display: none;">
+          <label>Custom Skill Type</label>
+          <input type="text" id="newCustomSkillType" placeholder="e.g., Language, Framework, Tool">
         </div>
-        <div class="form-group">
+        <div class="form-group" id="newSkillIconGroup">
+          <label id="iconLabel">Icon URL</label>
+          <input type="text" id="newSkillIcon" placeholder="e.g., https://example.com/icon.svg">
+        </div>
+        <div class="form-group" id="newSkillIconColorGroup">
           <label>Icon Color</label>
           <input type="text" id="newSkillIconColor" placeholder="e.g., #f24e1e">
         </div>
@@ -540,13 +592,18 @@
           <select id="editSkillType">
             <option value="App">App</option>
             <option value="Ability">Ability</option>
+            <option value="Other">Other</option>
           </select>
         </div>
-        <div class="form-group">
-          <label>Icon Class (Boxicons)</label>
-          <input type="text" id="editSkillIcon" placeholder="e.g., bx bxl-figma">
+        <div class="form-group" id="editSkillCustomTypeGroup" style="display: none;">
+          <label>Custom Skill Type</label>
+          <input type="text" id="editCustomSkillType" placeholder="e.g., Language, Framework, Tool">
         </div>
-        <div class="form-group">
+        <div class="form-group" id="editSkillIconGroup">
+          <label id="editIconLabel">Icon URL</label>
+          <input type="text" id="editSkillIcon" placeholder="e.g., https://example.com/icon.svg">
+        </div>
+        <div class="form-group" id="editSkillIconColorGroup">
           <label>Icon Color</label>
           <input type="text" id="editSkillIconColor" placeholder="e.g., #f24e1e">
         </div>
@@ -713,12 +770,6 @@
     // Load data on page load
     window.addEventListener('DOMContentLoaded', () => {
       loadData();
-      displayProfile();
-      displaySocial();
-      displaySkills();
-      displayEducation();
-      displayExperience();
-      displayJsonPreview();
     });
 
     function loadData() {
@@ -727,6 +778,12 @@
       if (localData) {
         data = JSON.parse(localData);
         console.log('Loaded data from localStorage');
+        normalizeData();
+        populateFields();
+        displaySkills();
+        displayEducation();
+        displayExperience();
+        displayJsonPreview();
       } else {
         // Fall back to data.json file
         fetch('data.json')
@@ -734,13 +791,26 @@
           .then(json => {
             data = json;
             console.log('Loaded data from data.json');
+            normalizeData();
             populateFields();
+            displaySkills();
+            displayEducation();
+            displayExperience();
+            displayJsonPreview();
           })
           .catch(error => console.error('Error loading data.json:', error));
       }
-      
-      // Populate fields regardless of data source
-      populateFields();
+    }
+
+    function normalizeData() {
+      // Normalize experience descriptions to arrays
+      if (data.experience) {
+        data.experience.forEach(exp => {
+          if (typeof exp.description === 'string') {
+            exp.description = exp.description.split(',').map(line => line.trim()).filter(Boolean);
+          }
+        });
+      }
     }
 
     function populateFields() {
@@ -775,6 +845,21 @@
       event.target.classList.add('active');
     }
 
+    function startLoading(message = 'Updating...') {
+      const overlay = document.getElementById('loadingOverlay');
+      if (!overlay) return;
+      overlay.querySelector('.loading-text').textContent = message;
+      overlay.setAttribute('aria-busy', 'true');
+      overlay.classList.add('show');
+    }
+
+    function stopLoading() {
+      const overlay = document.getElementById('loadingOverlay');
+      if (!overlay) return;
+      overlay.setAttribute('aria-busy', 'false');
+      overlay.classList.remove('show');
+    }
+
     function saveAbout() {
       data.profile = {
         name: data.profile?.name || 'Danny Aglinao', // Keep existing name
@@ -790,8 +875,10 @@
         degree: document.getElementById('degree').value,
         freelance: document.getElementById('freelance').value
       };
+      startLoading('Saving profile...');
       saveDataToFile();
-      showSuccess('About Me saved successfully!');
+      stopLoading();
+      showSuccess('About Me updated successfully! Changes will be reflected on the portfolio after refresh.');
     }
 
     function saveSocial() {
@@ -800,8 +887,10 @@
         instagram: document.getElementById('instagram').value,
         linkedin: document.getElementById('linkedin').value
       };
+      startLoading('Saving social links...');
       saveDataToFile();
-      showSuccess('Social links saved successfully!');
+      stopLoading();
+      showSuccess('Social links updated successfully! Changes will be reflected on the portfolio after refresh.');
     }
 
     function displayProfile() {
@@ -812,14 +901,40 @@
       // Social display logic here
     }
 
-    function openAddSkillForm() {
-      document.getElementById('addSkillForm').style.display = 'block';
+    function updateSkillFormFields(prefix) {
+      const type = document.getElementById(prefix + 'SkillType').value;
+      const iconGroup = document.getElementById(prefix + 'SkillIconGroup');
+      const iconColorGroup = document.getElementById(prefix + 'SkillIconColorGroup');
+      const customTypeGroup = document.getElementById(prefix + 'SkillCustomTypeGroup');
+      const iconLabel = document.getElementById(prefix + 'IconLabel');
+      const iconInput = document.getElementById(prefix + 'SkillIcon');
+
+      if (type === 'App') {
+        iconGroup.style.display = 'block';
+        iconColorGroup.style.display = 'block';
+        customTypeGroup.style.display = 'none';
+        iconLabel.textContent = 'Icon URL';
+        iconInput.placeholder = 'e.g., https://example.com/icon.svg';
+      } else if (type === 'Ability') {
+        iconGroup.style.display = 'none';
+        iconColorGroup.style.display = 'none';
+        customTypeGroup.style.display = 'none';
+      } else {
+        iconGroup.style.display = 'none';
+        iconColorGroup.style.display = 'none';
+        customTypeGroup.style.display = 'block';
+      }
     }
+
+    document.getElementById('newSkillType').addEventListener('change', () => updateSkillFormFields('new'));
+    document.getElementById('editSkillType').addEventListener('change', () => updateSkillFormFields('edit'));
 
     function closeAddSkillForm() {
       document.getElementById('addSkillForm').style.display = 'none';
       document.getElementById('newSkillName').value = '';
       document.getElementById('newSkillType').value = 'App';
+      document.getElementById('newCustomSkillType').value = '';
+      updateSkillFormFields('new');
       document.getElementById('newSkillIcon').value = '';
       document.getElementById('newSkillIconColor').value = '';
       document.getElementById('newSkillDescription').value = '';
@@ -828,6 +943,7 @@
     function addSkill() {
       const name = document.getElementById('newSkillName').value.trim();
       const type = document.getElementById('newSkillType').value;
+      const customType = document.getElementById('newCustomSkillType').value.trim();
       const icon = document.getElementById('newSkillIcon').value.trim();
       const iconColor = document.getElementById('newSkillIconColor').value.trim();
       const description = document.getElementById('newSkillDescription').value.trim();
@@ -837,27 +953,46 @@
         return;
       }
       if (type === 'App' && !icon) {
-        alert('Please add an icon class for app skills');
+        alert('Please add an icon URL for app skills');
         return;
       }
       if (type === 'Ability' && !description) {
         alert('Please add a description for ability skills');
         return;
       }
+      if (type === 'Other' && !customType) {
+        alert('Please add a custom skill type name');
+        return;
+      }
 
       if (!data.skills) data.skills = [];
-      data.skills.push({ name, type, icon, iconColor, description });
+      const actualType = type === 'Other' ? customType : type;
+      const skillObj = { name, type: actualType, description };
+      if (type === 'App') {
+        skillObj.iconUrl = icon;
+        skillObj.iconColor = iconColor;
+      }
+      data.skills.push(skillObj);
+      startLoading('Saving skill...');
       saveDataToFile();
+      stopLoading();
       displaySkills();
       closeAddSkillForm();
-      showSuccess('Skill added successfully!');
+      showSuccess('Skill added successfully! Changes will be reflected on the portfolio after refresh.');
     }
 
     function editSkill(index) {
       const skill = data.skills[index];
       document.getElementById('editSkillName').value = skill.name;
-      document.getElementById('editSkillType').value = skill.type || 'App';
-      document.getElementById('editSkillIcon').value = skill.icon || '';
+      if (skill.type === 'App' || skill.type === 'Ability') {
+        document.getElementById('editSkillType').value = skill.type;
+        document.getElementById('editCustomSkillType').value = '';
+      } else {
+        document.getElementById('editSkillType').value = 'Other';
+        document.getElementById('editCustomSkillType').value = skill.type;
+      }
+      updateSkillFormFields('edit');
+      document.getElementById('editSkillIcon').value = skill.iconUrl || '';
       document.getElementById('editSkillIconColor').value = skill.iconColor || '';
       document.getElementById('editSkillDescription').value = skill.description || '';
       document.getElementById('editSkillForm').style.display = 'block';
@@ -869,6 +1004,7 @@
       const index = parseInt(document.getElementById('editSkillForm').dataset.editIndex);
       const name = document.getElementById('editSkillName').value.trim();
       const type = document.getElementById('editSkillType').value;
+      const customType = document.getElementById('editCustomSkillType').value.trim();
       const icon = document.getElementById('editSkillIcon').value.trim();
       const iconColor = document.getElementById('editSkillIconColor').value.trim();
       const description = document.getElementById('editSkillDescription').value.trim();
@@ -878,19 +1014,43 @@
         return;
       }
       if (type === 'App' && !icon) {
-        alert('Please add an icon class for app skills');
+        alert('Please add an icon URL for app skills');
         return;
       }
       if (type === 'Ability' && !description) {
         alert('Please add a description for ability skills');
         return;
       }
+      if (type === 'Other' && !customType) {
+        alert('Please add a custom skill type name');
+        return;
+      }
 
-      data.skills[index] = { name, type, icon, iconColor, description };
+      const actualType = type === 'Other' ? customType : type;
+      const skillObj = { name, type: actualType, description };
+      if (type === 'App') {
+        skillObj.iconUrl = icon;
+        skillObj.iconColor = iconColor;
+      }
+      data.skills[index] = skillObj;
+      startLoading('Saving skill...');
       saveDataToFile();
+      stopLoading();
       displaySkills();
       closeEditSkillForm();
-      showSuccess('Skill updated successfully!');
+      showSuccess('Skill updated successfully! Changes will be reflected on the portfolio after refresh.');
+    }
+
+    function closeEditSkillForm() {
+      document.getElementById('editSkillForm').style.display = 'none';
+      document.getElementById('editSkillName').value = '';
+      document.getElementById('editSkillType').value = 'App';
+      document.getElementById('editCustomSkillType').value = '';
+      updateSkillFormFields('edit');
+      document.getElementById('editSkillIcon').value = '';
+      document.getElementById('editSkillIconColor').value = '';
+      document.getElementById('editSkillDescription').value = '';
+      delete document.getElementById('editSkillForm').dataset.editIndex;
     }
 
     function closeEditSkillForm() {
@@ -912,10 +1072,11 @@
       data.skills.forEach((skill, index) => {
         const item = document.createElement('div');
         item.className = 'list-item';
+        const iconHtml = skill.iconUrl ? `<img src="${skill.iconUrl}" alt="${skill.name}" style="width: 20px; height: 20px; object-fit: contain;">` : `<i class="bx ${skill.icon || 'bxs-star'}"></i>`;
         item.innerHTML = `
           <div class="list-item-content">
             <span class="skill-type">${skill.type}</span>
-            <i class="bx ${skill.icon || 'bxs-star'}"></i>
+            ${iconHtml}
             <strong>${skill.name}</strong>
             ${skill.description ? `<p>${skill.description}</p>` : ''}
           </div>
@@ -953,10 +1114,12 @@
 
       if (!data.education) data.education = [];
       data.education.push({ level, years, degree, school });
+      startLoading('Saving education...');
       saveDataToFile();
+      stopLoading();
       displayEducation();
       closeAddEducationForm();
-      showSuccess('Education added successfully!');
+      showSuccess('Education added successfully! Changes will be reflected on the portfolio after refresh.');
     }
 
     function editEducation(index) {
@@ -983,10 +1146,12 @@
       }
 
       data.education[index] = { level, years, degree, school };
+      startLoading('Saving education...');
       saveDataToFile();
+      stopLoading();
       displayEducation();
       closeEditEducationForm();
-      showSuccess('Education updated successfully!');
+      showSuccess('Education updated successfully! Changes will be reflected on the portfolio after refresh.');
     }
 
     function closeEditEducationForm() {
@@ -1083,10 +1248,12 @@
 
       if (!data.experience) data.experience = [];
       data.experience.push({ position, years, company, description });
+      startLoading('Saving experience...');
       saveDataToFile();
+      stopLoading();
       displayExperience();
       closeAddExperienceForm();
-      showSuccess('Experience added successfully!');
+      showSuccess('Experience added successfully! Changes will be reflected on the portfolio after refresh.');
     }
 
     function editExperience(index) {
@@ -1094,7 +1261,7 @@
       document.getElementById('editExpPosition').value = exp.position;
       document.getElementById('editExpYears').value = exp.years;
       document.getElementById('editExpCompany').value = exp.company;
-      const bullets = Array.isArray(exp.description) ? exp.description : String(exp.description).split('\n').map(line => line.trim()).filter(Boolean);
+      const bullets = Array.isArray(exp.description) ? exp.description : String(exp.description).split(',').map(line => line.trim()).filter(Boolean);
       initializeExperienceBullets('editExpDescriptionList', bullets.length ? bullets : ['']);
       document.getElementById('editExperienceForm').style.display = 'block';
       document.getElementById('editExperienceForm').dataset.editIndex = index;
@@ -1114,10 +1281,12 @@
       }
 
       data.experience[index] = { position, years, company, description };
+      startLoading('Saving experience...');
       saveDataToFile();
+      stopLoading();
       displayExperience();
       closeEditExperienceForm();
-      showSuccess('Experience updated successfully!');
+      showSuccess('Experience updated successfully! Changes will be reflected on the portfolio after refresh.');
     }
 
     function closeEditExperienceForm() {
@@ -1136,9 +1305,13 @@
       if (!data.experience) return;
 
       data.experience.forEach((exp, index) => {
-        const descriptionHtml = Array.isArray(exp.description)
-          ? `<ul>${exp.description.map(bullet => `<li>${bullet}</li>`).join('')}</ul>`
-          : `<small>${exp.description}</small>`;
+        const bullets = Array.isArray(exp.description)
+          ? exp.description
+          : String(exp.description).split(',').map(line => line.trim()).filter(Boolean);
+
+        const descriptionHtml = bullets.length
+          ? `<ul>${bullets.map(bullet => `<li>${bullet}</li>`).join('')}</ul>`
+          : '';
 
         const item = document.createElement('div');
         item.className = 'list-item';
@@ -1157,8 +1330,37 @@
       });
     }
 
-    function displayJsonPreview() {
-      document.getElementById('jsonPreview').textContent = JSON.stringify(data, null, 2);
+    function deleteSkill(index) {
+      if (confirm('Are you sure you want to delete this skill?')) {
+        data.skills.splice(index, 1);
+        startLoading('Deleting skill...');
+        saveDataToFile();
+        stopLoading();
+        displaySkills();
+        showSuccess('Skill deleted successfully! Changes will be reflected on the portfolio after refresh.');
+      }
+    }
+
+    function deleteEducation(index) {
+      if (confirm('Are you sure you want to delete this education entry?')) {
+        data.education.splice(index, 1);
+        startLoading('Deleting education...');
+        saveDataToFile();
+        stopLoading();
+        displayEducation();
+        showSuccess('Education entry deleted successfully! Changes will be reflected on the portfolio after refresh.');
+      }
+    }
+
+    function deleteExperience(index) {
+      if (confirm('Are you sure you want to delete this experience entry?')) {
+        data.experience.splice(index, 1);
+        startLoading('Deleting experience...');
+        saveDataToFile();
+        stopLoading();
+        displayExperience();
+        showSuccess('Experience entry deleted successfully! Changes will be reflected on the portfolio after refresh.');
+      }
     }
 
     function saveDataToFile() {
@@ -1168,6 +1370,16 @@
       
       // Also update the global data variable for immediate sync
       window.portfolioData = data;
+    }
+
+    function displayJsonPreview() {
+      try {
+        const preview = document.getElementById('jsonPreview');
+        if (!preview) return;
+        preview.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        console.warn('Unable to update JSON preview:', error);
+      }
     }
 
     function exportData() {
@@ -1190,7 +1402,7 @@
       link.download = 'data.json';
       link.click();
       URL.revokeObjectURL(url);
-      showSuccess('data.json file downloaded! Replace your existing data.json file with this one.');
+      showSuccess('data.json file downloaded! Replace your existing data.json file with this one to make changes permanent.');
     }
 
     function clearLocalStorage() {
