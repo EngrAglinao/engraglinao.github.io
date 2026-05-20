@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dan A. — Responsive Design Guide</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+
+    /* ═══════════════════════════════════════════════════════════
+       DESIGN TOKENS — Based on engraglinao.github.io
+       Bootstrap-based portfolio, dark navy sidebar, clean white content
+    ═══════════════════════════════════════════════════════════ */
+    :root {
+      --font-primary: 'Raleway', sans-serif;
+      --font-body:    'Poppins', sans-serif;
+
+      /* Spacing */
+      --sp-1:  4px;   --sp-2:  8px;   --sp-3: 12px;
+      --sp-4: 16px;   --sp-5: 20px;   --sp-6: 24px;
+      --sp-8: 32px;   --sp-10:40px;   --sp-12:48px;
+      --sp-16:64px;   --sp-20:80px;
+
+      /* Radius */
+      --r-sm:  4px;  --r-md:  8px;  --r-lg: 12px;
+      --r-xl: 20px;  --r-full:9999px;
+
+      /* Transitions */
+      --t-fast: 150ms ease;
+      --t-base: 300ms ease;
+      --t-slow: 500ms ease;
+    }
+
+    /* ── DARK MODE (matches Dan's site default dark navy) ── */
+    [data-theme="dark"] {
+      /* Sidebar / nav */
+      --sidebar-bg:      #040b14;
+      --sidebar-border:  rgba(255,255,255,0.08);
+
+      /* Page */
+      --bg-base:         #0c0f16;
+      --bg-surface:      #111827;
+      --bg-elevated:     #1a2133;
+      --bg-overlay:      #1e2a3d;
+
+      /* Text */
+      --text-primary:    #eaf0ff;
+      --text-secondary:  #a8b8d0;
+      --text-muted:      #596880;
+      --text-inverse:    #040b14;
+
+      /* Accent — Dan's site uses a bright cyan/teal blue */
+      --accent:          #149ddd;
+      --accent-hover:    #37b3ed;
+      --accent-muted:    rgba(20,157,221,0.12);
+      --accent-glow:     rgba(20,157,221,0.25);
+
+      /* Borders */
+      --border-subtle:   rgba(255,255,255,0.06);
+      --border-default:  rgba(255,255,255,0.12);
+      --border-strong:   rgba(255,255,255,0.25);
+
+      /* Shadows */
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.4);
+      --shadow-md: 0 6px 24px rgba(0,0,0,0.5);
+      --shadow-lg: 0 16px 48px rgba(0,0,0,0.65);
+
+      /* Nav */
+      --nav-bg:     rgba(4,11,20,0.92);
+      --nav-border: rgba(255,255,255,0.07);
+    }
+
+    /* ── LIGHT MODE ── */
+    [data-theme="light"] {
+      --sidebar-bg:      #12304a;
+      --sidebar-border:  rgba(255,255,255,0.10);
+
+      --bg-base:         #f4f6fb;
+      --bg-surface:      #ffffff;
+      --bg-elevated:     #edf1f8;
+      --bg-overlay:      #e2e8f4;
+
+      --text-primary:    #1a2638;
+      --text-secondary:  #4a6080;
+      --text-muted:      #8da0b8;
+      --text-inverse:    #ffffff;
+
+      --accent:          #1177bb;
+      --accent-hover:    #149ddd;
+      --accent-muted:    rgba(17,119,187,0.10);
+      --accent-glow:     rgba(17,119,187,0.20);
+
+      --border-subtle:   rgba(26,38,56,0.07);
+      --border-default:  rgba(26,38,56,0.14);
+      --border-strong:   rgba(26,38,56,0.28);
+
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-md: 0 6px 24px rgba(0,0,0,0.10);
+      --shadow-lg: 0 16px 48px rgba(0,0,0,0.14);
+
+      --nav-bg:     rgba(18,48,74,0.95);
+      --nav-border: rgba(255,255,255,0.08);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       RESET & BASE
+    ═══════════════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      transition: background var(--t-slow), color var(--t-slow);
+    }
+    a { color: var(--accent); text-decoration: none; transition: color var(--t-fast); }
+    a:hover { color: var(--accent-hover); }
+    img { display: block; max-width: 100%; }
+
+    /* ═══════════════════════════════════════════════════════════
+       LAYOUT — Sidebar + Main (mirrors Dan's site structure)
+    ═══════════════════════════════════════════════════════════ */
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 300px;
+      flex-shrink: 0;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--sidebar-border);
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      overflow-y: auto;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: var(--sp-10) var(--sp-6) var(--sp-8);
+      transition: transform var(--t-base), background var(--t-slow);
+    }
+
+    .sidebar__avatar {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      border: 4px solid var(--border-default);
+      object-fit: cover;
+      margin-bottom: var(--sp-5);
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg-elevated);
+      font-size: 42px;
+      color: var(--accent);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .sidebar__name {
+      font-family: var(--font-primary);
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      margin-bottom: var(--sp-3);
+      letter-spacing: 0.01em;
+    }
+
+    .sidebar__socials {
+      display: flex;
+      gap: var(--sp-3);
+      margin-bottom: var(--sp-8);
+    }
+    .sidebar__socials a {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.10);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
+      transition: background var(--t-fast), color var(--t-fast);
+    }
+    .sidebar__socials a:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* Sidebar nav */
+    .sidebar__nav {
+      width: 100%;
+      list-style: none;
+    }
+    .sidebar__nav li { width: 100%; }
+    .sidebar__nav a {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      padding: 10px var(--sp-4);
+      border-radius: var(--r-md);
+      color: rgba(255,255,255,0.65);
+      font-family: var(--font-primary);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: background var(--t-fast), color var(--t-fast);
+    }
+    .sidebar__nav a i {
+      width: 18px; text-align: center;
+      color: var(--accent);
+      font-size: 13px;
+    }
+    .sidebar__nav a:hover,
+    .sidebar__nav a.active {
+      background: rgba(20,157,221,0.12);
+      color: #fff;
+    }
+    .sidebar__nav a.active { color: var(--accent); }
+
+    /* Mobile sidebar toggle */
+    .sidebar-toggle {
+      display: none;
+      position: fixed;
+      top: 14px; left: 14px;
+      z-index: 300;
+      width: 40px; height: 40px;
+      background: var(--accent);
+      border: none;
+      border-radius: var(--r-md);
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      align-items: center; justify-content: center;
+      box-shadow: var(--shadow-md);
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 150;
+    }
+    .sidebar-overlay.visible { display: block; }
+
+    /* Theme toggle in sidebar */
+    .sidebar__theme {
+      margin-top: auto;
+      padding-top: var(--sp-8);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      color: rgba(255,255,255,0.45);
+      font-size: 12px;
+    }
+    .theme-pill {
+      width: 46px; height: 26px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--r-full);
+      position: relative;
+      cursor: pointer;
+    }
+    .theme-pill::after {
+      content: '';
+      position: absolute;
+      top: 4px; left: 4px;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      transition: transform var(--t-base);
+    }
+    [data-theme="light"] .theme-pill::after { transform: translateX(20px); }
+
+    /* ── MAIN CONTENT ── */
+    .main {
+      margin-left: 300px;
+      flex: 1;
+      min-height: 100vh;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SECTION STRUCTURE
+    ═══════════════════════════════════════════════════════════ */
+    .section {
+      padding: var(--sp-12) var(--sp-10);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .section:last-child { border-bottom: none; }
+
+    .section-heading {
+      font-family: var(--font-primary);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: var(--sp-2);
+      position: relative;
+      padding-bottom: var(--sp-4);
+    }
+    .section-heading::after {
+      content: '';
+      position: absolute;
+      left: 0; bottom: 0;
+      width: 48px; height: 3px;
+      background: var(--accent);
+      border-radius: var(--r-full);
+    }
+
+    .section-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: var(--sp-10);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SPEC TABLE
+    ═══════════════════════════════════════════════════════════ */
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: var(--sp-8);
+    }
+    .spec-table th {
+      font-family: var(--font-primary);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-align: left;
+      padding: var(--sp-2) var(--sp-4);
+      border-bottom: 2px solid var(--border-default);
+    }
+    .spec-table td {
+      padding: var(--sp-3) var(--sp-4);
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      vertical-align: top;
+    }
+    .spec-table td:first-child {
+      font-family: var(--font-primary);
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+    .spec-table tr:hover td { background: var(--accent-muted); }
+    code {
+      font-family: 'Courier New', monospace;
+      font-size: 11.5px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      padding: 1px 6px;
+      border-radius: var(--r-sm);
+      color: var(--accent);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       BREAKPOINT CARDS
+    ═══════════════════════════════════════════════════════════ */
+    .bp-row {
+      display: flex;
+      gap: var(--sp-3);
+      flex-wrap: wrap;
+      margin-bottom: var(--sp-8);
+    }
+    .bp-card {
+      flex: 1;
+      min-width: 120px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--r-lg);
+      padding: var(--sp-5) var(--sp-4);
+      text-align: center;
+      transition: border-color var(--t-base), transform var(--t-base);
+    }
+    .bp-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .bp-card__icon { font-size: 24px; margin-bottom: var(--sp-2); }
+    .bp-card__name {
+      font-family: var(--font-primary);
+      font-size: 13px; font-weight: 700;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .bp-card__range { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .bp-card__note  { font-size: 11px; color: var(--accent); margin-top: 4px; font-weight: 500; }
+
+    /* ═══════════════════════════════════════════════════════════
+       TYPE ROWS
+    ═══════════════════════════════════════════════════════════ */
+    .type-block {
+      display: flex;
+      align-items: baseline;
+      gap: var(--sp-8);
+      padding: var(--sp-5) 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .type-block__meta { min-width: 210px; flex-shrink: 0; }
+    .type-block__role {
+      font-family: var(--font-primary);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent);
+    }
+    .type-block__spec { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .type-block__sample { flex: 1; word-break: break-word; }
+
+    /* ═══════════════════════════════════════════════════════════
+       COLOR SWATCHES
+    ═══════════════════════════════════════════════════════════ */
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: var(--sp-4);
+      margin-bottom: var(--sp-8);
+    }
+    .swatch {
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      transition: transform var(--t-base), box-shadow var(--t-base);
+    }
+    .swatch:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .swatch__color { height: 72px; }
+    .swatch__info { background: var(--bg-surface); padding: var(--sp-3) var(--sp-4); }
+    .swatch__name { font-family: var(--font-primary); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-primary); }
+    .swatch__hex  { font-family: monospace; font-size: 11px; color: var(--text-muted); }
+
+    /* ═══════════════════════════════════════════════════════════
+       BUTTONS
+    ═══════════════════════════════════════════════════════════ */
+    .btn-showcase { display: flex; flex-wrap: wrap; gap: var(--sp-4); align-items: flex-start; margin-bottom: var(--sp-8); }
+    .btn-col { display: flex; flex-direction: column; gap: var(--sp-3); align-items: flex-start; }
+    .btn-col-label {
+      font-family: var(--font-primary);
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: var(--sp-2);
+      font-family: var(--font-primary);
+      font-weight: 600;
+      border: 2px solid transparent;
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      transition: all var(--t-base);
+      -webkit-appearance: none;
+    }
+    .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+    /* Sizes */
+    .btn--xs  { font-size: 10px; padding: 4px 12px; }
+    .btn--sm  { font-size: 11px; padding: 7px 16px; }
+    .btn--md  { font-size: 13px; padding: 10px 22px; }
+    .btn--lg  { font-size: 14px; padding: 12px 28px; }
+    .btn--xl  { font-size: 15px; padding: 14px 36px; }
+
+    /* Variants */
+    .btn--primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn--primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 6px 20px var(--accent-glow); }
+
+    .btn--outline { background: transparent; color: var(--accent); border-color: var(--accent); }
+    .btn--outline:hover { background: var(--accent); color: #fff; transform: translateY(-1px); }
+
+    .btn--ghost { background: transparent; color: var(--text-secondary); border-color: var(--border-default); }
+    .btn--ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    .btn--surface { background: var(--bg-elevated); color: var(--text-primary); border-color: var(--border-default); }
+    .btn--surface:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+
+    .btn--danger { background: transparent; color: #e05f5f; border-color: rgba(224,95,95,0.4); }
+    .btn--danger:hover { background: rgba(224,95,95,0.10); border-color: #e05f5f; }
+
+    .btn--disabled, .btn:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+
+    /* ═══════════════════════════════════════════════════════════
+       INPUTS
+    ═══════════════════════════════════════════════════════════ */
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--sp-6);
+      margin-bottom: var(--sp-8);
+    }
+    .field { display: flex; flex-direction: column; gap: var(--sp-2); }
+    .field__label {
+      font-family: var(--font-primary);
+      font-size: 12px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-secondary);
+    }
+    .field__hint { font-size: 11px; color: var(--text-muted); }
+
+    .input {
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--r-md);
+      padding: 10px 14px;
+      outline: none;
+      width: 100%;
+      transition: border-color var(--t-fast), box-shadow var(--t-fast);
+      -webkit-appearance: none;
+    }
+    .input::placeholder { color: var(--text-muted); }
+    .input:hover { border-color: var(--border-strong); }
+    .input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-muted); }
+    .input--sm  { font-size: 13px; padding: 7px 11px; border-radius: var(--r-sm); }
+    .input--md  { font-size: 14px; padding: 10px 14px; border-radius: var(--r-md); }
+    .input--lg  { font-size: 16px; padding: 13px 18px; border-radius: var(--r-lg); }
+    .input--error   { border-color: #e05f5f; }
+    .input--error:focus   { box-shadow: 0 0 0 3px rgba(224,95,95,0.15); }
+    .input--success { border-color: #50c878; }
+    .input--success:focus { box-shadow: 0 0 0 3px rgba(80,200,120,0.15); }
+    .input--disabled, .input:disabled { opacity: 0.45; cursor: not-allowed; }
+    textarea.input { resize: vertical; min-height: 100px; }
+
+    .tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-family: var(--font-primary);
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.10em; text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: var(--r-full);
+      border: 1px solid;
+    }
+    .tag--default { background: var(--bg-elevated); color: var(--text-muted);   border-color: var(--border-subtle); }
+    .tag--accent  { background: var(--accent-muted); color: var(--accent);      border-color: rgba(20,157,221,0.3); }
+    .tag--error   { background: rgba(224,95,95,0.10); color: #e05f5f;           border-color: rgba(224,95,95,0.3); }
+    .tag--success { background: rgba(80,200,120,0.10); color: #50c878;          border-color: rgba(80,200,120,0.3); }
+
+    /* ═══════════════════════════════════════════════════════════
+       SHOWCASE ROW — horizontal scroll cards (left to right)
+    ═══════════════════════════════════════════════════════════ */
+    .showcase-row {
+      display: flex;
+      gap: var(--sp-4);
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-bottom: var(--sp-4);
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-default) transparent;
+    }
+    .showcase-row::-webkit-scrollbar { height: 4px; }
+    .showcase-row::-webkit-scrollbar-thumb { background: var(--accent); border-radius: var(--r-full); }
+    .showcase-row::-webkit-scrollbar-track { background: transparent; }
+
+    /* Generic showcase card */
+    .showcase-card {
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+      width: 240px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      transition: transform var(--t-base), box-shadow var(--t-base), border-color var(--t-base);
+    }
+    .showcase-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--accent); }
+    .showcase-card__body { padding: var(--sp-5); }
+    .showcase-card__icon {
+      width: 44px; height: 44px;
+      background: var(--accent-muted);
+      border-radius: var(--r-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      color: var(--accent);
+      margin-bottom: var(--sp-4);
+    }
+    .showcase-card__title { font-family: var(--font-primary); font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: var(--sp-2); }
+    .showcase-card__desc  { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+
+    /* Media card — image top, text bottom (Dan's project card style) */
+    .media-card {
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+      width: 280px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      transition: transform var(--t-base), box-shadow var(--t-base), border-color var(--t-base);
+    }
+    .media-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
+
+    .media-card__image {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      background: var(--bg-elevated);
+      position: relative;
+    }
+    .media-card__image img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform var(--t-slow);
+    }
+    .media-card:hover .media-card__image img { transform: scale(1.06); }
+
+    /* Placeholder image pattern for demo */
+    .media-card__image.placeholder {
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px;
+      color: var(--accent);
+    }
+    .media-card__image.placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        var(--bg-elevated),
+        var(--bg-elevated) 10px,
+        var(--bg-overlay) 10px,
+        var(--bg-overlay) 20px
+      );
+      opacity: 0.4;
+    }
+    .media-card__image.placeholder i { position: relative; z-index: 1; }
+
+    .media-card__body { padding: var(--sp-5); }
+    .media-card__category {
+      font-family: var(--font-primary);
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: var(--sp-2);
+      display: flex; align-items: center; gap: var(--sp-2);
+    }
+    .media-card__category::before { content: '—'; opacity: 0.5; }
+    .media-card__title { font-family: var(--font-primary); font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: var(--sp-2); line-height: 1.35; }
+    .media-card__desc  { font-size: 12px; color: var(--text-secondary); line-height: 1.65; margin-bottom: var(--sp-4); }
+    .media-card__footer {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 11px; color: var(--text-muted);
+    }
+    .media-card__tags { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
+
+    /* ═══════════════════════════════════════════════════════════
+       DIVIDER & MISC
+    ═══════════════════════════════════════════════════════════ */
+    .divider {
+      display: flex; align-items: center; gap: var(--sp-4);
+      font-family: var(--font-primary); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--text-muted);
+      margin: var(--sp-8) 0;
+    }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border-subtle); }
+
+    .spec-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--r-lg);
+      padding: var(--sp-6);
+      margin-bottom: var(--sp-6);
+    }
+    .spec-card__title { font-family: var(--font-primary); font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: var(--sp-4); display: flex; align-items: center; gap: var(--sp-3); }
+    .spec-card__title i { color: var(--accent); font-size: 14px; }
+
+    /* PROMPT BOX */
+    .prompt-box {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--r-md);
+      padding: var(--sp-6);
+      font-family: 'Courier New', monospace;
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+    .prompt-box strong { color: var(--accent); }
+
+    /* Page padding offset for fixed sidebar */
+    .page-offset { padding-top: 0; }
+
+    /* ═══════════════════════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════════════════════ */
+    @media (max-width: 1199px) {
+      .sidebar { width: 260px; }
+      .main    { margin-left: 260px; }
+    }
+
+    @media (max-width: 991px) {
+      .sidebar { transform: translateX(-100%); width: 280px; }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; }
+      .sidebar-toggle { display: flex; }
+      .section { padding: var(--sp-8) var(--sp-6); }
+    }
+
+    @media (max-width: 767px) {
+      .section { padding: var(--sp-6) var(--sp-5); }
+      .section-heading { font-size: 22px; }
+      .type-block { flex-direction: column; gap: var(--sp-2); }
+      .type-block__meta { min-width: unset; }
+      .showcase-card { width: 200px; }
+      .media-card { width: 240px; }
+      .spec-table { font-size: 12px; }
+      .spec-table th, .spec-table td { padding: var(--sp-2) var(--sp-3); }
+    }
+
+    @media (max-width: 479px) {
+      .section { padding: var(--sp-5) var(--sp-4); }
+      .bp-row { gap: var(--sp-2); }
+      .bp-card { min-width: 90px; }
+      .showcase-card { width: 180px; }
+      .media-card { width: 220px; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Mobile toggle -->
+  <button class="sidebar-toggle" id="sidebarToggle" aria-label="Open menu">
+    <i class="fas fa-bars"></i>
+  </button>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <div class="layout">
+
+    <!-- ══════════════════════════════
+         SIDEBAR (mirrors Dan's site)
+    ══════════════════════════════ -->
+    <aside class="sidebar" id="sidebar">
+      <!-- Avatar -->
+      <div class="sidebar__avatar">
+        <i class="fas fa-user"></i>
+      </div>
+
+      <div class="sidebar__name">Dan A.</div>
+
+      <!-- Socials -->
+      <div class="sidebar__socials">
+        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+
+      <!-- Nav -->
+      <ul class="sidebar__nav">
+        <li><a href="#breakpoints" class="active"><i class="fas fa-mobile-screen-button"></i> Breakpoints</a></li>
+        <li><a href="#typography"><i class="fas fa-font"></i> Typography</a></li>
+        <li><a href="#colors"><i class="fas fa-palette"></i> Colors</a></li>
+        <li><a href="#buttons"><i class="fas fa-hand-pointer"></i> Buttons</a></li>
+        <li><a href="#inputs"><i class="fas fa-keyboard"></i> Inputs</a></li>
+        <li><a href="#showcase"><i class="fas fa-grip"></i> Showcase Cards</a></li>
+        <li><a href="#media"><i class="fas fa-image"></i> Media Cards</a></li>
+        <li><a href="#spacing"><i class="fas fa-ruler-combined"></i> Spacing</a></li>
+        <li><a href="#prompt"><i class="fas fa-code"></i> Prompt</a></li>
+      </ul>
+
+      <!-- Theme toggle -->
+      <div class="sidebar__theme">
+        <i class="fas fa-moon" style="font-size:12px;"></i>
+        <button class="theme-pill" id="themeToggle" aria-label="Toggle theme"></button>
+        <i class="fas fa-sun" style="font-size:12px;"></i>
+      </div>
+    </aside>
+
+    <!-- ══════════════════════════════
+         MAIN CONTENT
+    ══════════════════════════════ -->
+    <main class="main">
+
+      <!-- HERO -->
+      <section class="section" style="padding-top: var(--sp-20); border-bottom: 1px solid var(--border-subtle); background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-base) 100%);">
+        <p style="font-family:var(--font-primary);font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:var(--sp-3);">Dan Aglinao — Portfolio</p>
+        <h1 style="font-family:var(--font-primary);font-size:clamp(32px,5vw,56px);font-weight:800;line-height:1.08;letter-spacing:-0.02em;color:var(--text-primary);margin-bottom:var(--sp-5);">Responsive<br><span style="color:var(--accent);">Design Guide</span></h1>
+        <p style="font-size:15px;color:var(--text-secondary);max-width:520px;line-height:1.7;">
+          A complete sizing & styling reference built to match <strong style="color:var(--text-primary);">engraglinao.github.io</strong> — covering breakpoints, typography, colors, buttons, inputs, and cards at every device size.
+        </p>
+        <div style="margin-top:var(--sp-6);display:flex;gap:var(--sp-3);flex-wrap:wrap;">
+          <a href="#breakpoints" class="btn btn--primary btn--md">View Guide <i class="fas fa-arrow-down" style="font-size:11px;"></i></a>
+          <a href="#prompt" class="btn btn--outline btn--md">Copy Prompt</a>
+        </div>
+      </section>
+
+
+      <!-- ══ 1. BREAKPOINTS ══ -->
+      <section class="section" id="breakpoints">
+        <h2 class="section-heading">Breakpoints</h2>
+        <p class="section-sub">How your Bootstrap layout shifts across screen widths — and what to adjust at each step.</p>
+
+        <div class="bp-row">
+          <div class="bp-card"><div class="bp-card__icon">📱</div><div class="bp-card__name">XS</div><div class="bp-card__range">0 – 575px</div><div class="bp-card__note">Mobile</div></div>
+          <div class="bp-card"><div class="bp-card__icon">📲</div><div class="bp-card__name">SM</div><div class="bp-card__range">576 – 767px</div><div class="bp-card__note">Large mobile</div></div>
+          <div class="bp-card"><div class="bp-card__icon">💻</div><div class="bp-card__name">MD</div><div class="bp-card__range">768 – 991px</div><div class="bp-card__note">Tablet</div></div>
+          <div class="bp-card"><div class="bp-card__icon">🖥</div><div class="bp-card__name">LG</div><div class="bp-card__range">992 – 1199px</div><div class="bp-card__note">Laptop</div></div>
+          <div class="bp-card"><div class="bp-card__icon">🖥</div><div class="bp-card__name">XL</div><div class="bp-card__range">1200px +</div><div class="bp-card__note">Desktop</div></div>
+        </div>
+
+        <div class="spec-card">
+          <div class="spec-card__title"><i class="fas fa-sidebar"></i> Sidebar Behavior Per Breakpoint</div>
+          <table class="spec-table">
+            <thead><tr><th>Breakpoint</th><th>Sidebar state</th><th>Sidebar width</th><th>Main content</th><th>What to fix</th></tr></thead>
+            <tbody>
+              <tr><td>XS / SM (&lt;768px)</td><td>Hidden → hamburger toggle</td><td>280px (slides in)</td><td>Full width, no offset</td><td>Add <code>transform: translateX(-100%)</code> by default</td></tr>
+              <tr><td>MD (768–991px)</td><td>Hidden → hamburger toggle</td><td>280px (slides in)</td><td>Full width</td><td>Sidebar should still be collapsed on tablet</td></tr>
+              <tr><td>LG (992–1199px)</td><td>Fixed, visible</td><td>260px</td><td><code>margin-left: 260px</code></td><td>Check sidebar doesn't overlap main content</td></tr>
+              <tr><td>XL (1200px+)</td><td>Fixed, visible</td><td>300px</td><td><code>margin-left: 300px</code></td><td>Ideal — full sidebar + wide content</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="spec-card">
+          <div class="spec-card__title"><i class="fas fa-table-cells"></i> Bootstrap Grid Columns Per Section</div>
+          <table class="spec-table">
+            <thead><tr><th>Section / Element</th><th>XS–SM</th><th>MD</th><th>LG–XL</th><th>Bootstrap class</th></tr></thead>
+            <tbody>
+              <tr><td>About — photo</td><td>col-12 (centred)</td><td>col-4</td><td>col-3</td><td><code>col-lg-3 col-md-4</code></td></tr>
+              <tr><td>About — text</td><td>col-12</td><td>col-8</td><td>col-9</td><td><code>col-lg-9 col-md-8</code></td></tr>
+              <tr><td>Skills icons</td><td>3 cols (auto)</td><td>4 cols</td><td>5–6 cols</td><td>Flexbox wrap</td></tr>
+              <tr><td>Contact map</td><td>col-12</td><td>col-7</td><td>col-7</td><td><code>col-lg-7</code></td></tr>
+              <tr><td>Contact form</td><td>col-12</td><td>col-5</td><td>col-5</td><td><code>col-lg-5</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+
+      <!-- ══ 2. TYPOGRAPHY ══ -->
+      <section class="section" id="typography">
+        <h2 class="section-heading">Typography</h2>
+        <p class="section-sub">Your site uses Raleway for headings and Open Sans / Poppins for body text. Here's how every text role should scale.</p>
+
+        <div class="type-block">
+          <div class="type-block__meta"><div class="type-block__role">H1 / Hero</div><div class="type-block__spec">Raleway 800 · clamp(32px,5vw,56px) · LH 1.08 · LS -0.02em</div></div>
+          <div class="type-block__sample" style="font-family:var(--font-primary);font-size:clamp(26px,4vw,48px);font-weight:800;letter-spacing:-0.02em;line-height:1.08;">Danny Aglinao</div>
+        </div>
+        <div class="type-block">
+          <div class="type-block__meta"><div class="type-block__role">H2 / Section title</div><div class="type-block__spec">Raleway 700 · clamp(22px,3vw,36px) · LH 1.15 · LS -0.01em</div></div>
+          <div class="type-block__sample" style="font-family:var(--font-primary);font-size:clamp(20px,2.8vw,30px);font-weight:700;letter-spacing:-0.01em;line-height:1.15;">About Me</div>
+        </div>
+        <div class="type-block">
+          <div class="type-block__meta"><div class="type-block__role">H3 / Sub-heading</div><div class="type-block__spec">Raleway 600 · clamp(17px,2vw,24px) · LH 1.25</div></div>
+          <div class="type-block__sample" style="font-family:var(--font-primary);font-size:clamp(17px,2vw,22px);font-weight:600;line-height:1.25;">Computer Engineer &amp; Graphics Specialist</div>
+        </div>
+        <div class="type-block">
+          <div class="type-block__meta"><div class="type-block__role">Body / Paragraph</div><div class="type-block__spec">Poppins 400 · 15px · LH 1.7</div></div>
+          <div class="type-block__sample" style="font-size:15px;line-height:1.7;color:var(--text-secondary);">Computer Engineering Graduate at Universidad de Manila currently working as Graphics Specialist at Integreon Managed Solutions Manila.</div>
+        </div>
+        <div class="type-block">
+          <div class="type-block__meta"><div class="type-block__role">Body Small</div><div class="type-block__spec">Poppins 400 · 14px · LH 1.65</div></div>
+          <div class="type-block__sample" style="font-size:14px;line-height:1.65;color:var(--text-secondary);">Secondary content, descriptions, form field text.</div>
+        </div>
+        <div class="type-block">
+          <div class="type-block__meta"><div class="type-block__role">Caption / Meta</div><div class="type-block__spec">Poppins 400 · 13px · LH 1.5</div></div>
+          <div class="type-block__sample" style="font-size:13px;color:var(--text-muted);">Date ranges, metadata, hints — e.g. 2014–2020</div>
+        </div>
+        <div class="type-block">
+          <div class="type-block__meta"><div class="type-block__role">Label / Eyebrow</div><div class="type-block__spec">Raleway 700 · 11px · LS 0.16em · Uppercase</div></div>
+          <div class="type-block__sample" style="font-family:var(--font-primary);font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);">SECTION LABEL</div>
+        </div>
+        <div class="type-block">
+          <div class="type-block__meta"><div class="type-block__role">Nav link</div><div class="type-block__spec">Raleway 500 · 14px · LS 0.02em</div></div>
+          <div class="type-block__sample" style="font-family:var(--font-primary);font-size:14px;font-weight:500;letter-spacing:0.02em;color:rgba(255,255,255,0.65);">Home &nbsp;·&nbsp; About Me &nbsp;·&nbsp; Background &nbsp;·&nbsp; Contact</div>
+        </div>
+
+        <div class="divider">Responsive type scale</div>
+        <table class="spec-table">
+          <thead><tr><th>Role</th><th>XS (&lt;576)</th><th>SM (576–767)</th><th>MD (768–991)</th><th>LG (992–1199)</th><th>XL (1200+)</th></tr></thead>
+          <tbody>
+            <tr><td>H1 / Hero</td><td>28px</td><td>32px</td><td>38px</td><td>48px</td><td>56px</td></tr>
+            <tr><td>H2 / Section</td><td>22px</td><td>24px</td><td>28px</td><td>32px</td><td>36px</td></tr>
+            <tr><td>H3</td><td>18px</td><td>20px</td><td>22px</td><td>24px</td><td>24px</td></tr>
+            <tr><td>Body</td><td>14px</td><td>14px</td><td>15px</td><td>15px</td><td>16px</td></tr>
+            <tr><td>Caption</td><td>12px</td><td>12px</td><td>13px</td><td>13px</td><td>13px</td></tr>
+            <tr><td>Label / Eyebrow</td><td>10px</td><td>10px</td><td>11px</td><td>11px</td><td>11px</td></tr>
+            <tr><td>Nav links</td><td>16px (mobile overlay)</td><td>16px</td><td>13px</td><td>14px</td><td>14px</td></tr>
+            <tr><td>Sidebar name</td><td>20px</td><td>20px</td><td>22px</td><td>22px</td><td>22px</td></tr>
+          </tbody>
+        </table>
+
+        <div class="spec-card" style="margin-top:var(--sp-4);">
+          <div class="spec-card__title"><i class="fas fa-triangle-exclamation"></i> Adjustments Needed on Your Site</div>
+          <table class="spec-table">
+            <thead><tr><th>Element</th><th>Current issue</th><th>Recommended fix</th></tr></thead>
+            <tbody>
+              <tr><td>Hero name (H1)</td><td>May not scale down on XS — can overflow sidebar width</td><td>Use <code>clamp(28px,8vw,56px)</code></td></tr>
+              <tr><td>Section headings (H2)</td><td>Fixed px size may feel large on mobile</td><td>Add <code>font-size: 22px</code> inside <code>@media (max-width:576px)</code></td></tr>
+              <tr><td>Body line-height</td><td>Bootstrap default 1.5 feels tight for portfolio reading</td><td>Override to <code>line-height: 1.7</code> for paragraphs</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+
+      <!-- ══ 3. COLORS ══ -->
+      <section class="section" id="colors">
+        <h2 class="section-heading">Color Palettes</h2>
+        <p class="section-sub">Your site's dark navy + cyan accent palette, with a light mode alternative and semantic status colors.</p>
+
+        <div class="divider">Dark Mode — Current Site Palette</div>
+        <div class="palette-grid">
+          <div class="swatch"><div class="swatch__color" style="background:#040b14;border-bottom:1px solid rgba(255,255,255,0.06);"></div><div class="swatch__info"><div class="swatch__name">Sidebar BG</div><div class="swatch__hex">#040b14</div></div></div>
+          <div class="swatch"><div class="swatch__color" style="background:#0c0f16;border-bottom:1px solid rgba(255,255,255,0.06);"></div><div class="swatch__info"><div class="swatch__name">Page BG</div><div class="swatch__hex">#0c0f16</div></div></div>
+          <div class="swatch"><div class="swatch__color" style="background:#111827;"></div><div class="swatch__info"><div class="swatch__name">Surface</div><div class="swatch__hex">#111827</div></div></div>
+          <div class="swatch"><div class="swatch__color" style="background:#1a2133;"></div><div class="swatch__info"><div class="swatch__name">Elevated</div><div class="swatch__hex">#1a2133</div></div></div>
+          <div class="swatch"><div class="swatch__color" style="background:#eaf0ff;border-bottom:1px solid rgba(255,255,255,0.1);"></div><div class="swatch__info"><div class="swatch__name">Text Primary</div><div class="swatch__hex">#eaf0ff</div></div></div>
+          <div class="swatch"><div class="swatch__color" style="background:#a8b8d0;"></div><div class="swatch__info"><div class="swatch__name">Text Secondary</div><div class="swatch__hex">#a8b8d0</div></div></div>
+          <div class="swatch"><div class="swatch__color" style="background:#596880;"></div><div class="swatch__info"><div class="swatch__name">Text Muted</div><div class="swatch__hex">#596880</div></div></div>
+          <div class="swatch"><div class="swatch__color" style="background:#149ddd;"></div><div class="swatch__info"><div class="swatch__name">Accent (Cyan)</div><div class="swatch__hex">#149ddd</div></div></div>
+          <div class="swatch"><div class="swatch__color" style="background:#37b3ed;"></div><div class="swatch__info"><div class="swatch__name">Accent Hover</div><div class="swatch__hex">#37b3ed</div></div></div>
+          <div class="swatch"><div class="swatch__color" style="background:#e05f5f;"></div><div class="swatch__info"><div class="swatch__name">Error</div><div class="swatch__hex">#e05f5f</div></div></div>
+          <div class="swatch"><div class="swatch__color" style="background:#50c878;"></div><div class="swatch__info"><div class="swatch__name">Success</div><div class="swatch__hex">#50c878</div></div></div>
+          <div class="swatch"><div class="swatch__color" style="background:#f0c060;"></div><div class="swatch__info"><div class="swatch__name">Warning</div><div class="swatch__hex">#f0c060</div></div></div>
+        </div>
+
+        <div class="divider">Light Mode Alternative</div>
+        <div class="palette-grid">
+          <div class="swatch"><div class="swatch__color" style="background:#12304a;border-bottom:1px solid rgba(255,255,255,0.08);"></div><div class="swatch__info"><div class="swatch__name">Sidebar BG</div><div class="swatch__hex">#12304a</div></div></div>
+          <div class="swatch"><div class="swatch__color" style="background:#f4f6fb;border-bottom:1px solid #dde3ed;"></div><div class="swatch__info"><div class="swatch__name">Page BG</div><div class="swatch__hex">#f4f6fb</div></div></div>
+          <div class="swatch"><div class="swatch__color" style="background:#ffffff;border-bottom:1px solid #dde3ed;"></div><div class="swatch__info"><div class="swatch__name">Surface</div><div class="swatch__hex">#ffffff</div></div></div>
+          <div class="swatch"><div class="swatch__color" style="background:#edf1f8;border-bottom:1px solid #dde3ed;"></div><div class="swatch__info"><div class="swatch__name">Elevated</div><div class="swatch__hex">#edf1f8</div></div></div>
+          <div class="swatch"><div class="swatch__color" style="background:#1a2638;border-bottom:1px solid #ccc;"></div><div class="swatch__info"><div class="swatch__name">Text Primary</div><div class="swatch__hex">#1a2638</div></div></div>
+          <div class="swatch"><div class="swatch__color" style="background:#4a6080;border-bottom:1px solid #ccc;"></div><div class="swatch__info"><div class="swatch__name">Text Secondary</div><div class="swatch__hex">#4a6080</div></div></div>
+          <div class="swatch"><div class="swatch__color" style="background:#1177bb;"></div><div class="swatch__info"><div class="swatch__name">Accent</div><div class="swatch__hex">#1177bb</div></div></div>
+          <div class="swatch"><div class="swatch__color" style="background:#149ddd;"></div><div class="swatch__info"><div class="swatch__name">Accent Hover</div><div class="swatch__hex">#149ddd</div></div></div>
+        </div>
+
+        <table class="spec-table">
+          <thead><tr><th>Token</th><th>Dark value</th><th>Light value</th><th>Usage</th></tr></thead>
+          <tbody>
+            <tr><td><code>--sidebar-bg</code></td><td>#040b14</td><td>#12304a</td><td>Left sidebar background</td></tr>
+            <tr><td><code>--bg-base</code></td><td>#0c0f16</td><td>#f4f6fb</td><td>Page / body background</td></tr>
+            <tr><td><code>--bg-surface</code></td><td>#111827</td><td>#ffffff</td><td>Cards, panels, form inputs</td></tr>
+            <tr><td><code>--text-primary</code></td><td>#eaf0ff</td><td>#1a2638</td><td>Headings, important text</td></tr>
+            <tr><td><code>--text-secondary</code></td><td>#a8b8d0</td><td>#4a6080</td><td>Body copy, descriptions</td></tr>
+            <tr><td><code>--accent</code></td><td>#149ddd</td><td>#1177bb</td><td>Links, buttons, highlights, underlines</td></tr>
+            <tr><td><code>--accent-hover</code></td><td>#37b3ed</td><td>#149ddd</td><td>Hover state for accent elements</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+
+      <!-- ══ 4. BUTTONS ══ -->
+      <section class="section" id="buttons">
+        <h2 class="section-heading">Button System</h2>
+        <p class="section-sub">Your site's "Send Message" button style extended into a full system. Uppercase, border-radius square, with the cyan accent.</p>
+
+        <div class="divider">Variants</div>
+        <div class="btn-showcase">
+          <div class="btn-col"><div class="btn-col-label">Primary</div><button class="btn btn--primary btn--md">Send Message</button></div>
+          <div class="btn-col"><div class="btn-col-label">Outline</div><button class="btn btn--outline btn--md">View Work</button></div>
+          <div class="btn-col"><div class="btn-col-label">Ghost</div><button class="btn btn--ghost btn--md">Learn More</button></div>
+          <div class="btn-col"><div class="btn-col-label">Surface</div><button class="btn btn--surface btn--md">Download CV</button></div>
+          <div class="btn-col"><div class="btn-col-label">Danger</div><button class="btn btn--danger btn--md">Delete</button></div>
+          <div class="btn-col"><div class="btn-col-label">Disabled</div><button class="btn btn--primary btn--md btn--disabled" disabled>Sending…</button></div>
+        </div>
+
+        <div class="divider">Size Scale</div>
+        <div style="display:flex;flex-wrap:wrap;gap:var(--sp-4);align-items:center;margin-bottom:var(--sp-8);">
+          <button class="btn btn--primary btn--xs">XS</button>
+          <button class="btn btn--primary btn--sm">SM Button</button>
+          <button class="btn btn--primary btn--md">MD Button</button>
+          <button class="btn btn--primary btn--lg">LG Button</button>
+          <button class="btn btn--primary btn--xl">XL Button</button>
+        </div>
+
+        <table class="spec-table">
+          <thead><tr><th>Size</th><th>Font</th><th>Padding (V × H)</th><th>Border-radius</th><th>Usage on your site</th></tr></thead>
+          <tbody>
+            <tr><td>XS</td><td>Raleway 600 · 10px</td><td>4 × 12px</td><td>4px</td><td>Skill tags, tiny links</td></tr>
+            <tr><td>SM</td><td>Raleway 600 · 11px</td><td>7 × 16px</td><td>4px</td><td>Secondary actions, nav links</td></tr>
+            <tr><td>MD</td><td>Raleway 600 · 13px</td><td>10 × 22px</td><td>4px</td><td>"Send Message" — default form button</td></tr>
+            <tr><td>LG</td><td>Raleway 600 · 14px</td><td>12 × 28px</td><td>4px</td><td>Hero CTAs, prominent actions</td></tr>
+            <tr><td>XL</td><td>Raleway 600 · 15px</td><td>14 × 36px</td><td>4px</td><td>Hero / landing page only</td></tr>
+          </tbody>
+        </table>
+
+        <div class="spec-card">
+          <div class="spec-card__title"><i class="fas fa-mobile-screen-button"></i> Responsive Button Rules</div>
+          <table class="spec-table">
+            <thead><tr><th>Context</th><th>XS–SM (mobile)</th><th>MD (tablet)</th><th>LG–XL (desktop)</th></tr></thead>
+            <tbody>
+              <tr><td>Contact form "Send"</td><td>Full-width, LG size</td><td>Full-width, LG</td><td>Auto-width, MD</td></tr>
+              <tr><td>Hero / About CTA</td><td>Full-width, MD</td><td>Auto-width, LG</td><td>Auto-width, LG</td></tr>
+              <tr><td>Min touch target</td><td colspan="3">44 × 44px minimum on all mobile breakpoints</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+
+      <!-- ══ 5. INPUTS ══ -->
+      <section class="section" id="inputs">
+        <h2 class="section-heading">Inputs &amp; Form Fields</h2>
+        <p class="section-sub">Sizing and states for your Contact section's form — Name, Email, Subject, Message.</p>
+
+        <div class="input-grid">
+          <div class="field">
+            <div style="display:flex;align-items:center;gap:var(--sp-2);"><label class="field__label">Your Name</label><span class="tag tag--default">SM</span></div>
+            <input class="input input--sm" type="text" placeholder="Small — 13px, 7×11px padding" />
+            <span class="field__hint">Use in compact tables, tag inputs.</span>
+          </div>
+          <div class="field">
+            <div style="display:flex;align-items:center;gap:var(--sp-2);"><label class="field__label">Your Email</label><span class="tag tag--accent">MD ← Default</span></div>
+            <input class="input input--md" type="email" placeholder="Medium — 14px, 10×14px padding" />
+            <span class="field__hint">Default for all Contact form fields.</span>
+          </div>
+          <div class="field">
+            <div style="display:flex;align-items:center;gap:var(--sp-2);"><label class="field__label">Subject</label><span class="tag tag--default">LG</span></div>
+            <input class="input input--lg" type="text" placeholder="Large — 16px, 13×18px padding" />
+            <span class="field__hint">Use for hero search bars.</span>
+          </div>
+          <div class="field">
+            <div style="display:flex;align-items:center;gap:var(--sp-2);"><label class="field__label">Email</label><span class="tag tag--error">Error</span></div>
+            <input class="input input--md input--error" type="email" value="invalid@" />
+            <span class="field__hint" style="color:#e05f5f;">Please enter a valid email address.</span>
+          </div>
+          <div class="field">
+            <div style="display:flex;align-items:center;gap:var(--sp-2);"><label class="field__label">Email</label><span class="tag tag--success">Valid</span></div>
+            <input class="input input--md input--success" type="email" value="dan@example.com" />
+            <span class="field__hint" style="color:#50c878;">Looks good!</span>
+          </div>
+          <div class="field">
+            <label class="field__label">Disabled</label>
+            <input class="input input--md input--disabled" type="text" placeholder="Disabled field" disabled />
+            <span class="field__hint">Not interactive.</span>
+          </div>
+          <div class="field" style="grid-column:1/-1;">
+            <label class="field__label">Message</label>
+            <textarea class="input input--md" placeholder="Multiline textarea — matches your Contact section. min-height: 100px, resize: vertical…" style="min-height:100px;"></textarea>
+            <span class="field__hint">Matches the "Message" field in your Contact form.</span>
+          </div>
+        </div>
+
+        <table class="spec-table">
+          <thead><tr><th>Size</th><th>Font</th><th>Padding</th><th>Border-radius</th><th>Min height</th><th>When to use</th></tr></thead>
+          <tbody>
+            <tr><td>SM</td><td>Poppins 13px</td><td>7 × 11px</td><td>4px</td><td>34px</td><td>Compact / secondary fields</td></tr>
+            <tr><td>MD</td><td>Poppins 14px</td><td>10 × 14px</td><td>8px</td><td>42px</td><td>All Contact form inputs ← use this</td></tr>
+            <tr><td>LG</td><td>Poppins 16px</td><td>13 × 18px</td><td>12px</td><td>50px</td><td>Hero search / prominent fields</td></tr>
+          </tbody>
+        </table>
+
+        <div class="spec-card">
+          <div class="spec-card__title"><i class="fas fa-mobile-screen-button"></i> Mobile Input Rules (add to your CSS)</div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:var(--sp-3);font-size:14px;color:var(--text-secondary);">
+            <li>• Minimum touch target height: <strong style="color:var(--text-primary);">44px</strong> on all mobile sizes</li>
+            <li>• Set <code>font-size: 16px</code> on all inputs for iOS — prevents auto-zoom on focus</li>
+            <li>• Use <code>type="email"</code> and <code>type="tel"</code> to trigger correct mobile keyboards</li>
+            <li>• Make all inputs <code>width: 100%</code> on XS/SM — already true with Bootstrap <code>.form-control</code></li>
+            <li>• "Send Message" button should be <code>width: 100%</code> on mobile</li>
+          </ul>
+        </div>
+      </section>
+
+
+      <!-- ══ 6. SHOWCASE CARDS (horizontal, left → right) ══ -->
+      <section class="section" id="showcase">
+        <h2 class="section-heading">Showcase Cards</h2>
+        <p class="section-sub">Horizontal-scroll row of info cards — great for Skills, Tools, or Highlights. Scroll left → right.</p>
+
+        <div class="divider">Icon + Text Cards (skills / tools)</div>
+        <div class="showcase-row" style="margin-bottom:var(--sp-8);">
+          <div class="showcase-card">
+            <div class="showcase-card__body">
+              <div class="showcase-card__icon"><i class="fab fa-figma"></i></div>
+              <div class="showcase-card__title">Figma</div>
+              <div class="showcase-card__desc">UI/UX design, prototyping, and component libraries for web and mobile projects.</div>
+            </div>
+          </div>
+          <div class="showcase-card">
+            <div class="showcase-card__body">
+              <div class="showcase-card__icon"><i class="fas fa-pen-nib"></i></div>
+              <div class="showcase-card__title">Adobe Illustrator</div>
+              <div class="showcase-card__desc">Vector illustration, logo design, and print-ready artwork creation.</div>
+            </div>
+          </div>
+          <div class="showcase-card">
+            <div class="showcase-card__body">
+              <div class="showcase-card__icon"><i class="fas fa-palette"></i></div>
+              <div class="showcase-card__title">Canva</div>
+              <div class="showcase-card__desc">Quick graphic design for social media, presentations, and marketing materials.</div>
+            </div>
+          </div>
+          <div class="showcase-card">
+            <div class="showcase-card__body">
+              <div class="showcase-card__icon"><i class="fas fa-code"></i></div>
+              <div class="showcase-card__title">Web Design</div>
+              <div class="showcase-card__desc">HTML, CSS, JavaScript &amp; WordPress — building responsive, accessible websites.</div>
+            </div>
+          </div>
+          <div class="showcase-card">
+            <div class="showcase-card__body">
+              <div class="showcase-card__icon"><i class="fas fa-network-wired"></i></div>
+              <div class="showcase-card__title">Basic Networking</div>
+              <div class="showcase-card__desc">Network setup, troubleshooting, and maintenance for small office environments.</div>
+            </div>
+          </div>
+          <div class="showcase-card">
+            <div class="showcase-card__body">
+              <div class="showcase-card__icon"><i class="fab fa-microsoft"></i></div>
+              <div class="showcase-card__title">Microsoft Suite</div>
+              <div class="showcase-card__desc">PowerPoint, Excel, Word — advanced usage for professional presentations and reports.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider">Stat / Info Cards (experience, education, metrics)</div>
+        <div class="showcase-row">
+          <div class="showcase-card" style="width:200px;">
+            <div class="showcase-card__body" style="text-align:center;">
+              <div style="font-family:var(--font-primary);font-size:36px;font-weight:800;color:var(--accent);line-height:1;">4+</div>
+              <div style="font-family:var(--font-primary);font-size:13px;font-weight:600;color:var(--text-primary);margin-top:var(--sp-2);">Years Experience</div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:var(--sp-1);">Graphics Specialist</div>
+            </div>
+          </div>
+          <div class="showcase-card" style="width:200px;">
+            <div class="showcase-card__body" style="text-align:center;">
+              <div style="font-family:var(--font-primary);font-size:36px;font-weight:800;color:var(--accent);line-height:1;">BSc</div>
+              <div style="font-family:var(--font-primary);font-size:13px;font-weight:600;color:var(--text-primary);margin-top:var(--sp-2);">Computer Engineering</div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:var(--sp-1);">Universidad de Manila</div>
+            </div>
+          </div>
+          <div class="showcase-card" style="width:200px;">
+            <div class="showcase-card__body" style="text-align:center;">
+              <div style="font-family:var(--font-primary);font-size:36px;font-weight:800;color:var(--accent);line-height:1;">6+</div>
+              <div style="font-family:var(--font-primary);font-size:13px;font-weight:600;color:var(--text-primary);margin-top:var(--sp-2);">Tools Mastered</div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:var(--sp-1);">Design &amp; Dev</div>
+            </div>
+          </div>
+          <div class="showcase-card" style="width:200px;">
+            <div class="showcase-card__body" style="text-align:center;">
+              <div style="font-family:var(--font-primary);font-size:36px;font-weight:800;color:var(--accent);line-height:1;">✓</div>
+              <div style="font-family:var(--font-primary);font-size:13px;font-weight:600;color:var(--text-primary);margin-top:var(--sp-2);">Freelance Available</div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:var(--sp-1);">Open to projects</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ══ 7. MEDIA CARDS (image top, text bottom) ══ -->
+      <section class="section" id="media">
+        <h2 class="section-heading">Media Cards</h2>
+        <p class="section-sub">Cards with image on top, text &amp; metadata below — use for portfolio projects, blog posts, or work samples. Scroll left → right.</p>
+
+        <div class="showcase-row" style="margin-bottom: var(--sp-8);">
+
+          <!-- Card 1 -->
+          <div class="media-card">
+            <div class="media-card__image placeholder">
+              <i class="fas fa-image"></i>
+            </div>
+            <div class="media-card__body">
+              <div class="media-card__category">Graphic Design</div>
+              <div class="media-card__title">Brand Identity Project</div>
+              <div class="media-card__desc">Full brand identity design including logo, color palette, and typography guidelines.</div>
+              <div class="media-card__footer">
+                <div class="media-card__tags">
+                  <span class="tag tag--accent">Canva</span>
+                  <span class="tag tag--default">Print</span>
+                </div>
+                <span>2023</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="media-card">
+            <div class="media-card__image placeholder" style="background:linear-gradient(135deg,#1a2a3a,#0d1e2e);">
+              <i class="fas fa-laptop-code"></i>
+            </div>
+            <div class="media-card__body">
+              <div class="media-card__category">Web Design</div>
+              <div class="media-card__title">Portfolio Website</div>
+              <div class="media-card__desc">Personal portfolio built with HTML, CSS, Bootstrap — fully responsive across all devices.</div>
+              <div class="media-card__footer">
+                <div class="media-card__tags">
+                  <span class="tag tag--accent">HTML/CSS</span>
+                  <span class="tag tag--default">Bootstrap</span>
+                </div>
+                <span>2023</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="media-card">
+            <div class="media-card__image placeholder" style="background:linear-gradient(135deg,#162030,#0a1520);">
+              <i class="fas fa-vector-square"></i>
+            </div>
+            <div class="media-card__body">
+              <div class="media-card__category">Illustration</div>
+              <div class="media-card__title">Vector Artwork Series</div>
+              <div class="media-card__desc">Collection of vector illustrations created in Adobe Illustrator for various client projects.</div>
+              <div class="media-card__footer">
+                <div class="media-card__tags">
+                  <span class="tag tag--accent">Illustrator</span>
+                  <span class="tag tag--default">Vector</span>
+                </div>
+                <span>2022</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="media-card">
+            <div class="media-card__image placeholder" style="background:linear-gradient(135deg,#1e1a30,#0e0c20);">
+              <i class="fas fa-file-powerpoint"></i>
+            </div>
+            <div class="media-card__body">
+              <div class="media-card__category">Presentation</div>
+              <div class="media-card__title">Corporate Deck Design</div>
+              <div class="media-card__desc">Professional PowerPoint presentation template designed for executive-level business meetings.</div>
+              <div class="media-card__footer">
+                <div class="media-card__tags">
+                  <span class="tag tag--accent">PowerPoint</span>
+                  <span class="tag tag--default">Corporate</span>
+                </div>
+                <span>2022</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="media-card">
+            <div class="media-card__image placeholder" style="background:linear-gradient(135deg,#1a2a20,#0d1e12);">
+              <i class="fas fa-magnifying-glass"></i>
+            </div>
+            <div class="media-card__body">
+              <div class="media-card__category">UI/UX Design</div>
+              <div class="media-card__title">App Wireframes</div>
+              <div class="media-card__desc">Low and high-fidelity wireframes for a mobile app, prototyped and tested in Figma.</div>
+              <div class="media-card__footer">
+                <div class="media-card__tags">
+                  <span class="tag tag--accent">Figma</span>
+                  <span class="tag tag--default">UX</span>
+                </div>
+                <span>2024</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="spec-card">
+          <div class="spec-card__title"><i class="fas fa-ruler"></i> Media Card Specs</div>
+          <table class="spec-table">
+            <thead><tr><th>Property</th><th>XS–SM (mobile)</th><th>MD (tablet)</th><th>LG–XL (desktop)</th></tr></thead>
+            <tbody>
+              <tr><td>Card width (scroll row)</td><td>220–240px</td><td>260–280px</td><td>280px</td></tr>
+              <tr><td>Image aspect ratio</td><td>16:9</td><td>16:9</td><td>16:9</td></tr>
+              <tr><td>Card border-radius</td><td>8px</td><td>10px</td><td>12px</td></tr>
+              <tr><td>Body padding</td><td>16px</td><td>18px</td><td>20px</td></tr>
+              <tr><td>Title font size</td><td>14px</td><td>15px</td><td>15px</td></tr>
+              <tr><td>Description font size</td><td>12px</td><td>12px</td><td>13px</td></tr>
+              <tr><td>Grid layout (no scroll)</td><td>1 column</td><td>2 columns</td><td>3 columns</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+
+      <!-- ══ 8. SPACING ══ -->
+      <section class="section" id="spacing">
+        <h2 class="section-heading">Spacing &amp; Layout</h2>
+        <p class="section-sub">Spacing values and section padding to maintain consistent rhythm throughout your portfolio.</p>
+
+        <table class="spec-table" style="margin-bottom:var(--sp-8);">
+          <thead><tr><th>Token</th><th>Value</th><th>Bootstrap equiv</th><th>Usage</th></tr></thead>
+          <tbody>
+            <tr><td><code>--sp-1</code></td><td>4px</td><td><code>p-1</code> / <code>m-1</code></td><td>Micro gap — icon + label, tag padding</td></tr>
+            <tr><td><code>--sp-2</code></td><td>8px</td><td><code>p-2</code></td><td>Inline element gaps, list item spacing</td></tr>
+            <tr><td><code>--sp-3</code></td><td>12px</td><td><code>p-3</code></td><td>Small card inner padding, nav gaps</td></tr>
+            <tr><td><code>--sp-4</code></td><td>16px</td><td><code>p-4</code></td><td>Mobile page padding, small cards</td></tr>
+            <tr><td><code>--sp-5</code></td><td>20px</td><td><code>p-4</code> approx</td><td>Card body padding (mobile)</td></tr>
+            <tr><td><code>--sp-6</code></td><td>24px</td><td><code>p-5</code></td><td>Standard card padding, sidebar nav padding</td></tr>
+            <tr><td><code>--sp-8</code></td><td>32px</td><td><code>mb-4</code></td><td>Section heading margin, desktop card padding</td></tr>
+            <tr><td><code>--sp-10</code></td><td>40px</td><td>—</td><td>Desktop section horizontal padding</td></tr>
+            <tr><td><code>--sp-12</code></td><td>48px</td><td>—</td><td>Mobile section vertical padding</td></tr>
+            <tr><td><code>--sp-16</code></td><td>64px</td><td>—</td><td>Desktop section horizontal padding (LG)</td></tr>
+            <tr><td><code>--sp-20</code></td><td>80px</td><td>—</td><td>Section vertical padding (desktop)</td></tr>
+          </tbody>
+        </table>
+
+        <table class="spec-table">
+          <thead><tr><th>Section</th><th>XS</th><th>SM</th><th>MD</th><th>LG</th><th>XL</th></tr></thead>
+          <tbody>
+            <tr><td>Section vertical padding</td><td>32px</td><td>40px</td><td>48px</td><td>64px</td><td>80px</td></tr>
+            <tr><td>Section horizontal padding</td><td>16px</td><td>20px</td><td>24px</td><td>40px</td><td>48px</td></tr>
+            <tr><td>Sidebar padding (top)</td><td>—</td><td>—</td><td>—</td><td>40px</td><td>40px</td></tr>
+            <tr><td>Card body padding</td><td>16px</td><td>16px</td><td>20px</td><td>24px</td><td>24px</td></tr>
+            <tr><td>Card border-radius</td><td>8px</td><td>8px</td><td>10px</td><td>12px</td><td>12px</td></tr>
+            <tr><td>Grid / card gap</td><td>12px</td><td>16px</td><td>20px</td><td>24px</td><td>24px</td></tr>
+            <tr><td>Avatar size (sidebar)</td><td>—</td><td>—</td><td>—</td><td>120px</td><td>120px</td></tr>
+            <tr><td>Social icon size</td><td>—</td><td>—</td><td>—</td><td>36×36px</td><td>36×36px</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+
+      <!-- ══ 9. PROMPT ══ -->
+      <section class="section" id="prompt">
+        <h2 class="section-heading">Prompt Template</h2>
+        <p class="section-sub">Copy and paste this entire block into an AI prompt when building pages or components for your portfolio.</p>
+
+        <div class="prompt-box"><strong>DAN AGLINAO — PORTFOLIO DESIGN SYSTEM</strong>
+Site: engraglinao.github.io | Stack: HTML, CSS, Bootstrap 5, JS
+
+<strong>LAYOUT:</strong>
+  Fixed left sidebar (300px on XL, 260px on LG, hidden + hamburger on MD/tablet and below)
+  Main content: margin-left matches sidebar width on desktop, full-width on mobile
+  Single-page scroll: #hero → #about → #resume → #contact
+
+<strong>SIDEBAR BEHAVIOR:</strong>
+  XS–MD (&lt;992px): sidebar hidden (translateX(-100%)), hamburger toggle button (top-left)
+  LG–XL (≥992px): sidebar fixed, always visible
+  Sidebar items: avatar 120px circle, name (22px Raleway 700, white),
+    social icons (36px circles), nav links (icon + label, 14px Raleway 500)
+
+<strong>FONTS:</strong>
+  Headings: Raleway (800, 700, 600, 500)
+  Body/UI:  Poppins (400, 500, 600)
+  Both via Google Fonts
+
+<strong>BOOTSTRAP BREAKPOINTS (your site uses Bootstrap 5):</strong>
+  xs: 0–575px    sm: 576–767px   md: 768–991px
+  lg: 992–1199px xl: 1200px+
+
+<strong>COLOR TOKENS:</strong>
+  Dark mode (current):
+    sidebar:       #040b14
+    bg-base:       #0c0f16
+    bg-surface:    #111827
+    bg-elevated:   #1a2133
+    text-primary:  #eaf0ff
+    text-secondary:#a8b8d0
+    text-muted:    #596880
+    accent:        #149ddd  (cyan — main brand color)
+    accent-hover:  #37b3ed
+    error:         #e05f5f
+    success:       #50c878
+  Light mode:
+    sidebar:       #12304a
+    bg-base:       #f4f6fb
+    bg-surface:    #ffffff
+    text-primary:  #1a2638
+    accent:        #1177bb
+
+<strong>TYPOGRAPHY SCALE:</strong>
+  H1 (Hero name): clamp(28px,5vw,56px) · Raleway 800 · LH 1.08 · LS -0.02em
+  H2 (Section):   clamp(22px,3vw,36px) · Raleway 700 · LH 1.15 · underline accent bar
+  H3 (Sub):       clamp(17px,2vw,24px) · Raleway 600 · LH 1.25
+  Body:           15px · Poppins 400 · LH 1.7
+  Caption/meta:   13px · Poppins 400 · color: text-muted
+  Nav links:      14px · Raleway 500 · color: rgba(255,255,255,0.65)
+  Section underline: 48px wide, 3px thick, accent color, border-radius full
+
+<strong>BUTTONS (uppercase, Raleway, square-ish border-radius 4px):</strong>
+  Primary:  bg accent #149ddd · color white · border accent
+  Outline:  bg transparent · color accent · border accent
+  Ghost:    bg transparent · color text-secondary · border border-default
+  Sizes:
+    xs: 10px / 4×12px   sm: 11px / 7×16px   md: 13px / 10×22px
+    lg: 14px / 12×28px  xl: 15px / 14×36px
+  Mobile: full-width buttons inside forms, 44px min touch height
+  Hover: translateY(-1px) + glow shadow
+
+<strong>INPUTS (Poppins, consistent with Bootstrap .form-control):</strong>
+  sm: 13px / 7×11px / radius 4px  (~34px)
+  md: 14px / 10×14px / radius 8px (~42px) ← Contact form default
+  lg: 16px / 13×18px / radius 12px (~50px)
+  Focus: border accent + box-shadow 0 0 0 3px rgba(20,157,221,0.15)
+  Mobile: font-size 16px to prevent iOS zoom, min-height 44px
+
+<strong>CARDS:</strong>
+  Border-radius: 8px mobile / 12px desktop
+  Background: bg-surface · border: border-default
+  Hover: translateY(-4px) + shadow-md + border-color: accent
+  Media card: image top (16:9 aspect) + body below
+    image hover: scale(1.06) with overflow hidden
+    category label: 10px Raleway 700 uppercase accent color
+    title: 15px Raleway 700 · desc: 12px Poppins · footer: 11px muted
+
+<strong>SPACING SCALE:</strong>
+  4/8/12/16/20/24/32/40/48/64/80px
+  Section v-padding: 32px(xs)→80px(xl)
+  Section h-padding: 16px(xs)→48px(xl)
+
+<strong>TRANSITIONS:</strong>
+  fast: 150ms ease · base: 300ms ease · slow: 500ms ease
+
+<strong>ADJUSTMENTS NEEDED ON CURRENT SITE:</strong>
+  1. H1 — add clamp() for fluid sizing on mobile
+  2. All inputs — add font-size:16px on mobile to prevent iOS zoom
+  3. Section headings — reduce to 22px on mobile via media query
+  4. Body line-height — change from Bootstrap 1.5 to 1.7 for readability
+  5. Contact "Send Message" — make full-width on mobile
+  6. Sidebar — confirm transform:translateX(-100%) hides fully on tablet</div>
+
+      </section>
+
+      <!-- FOOTER -->
+      <div style="padding:var(--sp-8) var(--sp-10);text-align:center;font-size:12px;color:var(--text-muted);font-family:var(--font-primary);letter-spacing:0.08em;text-transform:uppercase;border-top:1px solid var(--border-subtle);">
+        Sizing Guide for <strong style="color:var(--accent);">Dan A.</strong> — engraglinao.github.io
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // Theme toggle
+    const html = document.documentElement;
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
+    });
+
+    // Sidebar toggle (mobile)
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const toggle  = document.getElementById('sidebarToggle');
+
+    function openSidebar() {
+      sidebar.classList.add('open');
+      overlay.classList.add('visible');
+      toggle.innerHTML = '<i class="fas fa-xmark"></i>';
+    }
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('visible');
+      toggle.innerHTML = '<i class="fas fa-bars"></i>';
+    }
+
+    toggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
+    overlay.addEventListener('click', closeSidebar);
+    sidebar.querySelectorAll('.sidebar__nav a').forEach(a => a.addEventListener('click', () => { if(window.innerWidth < 992) closeSidebar(); }));
+
+    // Active nav on scroll
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.sidebar__nav a');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id));
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    sections.forEach(s => obs.observe(s));
+  </script>
+</body>
+</html>

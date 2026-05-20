@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dan Aglinao — Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="portfolio.css" />
+</head>
+<body>
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+  <div class="overlay" id="overlay"></div>
+
+  <div class="layout">
+    <!-- ══ SIDEBAR ══ -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__avatar">
+        <img src="assets/img/profile-img.jpg" alt="Dan Aglinao" />
+      </div>
+      <div class="sidebar__name">Dan A.</div>
+      <div class="sidebar__socials">
+        <a href="https://www.facebook.com/Buenavista.Aglinao/" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://www.instagram.com/_buenavista.dan/?igshid=MTg2MTN1ZDR5ZmlycA%3D%3D&fbclid=IwAR2MsfVutl6Kzxj66tOe-9aIDQjVxdHYK7AJiGeBHsAskYawepLFPuUHwak" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.linkedin.com/in/danny-aglinao-2493511ab?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+      <nav>
+        <ul class="sidebar__nav">
+          <li><a href="#hero" class="active"><i class="fas fa-home"></i> Home</a></li>
+          <li><a href="#about"><i class="fas fa-user"></i> About Me</a></li>
+          <li><a href="#skills"><i class="fas fa-layer-group"></i> Skills</a></li>
+          <li><a href="#background"><i class="fas fa-briefcase"></i> Background</a></li>
+          <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+        </ul>
+      </nav>
+      <div class="sidebar__theme">
+        <i class="fas fa-moon"></i>
+        <button class="theme-pill" id="themeToggle" aria-label="Toggle theme"></button>
+        <i class="fas fa-sun"></i>
+      </div>
+    </aside>
+
+    <!-- ══ MAIN ══ -->
+    <main class="main" id="mainContent">
+
+      <!-- HERO -->
+      <section class="section hero" id="hero">
+        <div class="hero-inner">
+          <p class="hero-label" data-l10n="heroLabel">PORTFOLIO</p>
+          <h1 class="hero-name" data-l10n="heroName">Danny Aglinao</h1>
+          <p class="hero-typed" data-l10n="heroTyped">
+            <span class="typed-text" id="typedText"></span>
+            <span class="typed-cursor">|</span>
+          </p>
+          <div class="hero-actions">
+            <a href="#contact" class="btn btn--primary btn--lg" data-l10n="ctaContact">Contact Me</a>
+            <a href="#about" class="btn btn--outline btn--lg" data-l10n="ctaAbout">About Me</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABOUT -->
+      <section class="section" id="about">
+        <h2 class="section-heading" data-l10n="aboutHeading">About Me</h2>
+        <p class="section-sub" data-l10n="aboutSub">Get to know who I am and what I do.</p>
+        <div class="about-grid" id="aboutGrid">
+          <div class="about-image" id="aboutImage">
+            <img src="assets/img/profile-img.jpg" alt="Dan Aglinao" />
+          </div>
+          <div class="about-body" id="aboutBody">
+            <h3 data-l10n="aboutTitle">Computer Engineer &amp; Graphics Specialist.</h3>
+            <p class="about-bio" data-l10n="aboutBio">Computer Engineering Graduate at Universidad de Manila Batch 2020 &amp; currently working as Graphics Specialist at Integreon Managed Solutions Manila.</p>
+            <div class="about-details" id="aboutDetails">
+              <div class="about-details-col">
+                <ul>
+                  <li><i class="fas fa-chevron-right"></i> <strong>Birthday:</strong> <span>22 May 1997</span></li>
+                  <li><i class="fas fa-chevron-right"></i> <strong>Website:</strong> <span><a href="https://engraglinao.github.io/" target="_blank">https://engraglinao.github.io/</a></span></li>
+                  <li><i class="fas fa-chevron-right"></i> <strong>Contact:</strong> <span>+63 945 264 8770</span></li>
+                  <li><i class="fas fa-chevron-right"></i> <strong>City:</strong> <span>Metro Manila</span></li>
+                </ul>
+              </div>
+              <div class="about-details-col">
+                <ul>
+                  <li><i class="fas fa-chevron-right"></i> <strong>Age:</strong> <span>26</span></li>
+                  <li><i class="fas fa-chevron-right"></i> <strong>Degree:</strong> <span>Bachelors Degree</span></li>
+                  <li><i class="fas fa-chevron-right"></i> <strong>Email:</strong> <span>buenavistaaglinaodanny@gmail.com</span></li>
+                  <li><i class="fas fa-chevron-right"></i> <strong>Freelance:</strong> <span>Available</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SKILLS — Showcase Cards + Media Cards -->
+      <section class="section section-bg" id="skills">
+        <h2 class="section-heading" data-l10n="skillsHeading">Skills</h2>
+        <p class="section-sub" data-l10n="skillsSub">Tools, apps, and abilities I work with every day.</p>
+
+        <!-- App Skills — Showcase Cards (horizontal scroll) -->
+        <h3 class="skills-group-title" data-l10n="appsHeading">Apps &amp; Tools</h3>
+        <div class="showcase-row" id="skillsShowcase">
+          <!-- Populated by JS from data.json -->
+        </div>
+
+        <!-- Abilities — Showcase Stat Cards -->
+        <h3 class="skills-group-title" data-l10n="abilitiesHeading">Abilities</h3>
+        <div class="showcase-row" id="abilitiesShowcase">
+          <!-- Populated by JS from data.json -->
+        </div>
+
+        <!-- Featured Work — Media Cards (horizontal scroll) -->
+        <h3 class="skills-group-title" data-l10n="projectsHeading">Featured Work</h3>
+        <div class="showcase-row" id="projectsShowcase">
+          <!-- Populated by JS from data.json -->
+        </div>
+      </section>
+
+      <!-- BACKGROUND (Education / Resume) -->
+      <section class="section" id="background">
+        <h2 class="section-heading" data-l10n="bgHeading">Brief Background</h2>
+        <p class="section-sub" data-l10n="bgSub">My education journey and professional experience.</p>
+        <div class="resume-grid" id="resumeGrid">
+          <div class="resume-col" id="resumeEducation">
+            <h3 class="resume-col-title" data-l10n="eduTitle">Education</h3>
+            <!-- Populated by JS -->
+          </div>
+          <div class="resume-col" id="resumeExperience">
+            <h3 class="resume-col-title" data-l10n="expTitle">Professional Experience</h3>
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section class="section section-bg" id="contact">
+        <h2 class="section-heading" data-l10n="contactHeading">Contact</h2>
+        <p class="section-sub" data-l10n="contactSub">Get in touch — I'd love to hear from you.</p>
+        <div class="contact-grid" id="contactGrid">
+          <div class="contact-info" id="contactInfo">
+            <div class="contact-item">
+              <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+              <div>
+                <h4 data-l10n="locTitle">Location:</h4>
+                <p>452 Cabildo St. Intramuros Manila</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+              <div>
+                <h4 data-l10n="emailTitle">Email:</h4>
+                <p>buenavistaaglinaodanny@gmail.com</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon"><i class="fas fa-phone"></i></div>
+              <div>
+                <h4 data-l10n="callTitle">Call:</h4>
+                <p>+63 945 264 8770</p>
+              </div>
+            </div>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.1486954144443!2d120.97278637465767!3d14.590601577322332!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397cb09bdd117e7%3A0x46aac34ea001317!2sAglinao%20Family!5e0!3m2!1sen!2sph!4v1699881360474!5m2!1sen!2sph" frameborder="0" allowfullscreen="" loading="lazy"></iframe>
+          </div>
+          <form class="contact-form" id="contactForm" onsubmit="handleSubmit(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name" data-l10n="fName">Your Name</label>
+                <input type="text" id="name" required />
+              </div>
+              <div class="form-group">
+                <label for="email" data-l10n="fEmail">Your Email</label>
+                <input type="email" id="email" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="subject" data-l10n="fSubject">Subject</label>
+              <input type="text" id="subject" required />
+            </div>
+            <div class="form-group">
+              <label for="message" data-l10n="fMessage">Message</label>
+              <textarea id="message" rows="6" required></textarea>
+            </div>
+            <div class="form-status" id="formStatus"></div>
+            <button type="submit" class="btn btn--primary btn--lg btn--full" id="sendBtn" data-l10n="sendBtn">Send Message</button>
+          </form>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ══ DASHBOARD IFRAME ══ -->
+  <div class="dashboard-launcher" id="dashboardLauncher">
+    <button class="dashboard-toggle" id="dashboardToggle" title="Open Dashboard">
+      <i class="fas fa-sliders-h"></i>
+    </button>
+    <div class="dashboard-panel" id="dashboardPanel">
+      <div class="dashboard-header">
+        <h3><i class="fas fa-sliders-h"></i> Portfolio Dashboard</h3>
+        <button class="dashboard-close" id="dashboardClose"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="dashboard-body">
+        <!-- Layout Tab -->
+        <div class="db-tab active" id="tab-layout">
+          <h4>Layout</h4>
+          <div class="db-field">
+            <label>Theme</label>
+            <select id="cfgTheme" onchange="applyConfig()">
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
+            </select>
+          </div>
+          <div class="db-field">
+            <label>Sidebar Position</label>
+            <select id="cfgSidebar" onchange="applyConfig()">
+              <option value="left">Left</option>
+              <option value="right">Right</option>
+              <option value="hidden">Hidden</option>
+            </select>
+          </div>
+          <div class="db-field">
+            <label>Navbar Position</label>
+            <select id="cfgNavbar" onchange="applyConfig()">
+              <option value="sidebar">Sidebar</option>
+              <option value="top">Top Bar</option>
+            </select>
+          </div>
+          <div class="db-field">
+            <label>Section Heading Align</label>
+            <select id="cfgHeadingAlign" onchange="applyConfig()">
+              <option value="left">Left</option>
+              <option value="center">Center</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Sections Tab -->
+        <div class="db-tab" id="tab-sections">
+          <h4>Sections</h4>
+          <p class="db-hint">Toggle sections on or off. Drag to reorder (coming soon).</p>
+          <div class="db-section-list" id="dbSectionList">
+            <!-- Populated by JS -->
+          </div>
+          <button class="btn btn--surface btn--sm" onclick="addSection()" style="margin-top:12px;"><i class="fas fa-plus"></i> Add New Section</button>
+        </div>
+
+        <!-- Colors Tab -->
+        <div class="db-tab" id="tab-colors">
+          <h4>Colors</h4>
+          <div class="db-field">
+            <label>Accent Color</label>
+            <div class="color-input-row">
+              <input type="color" id="cfgAccent" value="#149ddd" onchange="applyColors()" />
+              <input type="text" id="cfgAccentText" value="#149ddd" onchange="syncColorFromText('accent')" />
+            </div>
+          </div>
+          <div class="db-field">
+            <label>Accent Hover</label>
+            <div class="color-input-row">
+              <input type="color" id="cfgAccentHover" value="#37b3ed" onchange="applyColors()" />
+              <input type="text" id="cfgAccentHoverText" value="#37b3ed" onchange="syncColorFromText('accentHover')" />
+            </div>
+          </div>
+          <div class="db-field">
+            <label>Sidebar BG</label>
+            <div class="color-input-row">
+              <input type="color" id="cfgSidebarBg" value="#040b14" onchange="applyColors()" />
+              <input type="text" id="cfgSidebarBgText" value="#040b14" onchange="syncColorFromText('sidebarBg')" />
+            </div>
+          </div>
+          <div class="db-field">
+            <label>Page BG</label>
+            <div class="color-input-row">
+              <input type="color" id="cfgPageBg" value="#0c0f16" onchange="applyColors()" />
+              <input type="text" id="cfgPageBgText" value="#0c0f16" onchange="syncColorFromText('pageBg')" />
+            </div>
+          </div>
+          <div class="db-field">
+            <label>Surface BG</label>
+            <div class="color-input-row">
+              <input type="color" id="cfgSurfaceBg" value="#111827" onchange="applyColors()" />
+              <input type="text" id="cfgSurfaceBgText" value="#111827" onchange="syncColorFromText('surfaceBg')" />
+            </div>
+          </div>
+          <div class="db-field">
+            <label>Palette Preset</label>
+            <select id="cfgPalette" onchange="applyPalette()">
+              <option value="custom">Custom</option>
+              <option value="dark">Default Dark</option>
+              <option value="light">Light Mode</option>
+              <option value="ocean">Ocean Blue</option>
+              <option value="forest">Forest Green</option>
+              <option value="sunset">Sunset Orange</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Buttons Tab -->
+        <div class="db-tab" id="tab-buttons">
+          <h4>Buttons</h4>
+          <div class="db-field">
+            <label>Primary Style</label>
+            <select id="cfgBtnPrimary" onchange="applyButtons()">
+              <option value="primary">Filled</option>
+              <option value="outline">Outline</option>
+              <option value="ghost">Ghost</option>
+              <option value="surface">Surface</option>
+            </select>
+          </div>
+          <div class="db-field">
+            <label>Button Radius</label>
+            <select id="cfgBtnRadius" onchange="applyButtons()">
+              <option value="4px">Square (4px)</option>
+              <option value="8px">Rounded (8px)</option>
+              <option value="50px">Pill (50px)</option>
+            </select>
+          </div>
+          <div class="db-field">
+            <label>Button Size</label>
+            <select id="cfgBtnSize" onchange="applyButtons()">
+              <option value="sm">Small</option>
+              <option value="md" selected>Medium</option>
+              <option value="lg">Large</option>
+            </select>
+          </div>
+          <div class="btn-preview" id="btnPreview">
+            <button class="btn btn--primary btn--md">Primary</button>
+            <button class="btn btn--outline btn--md">Outline</button>
+            <button class="btn btn--ghost btn--md">Ghost</button>
+          </div>
+        </div>
+
+        <!-- NewSection Tab -->
+        <div class="db-tab" id="tab-newsection">
+          <h4>Custom Sections</h4>
+          <p class="db-hint">Create new sections with custom content, layout, and card types.</p>
+          <div class="db-field">
+            <label>Section Name</label>
+            <input type="text" id="newSectionName" placeholder="e.g., My Projects" />
+          </div>
+          <div class="db-field">
+            <label>Layout</label>
+            <select id="newSectionLayout">
+              <option value="showcase-cards">Showcase Cards (horizontal scroll)</option>
+              <option value="media-cards">Media Cards (image + text)</option>
+              <option value="grid-cards">Grid Cards (static grid)</option>
+              <option value="text-block">Text Block (full width)</option>
+              <option value="two-col">Two Column (text | image)</option>
+            </select>
+          </div>
+          <div class="db-field">
+            <label>Text Side</label>
+            <select id="newSectionTextSide">
+              <option value="left">Left</option>
+              <option value="right">Right</option>
+              <option value="center">Center</option>
+            </select>
+          </div>
+          <div class="db-field">
+            <label>Content (JSON array or plain text)</label>
+            <textarea id="newSectionContent" rows="6" placeholder='[{"title":"Item 1","desc":"Description","icon":"fa-star"},...]'></textarea>
+          </div>
+          <button class="btn btn--primary btn--sm" onclick="createCustomSection()"><i class="fas fa-plus"></i> Create Section</button>
+          <div id="customSectionsList"></div>
+        </div>
+
+        <!-- Save / Export -->
+        <div class="db-tab-footer">
+          <button class="btn btn--primary btn--sm" onclick="saveConfig()"><i class="fas fa-save"></i> Save Config</button>
+          <button class="btn btn--surface btn--sm" onclick="exportConfig()"><i class="fas fa-download"></i> Export Config</button>
+          <button class="btn btn--outline btn--sm" onclick="resetConfig()"><i class="fas fa-undo"></i> Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCRIPTS ══ -->
+  <script src="assets/guide/portfolio.js"></script>
+</body>
+</html>

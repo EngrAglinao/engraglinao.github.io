@@ -1,0 +1,101 @@
+{
+  "profile": {
+    "name": "Danny Aglinao",
+    "shortName": "Dan A.",
+    "title": "Computer Engineer & Graphics Specialist",
+    "bio": "Computer Engineering Graduate at Universidad de Manila Batch 2020 & currently working as Graphics Specialist at Integreon Managed Solutions Manila.",
+    "profileImage": "assets/img/profile-img.jpg",
+    "birthDate": "22 May 1997",
+    "website": "https://engraglinao.github.io/",
+    "contact": "+63 945 264 8770",
+    "email": "buenavistaaglinaodanny@gmail.com",
+    "city": "Metro Manila",
+    "degree": "Bachelors Degree",
+    "freelance": "Available"
+  },
+  "social": {
+    "facebook": "https://www.facebook.com/Buenavista.Aglinao/",
+    "instagram": "https://www.instagram.com/_buenavista.dan/?igshid=MTg2MTN1ZDR5ZmlycA%3D%3D&fbclid=IwAR2MsfVutl6Kzxj66tOe-9aIDQjVxdHYK7AJiGeBHsAskYawepLFPuUHwak",
+    "linkedin": "https://www.linkedin.com/in/danny-aglinao-2493511ab?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+  },
+  "skills": [
+    { "name": "Canva", "type": "App", "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/0/08/Canva_icon_2021.svg", "color": "#00C4CC", "description": "Quick graphic design for social media, presentations, and marketing materials." },
+    { "name": "Figma", "type": "App", "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/3/33/Figma-logo.svg", "color": "#F24E1E", "description": "UI/UX design, prototyping, and component libraries for web and mobile projects." },
+    { "name": "PowerPoint", "type": "App", "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg", "color": "#B7472A", "description": "Professional presentation design and storytelling." },
+    { "name": "Excel", "type": "App", "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg", "color": "#217346", "description": "Data analysis, tables, and spreadsheet automation." },
+    { "name": "Adobe Illustrator", "type": "App", "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Adobe_Systems_logo_and_wordmark.svg", "color": "#FF9A00", "description": "Vector illustration, logo design, and print-ready artwork." },
+    { "name": "Adobe InDesign", "type": "App", "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Adobe_Systems_logo_and_wordmark.svg", "color": "#DD006F", "description": "Layout and page design for print and digital publications." },
+    { "name": "Computer Literate", "type": "Ability", "description": "Full proficiency across operating systems, office software, and productivity tools." },
+    { "name": "Basic Troubleshooting", "type": "Ability", "description": "Diagnosing and resolving software and hardware issues efficiently." },
+    { "name": "Basic Networking", "type": "Ability", "description": "Network setup, troubleshooting, and maintenance for small office environments." },
+    { "name": "Web Design", "type": "Ability", "description": "HTML, CSS, JavaScript & WordPress — building responsive, accessible websites." }
+  ],
+  "education": [
+    { "level": "Tertiary", "years": "2014-2020", "degree": "Bachelor of Science in Computer Engineering", "school": "Universidad de Manila | One Mehan Garden, Manila City, Ph 1000" },
+    { "level": "Secondary", "years": "2010 - 2014", "degree": "Manila High School", "school": "Intramuros Manila, 1002 Metro Manila" },
+    { "level": "Primary", "years": "2004 - 2010", "degree": "Apolinario Mabini Elementary School", "school": "Quiapo Manila, 1001 Metro Manila" }
+  ],
+  "experience": [
+    {
+      "position": "Graphics Specialist",
+      "years": "May 21, 2021 - May 14, 2022",
+      "company": "Integreon Managed Solutions Manila",
+      "description": [ "Design graphics and layouts for digital and print materials.", "Collaborate with team members on creative campaigns.", "Ensure brand consistency across all deliverables." ]
+    }
+  ],
+  "projects": [
+    { "category": "Graphic Design", "title": "Brand Identity Project", "desc": "Full brand identity design including logo, color palette, and typography guidelines.", "tags": ["Canva","Print"], "year": "2023" },
+    { "category": "Web Design", "title": "Portfolio Website", "desc": "Personal portfolio built with HTML, CSS, Bootstrap — fully responsive across all devices.", "tags": ["HTML/CSS","Bootstrap"], "year": "2023" },
+    { "category": "Illustration", "title": "Vector Artwork Series", "desc": "Collection of vector illustrations created in Adobe Illustrator for various client projects.", "tags": ["Illustrator","Vector"], "year": "2022" },
+    { "category": "Presentation", "title": "Corporate Deck Design", "desc": "Professional PowerPoint presentation template designed for executive-level business meetings.", "tags": ["PowerPoint","Corporate"], "year": "2022" },
+    { "category": "UI/UX Design", "title": "App Wireframes", "desc": "Low and high-fidelity wireframes for a mobile app, prototyped and tested in Figma.", "tags": ["Figma","UX"], "year": "2024" }
+  ],
+  "contact": {
+    "location": "452 Cabildo St. Intramuros Manila",
+    "email": "buenavistaaglinaodanny@gmail.com",
+    "phone": "+63 945 264 8770"
+  },
+  "layout": {
+    "theme": "dark",
+    "sidebarPosition": "left",
+    "sectionOrder": ["hero","about","skills","background","contact"],
+    "hero": {
+      "textSide": "center",
+      "showAvatar": true,
+      "heading": "Danny Aglinao"
+    },
+    "about": {
+      "imageSide": "right",
+      "imageRatio": "square-circle"
+    },
+    "skills": {
+      "displayMode": "both",
+      "headingSide": "top"
+    },
+    "background": {
+      "imageSide": "left",
+      "contentSide": "right",
+      "showEducation": true,
+      "showExperience": true
+    },
+    "navbar": {
+      "position": "sidebar",
+      "side": "left"
+    }
+  },
+  "colors": {
+    "mode": "dark",
+    "accent": "#149ddd",
+    "accentHover": "#37b3ed",
+    "sidebarBg": "#040b14",
+    "pageBg": "#0c0f16",
+    "surface": "#111827"
+  },
+  "buttons": {
+    "primaryVariant": "primary",
+    "primaryColor": "#149ddd",
+    "outlineColor": "#149ddd",
+    "ghostColor": "#6c757d",
+    "borderRadius": "4px"
+  }
+}
