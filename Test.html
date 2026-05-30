@@ -1,489 +1,539 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="light" class="h-full">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlyonUI Enterprise Low-Code Builder</title>
-    <link href="https://cdn.jsdelivr.net/npm/flyonui/dist/full.min.css" rel="stylesheet" type="text/css" />
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* Custom UI scrollbars & adjustments */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        .drag-ghost { opacity: 0.4; border: 2px dashed #4f46e5 !important; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlyonUI Interactive Application Engine</title>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flyonui@latest/dist/flyonui.css">
+  
+  <style>
+    /* Prevent drag artifacts and control visual canvas feedback layers */
+    .drop-zone.drag-over {
+      border-color: #4f46e5 !important;
+      background-color: rgba(79, 70, 229, 0.05) !important;
+    }
+    .canvas-element-selected {
+      outline: 2px solid #4f46e5 !important;
+      outline-offset: 2px;
+    }
+    iframe { pointer-events: none; }
+  </style>
 </head>
-<body class="bg-base-200 h-screen w-screen flex flex-col font-sans overflow-hidden antialiased text-base-content">
+<body class="bg-base-200 text-base-content h-screen flex flex-col overflow-hidden font-sans">
 
-    <header class="navbar bg-base-100 shadow-sm justify-between px-6 border-b border-base-300 z-20 min-h-[64px]">
-        <div class="flex items-center gap-6">
-            <span class="text-xl font-black tracking-tight bg-gradient-to-r from-primary to-info bg-clip-text text-transparent flex items-center gap-2">
-                <i class="fa-solid fa-cubes-gradient"></i> FlyonStudio
-            </span>
-            <div class="tabs tabs-box bg-base-200 p-1 size-sm rounded-lg">
-                <button id="tab-web-creation" class="tab tab-active text-xs font-semibold px-4" onclick="switchMainTab('web')">
-                    <i class="fa-solid fa-globe mr-1.5"></i> Web Creation
-                </button>
-                <button id="tab-comp-creation" class="tab text-xs font-semibold px-4" onclick="switchMainTab('component')">
-                    <i class="fa-solid fa-puzzle-piece mr-1.5"></i> Component Builder
-                </button>
+  <header class="navbar bg-base-100 border-b border-base-300 shadow-sm px-4 flex-none z-50">
+    <div class="navbar-start gap-3">
+      <button class="btn btn-square btn-ghost lg:hidden" onclick="toggleMobileSidebar()" id="mobile-sidebar-toggle">
+        <span class="text-xl">☰</span>
+      </button>
+      <a class="text-xl font-black tracking-tight flex items-center gap-2">
+        <span class="bg-primary text-primary-content px-2 py-0.5 rounded text-sm font-mono">FLYON</span>
+        <span class="hidden sm:inline text-lg font-semibold text-base-content/80">StudioEngine</span>
+      </a>
+    </div>
+
+    <div class="navbar-center">
+      <div class="tabs tabs-box bg-base-200 p-1 rounded-lg" role="tablist">
+        <button id="tab-web-creation" class="tab tab-active" onclick="switchWorkflowMode('web')">Website Creation</button>
+        <button id="tab-comp-forge" class="tab" onclick="switchWorkflowMode('forge')">Component Forge</button>
+      </div>
+    </div>
+
+    <div class="navbar-end gap-2">
+      <div class="join border border-base-300 bg-base-100 p-0.5 rounded-lg hidden md:inline-flex">
+        <button class="btn btn-xs btn-ghost join-item px-2.5 active" id="view-desktop" onclick="setCanvasViewport('desktop')">🖥️</button>
+        <button class="btn btn-xs btn-ghost join-item px-2.5" id="view-tablet" onclick="setCanvasViewport('tablet')">📐</button>
+        <button class="btn btn-xs btn-ghost join-item px-2.5" id="view-mobile" onclick="setCanvasViewport('mobile')">📱</button>
+      </div>
+      <button class="btn btn-sm btn-outline" onclick="saveActiveComponentForge()">Save Block</button>
+      <button class="btn btn-sm btn-primary" onclick="exportProductionHTML()">Export HTML</button>
+    </div>
+  </header>
+
+  <div class="flex flex-1 overflow-hidden relative">
+
+    <aside id="app-sidebar" class="fixed inset-y-16 left-0 w-80 bg-base-100 border-r border-base-300 flex flex-col z-40 transform -translate-x-full lg:translate-x-0 lg:static transition-transform duration-300 overflow-y-auto">
+      <div class="p-4 border-b border-base-300 sticky top-0 bg-base-100 z-10">
+        <input type="text" placeholder="Search catalog elements..." class="input input-sm input-bordered w-full" oninput="filterCatalog(this.value)" />
+      </div>
+
+      <div class="accordion accordion-border border-0" id="catalog-accordion">
+        
+        <div class="accordion-item active">
+          <button class="accordion-toggle text-xs uppercase tracking-wider font-bold text-base-content/60" onclick="toggleAccordionItem(this)">Typography Elements</button>
+          <div class="accordion-content bg-base-50/50 p-3 space-y-3">
+            <div class="p-2 border border-dashed border-base-300 rounded cursor-grab bg-base-100 hover:border-primary transition" draggable="true" ondragstart="handleDragStart(event)" data-type="h1">
+              <h1 class="text-3xl font-extrabold text-base-content">Display Header</h1>
             </div>
+            <div class="p-2 border border-dashed border-base-300 rounded cursor-grab bg-base-100 hover:border-primary transition" draggable="true" ondragstart="handleDragStart(event)" data-type="p">
+              <p class="text-sm text-base-content/70">Standard body helper copy block.</p>
+            </div>
+          </div>
         </div>
 
-        <div class="flex items-center gap-3">
-            <div class="flex items-center bg-base-200 rounded-lg p-1 mr-2 gap-1 size-sm">
-                <button class="btn btn-square btn-text btn-xs" onclick="changeResponsiveView('desktop')" title="Desktop View"><i class="fa-solid fa-desktop"></i></button>
-                <button class="btn btn-square btn-text btn-xs" onclick="changeResponsiveView('tablet')" title="Tablet View"><i class="fa-solid fa-tablet-screen-button"></i></button>
-                <button class="btn btn-square btn-text btn-xs" onclick="changeResponsiveView('mobile')" title="Mobile View"><i class="fa-solid fa-mobile-button"></i></button>
+        <div class="accordion-item">
+          <button class="accordion-toggle text-xs uppercase tracking-wider font-bold text-base-content/60" onclick="toggleAccordionItem(this)">Buttons & Action Components</button>
+          <div class="accordion-content bg-base-50/50 p-3 space-y-3">
+            <div class="p-2 border border-dashed border-base-300 rounded cursor-grab bg-base-100" draggable="true" ondragstart="handleDragStart(event)" data-type="btn-primary">
+              <button class="btn btn-primary btn-sm">Primary Blueprint Button</button>
             </div>
-            <button class="btn btn-outline btn-secondary btn-sm rounded-lg gap-2" onclick="saveComponent()">
-                <i class="fa-solid fa-bookmark"></i> Save Component
-            </button>
-            <button class="btn btn-primary btn-sm rounded-lg gap-2 shadow-sm" onclick="exportToHTML()">
-                <i class="fa-solid fa-file-arrow-down"></i> Export HTML
-            </button>
+            <div class="p-2 border border-dashed border-base-300 rounded cursor-grab bg-base-100" draggable="true" ondragstart="handleDragStart(event)" data-type="btn-outline">
+              <button class="btn btn-outline btn-secondary btn-sm">Outline Action</button>
+            </div>
+          </div>
         </div>
-    </header>
 
-    <main class="flex-1 grid grid-cols-4 overflow-hidden relative w-full h-full">
-
-        <aside class="col-span-1 bg-base-100 border-r border-base-300 flex flex-col overflow-hidden max-h-full">
-            <div class="p-4 border-b border-base-200">
-                <div class="relative w-full">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-base-content/40">
-                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                    </span>
-                    <input type="text" id="component-search" placeholder="Search components..." class="input input-sm input-bordered w-full pl-9 rounded-lg" oninput="filterComponents()" />
-                </div>
+        <div class="accordion-item">
+          <button class="accordion-toggle text-xs uppercase tracking-wider font-bold text-base-content/60" onclick="toggleAccordionItem(this)">Form & Input Systems</button>
+          <div class="accordion-content bg-base-50/50 p-3 space-y-3">
+            <div class="p-2 border border-dashed border-base-300 rounded cursor-grab bg-base-100" draggable="true" ondragstart="handleDragStart(event)" data-type="field-text">
+              <div class="form-control w-full">
+                <label class="label"><span class="label-text-semibold text-xs">Dynamic Label</span></label>
+                <input type="text" placeholder="Standard form field..." class="input input-sm input-bordered w-full" disabled />
+              </div>
             </div>
-            
-            <div class="flex-1 overflow-y-auto p-4 space-y-3">
-                <div class="accordion seq-accordion-boxed w-full">
-                    
-                    <div class="accordion-item active">
-                        <button class="accordion-toggle text-xs font-bold uppercase tracking-wider text-base-content/70">Navigation & Wireframes</button>
-                        <div class="accordion-content p-2 flex flex-col gap-2">
-                            <div class="card bg-base-200 p-2 text-xs font-medium border border-base-300 rounded-lg cursor-grab hover:bg-base-300 transition duration-150 flex items-center justify-between" draggable="true" ondragstart="handleDragStart(event, 'navbar-basic')">
-                                <span><i class="fa-solid fa-window-maximize mr-2 text-primary"></i> Application Navbar</span>
-                                <i class="fa-solid fa-grip-vertical text-base-content/30 text-xs"></i>
-                            </div>
-                            <div class="card bg-base-200 p-2 text-xs font-medium border border-base-300 rounded-lg cursor-grab hover:bg-base-300 transition duration-150 flex items-center justify-between" draggable="true" ondragstart="handleDragStart(event, 'hero-section')">
-                                <span><i class="fa-solid fa-image-portrait mr-2 text-primary"></i> Marketing Hero Block</span>
-                                <i class="fa-solid fa-grip-vertical text-base-content/30 text-xs"></i>
-                            </div>
-                            <div class="card bg-base-200 p-2 text-xs font-medium border border-base-300 rounded-lg cursor-grab hover:bg-base-300 transition duration-150 flex items-center justify-between" draggable="true" ondragstart="handleDragStart(event, 'footer-simple')">
-                                <span><i class="fa-solid fa-shoe-prints mr-2 text-primary"></i> Universal Footer</span>
-                                <i class="fa-solid fa-grip-vertical text-base-content/30 text-xs"></i>
-                            </div>
-                        </div>
-                    </div>
+          </div>
+        </div>
 
-                    <div class="accordion-item">
-                        <button class="accordion-toggle text-xs font-bold uppercase tracking-wider text-base-content/70">Actions & Buttons</button>
-                        <div class="accordion-content hidden p-2 flex flex-col gap-2">
-                            <div class="card bg-base-200 p-2 text-xs font-medium border border-base-300 rounded-lg cursor-grab hover:bg-base-300 transition duration-150 flex items-center justify-between" draggable="true" ondragstart="handleDragStart(event, 'btn-primary')">
-                                <span><i class="fa-solid fa-square-mouse-pointer mr-2 text-success"></i> Primary Button</span>
-                                <i class="fa-solid fa-grip-vertical text-base-content/30 text-xs"></i>
-                            </div>
-                            <div class="card bg-base-200 p-2 text-xs font-medium border border-base-300 rounded-lg cursor-grab hover:bg-base-300 transition duration-150 flex items-center justify-between" draggable="true" ondragstart="handleDragStart(event, 'btn-group')">
-                                <span><i class="fa-solid fa-layer-group mr-2 text-success"></i> Action Button Group</span>
-                                <i class="fa-solid fa-grip-vertical text-base-content/30 text-xs"></i>
-                            </div>
-                            <div class="card bg-base-200 p-2 text-xs font-medium border border-base-300 rounded-lg cursor-grab hover:bg-base-300 transition duration-150 flex items-center justify-between" draggable="true" ondragstart="handleDragStart(event, 'badge-outline')">
-                                <span><i class="fa-solid fa-tag mr-2 text-success"></i> Context Badge</span>
-                                <i class="fa-solid fa-grip-vertical text-base-content/30 text-xs"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <button class="accordion-toggle text-xs font-bold uppercase tracking-wider text-base-content/70">Data & Layout Cards</button>
-                        <div class="accordion-content hidden p-2 flex flex-col gap-2">
-                            <div class="card bg-base-200 p-2 text-xs font-medium border border-base-300 rounded-lg cursor-grab hover:bg-base-300 transition duration-150 flex items-center justify-between" draggable="true" ondragstart="handleDragStart(event, 'card-basic')">
-                                <span><i class="fa-solid fa-id-card mr-2 text-info"></i> Informative Display Card</span>
-                                <i class="fa-solid fa-grip-vertical text-base-content/30 text-xs"></i>
-                            </div>
-                            <div class="card bg-base-200 p-2 text-xs font-medium border border-base-300 rounded-lg cursor-grab hover:bg-base-300 transition duration-150 flex items-center justify-between" draggable="true" ondragstart="handleDragStart(event, 'stats-grid')">
-                                <span><i class="fa-solid fa-chart-simple mr-2 text-info"></i> Metrics/Analytics Dashboard</span>
-                                <i class="fa-solid fa-grip-vertical text-base-content/30 text-xs"></i>
-                            </div>
-                            <div class="card bg-base-200 p-2 text-xs font-medium border border-base-300 rounded-lg cursor-grab hover:bg-base-300 transition duration-150 flex items-center justify-between" draggable="true" ondragstart="handleDragStart(event, 'alert-success')">
-                                <span><i class="fa-solid fa-bell mr-2 text-warning"></i> System Status Banner</span>
-                                <i class="fa-solid fa-grip-vertical text-base-content/30 text-xs"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <button class="accordion-toggle text-xs font-bold uppercase tracking-wider text-secondary">❤️ Reusable Custom Elements</button>
-                        <div id="saved-components-pool" class="accordion-content hidden p-2 flex flex-col gap-2">
-                            <p class="text-xs text-base-content/40 italic p-2 text-center">No components saved in local storage cache pool.</p>
-                        </div>
-                    </div>
-
-                </div>
+        <div class="accordion-item">
+          <button class="accordion-toggle text-xs uppercase tracking-wider font-bold text-base-content/60" onclick="toggleAccordionItem(this)">Data Arrays & Tables</button>
+          <div class="accordion-content bg-base-50/50 p-3 space-y-3">
+            <div class="p-2 border border-dashed border-base-300 rounded cursor-grab bg-base-100 overflow-x-auto" draggable="true" ondragstart="handleDragStart(event)" data-type="table-editable">
+              <table class="table table-sm w-full border border-base-200">
+                <thead><tr class="bg-base-200"><th>Entity</th><th>State</th></tr></thead>
+                <tbody>
+                  <tr><td contenteditable="true" class="border border-base-200 px-1">Row A</td><td contenteditable="true" class="border border-base-200 px-1">Active</td></tr>
+                  <tr><td contenteditable="true" class="border border-base-200 px-1">Row B</td><td contenteditable="true" class="border border-base-200 px-1">Pending</td></tr>
+                </tbody>
+              </table>
             </div>
-        </aside>
+          </div>
+        </div>
 
-        <section class="col-span-3 flex flex-col h-full overflow-hidden bg-base-200">
-            
-            <div class="h-[55%] p-4 flex flex-col overflow-hidden min-h-[250px]">
-                <div class="flex items-center justify-between bg-base-100 px-4 py-2 border border-base-300 border-b-0 rounded-t-xl text-xs font-mono font-medium text-base-content/70 shadow-xs">
-                    <span id="canvas-status-label"><i class="fa-solid fa-wand-magic mr-2 text-primary animate-pulse"></i> Live Droppable Sandbox Canvas</span>
-                    <button class="btn btn-text btn-xs text-error font-sans font-semibold rounded-md hover:bg-error/10" onclick="clearCanvas()">
-                        <i class="fa-solid fa-trash-can mr-1"></i> Clear Canvas
-                    </button>
-                </div>
-                <div id="preview-frame-container" class="flex-1 bg-white border border-base-300 rounded-b-xl shadow-inner overflow-hidden flex justify-center items-center transition-all duration-300">
-                    <iframe id="live-preview" class="w-full h-full border-0 bg-white transition-all duration-200"></iframe>
-                </div>
-            </div>
+        <div class="accordion-item">
+          <button class="accordion-toggle text-xs uppercase tracking-wider font-bold text-secondary" onclick="toggleAccordionItem(this)">Saved Forge Blocks</button>
+          <div class="accordion-content bg-base-50/50 p-3 space-y-3" id="forge-vault-container">
+            <p class="text-xs text-base-content/40 text-center py-2" id="forge-empty-msg">No custom components saved yet.</p>
+          </div>
+        </div>
 
-            <div class="h-[45%] border-t border-base-300 bg-base-100 flex flex-col overflow-hidden min-h-[200px]">
-                
-                <div class="bg-base-200 p-2.5 flex flex-wrap gap-4 items-center border-b border-base-300 px-5 text-xs">
-                    <span class="font-bold text-base-content/60 tracking-wider uppercase flex items-center gap-1">
-                        <i class="fa-solid fa-sliders"></i> Active Node Rules:
-                    </span>
-                    <div class="flex items-center gap-2">
-                        <label class="font-mono font-bold text-base-content/70">ID:</label>
-                        <input id="node-id" type="text" placeholder="e.g. hero-cta" class="input input-xs input-bordered w-36 rounded-md shadow-xs bg-base-100 font-mono" oninput="updateActiveElementProperties()">
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <label class="font-mono font-bold text-base-content/70">Append Classes:</label>
-                        <input id="node-class" type="text" placeholder="e.g. shadow-2xl border-2" class="input input-xs input-bordered w-72 rounded-md shadow-xs bg-base-100 font-mono" oninput="updateActiveElementProperties()">
-                    </div>
-                    <span class="text-[10px] text-base-content/40 italic pl-2"><i class="fa-solid fa-circle-info"></i> Automatically applies modifications to the topmost layer</span>
-                </div>
+      </div>
+    </aside>
 
-                <div class="tabs tabs-bordered bg-base-100 flex border-b border-base-200">
-                    <button id="tab-html" class="tab tab-active flex-1 font-mono text-xs font-semibold py-3 border-b-2" onclick="switchEditorTab('html')">
-                        <i class="fa-solid fa-code text-orange-500 mr-1.5"></i> STRUCTURE (HTML)
-                    </button>
-                    <button id="tab-css" class="tab flex-1 font-mono text-xs font-semibold py-3 border-b-2" onclick="switchEditorTab('css')">
-                        <i class="fa-solid fa-palette text-blue-500 mr-1.5"></i> CUSTOM STYLES (CSS)
-                    </button>
-                    <button id="tab-js" class="tab flex-1 font-mono text-xs font-semibold py-3 border-b-2" onclick="switchEditorTab('js')">
-                        <i class="fa-brands fa-js text-yellow-500 mr-1.5"></i> SCRIPTS & LOGIC (JS)
-                    </button>
-                </div>
+    <main class="flex-1 bg-base-200 p-4 md:p-6 overflow-y-auto flex flex-col justify-between relative transition-all duration-300 items-center">
+      
+      <div id="canvas-viewport-container" class="w-full max-w-7xl min-h-[70vh] bg-base-100 shadow-xl rounded-xl border border-base-300 p-6 space-y-6 transition-all duration-300">
+        
+        <div id="live-web-canvas" class="space-y-6 min-h-[400px]"></div>
 
-                <div class="flex-1 relative overflow-hidden bg-neutral">
-                    <textarea id="editor-html" class="w-full h-full font-mono text-xs p-4 bg-neutral text-neutral-content/90 focus:outline-none resize-none leading-relaxed" placeholder="" oninput="syncCodeToPreview()"></textarea>
-                    <textarea id="editor-css" class="w-full h-full font-mono text-xs p-4 bg-neutral text-neutral-content/90 focus:outline-none resize-none hidden leading-relaxed" placeholder="/* Append element-scoped cascading style sheet configurations here */" oninput="syncCodeToPreview()"></textarea>
-                    <textarea id="editor-js" class="w-full h-full font-mono text-xs p-4 bg-neutral text-neutral-content/90 focus:outline-none resize-none hidden leading-relaxed" placeholder="// Write localized client-side script modules here&#10;// Targets work out of the box via element listeners" oninput="syncCodeToPreview()"></textarea>
-                </div>
-            </div>
-        </section>
+        <div class="flex justify-center pt-4">
+          <button class="btn btn-sm btn-dashed border-base-400 text-base-content/60 px-6 hover:border-primary hover:text-primary transition" onclick="appendNewStructuralSection()">
+            + Append Architecture Section Row
+          </button>
+        </div>
+      </div>
+
     </main>
+  </div>
 
-    <script>
-        // Production FlyonUI Markup Snippet Library Database 
-        const componentTemplates = {
-            'btn-primary': `<button class="btn btn-primary shadow-sm hover:scale-[1.02] transition">Primary Action</button>`,
-            'btn-group': `<div class="btn-group border border-base-300 rounded-xl overflow-hidden">\n  <button class="btn btn-active btn-primary">Left</button>\n  <button class="btn btn-primary">Middle</button>\n  <button class="btn btn-primary">Right</button>\n</div>`,
-            'badge-outline': `<span class="badge badge-outline badge-info gap-1"><i class="fa-solid fa-sparkles text-[10px]"></i> FlyonUI Feature</span>`,
-            'navbar-basic': `<div class="navbar bg-base-100 shadow-md rounded-2xl w-full border border-base-200 px-4">\n  <div class="navbar-start">\n    <a class="text-lg font-black tracking-tight text-primary">PROJECT_BRAND</a>\n  </div>\n  <div class="navbar-center hidden md:flex">\n    <ul class="menu menu-horizontal p-0 gap-1 text-sm font-medium">\n      <li><a class="rounded-lg">Features</a></li>\n      <li><a class="rounded-lg">Pricing</a></li>\n      <li><a class="rounded-lg">Contact</a></li>\n    </ul>\n  </div>\n  <div class="navbar-end">\n    <button class="btn btn-primary btn-sm rounded-xl px-4">Launch Dashboard</button>\n  </div>\n</div>`,
-            'footer-simple': `<footer class="footer footer-center p-6 bg-base-300 text-base-content rounded-2xl border border-base-400/20 w-full">\n  <div class="flex flex-col gap-2">\n    <p class="font-bold tracking-wide text-sm text-base-content/80">FlyonUI Application Suite</p>\n    <p class="text-xs text-base-content/50">© 2026 Architectural Builder Engine. All liberties preserved.</p>\n  </div>\n</footer>`,
-            'card-basic': `<div class="card bg-base-100 shadow-xl border border-base-200/60 rounded-2xl max-w-sm transition hover:shadow-2xl">\n  <div class="card-body p-6">\n    <div class="badge badge-soft badge-primary mb-2">Technology</div>\n    <h2 class="card-title text-xl font-bold tracking-tight">Atomic System Controls</h2>\n    <p class="text-sm text-base-content/70 leading-relaxed">This card module acts as a container for displaying dense dashboard statistics or curated blog posts.</p>\n    <div class="card-actions justify-end mt-4">\n      <button class="btn btn-primary btn-sm rounded-xl">Explore Feature</button>\n    </div>\n  </div>\n</div>`,
-            'alert-success': `<div class="alert alert-success shadow-lg border-0 rounded-xl p-4 w-full flex items-center gap-3 text-sm font-semibold">\n  <i class="fa-solid fa-circle-check text-xl text-success-content"></i>\n  <span class="text-success-content">Configuration manifest processed and live-compiled successfully.</span>\n</div>`,
-            'hero-section': `<div class="hero bg-base-100 rounded-3xl border border-base-200/80 p-8 w-full shadow-xs">\n  <div class="hero-content text-center max-w-md mx-auto py-6">\n    <div>\n      <h1 class="text-4xl font-black tracking-tight mb-4">Design Beautifully.</h1>\n      <p class="text-sm text-base-content/70 leading-relaxed mb-6">Combine the raw utility power of standard Tailwind CSS variables with the rich element structures of headless components.</p>\n      <div class="flex justify-center gap-2">\n        <button class="btn btn-primary rounded-xl px-5">Get Started</button>\n        <button class="btn btn-outline rounded-xl px-5">Learn More</button>\n      </div>\n    </div>\n  </div>\n</div>`,
-            'stats-grid': `<div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">\n  <div class="bg-base-100 border border-base-200 p-4 rounded-xl shadow-xs text-center">\n    <div class="text-xs font-semibold text-base-content/50 uppercase tracking-wider">Gross Income</div>\n    <div class="text-2xl font-black text-primary mt-1">$48,259</div>\n  </div>\n  <div class="bg-base-100 border border-base-200 p-4 rounded-xl shadow-xs text-center">\n    <div class="text-xs font-semibold text-base-content/50 uppercase tracking-wider">Active Deployments</div>\n    <div class="text-2xl font-black text-success mt-1">1,842</div>\n  </div>\n  <div class="bg-base-100 border border-base-200 p-4 rounded-xl shadow-xs text-center">\n    <div class="text-xs font-semibold text-base-content/50 uppercase tracking-wider">Bounce Index</div>\n    <div class="text-2xl font-black text-error mt-1">2.4%</div>\n  </div>\n</div>`
-        };
+  <footer class="h-64 bg-base-100 border-t border-base-300 flex-none flex flex-col overflow-hidden z-50">
+    <div class="tabs tabs-bordered bg-base-50 border-b border-base-200 flex-none px-4">
+      <button class="tab tab-active py-2 text-xs" onclick="switchInspectorTab(event, 'pane-html')">HTML Document Source</button>
+      <button class="tab py-2 text-xs" onclick="switchInspectorTab(event, 'pane-css')">Custom CSS Properties</button>
+      <button class="tab py-2 text-xs" onclick="switchInspectorTab(event, 'pane-js')">JavaScript Interaction Triggers</button>
+    </div>
 
-        let currentMode = 'web';
-        let savedComponents = JSON.parse(localStorage.getItem('flyon_saved_components')) || {};
-        let currentDraggedKey = null;
+    <div class="flex-1 flex overflow-hidden">
+      <div class="w-80 border-r border-base-200 p-4 space-y-3 overflow-y-auto bg-base-50/30 flex-none">
+        <h4 class="text-xs uppercase font-bold text-base-content/60 tracking-wider">DOM Properties</h4>
+        
+        <div class="form-control">
+          <label class="label py-1"><span class="label-text text-[11px] font-semibold">Element System ID</span></label>
+          <input type="text" id="node-prop-id" class="input input-xs input-bordered" placeholder="No component targeted" oninput="applyTargetedNodeModifications()" disabled />
+        </div>
 
-        // Assembly Frame Environment Configuration Generator
-        function getIframeBaseTemplate(htmlContent = '', cssContent = '', jsContent = '') {
-            return `
-                <!DOCTYPE html>
-                <html lang="en" data-theme="light">
-                <head>
-                    <meta charset="UTF-8">
-                    <link href="https://cdn.jsdelivr.net/npm/flyonui/dist/full.min.css" rel="stylesheet" type="text/css" />
-                    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"><\/script>
-                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-                    <style>
-                        body { 
-                            padding: 2rem; 
-                            background-color: #f8fafc; 
-                            min-height: 100vh; 
-                            display: flex; 
-                            flex-col; 
-                            align-items: center;
-                            justify-content: start;
-                            transition: background-color 0.2s ease;
-                        }
-                        /* Visual Target Indicator styles during drag events */
-                        body.drag-over-canvas { 
-                            background-color: #e0e7ff !important;
-                            outline: 3px dashed #4f46e5 !important;
-                            outline-offset: -8px;
-                        }
-                        #iframe-root-canvas {
-                            width: 100%;
-                            display: flex;
-                            flex-direction: column;
-                            gap: 1.5rem;
-                            align-items: start;
-                        }
-                        ${cssContent}
-                    </style>
-                </head>
-                <body>
-                    <div id="iframe-root-canvas">
-                        ${htmlContent}
-                    </div>
-                    <script>
-                        // Pass cross-origin event notification hooks upward to capture drops
-                        window.addEventListener('dragover', (e) => e.preventDefault());
-                        window.addEventListener('dragenter', () => document.body.classList.add('drag-over-canvas'));
-                        window.addEventListener('dragleave', () => document.body.classList.remove('drag-over-canvas'));
-                        window.addEventListener('drop', (e) => {
-                            document.body.classList.remove('drag-over-canvas');
-                            window.parent.postMessage({ type: 'CANVAS_DROP_FIRED' }, '*');
-                        });
-                        try {
-                            ${jsContent}
-                        } catch(err) { console.error("Sandbox Exception Handler:", err); }
-                    <\/script>
-                </body>
-                </html>
-            `;
+        <div class="form-control">
+          <label class="label py-1"><span class="label-text text-[11px] font-semibold">Tailwind Class Utility Chain</span></label>
+          <input type="text" id="node-prop-classes" class="input input-xs input-bordered" placeholder="Select a component..." oninput="applyTargetedNodeModifications()" disabled />
+        </div>
+      </div>
+
+      <div class="flex-1 bg-neutral text-neutral-content p-4 font-mono text-xs overflow-y-auto relative select-all">
+        <div id="pane-html" class="inspector-pane whitespace-pre-wrap leading-relaxed">Select an operational component to load its production schema markup...</div>
+        <div id="pane-css" class="inspector-pane hidden whitespace-pre-wrap leading-relaxed">/* Custom CSS Layout Attributes scoped dynamically to active workspace target */&#10;.custom-node-override {&#10;  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);&#10;}</div>
+        <div id="pane-js" class="inspector-pane hidden whitespace-pre-wrap leading-relaxed">// Event Rigging Scopes&#10;document.addEventListener("DOMContentLoaded", () => {&#10;  console.log("FlyonUI Engine Module Mock Stack Initialized.");&#10;});</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    let activeWorkflowMode = 'web';
+    let focusedComponentNode = null;
+    let draggedTemplateType = null;
+
+    // Component Raw Library Templates Layout Maps
+    const componentHTMLCatalog = {
+      'h1': `<h1 class="text-4xl font-extrabold text-base-content tracking-tight">Dynamic Display Title Header</h1>`,
+      'p': `<p class="text-base text-base-content/80 leading-relaxed">Tailwind and FlyonUI generate rapid application structures cleanly and natively.</p>`,
+      'btn-primary': `<button class="btn btn-primary px-6 shadow-md transition-all">Execute Core Action</button>`,
+      'btn-outline': `<button class="btn btn-outline btn-secondary px-5">Secondary Route</button>`,
+      'field-text': `<div class="form-control w-full"><label class="label"><span class="label-text text-sm">Input Field Title</span></label><input type="text" placeholder="User prompt matrix..." class="input input-bordered w-full" /></div>`,
+      'table-editable': `<div class="overflow-x-auto w-full"><table class="table w-full border border-base-200"><thead><tr class="bg-base-200"><th>Parameter</th><th>Value Matrix</th></tr></thead><tbody><tr><td class="border p-2">Item Metric Alpha</td><td class="border p-2" contenteditable="true">94.2% Success</td></tr><tr><td class="border p-2">Item Metric Beta</td><td class="border p-2" contenteditable="true">Online status</td></tr></tbody></table></div>`
+    };
+
+    // Initialize application layout elements
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSavedForgeBlocksFromStorage();
+      appendNewStructuralSection(); 
+    });
+
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('app-sidebar');
+      sidebar.classList.toggle('-translate-x-full');
+    }
+
+    function toggleAccordionItem(button) {
+      const parent = button.parentElement;
+      parent.classList.toggle('active');
+    }
+
+    function switchWorkflowMode(mode) {
+      activeWorkflowMode = mode;
+      document.getElementById('tab-web-creation').classList.toggle('tab-active', mode === 'web');
+      document.getElementById('tab-comp-forge').classList.toggle('tab-active', mode === 'forge');
+      
+      const canvas = document.getElementById('live-web-canvas');
+      if (mode === 'forge') {
+        canvas.innerHTML = `
+          <div class="border-2 border-dashed border-secondary rounded-xl p-8 bg-secondary/5 text-center max-w-2xl mx-auto space-y-4" id="forge-sandbox-root">
+            <h2 class="text-lg font-bold text-secondary">Component Forge Development Sandbox</h2>
+            <p class="text-sm text-base-content/70">Build custom configurations below by dropping elements here. Once finalized, click "Save Block" in the header menu to sync it with your LocalStorage vault.</p>
+            <div class="drop-zone border border-dashed border-base-300 min-h-[150px] rounded-lg p-4 bg-base-100 flex flex-col items-center justify-center gap-3" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+              <p class="text-xs text-base-content/40 pointer-events-none">Drop components here to forge a reusable layout block</p>
+            </div>
+          </div>`;
+      } else {
+        canvas.innerHTML = '';
+        appendNewStructuralSection();
+      }
+    }
+
+    function setCanvasViewport(device) {
+      const container = document.getElementById('canvas-viewport-container');
+      const triggers = ['view-desktop', 'view-tablet', 'view-mobile'];
+      
+      triggers.forEach(id => document.getElementById(id).classList.remove('bg-base-300', 'font-bold'));
+      document.getElementById(`view-${device}`).classList.add('bg-base-300', 'font-bold');
+
+      if (device === 'desktop') container.className = "w-full max-w-7xl min-h-[70vh] bg-base-100 shadow-xl rounded-xl border border-base-300 p-6 space-y-6 transition-all duration-300";
+      if (device === 'tablet') container.className = "w-[768px] min-h-[70vh] bg-base-100 shadow-xl rounded-xl border border-base-300 p-6 space-y-6 transition-all duration-300";
+      if (device === 'mobile') container.className = "w-[375px] min-h-[70vh] bg-base-100 shadow-xl rounded-xl border border-base-300 p-6 space-y-6 transition-all duration-300";
+    }
+
+    // Interactive Layout Engine Generators
+    function appendNewStructuralSection() {
+      const canvas = document.getElementById('live-web-canvas');
+      if (activeWorkflowMode === 'forge') return;
+
+      const sectionId = 'section_' + Math.random().toString(36).substr(2, 9);
+      const sectionTemplate = document.createElement('div');
+      sectionTemplate.className = "relative group border border-dashed border-base-300 p-6 rounded-xl hover:border-primary/50 bg-base-50/20 transition-all duration-200";
+      sectionTemplate.id = sectionId;
+      
+      sectionTemplate.innerHTML = `
+        <div class="absolute -top-3 left-4 right-4 hidden group-hover:flex items-center justify-between bg-base-100 shadow border border-base-200 rounded-lg p-1.5 z-30 transition-all">
+          <div class="flex items-center gap-1.5">
+            <span class="text-[10px] uppercase font-bold text-base-content/40 px-2">Grid Columns:</span>
+            <div class="join">
+              <button class="btn btn-xs join-item btn-ghost bg-base-200" onclick="updateSectionGridColumns('${sectionId}', 1)">1</button>
+              <button class="btn btn-xs join-item btn-ghost" onclick="updateSectionGridColumns('${sectionId}', 2)">2</button>
+              <button class="btn btn-xs join-item btn-ghost" onclick="updateSectionGridColumns('${sectionId}', 3)">3</button>
+              <button class="btn btn-xs join-item btn-ghost" onclick="updateSectionGridColumns('${sectionId}', 4)">4</button>
+            </div>
+          </div>
+          <button class="btn btn-xs btn-error btn-square rounded-md" onclick="document.getElementById('${sectionId}').remove(); syncCodeInspectorView();">✕</button>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 structural-grid-root min-h-[100px]">
+          <div class="drop-zone border border-dashed border-base-300 rounded-lg p-4 flex flex-col justify-center items-center bg-base-100 min-h-[100px] transition-all" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" onclick="handleDirectCanvasTapDrop(this)">
+            <p class="text-xs text-base-content/30 pointer-events-none text-center">Drop components here</p>
+          </div>
+        </div>
+      `;
+      
+      canvas.appendChild(sectionTemplate);
+      syncCodeInspectorView();
+    }
+
+    function updateSectionGridColumns(sectionId, colCount) {
+      const section = document.getElementById(sectionId);
+      const gridRoot = section.querySelector('.structural-grid-root');
+      
+      // Cache running child nodes to prevent structural element loss during layout mutation
+      const currentElements = Array.from(gridRoot.querySelectorAll('.canvas-component-wrap'));
+      gridRoot.innerHTML = '';
+
+      // Remap Tailwind col utility token chains dynamically
+      gridRoot.className = `grid grid-cols-1 md:grid-cols-${colCount} gap-4 structural-grid-root min-h-[100px]`;
+
+      for (let i = 0; i < colCount; i++) {
+        const cell = document.createElement('div');
+        cell.className = "drop-zone border border-dashed border-base-300 rounded-lg p-4 flex flex-col justify-center items-center bg-base-100 min-h-[100px] transition-all";
+        cell.setAttribute('ondragover', 'handleDragOver(event)');
+        cell.setAttribute('ondragleave', 'handleDragLeave(event)');
+        cell.setAttribute('ondrop', 'handleDrop(event)');
+        cell.setAttribute('onclick', 'handleDirectCanvasTapDrop(this)');
+
+        if (currentElements[i]) {
+          cell.appendChild(currentElements[i]);
+        } else {
+          cell.innerHTML = `<p class="text-xs text-base-content/30 pointer-events-none text-center">Drop components here</p>`;
         }
+        gridRoot.appendChild(cell);
+      }
+      syncCodeInspectorView();
+    }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            initAccordions();
-            loadSavedComponentsPool();
-            clearCanvas();
-            initParentDropListeners();
+    // Drag and Drop Engine Mechanics
+    function handleDragStart(e) {
+      draggedTemplateType = e.target.getAttribute('data-type');
+      if (e.target.dataset.customHtml) {
+        draggedTemplateType = 'custom-vault-injection';
+        e.dataTransfer.setData('text/custom-html', e.target.dataset.customHtml);
+      }
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      const zone = e.currentTarget;
+      zone.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+      e.currentTarget.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      const zone = e.currentTarget;
+      zone.classList.remove('drag-over');
+
+      // Clear empty guide state placeholders
+      const placeholder = zone.querySelector('p');
+      if (placeholder) placeholder.remove();
+
+      let targetHTML = "";
+      if (draggedTemplateType === 'custom-vault-injection') {
+        targetHTML = e.dataTransfer.getData('text/custom-html');
+      } else {
+        targetHTML = componentHTMLCatalog[draggedTemplateType] || '';
+      }
+
+      if (!targetHTML) return;
+
+      const elementWrapper = document.createElement('div');
+      elementWrapper.className = "canvas-component-wrap relative group/node w-full py-1 cursor-pointer";
+      elementWrapper.onclick = (event) => selectComponentNode(event, elementWrapper);
+      
+      elementWrapper.innerHTML = `
+        <div class="absolute -top-2 -right-2 hidden group-hover/node:flex z-40">
+          <button class="btn btn-square btn-xs btn-error shadow" onclick="event.stopPropagation(); elementWrapper.remove(); syncCodeInspectorView();">✕</button>
+        </div>
+        <div class="compiled-node-content">${targetHTML}</div>
+      `;
+
+      zone.appendChild(elementWrapper);
+      syncCodeInspectorView();
+    }
+
+    // Touchscreen Tap-to-Inject Fallback Handler
+    function handleDirectCanvasTapDrop(zone) {
+      if (window.innerWidth >= 1024) return; // Restrict tap injection exclusively to smaller display states
+      if (!draggedTemplateType) return;
+
+      const placeholder = zone.querySelector('p');
+      if (placeholder) placeholder.remove();
+
+      const targetHTML = componentHTMLCatalog[draggedTemplateType] || '';
+      const elementWrapper = document.createElement('div');
+      elementWrapper.className = "canvas-component-wrap relative group/node w-full py-1 cursor-pointer";
+      elementWrapper.onclick = (event) => selectComponentNode(event, elementWrapper);
+      
+      elementWrapper.innerHTML = `
+        <div class="absolute -top-2 -right-2 flex z-40">
+          <button class="btn btn-square btn-xs btn-error shadow" onclick="event.stopPropagation(); elementWrapper.remove(); syncCodeInspectorView();">✕</button>
+        </div>
+        <div class="compiled-node-content">${targetHTML}</div>
+      `;
+      zone.appendChild(elementWrapper);
+      syncCodeInspectorView();
+    }
+
+    // Selection & Dynamic Parameter Modification Drivers
+    function selectComponentNode(event, wrapper) {
+      event.stopPropagation();
+      
+      document.querySelectorAll('.canvas-component-wrap').forEach(el => el.classList.remove('canvas-element-selected'));
+      wrapper.classList.add('canvas-element-selected');
+      
+      focusedComponentNode = wrapper.querySelector('.compiled-node-content').firstElementChild;
+      
+      const inputId = document.getElementById('node-prop-id');
+      const inputClasses = document.getElementById('node-prop-classes');
+      
+      inputId.removeAttribute('disabled');
+      inputClasses.removeAttribute('disabled');
+      
+      inputId.value = focusedComponentNode.id || '';
+      inputClasses.value = focusedComponentNode.className || '';
+      
+      syncCodeInspectorView();
+    }
+
+    function applyTargetedNodeModifications() {
+      if (!focusedComponentNode) return;
+      focusedComponentNode.id = document.getElementById('node-prop-id').value;
+      focusedComponentNode.className = document.getElementById('node-prop-classes').value;
+      syncCodeInspectorView();
+    }
+
+    // Tab Compiler Controls
+    function switchInspectorTab(event, tabId) {
+      document.querySelectorAll('.inspector-pane').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tabs-bordered .tab').forEach(el => el.classList.remove('tab-active'));
+      
+      document.getElementById(tabId).classList.remove('hidden');
+      event.currentTarget.classList.add('tab-active');
+    }
+
+    function syncCodeInspectorView() {
+      const htmlPane = document.getElementById('pane-html');
+      let rootSource = document.getElementById('live-web-canvas').innerHTML;
+      
+      // Parse clean markup options without operational control overlays
+      if (!rootSource.trim()) {
+        htmlPane.innerText = "Select an operational component to load its production schema markup...";
+        return;
+      }
+
+      let sandbox = document.createElement('div');
+      sandbox.innerHTML = rootSource;
+      
+      // Strip operational overlay controls from code pane views
+      sandbox.querySelectorAll('.group-hover\\:flex, .group-hover\\/node\\:flex, button, .absolute').forEach(el => el.remove());
+      
+      let cleanOutput = sandbox.innerHTML.replace(/ structural-grid-root/g, '')
+                                           .replace(/canvas-component-wrap/g, '')
+                                           .replace(/compiled-node-content/g, '')
+                                           .replace(/class=""/g, '')
+                                           .trim();
+
+      htmlPane.innerText = cleanOutput || "Canvas Workspace Clean.";
+    }
+
+    // Component Forge & LocalStorage Caching Pipelines
+    function saveActiveComponentForge() {
+      const sandboxZone = document.getElementById('forge-sandbox-root');
+      if (!sandboxZone) {
+        alert("Switch to the 'Component Forge' workflow workspace tab to create and save custom blocks.");
+        return;
+      }
+
+      const innerContent = sandboxZone.querySelector('.drop-zone').innerHTML.trim();
+      if (!innerContent || innerContent.includes("Drop components here")) {
+        alert("The component forge sandbox container is currently empty.");
+        return;
+      }
+
+      const blockName = prompt("Assign an identifier name to this custom component block:", "Custom Component Frame");
+      if (!blockName) return;
+
+      const savedBlocks = JSON.parse(localStorage.getItem('fui_forged_blocks') || '[]');
+      savedBlocks.push({ name: blockName, html: innerContent });
+      localStorage.setItem('fui_forged_blocks', JSON.stringify(savedBlocks));
+
+      loadSavedForgeBlocksFromStorage();
+      switchWorkflowMode('web'); // Return smoothly to workspace canvas
+    }
+
+    function loadSavedForgeBlocksFromStorage() {
+      const vault = document.getElementById('forge-vault-container');
+      const savedBlocks = JSON.parse(localStorage.getItem('fui_forged_blocks') || '[]');
+      
+      if (savedBlocks.length > 0) {
+        const msg = document.getElementById('forge-empty-msg');
+        if (msg) msg.remove();
+        vault.innerHTML = '';
+        
+        savedBlocks.forEach((block, index) => {
+          const item = document.createElement('div');
+          item.className = "p-2 border border-secondary border-dashed rounded cursor-grab bg-base-100 flex items-center justify-between";
+          item.setAttribute('draggable', 'true');
+          item.setAttribute('data-type', 'custom-vault');
+          item.dataset.customHtml = block.html;
+          item.ondragstart = handleDragStart;
+          
+          item.innerHTML = `
+            <span class="text-xs font-semibold text-secondary truncate">${block.name}</span>
+            <button class="btn btn-square btn-ghost btn-xs text-error" onclick="deleteForgedBlock(${index}, event)">✕</button>
+          `;
+          vault.appendChild(item);
         });
+      }
+    }
 
-        // Initialize Native Flyon Accordion Emulators
-        function initAccordions() {
-            document.querySelectorAll('.accordion-toggle').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const content = btn.nextElementSibling;
-                    const isOpen = !content.classList.contains('hidden');
-                    
-                    btn.closest('.accordion').querySelectorAll('.accordion-content').forEach(c => c.classList.add('hidden'));
-                    btn.closest('.accordion').querySelectorAll('.accordion-item').forEach(i => i.classList.remove('active'));
+    function deleteForgedBlock(index, e) {
+      e.stopPropagation();
+      let savedBlocks = JSON.parse(localStorage.getItem('fui_forged_blocks') || '[]');
+      savedBlocks.splice(index, 1);
+      localStorage.setItem('fui_forged_blocks', JSON.stringify(savedBlocks));
+      loadSavedForgeBlocksFromStorage();
+    }
 
-                    if (!isOpen) {
-                        content.classList.remove('hidden');
-                        btn.parentElement.classList.add('active');
-                    }
-                });
-            });
-        }
+    function filterCatalog(query) {
+      const normalizedQuery = query.toLowerCase();
+      document.querySelectorAll('#catalog-accordion .p-2').forEach(item => {
+        const matches = item.innerText.toLowerCase().includes(normalizedQuery);
+        item.style.display = matches ? 'block' : 'none';
+      });
+    }
 
-        // Search engine filter logic
-        function filterComponents() {
-            const query = document.getElementById('component-search').value.toLowerCase();
-            document.querySelectorAll('.accordion-content .card').forEach(item => {
-                const name = item.textContent.toLowerCase();
-                item.style.display = name.includes(query) ? 'flex' : 'none';
-            });
-        }
+    // Production Build Downloader Subroutines
+    function exportProductionHTML() {
+      let sandbox = document.createElement('div');
+      sandbox.innerHTML = document.getElementById('live-web-canvas').innerHTML;
+      
+      // Clean editing utility wrappers from the final production file
+      sandbox.querySelectorAll('.group-hover\\:flex, .group-hover\\/node\\:flex, button, .absolute, p').forEach(el => el.remove());
+      
+      let cleanBodyContent = sandbox.innerHTML.trim();
 
-        // Drag Start event attachment routing definitions
-        function handleDragStart(event, componentKey) {
-            currentDraggedKey = componentKey;
-            event.dataTransfer.setData('text/plain', componentKey);
-            event.dataTransfer.effectAllowed = 'copy';
-        }
+      const structuralHTMLBlobDocument = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Production FlyonUI App Export</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"><\/script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flyonui@latest/dist/flyonui.css">
+</head>
+<body class="bg-base-100 text-base-content min-h-screen p-8">
+  <main class="max-w-7xl mx-auto space-y-8">
+    ${cleanBodyContent}
+  </main>
+</body>
+</html>`;
 
-        // Hook system to monitor the virtual sandboxed iframe canvas element
-        function initParentDropListeners() {
-            const iframe = document.getElementById('live-preview');
-            
-            // Handle drops over the internal context structure
-            window.addEventListener('message', (event) => {
-                if (event.data && event.data.type === 'CANVAS_DROP_FIRED') {
-                    executeDropPlacement();
-                }
-            });
-
-            // Handle drops directly on top of the parent layer container frame wrapper element
-            iframe.addEventListener('dragover', (e) => e.preventDefault());
-            iframe.addEventListener('drop', (e) => {
-                e.preventDefault();
-                executeDropPlacement();
-            });
-        }
-
-        function executeDropPlacement() {
-            if (!currentDraggedKey) return;
-            addComponentToMarkup(currentDraggedKey);
-            currentDraggedKey = null;
-        }
-
-        // Inject components into code strings and sync previews
-        function addComponentToMarkup(key) {
-            let template = '';
-            if (componentTemplates[key]) {
-                template = componentTemplates[key];
-            } else if (savedComponents[key]) {
-                template = savedComponents[key].html;
-                if(savedComponents[key].css) document.getElementById('editor-css').value += "\n" + savedComponents[key].css;
-                if(savedComponents[key].js) document.getElementById('editor-js').value += "\n" + savedComponents[key].js;
-            }
-
-            const htmlEditor = document.getElementById('editor-html');
-            if (currentMode === 'web') {
-                htmlEditor.value += (htmlEditor.value ? "\n\n" : "") + template;
-            } else {
-                htmlEditor.value = template;
-            }
-            syncCodeToPreview();
-        }
-
-        // Sync local text values into preview frames
-        function syncCodeToPreview() {
-            const html = document.getElementById('editor-html').value;
-            const css = document.getElementById('editor-css').value;
-            const js = document.getElementById('editor-js').value;
-
-            const iframe = document.getElementById('live-preview');
-            const targetDoc = iframe.contentDocument || iframe.contentWindow.document;
-            
-            targetDoc.open();
-            targetDoc.write(getIframeBaseTemplate(html, css, js));
-            targetDoc.close();
-        }
-
-        // Update active element node metadata parameters
-        function updateActiveElementProperties() {
-            const idVal = document.getElementById('node-id').value.trim();
-            const classVal = document.getElementById('node-class').value.trim();
-            const htmlEditor = document.getElementById('editor-html');
-
-            if (!htmlEditor.value.trim()) return;
-
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(`<div>${htmlEditor.value}</div>`, 'text/html');
-            const target = doc.querySelector('div').firstElementChild;
-
-            if (target) {
-                if (idVal) target.setAttribute('id', idVal);
-                else target.removeAttribute('id');
-
-                if (classVal) {
-                    target.className = classVal;
-                }
-                htmlEditor.value = doc.querySelector('div').innerHTML;
-                syncCodeToPreview();
-            }
-        }
-
-        // Switch application creation contexts
-        function switchMainTab(mode) {
-            currentMode = mode;
-            document.getElementById('tab-web-creation').classList.toggle('tab-active', mode === 'web');
-            document.getElementById('tab-comp-creation').classList.toggle('tab-active', mode === 'component');
-            
-            const statusLabel = document.getElementById('canvas-status-label');
-            if(mode === 'component') {
-                statusLabel.innerHTML = `<i class="fa-solid fa-puzzle-piece text-secondary mr-2"></i> Component Atomic Composition View`;
-            } else {
-                statusLabel.innerHTML = `<i class="fa-solid fa-wand-magic text-primary mr-2"></i> Live Droppable Sandbox Canvas`;
-            }
-            clearCanvas();
-        }
-
-        // Switch editor tabs
-        function switchEditorTab(tab) {
-            ['html', 'css', 'js'].forEach(t => {
-                document.getElementById(`tab-${t}`).classList.toggle('tab-active', t === tab);
-                document.getElementById(`editor-${t}`).classList.add('hidden');
-            });
-            document.getElementById(`editor-${tab}`).classList.remove('hidden');
-        }
-
-        // Responsive viewport dimension switcher tool
-        function changeResponsiveView(device) {
-            const frame = document.getElementById('live-preview');
-            const container = document.getElementById('preview-frame-container');
-            
-            if (device === 'mobile') {
-                frame.style.width = '375px';
-                frame.style.height = '100%';
-                container.style.padding = '1rem 0';
-            } else if (device === 'tablet') {
-                frame.style.width = '768px';
-                frame.style.height = '100%';
-                container.style.padding = '1rem 0';
-            } else {
-                frame.style.width = '100%';
-                frame.style.height = '100%';
-                container.style.padding = '0';
-            }
-        }
-
-        // Save component state to localStorage
-        function saveComponent() {
-            const html = document.getElementById('editor-html').value;
-            const css = document.getElementById('editor-css').value;
-            const js = document.getElementById('editor-js').value;
-
-            if (!html.trim()) return alert("Structural HTML target layout is required before execution.");
-
-            const name = prompt("Assign component structural identifier token name:", "custom-layout-card");
-            if (!name) return;
-
-            savedComponents[name] = { html, css, js };
-            localStorage.setItem('flyon_saved_components', JSON.stringify(savedComponents));
-            loadSavedComponentsPool();
-        }
-
-        // Hydrate local system variables back into pool markup
-        function loadSavedComponentsPool() {
-            const pool = document.getElementById('saved-components-pool');
-            const keys = Object.keys(savedComponents);
-            
-            if (keys.length === 0) return;
-            
-            pool.innerHTML = '';
-            keys.forEach(k => {
-                const div = document.createElement('div');
-                div.className = "card bg-base-300 p-2 text-xs font-mono text-secondary border border-secondary/30 rounded-lg cursor-grab hover:bg-base-200 transition duration-150 flex items-center justify-between";
-                div.setAttribute('draggable', 'true');
-                div.addEventListener('dragstart', (e) => handleDragStart(e, k));
-                div.innerHTML = `<span><i class="fa-solid fa-box-archive mr-2"></i>${k}</span><i class="fa-solid fa-grip-vertical opacity-40 text-xs"></i>`;
-                pool.appendChild(div);
-            });
-        }
-
-        function clearCanvas() {
-            document.getElementById('editor-html').value = '';
-            document.getElementById('editor-css').value = '';
-            document.getElementById('editor-js').value = '';
-            document.getElementById('node-id').value = '';
-            document.getElementById('node-class').value = '';
-            syncCodeToPreview();
-        }
-
-        function exportToHTML() {
-            const html = document.getElementById('editor-html').value;
-            const css = document.getElementById('editor-css').value;
-            const js = document.getElementById('editor-js').value;
-
-            const finalOutput = getIframeBaseTemplate(html, css, js);
-            const blob = new Blob([finalOutput], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `flyonui-compiled-site.html`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-    </script>
+      const downloadLinkElement = document.createElement('a');
+      const fileBlob = new Blob([structuralHTMLBlobDocument], { type: 'text/html' });
+      downloadLinkElement.href = URL.createObjectURL(fileBlob);
+      downloadLinkElement.download = 'flyonui-production-build.html';
+      document.body.appendChild(downloadLinkElement);
+      downloadLinkElement.click();
+      document.body.removeChild(downloadLinkElement);
+    }
+  </script>
 </body>
 </html>
