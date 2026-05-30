@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DragDrop Builder - Website Builder</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm" id="mainNavbar">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="bi bi-grid-3x3-gap-fill me-2"></i>DragDrop Builder
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="tab-web-creation" href="#" onclick="switchTab('web')">
+                            <i class="bi bi-code-slash me-1"></i>Web Creation
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tab-components" href="#" onclick="switchTab('components')">
+                            <i class="bi bi-puzzle me-1"></i>Components Library
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tab-my-components" href="#" onclick="switchTab('mycomponents')">
+                            <i class="bi bi-bookmark-fill me-1"></i>My Components
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Device Preview">
+                        <button class="btn btn-outline-light active" onclick="setPreviewDevice('desktop')" id="btn-desktop" title="Desktop">
+                            <i class="bi bi-display"></i>
+                        </button>
+                        <button class="btn btn-outline-light" onclick="setPreviewDevice('tablet')" id="btn-tablet" title="Tablet">
+                            <i class="bi bi-tablet"></i>
+                        </button>
+                        <button class="btn btn-outline-light" onclick="setPreviewDevice('mobile')" id="btn-mobile" title="Mobile">
+                            <i class="bi bi-phone"></i>
+                        </button>
+                    </div>
+                    <div class="vr text-light opacity-50 mx-1"></div>
+                    <button class="btn btn-sm btn-warning" onclick="undoAction()" title="Undo">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </button>
+                    <button class="btn btn-sm btn-warning" onclick="redoAction()" title="Redo">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </button>
+                    <div class="vr text-light opacity-50 mx-1"></div>
+                    <button class="btn btn-sm btn-success" onclick="saveProject()">
+                        <i class="bi bi-cloud-upload me-1"></i>Save Project
+                    </button>
+                    <button class="btn btn-sm btn-info" onclick="saveAllUnsaved()">
+                        <i class="bi bi-bookmark-plus me-1"></i>Save Unsaved
+                    </button>
+                    <button class="btn btn-sm btn-primary" onclick="exportToHTML()">
+                        <i class="bi bi-file-earmark-code me-1"></i>Export HTML
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="clearCanvas()">
+                        <i class="bi bi-trash me-1"></i>Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-wrapper" id="main-wrapper">
+        <!-- Web Creation Tab -->
+        <div id="web-creation-panel">
+            <!-- Left Sidebar - Components Palette -->
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <h6 class="mb-0"><i class="bi bi-collection me-2"></i>Components</h6>
+                    <input type="text" class="form-control form-control-sm mt-2" placeholder="Search components..." id="componentSearch" oninput="filterComponents(this.value)">
+                </div>
+                <div class="sidebar-content" id="componentsList">
+                    <!-- Components will be dynamically loaded -->
+                </div>
+            </div>
+
+            <!-- Resize Handle -->
+            <div class="resize-handle" id="resizeHandle">
+                <div class="resize-dots">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+
+            <!-- Canvas Area -->
+            <div class="canvas-area" id="canvasArea">
+                <div class="canvas-container" id="canvasContainer">
+                    <!-- Top Toolbar -->
+                    <div class="canvas-toolbar">
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn btn-sm btn-outline-primary" onclick="addSection()">
+                                <i class="bi bi-plus-circle me-1"></i>Add Section
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="addSectionWithColumns(1)">
+                                <i class="bi bi-distribute-vertical me-1"></i>1 Col
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="addSectionWithColumns(2)">
+                                <i class="bi bi-distribute-horizontal me-1"></i>2 Col
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="addSectionWithColumns(3)">
+                                <i class="bi bi-grid-3x3 me-1"></i>3 Col
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="addSectionWithColumns(4)">
+                                <i class="bi bi-grid-3x3-gap me-1"></i>4 Col
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="addSectionWithColumns('custom')">
+                                <i class="bi bi-sliders me-1"></i>Custom
+                            </button>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-secondary" id="zoomLevel">100%</span>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="zoomOut()"><i class="bi bi-dash"></i></button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="zoomIn()"><i class="bi bi-plus"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Canvas -->
+                    <div class="canvas" id="canvas">
+                        <div class="canvas-empty-state" id="canvasEmptyState">
+                            <i class="bi bi-mouse2 display-1 text-muted"></i>
+                            <h4 class="text-muted mt-3">Drop Components Here</h4>
+                            <p class="text-muted">Drag components from the left panel or click "Add Section" to start building</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Code Panel -->
+                <div class="code-panel" id="codePanel">
+                    <div class="code-panel-header">
+                        <ul class="nav nav-tabs card-header-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="code-html-tab" href="#" onclick="switchCodeTab('html')">
+                                    <i class="bi bi-filetype-html me-1"></i>HTML
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="code-css-tab" href="#" onclick="switchCodeTab('css')">
+                                    <i class="bi bi-filetype-css me-1"></i>CSS
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="code-js-tab" href="#" onclick="switchCodeTab('js')">
+                                    <i class="bi bi-filetype-js me-1"></i>JS
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="d-flex gap-1">
+                            <button class="btn btn-sm btn-outline-light" onclick="copyCode()" title="Copy Code">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-light" onclick="toggleCodePanel()" title="Close">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="code-panel-body">
+                        <pre><code id="codeOutput"></code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Components Library Tab -->
+        <div id="components-panel" style="display: none;">
+            <div class="components-library">
+                <div class="container py-4">
+                    <div class="row mb-4">
+                        <div class="col">
+                            <h3><i class="bi bi-puzzle me-2"></i>Components Library</h3>
+                            <p class="text-muted">Browse suggested components from across the web. Edit, customize, and save them to your collection.</p>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-primary" onclick="openCreateComponentModal()">
+                                <i class="bi bi-plus-circle me-1"></i>Create New Component
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="Search components..." id="librarySearch" oninput="filterLibrary(this.value)">
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="libraryCategory" onchange="filterByCategory(this.value)">
+                                <option value="all">All Categories</option>
+                                <option value="navigation">Navigation</option>
+                                <option value="hero">Hero Sections</option>
+                                <option value="cards">Cards</option>
+                                <option value="forms">Forms</option>
+                                <option value="tables">Tables</option>
+                                <option value="footers">Footers</option>
+                                <option value="features">Features</option>
+                                <option value="testimonials">Testimonials</option>
+                                <option value="pricing">Pricing</option>
+                                <option value="cta">Call to Action</option>
+                                <option value="stats">Statistics</option>
+                                <option value="team">Team</option>
+                                <option value="gallery">Gallery</option>
+                                <option value="faq">FAQ</option>
+                                <option value="contact">Contact</option>
+                                <option value="blog">Blog</option>
+                                <option value="ecommerce">E-Commerce</option>
+                                <option value="social">Social Media</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="Tags (comma separated)" id="libraryTags" oninput="filterByTags(this.value)">
+                        </div>
+                    </div>
+
+                    <div class="row" id="libraryComponentsList">
+                        <!-- Library components will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Components Tab -->
+        <div id="mycomponents-panel" style="display: none;">
+            <div class="components-library">
+                <div class="container py-4">
+                    <div class="row mb-4">
+                        <div class="col">
+                            <h3><i class="bi bi-bookmark-fill me-2"></i>My Saved Components</h3>
+                            <p class="text-muted">Your custom components. Drag them to the canvas or manage them here.</p>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-primary" onclick="openCreateComponentModal()">
+                                <i class="bi bi-plus-circle me-1"></i>Create New Component
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="importComponents()">
+                                <i class="bi bi-box-arrow-in-down me-1"></i>Import
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="exportComponents()">
+                                <i class="bi bi-box-arrow-up me-1"></i>Export
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row" id="myComponentsList">
+                        <!-- My saved components rendered here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Toggle Bar -->
+    <div class="footer-bar" id="footerBar">
+        <button class="footer-toggle" onclick="toggleCodePanel()">
+            <i class="bi bi-code-slash me-1"></i>
+            <span id="codePanelToggleText">Show Code</span>
+            <i class="bi bi-chevron-up ms-1" id="codePanelArrow"></i>
+        </button>
+    </div>
+
+    <!-- Edit Component Modal -->
+    <div class="modal fade" id="editComponentModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>Edit Component</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Component Name</label>
+                                <input type="text" class="form-control" id="editCompName">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Category</label>
+                                <select class="form-select" id="editCompCategory">
+                                    <option value="navigation">Navigation</option>
+                                    <option value="hero">Hero Sections</option>
+                                    <option value="cards">Cards</option>
+                                    <option value="forms">Forms</option>
+                                    <option value="tables">Tables</option>
+                                    <option value="footers">Footers</option>
+                                    <option value="features">Features</option>
+                                    <option value="testimonials">Testimonials</option>
+                                    <option value="pricing">Pricing</option>
+                                    <option value="cta">Call to Action</option>
+                                    <option value="custom">Custom</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tags (comma separated)</label>
+                                <input type="text" class="form-control" id="editCompTags">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">CSS</label>
+                                <textarea class="form-control font-monospace" id="editCompCSS" rows="6" placeholder="/* Custom CSS */"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">JavaScript</label>
+                                <textarea class="form-control font-monospace" id="editCompJS" rows="4" placeholder="// Custom JS"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label class="form-label">HTML</label>
+                                <textarea class="form-control font-monospace" id="editCompHTML" rows="12" placeholder="<div>Component HTML</div>"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Preview</label>
+                                <div class="border rounded p-3 bg-white" id="editCompPreview" style="min-height: 200px; overflow: auto;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-outline-info" onclick="previewEditComponent()">
+                        <i class="bi bi-eye me-1"></i>Preview
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="saveEditedComponent()">
+                        <i class="bi bi-check-lg me-1"></i>Save Component
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Column Modal -->
+    <div class="modal fade" id="columnModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">Choose Column Layout</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-2" id="columnOptions">
+                        <!-- Column options will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Component Modal -->
+    <div class="modal fade" id="createComponentModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i>Create New Component</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Component Name</label>
+                                <input type="text" class="form-control" id="newCompName" placeholder="My Awesome Component">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Category</label>
+                                <select class="form-select" id="newCompCategory">
+                                    <option value="navigation">Navigation</option>
+                                    <option value="hero">Hero Sections</option>
+                                    <option value="cards">Cards</option>
+                                    <option value="forms">Forms</option>
+                                    <option value="tables">Tables</option>
+                                    <option value="footers">Footers</option>
+                                    <option value="features">Features</option>
+                                    <option value="testimonials">Testimonials</option>
+                                    <option value="pricing">Pricing</option>
+                                    <option value="cta">Call to Action</option>
+                                    <option value="stats">Statistics</option>
+                                    <option value="team">Team</option>
+                                    <option value="gallery">Gallery</option>
+                                    <option value="faq">FAQ</option>
+                                    <option value="contact">Contact</option>
+                                    <option value="blog">Blog</option>
+                                    <option value="ecommerce">E-Commerce</option>
+                                    <option value="social">Social Media</option>
+                                    <option value="custom">Custom</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tags</label>
+                                <input type="text" class="form-control" id="newCompTags" placeholder="hero, landing, modern">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Thumbnail (optional)</label>
+                                <input type="text" class="form-control" id="newCompThumbnail" placeholder="URL or leave blank for auto">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">CSS</label>
+                                <textarea class="form-control font-monospace" id="newCompCSS" rows="6" placeholder="/* Custom CSS */"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">JavaScript</label>
+                                <textarea class="form-control font-monospace" id="newCompJS" rows="4" placeholder="// Custom JS"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label class="form-label">HTML</label>
+                                <textarea class="form-control font-monospace" id="newCompHTML" rows="12" placeholder="<div class='p-5'>Your component HTML...</div>"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Live Preview</label>
+                                <div class="border rounded p-3 bg-white" id="newCompPreview" style="min-height: 200px; overflow: auto;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-outline-info" onclick="previewNewComponent()">
+                        <i class="bi bi-eye me-1"></i>Preview
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="saveNewComponent()">
+                        <i class="bi bi-check-lg me-1"></i>Save Component
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Settings Modal -->
+    <div class="modal fade" id="sectionSettingsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title"><i class="bi bi-gear me-2"></i>Section Settings</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Background Color</label>
+                        <input type="color" class="form-control form-control-color w-100" id="sectionBgColor" value="#ffffff">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Background Image URL</label>
+                        <input type="text" class="form-control" id="sectionBgImage" placeholder="https://...">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Padding Top (px)</label>
+                        <input type="number" class="form-control" id="sectionPaddingTop" value="40">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Padding Bottom (px)</label>
+                        <input type="number" class="form-control" id="sectionPaddingBottom" value="40">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Custom Class</label>
+                        <input type="text" class="form-control" id="sectionCustomClass" placeholder="my-custom-class">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Section ID</label>
+                        <input type="text" class="form-control" id="sectionId" placeholder="section-1">
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="applySectionSettings()">
+                        <i class="bi bi-check-lg me-1"></i>Apply
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script src="components.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

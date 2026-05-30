@@ -1,0 +1,1018 @@
+/* =============================================
+   DragDrop Builder - Main Styles
+   ============================================= */
+
+:root {
+    --sidebar-width: 280px;
+    --navbar-height: 56px;
+    --footer-height: 36px;
+    --canvas-bg: #1a1d23;
+    --sidebar-bg: #1e2128;
+    --card-bg: #272b33;
+    --border-color: #333;
+    --accent: #0d6efd;
+    --accent-hover: #0b5ed7;
+    --success: #198754;
+    --drag-highlight: rgba(13, 110, 253, 0.15);
+    --section-drop-highlight: rgba(13, 110, 253, 0.25);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--canvas-bg);
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* =============================================
+   Navbar
+   ============================================= */
+
+#mainNavbar {
+    z-index: 1050;
+    height: var(--navbar-height);
+}
+
+.navbar-brand {
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+.nav-tabs .nav-link {
+    color: #aaa;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+}
+
+.nav-tabs .nav-link:hover {
+    color: #fff;
+}
+
+.nav-tabs .nav-link.active {
+    color: #fff;
+    border-bottom: 2px solid var(--accent);
+    background: transparent;
+}
+
+/* =============================================
+   Main Wrapper
+   ============================================= */
+
+.main-wrapper {
+    display: flex;
+    height: calc(100vh - var(--navbar-height));
+    margin-top: var(--navbar-height);
+}
+
+/* =============================================
+   Sidebar
+   ============================================= */
+
+.sidebar {
+    width: var(--sidebar-width);
+    min-width: 200px;
+    max-width: 500px;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex-shrink: 0;
+    z-index: 100;
+}
+
+.sidebar-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+}
+
+.sidebar-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 3px;
+}
+
+/* Component Category */
+.component-category {
+    margin-bottom: 4px;
+}
+
+.category-header {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #8a8f98;
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.category-header:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #c0c4cc;
+}
+
+.category-header i.bi {
+    font-size: 0.7rem;
+    transition: transform 0.2s;
+    margin-right: 8px;
+}
+
+.category-header.collapsed i.bi {
+    transform: rotate(-90deg);
+}
+
+.category-items {
+    padding: 4px 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.category-items.collapsed {
+    max-height: 0 !important;
+    padding: 0;
+}
+
+/* Draggable Component Items */
+.component-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    margin: 2px 0;
+    border-radius: 6px;
+    cursor: grab;
+    font-size: 0.82rem;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+    background: transparent;
+}
+
+.component-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.component-item:active {
+    cursor: grabbing;
+    background: rgba(13, 110, 253, 0.15);
+    border-color: rgba(13, 110, 253, 0.3);
+}
+
+.component-item .comp-icon {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+    background: rgba(13, 110, 253, 0.15);
+    color: #6ea8fe;
+}
+
+.component-item .comp-name {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.component-item .comp-actions {
+    opacity: 0;
+    transition: opacity 0.15s;
+    display: flex;
+    gap: 2px;
+}
+
+.component-item:hover .comp-actions {
+    opacity: 1;
+}
+
+.component-item .comp-actions .btn {
+    padding: 2px 5px;
+    font-size: 0.65rem;
+}
+
+/* Resize Handle */
+.resize-handle {
+    width: 6px;
+    background: var(--border-color);
+    cursor: col-resize;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+
+.resize-handle:hover {
+    background: var(--accent);
+}
+
+.resize-dots {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.resize-dots span {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #666;
+}
+
+/* =============================================
+   Canvas Area
+   ============================================= */
+
+.canvas-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.canvas-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.canvas-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    background: #21252b;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.canvas {
+    flex: 1;
+    overflow: auto;
+    padding: 24px;
+    background: #14161a;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.canvas.drag-over {
+    background: rgba(13, 110, 253, 0.03);
+}
+
+.canvas-content {
+    width: 100%;
+    max-width: 100%;
+    transition: max-width 0.3s;
+}
+
+.canvas-content.device-desktop {
+    max-width: 100%;
+}
+
+.canvas-content.device-tablet {
+    max-width: 768px;
+    margin: 0 auto;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+    border: 1px solid #333;
+}
+
+.canvas-content.device-mobile {
+    max-width: 375px;
+    margin: 0 auto;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+    border: 1px solid #333;
+}
+
+.canvas-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-height: 300px;
+    opacity: 0.6;
+}
+
+/* =============================================
+   Sections in Canvas
+   ============================================= */
+
+.builder-section {
+    position: relative;
+    border: 2px dashed transparent;
+    margin: 4px 0;
+    transition: all 0.2s;
+    min-height: 60px;
+}
+
+.builder-section:hover {
+    border-color: rgba(13, 110, 253, 0.4);
+}
+
+.builder-section.selected {
+    border-color: var(--accent);
+}
+
+.builder-section.drag-over {
+    border-color: var(--accent);
+    background: var(--section-drop-highlight);
+}
+
+.section-controls {
+    position: absolute;
+    top: -14px;
+    right: 8px;
+    display: none;
+    gap: 2px;
+    z-index: 20;
+    background: var(--accent);
+    border-radius: 4px;
+    padding: 2px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.builder-section:hover .section-controls,
+.builder-section.selected .section-controls {
+    display: flex;
+}
+
+.section-controls .btn {
+    padding: 2px 6px;
+    font-size: 0.7rem;
+    color: #fff;
+    border: none;
+    background: transparent;
+    opacity: 0.8;
+}
+
+.section-controls .btn:hover {
+    opacity: 1;
+    background: rgba(255,255,255,0.15);
+}
+
+.section-label {
+    position: absolute;
+    top: -14px;
+    left: 8px;
+    font-size: 0.65rem;
+    background: var(--accent);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: none;
+    z-index: 20;
+    white-space: nowrap;
+}
+
+.builder-section:hover .section-label,
+.builder-section.selected .section-label {
+    display: block;
+}
+
+.section-drop-zone {
+    min-height: 60px;
+    padding: 8px;
+    position: relative;
+}
+
+.section-drop-zone.empty::after {
+    content: 'Drop components here or click to add';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    font-size: 0.85rem;
+    pointer-events: none;
+}
+
+/* =============================================
+   Columns
+   ============================================= */
+
+.builder-row {
+    display: flex;
+    gap: 0;
+    min-height: 60px;
+}
+
+.builder-col {
+    flex: 1;
+    min-height: 60px;
+    border: 1px dashed rgba(255, 255, 255, 0.08);
+    padding: 4px;
+    position: relative;
+    transition: all 0.2s;
+    border-radius: 4px;
+}
+
+.builder-col:hover {
+    border-color: rgba(13, 110, 253, 0.3);
+    background: rgba(13, 110, 253, 0.05);
+}
+
+.builder-col.drag-over {
+    border-color: var(--accent);
+    background: var(--drag-highlight);
+}
+
+.builder-col .col-label {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    font-size: 0.55rem;
+    color: #555;
+    pointer-events: none;
+}
+
+/* =============================================
+   Component in Canvas
+   ============================================= */
+
+.builder-component {
+    position: relative;
+    border: 1px solid transparent;
+    margin: 4px 0;
+    transition: all 0.15s;
+    border-radius: 4px;
+    cursor: move;
+}
+
+.builder-component:hover {
+    border-color: rgba(13, 110, 253, 0.5);
+    box-shadow: 0 0 0 1px rgba(13, 110, 253, 0.3);
+}
+
+.builder-component.selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.4);
+}
+
+.builder-component .comp-controls {
+    position: absolute;
+    top: -12px;
+    right: 4px;
+    display: none;
+    gap: 1px;
+    z-index: 20;
+    background: #333;
+    border-radius: 3px;
+    padding: 1px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.builder-component:hover .comp-controls,
+.builder-component.selected .comp-controls {
+    display: flex;
+}
+
+.builder-component .comp-controls .btn {
+    padding: 1px 5px;
+    font-size: 0.6rem;
+    color: #ccc;
+    border: none;
+    background: transparent;
+    line-height: 1.4;
+}
+
+.builder-component .comp-controls .btn:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+}
+
+.builder-component .comp-type-label {
+    position: absolute;
+    top: -12px;
+    left: 4px;
+    font-size: 0.55rem;
+    background: #333;
+    color: #aaa;
+    padding: 1px 6px;
+    border-radius: 3px;
+    display: none;
+    z-index: 20;
+    white-space: nowrap;
+}
+
+.builder-component:hover .comp-type-label {
+    display: block;
+}
+
+.builder-component .component-content {
+    pointer-events: none;
+}
+
+.builder-component.selected .component-content,
+.builder-component:hover .component-content {
+    pointer-events: auto;
+}
+
+/* Component inline editing */
+.builder-component .component-content [contenteditable="true"] {
+    outline: none;
+    cursor: text;
+}
+
+.builder-component .component-content [contenteditable="true"]:focus {
+    outline: 2px dashed rgba(13, 110, 253, 0.5);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* Sortable ghost */
+.sortable-ghost {
+    opacity: 0.4;
+    border: 2px dashed var(--accent) !important;
+}
+
+.sortable-chosen {
+    opacity: 0.9;
+}
+
+/* =============================================
+   Code Panel
+   ============================================= */
+
+.code-panel {
+    display: none;
+    flex-direction: column;
+    height: 300px;
+    background: #1a1d23;
+    border-top: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.code-panel.visible {
+    display: flex;
+}
+
+.code-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    background: #21252b;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.code-panel-body {
+    flex: 1;
+    overflow: auto;
+    padding: 12px;
+}
+
+.code-panel-body pre {
+    margin: 0;
+    font-size: 0.78rem;
+    line-height: 1.5;
+}
+
+.code-panel-body code {
+    color: #c9d1d9;
+    font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace;
+}
+
+/* =============================================
+   Footer Bar
+   ============================================= */
+
+.footer-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--footer-height);
+    background: #21252b;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.footer-toggle {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 0.78rem;
+    cursor: pointer;
+    padding: 4px 16px;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.footer-toggle:hover {
+    color: #fff;
+}
+
+/* =============================================
+   Components Library
+   ============================================= */
+
+.components-library {
+    width: 100%;
+    height: calc(100vh - var(--navbar-height));
+    overflow: auto;
+    padding-bottom: 60px;
+}
+
+.library-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.2s;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.library-card:hover {
+    border-color: rgba(13, 110, 253, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.library-card .card-preview {
+    height: 180px;
+    overflow: hidden;
+    background: #fff;
+    padding: 12px;
+    position: relative;
+}
+
+.library-card .card-preview iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    pointer-events: none;
+}
+
+.library-card .card-preview .preview-overlay {
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.library-card .card-body {
+    padding: 12px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.library-card .card-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.library-card .card-text {
+    font-size: 0.72rem;
+    color: #888;
+    flex: 1;
+}
+
+.library-card .card-actions {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+}
+
+.library-card .card-actions .btn {
+    font-size: 0.72rem;
+    padding: 4px 10px;
+}
+
+.library-card .card-tags {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.library-card .card-tags .badge {
+    font-size: 0.6rem;
+    font-weight: 500;
+}
+
+/* =============================================
+   Drag placeholder
+   ============================================= */
+
+.drag-placeholder {
+    border: 2px dashed var(--accent);
+    background: var(--drag-highlight);
+    min-height: 40px;
+    border-radius: 4px;
+    margin: 4px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 0.75rem;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+/* =============================================
+   Column Modal
+   ============================================= */
+
+.col-option {
+    cursor: pointer;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    transition: all 0.2s;
+    background: var(--card-bg);
+}
+
+.col-option:hover {
+    border-color: var(--accent);
+    background: rgba(13, 110, 253, 0.1);
+}
+
+.col-option .col-preview {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+    height: 30px;
+}
+
+.col-option .col-preview span {
+    flex: 1;
+    background: var(--accent);
+    border-radius: 3px;
+    opacity: 0.6;
+}
+
+.col-option:hover .col-preview span {
+    opacity: 1;
+}
+
+.col-option .col-label {
+    font-size: 0.75rem;
+    color: #aaa;
+}
+
+/* =============================================
+   Toast
+   ============================================= */
+
+.toast {
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* =============================================
+   Responsive helpers
+   ============================================= */
+
+.builder-row .col-md-1,
+.builder-row .col-md-2,
+.builder-row .col-md-3,
+.builder-row .col-md-4,
+.builder-row .col-md-5,
+.builder-row .col-md-6,
+.builder-row .col-md-7,
+.builder-row .col-md-8,
+.builder-row .col-md-9,
+.builder-row .col-md-10,
+.builder-row .col-md-11,
+.builder-row .col-md-12 {
+    padding: 4px;
+}
+
+/* Make canvas components show proper Bootstrap styles */
+.builder-component .component-content img {
+    max-width: 100%;
+    height: auto;
+}
+
+.builder-component .component-content .btn {
+    pointer-events: none;
+}
+
+.builder-component.selected .component-content .btn {
+    pointer-events: auto;
+}
+
+/* =============================================
+   Animations
+   ============================================= */
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.builder-section {
+    animation: fadeIn 0.3s ease;
+}
+
+/* =============================================
+   Section Drop Indicator
+   ============================================= */
+
+.section-drop-indicator {
+    height: 4px;
+    background: var(--accent);
+    border-radius: 2px;
+    margin: 2px 0;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.section-drop-indicator.active {
+    opacity: 1;
+}
+
+/* =============================================
+   Properties Panel (inline)
+   ============================================= */
+
+.properties-floating {
+    position: absolute;
+    z-index: 100;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    width: 280px;
+    max-height: 400px;
+    overflow: auto;
+}
+
+.properties-floating .prop-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #aaa;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.properties-floating .prop-group {
+    margin-bottom: 8px;
+}
+
+.properties-floating .prop-label {
+    font-size: 0.7rem;
+    color: #888;
+    margin-bottom: 3px;
+}
+
+.properties-floating .prop-input {
+    width: 100%;
+    background: #1a1d23;
+    border: 1px solid #333;
+    color: #e0e0e0;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+}
+
+.properties-floating .prop-input:focus {
+    border-color: var(--accent);
+    outline: none;
+}
+
+/* =============================================
+   Scrollbar Styles
+   ============================================= */
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* =============================================
+   Editable content in builder
+   ============================================= */
+
+.builder-component .editable-text {
+    min-width: 20px;
+    outline: none;
+}
+
+.builder-component .editable-text:hover {
+    outline: 1px dashed rgba(13, 110, 253, 0.3);
+}
+
+.builder-component .editable-text:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* =============================================
+   Custom scrollbar for canvas
+   ============================================= */
+
+.canvas::-webkit-scrollbar {
+    width: 10px;
+}
+
+.canvas::-webkit-scrollbar-track {
+    background: #14161a;
+}
+
+.canvas::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 5px;
+}
+
+.canvas::-webkit-scrollbar-thumb:hover {
+    background: #444;
+}
+
+/* =============================================
+   Mobile responsiveness for builder itself
+   ============================================= */
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px !important;
+        position: absolute;
+        left: 0;
+        top: var(--navbar-height);
+        bottom: 0;
+        z-index: 1000;
+        display: none;
+    }
+
+    .sidebar.mobile-visible {
+        display: flex;
+    }
+
+    .resize-handle {
+        display: none;
+    }
+
+    .canvas-toolbar {
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .canvas-toolbar .btn {
+        font-size: 0.7rem;
+    }
+}
