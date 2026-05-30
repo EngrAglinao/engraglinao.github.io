@@ -3,239 +3,347 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlyonUI Web App Builder</title>
+    <title>FlyonUI Enterprise Low-Code Builder</title>
     <link href="https://cdn.jsdelivr.net/npm/flyonui/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom UI scrollbars & adjustments */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .drag-ghost { opacity: 0.4; border: 2px dashed #4f46e5 !important; }
+    </style>
 </head>
-<body class="bg-base-200 h-screen flex flex-col font-sans overflow-hidden">
+<body class="bg-base-200 h-screen w-screen flex flex-col font-sans overflow-hidden antialiased text-base-content">
 
-    <header class="navbar bg-base-100 shadow-sm justify-between px-4 border-b border-base-300 z-10">
-        <div class="flex items-center gap-4">
-            <a class="text-xl font-bold text-primary flex items-center gap-2">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> FlyonBuilder
-            </a>
-            <div class="tabs tabs-box bg-base-200 p-1 size-sm">
-                <button id="tab-web-creation" class="tab tab-active text-sm" onclick="switchMainTab('web')">Web Creation</button>
-                <button id="tab-comp-creation" class="tab text-sm" onclick="switchMainTab('component')">Component Creation</button>
+    <header class="navbar bg-base-100 shadow-sm justify-between px-6 border-b border-base-300 z-20 min-h-[64px]">
+        <div class="flex items-center gap-6">
+            <span class="text-xl font-black tracking-tight bg-gradient-to-r from-primary to-info bg-clip-text text-transparent flex items-center gap-2">
+                <i class="fa-solid fa-cubes-gradient"></i> FlyonStudio
+            </span>
+            <div class="tabs tabs-box bg-base-200 p-1 size-sm rounded-lg">
+                <button id="tab-web-creation" class="tab tab-active text-xs font-semibold px-4" onclick="switchMainTab('web')">
+                    <i class="fa-solid fa-globe mr-1.5"></i> Web Creation
+                </button>
+                <button id="tab-comp-creation" class="tab text-xs font-semibold px-4" onclick="switchMainTab('component')">
+                    <i class="fa-solid fa-puzzle-piece mr-1.5"></i> Component Builder
+                </button>
             </div>
         </div>
 
-        <div class="flex items-center gap-2">
-            <button class="btn btn-outline btn-sm btn-secondary" onclick="saveComponent()">
-                <i class="fa-solid fa-floppy-disk"></i> Save Component
+        <div class="flex items-center gap-3">
+            <div class="flex items-center bg-base-200 rounded-lg p-1 mr-2 gap-1 size-sm">
+                <button class="btn btn-square btn-text btn-xs" onclick="changeResponsiveView('desktop')" title="Desktop View"><i class="fa-solid fa-desktop"></i></button>
+                <button class="btn btn-square btn-text btn-xs" onclick="changeResponsiveView('tablet')" title="Tablet View"><i class="fa-solid fa-tablet-screen-button"></i></button>
+                <button class="btn btn-square btn-text btn-xs" onclick="changeResponsiveView('mobile')" title="Mobile View"><i class="fa-solid fa-mobile-button"></i></button>
+            </div>
+            <button class="btn btn-outline btn-secondary btn-sm rounded-lg gap-2" onclick="saveComponent()">
+                <i class="fa-solid fa-bookmark"></i> Save Component
             </button>
-            <button class="btn btn-primary btn-sm" onclick="exportToHTML()">
-                <i class="fa-solid fa-download"></i> Export HTML
+            <button class="btn btn-primary btn-sm rounded-lg gap-2 shadow-sm" onclick="exportToHTML()">
+                <i class="fa-solid fa-file-arrow-down"></i> Export HTML
             </button>
         </div>
     </header>
 
-    <main class="flex-1 grid grid-cols-4 overflow-hidden">
+    <main class="flex-1 grid grid-cols-4 overflow-hidden relative w-full h-full">
 
-        <aside class="col-span-1 bg-base-100 border-r border-base-300 flex flex-col overflow-y-auto p-4 gap-4">
-            <div class="flex flex-col">
-                <h2 class="text-sm font-semibold text-base-content/60 uppercase tracking-wider mb-2">FlyonUI Components</h2>
-                <input type="text" placeholder="Search components..." class="input input-sm input-bordered w-full mb-4" />
-                
-                <div class="accordion seq-accordion-boxed">
+        <aside class="col-span-1 bg-base-100 border-r border-base-300 flex flex-col overflow-hidden max-h-full">
+            <div class="p-4 border-b border-base-200">
+                <div class="relative w-full">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-base-content/40">
+                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                    </span>
+                    <input type="text" id="component-search" placeholder="Search components..." class="input input-sm input-bordered w-full pl-9 rounded-lg" oninput="filterComponents()" />
+                </div>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-4 space-y-3">
+                <div class="accordion seq-accordion-boxed w-full">
+                    
                     <div class="accordion-item active">
-                        <button class="accordion-toggle text-sm font-medium">Buttons & Badges</button>
-                        <div class="accordion-content hidden p-2 flex flex-col gap-2">
-                            <button class="btn btn-text btn-sm justify-start w-full" onclick="addComponent('btn-primary')">Primary Button</button>
-                            <button class="btn btn-text btn-sm justify-start w-full" onclick="addComponent('badge-outline')">Outline Badge</button>
+                        <button class="accordion-toggle text-xs font-bold uppercase tracking-wider text-base-content/70">Navigation & Wireframes</button>
+                        <div class="accordion-content p-2 flex flex-col gap-2">
+                            <div class="card bg-base-200 p-2 text-xs font-medium border border-base-300 rounded-lg cursor-grab hover:bg-base-300 transition duration-150 flex items-center justify-between" draggable="true" ondragstart="handleDragStart(event, 'navbar-basic')">
+                                <span><i class="fa-solid fa-window-maximize mr-2 text-primary"></i> Application Navbar</span>
+                                <i class="fa-solid fa-grip-vertical text-base-content/30 text-xs"></i>
+                            </div>
+                            <div class="card bg-base-200 p-2 text-xs font-medium border border-base-300 rounded-lg cursor-grab hover:bg-base-300 transition duration-150 flex items-center justify-between" draggable="true" ondragstart="handleDragStart(event, 'hero-section')">
+                                <span><i class="fa-solid fa-image-portrait mr-2 text-primary"></i> Marketing Hero Block</span>
+                                <i class="fa-solid fa-grip-vertical text-base-content/30 text-xs"></i>
+                            </div>
+                            <div class="card bg-base-200 p-2 text-xs font-medium border border-base-300 rounded-lg cursor-grab hover:bg-base-300 transition duration-150 flex items-center justify-between" draggable="true" ondragstart="handleDragStart(event, 'footer-simple')">
+                                <span><i class="fa-solid fa-shoe-prints mr-2 text-primary"></i> Universal Footer</span>
+                                <i class="fa-solid fa-grip-vertical text-base-content/30 text-xs"></i>
+                            </div>
                         </div>
                     </div>
+
                     <div class="accordion-item">
-                        <button class="accordion-toggle text-sm font-medium">Layout & Navigation</button>
+                        <button class="accordion-toggle text-xs font-bold uppercase tracking-wider text-base-content/70">Actions & Buttons</button>
                         <div class="accordion-content hidden p-2 flex flex-col gap-2">
-                            <button class="btn btn-text btn-sm justify-start w-full" onclick="addComponent('navbar-basic')">Basic Navbar</button>
-                            <button class="btn btn-text btn-sm justify-start w-full" onclick="addComponent('footer-simple')">Simple Footer</button>
+                            <div class="card bg-base-200 p-2 text-xs font-medium border border-base-300 rounded-lg cursor-grab hover:bg-base-300 transition duration-150 flex items-center justify-between" draggable="true" ondragstart="handleDragStart(event, 'btn-primary')">
+                                <span><i class="fa-solid fa-square-mouse-pointer mr-2 text-success"></i> Primary Button</span>
+                                <i class="fa-solid fa-grip-vertical text-base-content/30 text-xs"></i>
+                            </div>
+                            <div class="card bg-base-200 p-2 text-xs font-medium border border-base-300 rounded-lg cursor-grab hover:bg-base-300 transition duration-150 flex items-center justify-between" draggable="true" ondragstart="handleDragStart(event, 'btn-group')">
+                                <span><i class="fa-solid fa-layer-group mr-2 text-success"></i> Action Button Group</span>
+                                <i class="fa-solid fa-grip-vertical text-base-content/30 text-xs"></i>
+                            </div>
+                            <div class="card bg-base-200 p-2 text-xs font-medium border border-base-300 rounded-lg cursor-grab hover:bg-base-300 transition duration-150 flex items-center justify-between" draggable="true" ondragstart="handleDragStart(event, 'badge-outline')">
+                                <span><i class="fa-solid fa-tag mr-2 text-success"></i> Context Badge</span>
+                                <i class="fa-solid fa-grip-vertical text-base-content/30 text-xs"></i>
+                            </div>
                         </div>
                     </div>
+
                     <div class="accordion-item">
-                        <button class="accordion-toggle text-sm font-medium">Data Display</button>
+                        <button class="accordion-toggle text-xs font-bold uppercase tracking-wider text-base-content/70">Data & Layout Cards</button>
                         <div class="accordion-content hidden p-2 flex flex-col gap-2">
-                            <button class="btn btn-text btn-sm justify-start w-full" onclick="addComponent('card-basic')">Basic Card</button>
-                            <button class="btn btn-text btn-sm justify-start w-full" onclick="addComponent('alert-success')">Success Alert</button>
+                            <div class="card bg-base-200 p-2 text-xs font-medium border border-base-300 rounded-lg cursor-grab hover:bg-base-300 transition duration-150 flex items-center justify-between" draggable="true" ondragstart="handleDragStart(event, 'card-basic')">
+                                <span><i class="fa-solid fa-id-card mr-2 text-info"></i> Informative Display Card</span>
+                                <i class="fa-solid fa-grip-vertical text-base-content/30 text-xs"></i>
+                            </div>
+                            <div class="card bg-base-200 p-2 text-xs font-medium border border-base-300 rounded-lg cursor-grab hover:bg-base-300 transition duration-150 flex items-center justify-between" draggable="true" ondragstart="handleDragStart(event, 'stats-grid')">
+                                <span><i class="fa-solid fa-chart-simple mr-2 text-info"></i> Metrics/Analytics Dashboard</span>
+                                <i class="fa-solid fa-grip-vertical text-base-content/30 text-xs"></i>
+                            </div>
+                            <div class="card bg-base-200 p-2 text-xs font-medium border border-base-300 rounded-lg cursor-grab hover:bg-base-300 transition duration-150 flex items-center justify-between" draggable="true" ondragstart="handleDragStart(event, 'alert-success')">
+                                <span><i class="fa-solid fa-bell mr-2 text-warning"></i> System Status Banner</span>
+                                <i class="fa-solid fa-grip-vertical text-base-content/30 text-xs"></i>
+                            </div>
                         </div>
                     </div>
+
                     <div class="accordion-item">
-                        <button class="accordion-toggle text-sm font-medium text-secondary">❤️ My Saved Components</button>
+                        <button class="accordion-toggle text-xs font-bold uppercase tracking-wider text-secondary">❤️ Reusable Custom Elements</button>
                         <div id="saved-components-pool" class="accordion-content hidden p-2 flex flex-col gap-2">
-                            <p class="text-xs text-base-content/50 italic p-2">No custom components saved yet.</p>
+                            <p class="text-xs text-base-content/40 italic p-2 text-center">No components saved in local storage cache pool.</p>
                         </div>
                     </div>
+
                 </div>
             </div>
         </aside>
 
-        <section class="col-span-3 flex flex-col h-full bg-base-200">
+        <section class="col-span-3 flex flex-col h-full overflow-hidden bg-base-200">
             
-            <div class="h-[60%] p-4 flex flex-col">
-                <div class="flex items-center justify-between bg-base-100 px-4 py-2 border border-base-300 border-b-0 rounded-t-lg text-xs font-mono text-base-content/70">
-                    <span><i class="fa-solid fa-desktop mr-2"></i> Live Canvas Preview</span>
-                    <button class="btn btn-text btn-xs text-error" onclick="clearCanvas()">Clear Canvas</button>
+            <div class="h-[55%] p-4 flex flex-col overflow-hidden min-h-[250px]">
+                <div class="flex items-center justify-between bg-base-100 px-4 py-2 border border-base-300 border-b-0 rounded-t-xl text-xs font-mono font-medium text-base-content/70 shadow-xs">
+                    <span id="canvas-status-label"><i class="fa-solid fa-wand-magic mr-2 text-primary animate-pulse"></i> Live Droppable Sandbox Canvas</span>
+                    <button class="btn btn-text btn-xs text-error font-sans font-semibold rounded-md hover:bg-error/10" onclick="clearCanvas()">
+                        <i class="fa-solid fa-trash-can mr-1"></i> Clear Canvas
+                    </button>
                 </div>
-                <div class="flex-1 bg-white border border-base-300 rounded-b-lg shadow-inner overflow-hidden">
-                    <iframe id="live-preview" class="w-full h-full border-0 bg-white"></iframe>
+                <div id="preview-frame-container" class="flex-1 bg-white border border-base-300 rounded-b-xl shadow-inner overflow-hidden flex justify-center items-center transition-all duration-300">
+                    <iframe id="live-preview" class="w-full h-full border-0 bg-white transition-all duration-200"></iframe>
                 </div>
             </div>
 
-            <div class="h-[40%] border-t border-base-300 bg-base-100 flex flex-col overflow-hidden">
-                <div class="bg-base-200 p-2 flex gap-4 items-center border-b border-base-300 px-4">
-                    <span class="text-xs font-bold text-base-content/70 uppercase">Active Node Configuration:</span>
+            <div class="h-[45%] border-t border-base-300 bg-base-100 flex flex-col overflow-hidden min-h-[200px]">
+                
+                <div class="bg-base-200 p-2.5 flex flex-wrap gap-4 items-center border-b border-base-300 px-5 text-xs">
+                    <span class="font-bold text-base-content/60 tracking-wider uppercase flex items-center gap-1">
+                        <i class="fa-solid fa-sliders"></i> Active Node Rules:
+                    </span>
                     <div class="flex items-center gap-2">
-                        <label class="text-xs font-mono">ID:</label>
-                        <input id="node-id" type="text" placeholder="custom-id" class="input input-xs input-bordered w-32" oninput="updateActiveElementProperties()">
+                        <label class="font-mono font-bold text-base-content/70">ID:</label>
+                        <input id="node-id" type="text" placeholder="e.g. hero-cta" class="input input-xs input-bordered w-36 rounded-md shadow-xs bg-base-100 font-mono" oninput="updateActiveElementProperties()">
                     </div>
-                    <div class="flex items-center gap-2 class-input-wrapper">
-                        <label class="text-xs font-mono">Extra Classes:</label>
-                        <input id="node-class" type="text" placeholder="mt-4 p-2 shadow" class="input input-xs input-bordered w-64" oninput="updateActiveElementProperties()">
+                    <div class="flex items-center gap-2">
+                        <label class="font-mono font-bold text-base-content/70">Append Classes:</label>
+                        <input id="node-class" type="text" placeholder="e.g. shadow-2xl border-2" class="input input-xs input-bordered w-72 rounded-md shadow-xs bg-base-100 font-mono" oninput="updateActiveElementProperties()">
                     </div>
+                    <span class="text-[10px] text-base-content/40 italic pl-2"><i class="fa-solid fa-circle-info"></i> Automatically applies modifications to the topmost layer</span>
                 </div>
 
-                <div class="tabs tabs-bordered bg-base-100 border-b border-base-300">
-                    <button id="tab-html" class="tab tab-active font-mono text-xs" onclick="switchEditorTab('html')">HTML</button>
-                    <button id="tab-css" class="tab font-mono text-xs" onclick="switchEditorTab('css')">CSS</button>
-                    <button id="tab-js" class="tab font-mono text-xs" onclick="switchEditorTab('js')">JS</button>
+                <div class="tabs tabs-bordered bg-base-100 flex border-b border-base-200">
+                    <button id="tab-html" class="tab tab-active flex-1 font-mono text-xs font-semibold py-3 border-b-2" onclick="switchEditorTab('html')">
+                        <i class="fa-solid fa-code text-orange-500 mr-1.5"></i> STRUCTURE (HTML)
+                    </button>
+                    <button id="tab-css" class="tab flex-1 font-mono text-xs font-semibold py-3 border-b-2" onclick="switchEditorTab('css')">
+                        <i class="fa-solid fa-palette text-blue-500 mr-1.5"></i> CUSTOM STYLES (CSS)
+                    </button>
+                    <button id="tab-js" class="tab flex-1 font-mono text-xs font-semibold py-3 border-b-2" onclick="switchEditorTab('js')">
+                        <i class="fa-brands fa-js text-yellow-500 mr-1.5"></i> SCRIPTS & LOGIC (JS)
+                    </button>
                 </div>
 
-                <div class="flex-1 relative overflow-hidden">
-                    <textarea id="editor-html" class="w-full h-full font-mono text-sm p-4 bg-neutral text-neutral-content focus:outline-none resize-none" placeholder="" oninput="syncCodeToPreview()"></textarea>
-                    <textarea id="editor-css" class="w-full h-full font-mono text-sm p-4 bg-neutral text-neutral-content focus:outline-none resize-none hidden" placeholder="/* Custom CSS Scope */" oninput="syncCodeToPreview()"></textarea>
-                    <textarea id="editor-js" class="w-full h-full font-mono text-sm p-4 bg-neutral text-neutral-content focus:outline-none resize-none hidden" placeholder="// Custom JavaScript Code \n// Use document.querySelector inside handlers" oninput="syncCodeToPreview()"></textarea>
+                <div class="flex-1 relative overflow-hidden bg-neutral">
+                    <textarea id="editor-html" class="w-full h-full font-mono text-xs p-4 bg-neutral text-neutral-content/90 focus:outline-none resize-none leading-relaxed" placeholder="" oninput="syncCodeToPreview()"></textarea>
+                    <textarea id="editor-css" class="w-full h-full font-mono text-xs p-4 bg-neutral text-neutral-content/90 focus:outline-none resize-none hidden leading-relaxed" placeholder="/* Append element-scoped cascading style sheet configurations here */" oninput="syncCodeToPreview()"></textarea>
+                    <textarea id="editor-js" class="w-full h-full font-mono text-xs p-4 bg-neutral text-neutral-content/90 focus:outline-none resize-none hidden leading-relaxed" placeholder="// Write localized client-side script modules here&#10;// Targets work out of the box via element listeners" oninput="syncCodeToPreview()"></textarea>
                 </div>
             </div>
         </section>
     </main>
 
     <script>
-        // Preset FlyonUI Raw HTML templates
+        // Production FlyonUI Markup Snippet Library Database 
         const componentTemplates = {
-            'btn-primary': `<button class="btn btn-primary">Primary Action</button>`,
-            'badge-outline': `<span class="badge badge-outline badge-secondary">New feature</span>`,
-            'navbar-basic': `<div class="navbar bg-base-100 shadow-md rounded-box w-full mb-4">
-  <div class="navbar-start"><a class="btn btn-text text-xl">FlyonUI Site</a></div>
-  <div class="navbar-end"><button class="btn btn-primary btn-sm">Get Started</button></div>
-</div>`,
-            'footer-simple': `<footer class="footer footer-center p-4 bg-base-300 text-base-content rounded mt-8">
-  <div><p>Copyright © 2026 - All rights reserved by FlyonBuilder</p></div>
-</footer>`,
-            'card-basic': `<div class="card bg-base-100 shadow-xl max-w-sm border border-base-200">
-  <div class="card-body">
-    <h2 class="card-title">FlyonUI Cards!</h2>
-    <p>Using utility classes with rich pre-designed structural primitives makes prototyping fun.</p>
-    <div class="card-actions justify-end"><button class="btn btn-secondary btn-sm">Buy Now</button></div>
-  </div>
-</div>`,
-            'alert-success': `<div class="alert alert-success shadow-lg mb-4">
-  <div><i class="fa-solid fa-circle-check mr-2"></i><span>Your component configurations have been saved locally.</span></div>
-</div>`
+            'btn-primary': `<button class="btn btn-primary shadow-sm hover:scale-[1.02] transition">Primary Action</button>`,
+            'btn-group': `<div class="btn-group border border-base-300 rounded-xl overflow-hidden">\n  <button class="btn btn-active btn-primary">Left</button>\n  <button class="btn btn-primary">Middle</button>\n  <button class="btn btn-primary">Right</button>\n</div>`,
+            'badge-outline': `<span class="badge badge-outline badge-info gap-1"><i class="fa-solid fa-sparkles text-[10px]"></i> FlyonUI Feature</span>`,
+            'navbar-basic': `<div class="navbar bg-base-100 shadow-md rounded-2xl w-full border border-base-200 px-4">\n  <div class="navbar-start">\n    <a class="text-lg font-black tracking-tight text-primary">PROJECT_BRAND</a>\n  </div>\n  <div class="navbar-center hidden md:flex">\n    <ul class="menu menu-horizontal p-0 gap-1 text-sm font-medium">\n      <li><a class="rounded-lg">Features</a></li>\n      <li><a class="rounded-lg">Pricing</a></li>\n      <li><a class="rounded-lg">Contact</a></li>\n    </ul>\n  </div>\n  <div class="navbar-end">\n    <button class="btn btn-primary btn-sm rounded-xl px-4">Launch Dashboard</button>\n  </div>\n</div>`,
+            'footer-simple': `<footer class="footer footer-center p-6 bg-base-300 text-base-content rounded-2xl border border-base-400/20 w-full">\n  <div class="flex flex-col gap-2">\n    <p class="font-bold tracking-wide text-sm text-base-content/80">FlyonUI Application Suite</p>\n    <p class="text-xs text-base-content/50">© 2026 Architectural Builder Engine. All liberties preserved.</p>\n  </div>\n</footer>`,
+            'card-basic': `<div class="card bg-base-100 shadow-xl border border-base-200/60 rounded-2xl max-w-sm transition hover:shadow-2xl">\n  <div class="card-body p-6">\n    <div class="badge badge-soft badge-primary mb-2">Technology</div>\n    <h2 class="card-title text-xl font-bold tracking-tight">Atomic System Controls</h2>\n    <p class="text-sm text-base-content/70 leading-relaxed">This card module acts as a container for displaying dense dashboard statistics or curated blog posts.</p>\n    <div class="card-actions justify-end mt-4">\n      <button class="btn btn-primary btn-sm rounded-xl">Explore Feature</button>\n    </div>\n  </div>\n</div>`,
+            'alert-success': `<div class="alert alert-success shadow-lg border-0 rounded-xl p-4 w-full flex items-center gap-3 text-sm font-semibold">\n  <i class="fa-solid fa-circle-check text-xl text-success-content"></i>\n  <span class="text-success-content">Configuration manifest processed and live-compiled successfully.</span>\n</div>`,
+            'hero-section': `<div class="hero bg-base-100 rounded-3xl border border-base-200/80 p-8 w-full shadow-xs">\n  <div class="hero-content text-center max-w-md mx-auto py-6">\n    <div>\n      <h1 class="text-4xl font-black tracking-tight mb-4">Design Beautifully.</h1>\n      <p class="text-sm text-base-content/70 leading-relaxed mb-6">Combine the raw utility power of standard Tailwind CSS variables with the rich element structures of headless components.</p>\n      <div class="flex justify-center gap-2">\n        <button class="btn btn-primary rounded-xl px-5">Get Started</button>\n        <button class="btn btn-outline rounded-xl px-5">Learn More</button>\n      </div>\n    </div>\n  </div>\n</div>`,
+            'stats-grid': `<div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">\n  <div class="bg-base-100 border border-base-200 p-4 rounded-xl shadow-xs text-center">\n    <div class="text-xs font-semibold text-base-content/50 uppercase tracking-wider">Gross Income</div>\n    <div class="text-2xl font-black text-primary mt-1">$48,259</div>\n  </div>\n  <div class="bg-base-100 border border-base-200 p-4 rounded-xl shadow-xs text-center">\n    <div class="text-xs font-semibold text-base-content/50 uppercase tracking-wider">Active Deployments</div>\n    <div class="text-2xl font-black text-success mt-1">1,842</div>\n  </div>\n  <div class="bg-base-100 border border-base-200 p-4 rounded-xl shadow-xs text-center">\n    <div class="text-xs font-semibold text-base-content/50 uppercase tracking-wider">Bounce Index</div>\n    <div class="text-2xl font-black text-error mt-1">2.4%</div>\n  </div>\n</div>`
         };
 
-        let currentMode = 'web'; // 'web' or 'component'
+        let currentMode = 'web';
         let savedComponents = JSON.parse(localStorage.getItem('flyon_saved_components')) || {};
+        let currentDraggedKey = null;
 
-        // Base document structure inside the iframe canvas
+        // Assembly Frame Environment Configuration Generator
         function getIframeBaseTemplate(htmlContent = '', cssContent = '', jsContent = '') {
             return `
                 <!DOCTYPE html>
                 <html lang="en" data-theme="light">
                 <head>
+                    <meta charset="UTF-8">
                     <link href="https://cdn.jsdelivr.net/npm/flyonui/dist/full.min.css" rel="stylesheet" type="text/css" />
                     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"><\/script>
                     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
                     <style>
-                        body { padding: 1.5rem; background-color: #f8fafc; min-height: 100vh; }
+                        body { 
+                            padding: 2rem; 
+                            background-color: #f8fafc; 
+                            min-height: 100vh; 
+                            display: flex; 
+                            flex-col; 
+                            align-items: center;
+                            justify-content: start;
+                            transition: background-color 0.2s ease;
+                        }
+                        /* Visual Target Indicator styles during drag events */
+                        body.drag-over-canvas { 
+                            background-color: #e0e7ff !important;
+                            outline: 3px dashed #4f46e5 !important;
+                            outline-offset: -8px;
+                        }
+                        #iframe-root-canvas {
+                            width: 100%;
+                            display: flex;
+                            flex-direction: column;
+                            gap: 1.5rem;
+                            align-items: start;
+                        }
                         ${cssContent}
                     </style>
                 </head>
                 <body>
-                    <div id="canvas-wrapper" class="flex flex-col gap-4 items-start">
+                    <div id="iframe-root-canvas">
                         ${htmlContent}
                     </div>
                     <script>
+                        // Pass cross-origin event notification hooks upward to capture drops
+                        window.addEventListener('dragover', (e) => e.preventDefault());
+                        window.addEventListener('dragenter', () => document.body.classList.add('drag-over-canvas'));
+                        window.addEventListener('dragleave', () => document.body.classList.remove('drag-over-canvas'));
+                        window.addEventListener('drop', (e) => {
+                            document.body.classList.remove('drag-over-canvas');
+                            window.parent.postMessage({ type: 'CANVAS_DROP_FIRED' }, '*');
+                        });
                         try {
                             ${jsContent}
-                        } catch(err) { console.error("Runtime Custom Script Error:", err); }
+                        } catch(err) { console.error("Sandbox Exception Handler:", err); }
                     <\/script>
                 </body>
                 </html>
             `;
         }
 
-        // Initialize App
         window.addEventListener('DOMContentLoaded', () => {
             initAccordions();
             loadSavedComponentsPool();
             clearCanvas();
+            initParentDropListeners();
         });
 
-        // Simple FlyonUI-like Accordion Handler Toggle
+        // Initialize Native Flyon Accordion Emulators
         function initAccordions() {
             document.querySelectorAll('.accordion-toggle').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const content = btn.nextElementSibling;
-                    const item = btn.parentElement;
                     const isOpen = !content.classList.contains('hidden');
                     
-                    // Close all
                     btn.closest('.accordion').querySelectorAll('.accordion-content').forEach(c => c.classList.add('hidden'));
                     btn.closest('.accordion').querySelectorAll('.accordion-item').forEach(i => i.classList.remove('active'));
 
                     if (!isOpen) {
                         content.classList.remove('hidden');
-                        item.classList.add('active');
+                        btn.parentElement.classList.add('active');
                     }
                 });
             });
         }
 
-        // Switch application modes
-        function switchMainTab(mode) {
-            currentMode = mode;
-            document.getElementById('tab-web-creation').classList.toggle('tab-active', mode === 'web');
-            document.getElementById('tab-comp-creation').classList.toggle('tab-active', mode === 'component');
-            clearCanvas();
-        }
-
-        // Switch local view tabs for code editors
-        function switchEditorTab(tab) {
-            ['html', 'css', 'js'].forEach(t => {
-                document.getElementById(`tab-${t}`).classList.toggle('tab-active', t === tab);
-                document.getElementById(`editor-${t}`).classList.add('hidden');
+        // Search engine filter logic
+        function filterComponents() {
+            const query = document.getElementById('component-search').value.toLowerCase();
+            document.querySelectorAll('.accordion-content .card').forEach(item => {
+                const name = item.textContent.toLowerCase();
+                item.style.display = name.includes(query) ? 'flex' : 'none';
             });
-            document.getElementById(`editor-${tab}`).classList.remove('hidden');
         }
 
-        // Add a component target structural template to raw inputs
-        function addComponent(key) {
+        // Drag Start event attachment routing definitions
+        function handleDragStart(event, componentKey) {
+            currentDraggedKey = componentKey;
+            event.dataTransfer.setData('text/plain', componentKey);
+            event.dataTransfer.effectAllowed = 'copy';
+        }
+
+        // Hook system to monitor the virtual sandboxed iframe canvas element
+        function initParentDropListeners() {
+            const iframe = document.getElementById('live-preview');
+            
+            // Handle drops over the internal context structure
+            window.addEventListener('message', (event) => {
+                if (event.data && event.data.type === 'CANVAS_DROP_FIRED') {
+                    executeDropPlacement();
+                }
+            });
+
+            // Handle drops directly on top of the parent layer container frame wrapper element
+            iframe.addEventListener('dragover', (e) => e.preventDefault());
+            iframe.addEventListener('drop', (e) => {
+                e.preventDefault();
+                executeDropPlacement();
+            });
+        }
+
+        function executeDropPlacement() {
+            if (!currentDraggedKey) return;
+            addComponentToMarkup(currentDraggedKey);
+            currentDraggedKey = null;
+        }
+
+        // Inject components into code strings and sync previews
+        function addComponentToMarkup(key) {
             let template = '';
             if (componentTemplates[key]) {
                 template = componentTemplates[key];
             } else if (savedComponents[key]) {
                 template = savedComponents[key].html;
-                if(savedComponents[key].css) {
-                    document.getElementById('editor-css').value += "\n" + savedComponents[key].css;
-                }
-                if(savedComponents[key].js) {
-                    document.getElementById('editor-js').value += "\n" + savedComponents[key].js;
-                }
+                if(savedComponents[key].css) document.getElementById('editor-css').value += "\n" + savedComponents[key].css;
+                if(savedComponents[key].js) document.getElementById('editor-js').value += "\n" + savedComponents[key].js;
             }
 
             const htmlEditor = document.getElementById('editor-html');
             if (currentMode === 'web') {
-                // Append mode for web layout assembly
-                htmlEditor.value += (htmlEditor.value ? "\n" : "") + template;
+                htmlEditor.value += (htmlEditor.value ? "\n\n" : "") + template;
             } else {
-                // Replace mode for atomic component composition
                 htmlEditor.value = template;
             }
             syncCodeToPreview();
         }
 
-        // Dynamically mirror editors into iframe execution environment
+        // Sync local text values into preview frames
         function syncCodeToPreview() {
             const html = document.getElementById('editor-html').value;
             const css = document.getElementById('editor-css').value;
@@ -249,13 +357,14 @@
             targetDoc.close();
         }
 
-        // Intercept properties inside Active fields and update HTML markup strings
+        // Update active element node metadata parameters
         function updateActiveElementProperties() {
             const idVal = document.getElementById('node-id').value.trim();
             const classVal = document.getElementById('node-class').value.trim();
             const htmlEditor = document.getElementById('editor-html');
 
-            // Parse markup safely using standard DOM parser
+            if (!htmlEditor.value.trim()) return;
+
             const parser = new DOMParser();
             const doc = parser.parseFromString(`<div>${htmlEditor.value}</div>`, 'text/html');
             const target = doc.querySelector('div').firstElementChild;
@@ -265,7 +374,6 @@
                 else target.removeAttribute('id');
 
                 if (classVal) {
-                    // Retain original core flyon functional styling classes, append metadata
                     target.className = classVal;
                 }
                 htmlEditor.value = doc.querySelector('div').innerHTML;
@@ -273,23 +381,67 @@
             }
         }
 
-        // Save local sub-compositions to cache pool
+        // Switch application creation contexts
+        function switchMainTab(mode) {
+            currentMode = mode;
+            document.getElementById('tab-web-creation').classList.toggle('tab-active', mode === 'web');
+            document.getElementById('tab-comp-creation').classList.toggle('tab-active', mode === 'component');
+            
+            const statusLabel = document.getElementById('canvas-status-label');
+            if(mode === 'component') {
+                statusLabel.innerHTML = `<i class="fa-solid fa-puzzle-piece text-secondary mr-2"></i> Component Atomic Composition View`;
+            } else {
+                statusLabel.innerHTML = `<i class="fa-solid fa-wand-magic text-primary mr-2"></i> Live Droppable Sandbox Canvas`;
+            }
+            clearCanvas();
+        }
+
+        // Switch editor tabs
+        function switchEditorTab(tab) {
+            ['html', 'css', 'js'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.toggle('tab-active', t === tab);
+                document.getElementById(`editor-${t}`).classList.add('hidden');
+            });
+            document.getElementById(`editor-${tab}`).classList.remove('hidden');
+        }
+
+        // Responsive viewport dimension switcher tool
+        function changeResponsiveView(device) {
+            const frame = document.getElementById('live-preview');
+            const container = document.getElementById('preview-frame-container');
+            
+            if (device === 'mobile') {
+                frame.style.width = '375px';
+                frame.style.height = '100%';
+                container.style.padding = '1rem 0';
+            } else if (device === 'tablet') {
+                frame.style.width = '768px';
+                frame.style.height = '100%';
+                container.style.padding = '1rem 0';
+            } else {
+                frame.style.width = '100%';
+                frame.style.height = '100%';
+                container.style.padding = '0';
+            }
+        }
+
+        // Save component state to localStorage
         function saveComponent() {
             const html = document.getElementById('editor-html').value;
             const css = document.getElementById('editor-css').value;
             const js = document.getElementById('editor-js').value;
 
-            if (!html) return alert("Component compilation must contain structural body.");
+            if (!html.trim()) return alert("Structural HTML target layout is required before execution.");
 
-            const componentName = prompt("Assign unique identifier name for your component:", "my-custom-component");
-            if (!componentName) return;
+            const name = prompt("Assign component structural identifier token name:", "custom-layout-card");
+            if (!name) return;
 
-            savedComponents[componentName] = { html, css, js };
+            savedComponents[name] = { html, css, js };
             localStorage.setItem('flyon_saved_components', JSON.stringify(savedComponents));
             loadSavedComponentsPool();
         }
 
-        // Sync local storage lists into left runtime context side menus
+        // Hydrate local system variables back into pool markup
         function loadSavedComponentsPool() {
             const pool = document.getElementById('saved-components-pool');
             const keys = Object.keys(savedComponents);
@@ -298,15 +450,15 @@
             
             pool.innerHTML = '';
             keys.forEach(k => {
-                const btn = document.createElement('button');
-                btn.className = "btn btn-text btn-sm text-secondary justify-between w-full font-mono text-xs";
-                btn.innerHTML = `<span>📂 ${k}</span> <i class="fa-solid fa-plus text-xs"></i>`;
-                btn.onclick = () => addComponent(k);
-                pool.appendChild(btn);
+                const div = document.createElement('div');
+                div.className = "card bg-base-300 p-2 text-xs font-mono text-secondary border border-secondary/30 rounded-lg cursor-grab hover:bg-base-200 transition duration-150 flex items-center justify-between";
+                div.setAttribute('draggable', 'true');
+                div.addEventListener('dragstart', (e) => handleDragStart(e, k));
+                div.innerHTML = `<span><i class="fa-solid fa-box-archive mr-2"></i>${k}</span><i class="fa-solid fa-grip-vertical opacity-40 text-xs"></i>`;
+                pool.appendChild(div);
             });
         }
 
-        // Flush standard canvas configurations
         function clearCanvas() {
             document.getElementById('editor-html').value = '';
             document.getElementById('editor-css').value = '';
@@ -316,19 +468,17 @@
             syncCodeToPreview();
         }
 
-        // Export complete static distributable HTML files
         function exportToHTML() {
             const html = document.getElementById('editor-html').value;
             const css = document.getElementById('editor-css').value;
             const js = document.getElementById('editor-js').value;
 
             const finalOutput = getIframeBaseTemplate(html, css, js);
-            
             const blob = new Blob([finalOutput], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `flyonui-project-${new Date().toISOString().slice(0,10)}.html`;
+            a.download = `flyonui-compiled-site.html`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
