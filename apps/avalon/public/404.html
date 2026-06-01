@@ -14,14 +14,7 @@
       // GitHub Pages SPA redirect fix
       // Saves the current URL and redirects to index.html
       // index.html then restores the route
-      var l = window.location;
-      var pathSegmentsToKeep = 1; // change to 0 for custom domain
-      var redirectUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') +
-        '/?p=' + l.pathname.split('/').slice(1 + pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
-        (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-        l.hash;
-      l.replace(redirectUrl);
+
       window.location.href = 'engraglinao.github.io/apps/avalon/';
 
     </script>
