@@ -1,0 +1,165 @@
+@import "tailwindcss";
+
+/* Custom utilities */
+@layer utilities {
+  .text-shadow-glow {
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.6);
+  }
+  .border-glow-amber {
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.3), inset 0 0 15px rgba(251, 191, 36, 0.05);
+  }
+  .border-glow-blue {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.3), inset 0 0 15px rgba(59, 130, 246, 0.05);
+  }
+  .border-glow-red {
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.3), inset 0 0 15px rgba(239, 68, 68, 0.05);
+  }
+  .active\:scale-98:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Prevent text selection on game elements */
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Card flip styles */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(251, 191, 36, 0.3);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(251, 191, 36, 0.5);
+}
+
+/* Animations */
+@keyframes twinkle {
+  0% { opacity: 0.1; transform: scale(0.8); }
+  100% { opacity: 0.9; transform: scale(1.2); }
+}
+
+@keyframes float-up {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-60px) scale(0); opacity: 0; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-float-up {
+  animation: float-up 2s ease-out forwards;
+}
+
+.animate-shimmer {
+  background-size: 200% auto;
+  animation: shimmer 3s linear infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+/* Quest token pulse */
+@keyframes quest-pulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.7), 0 0 40px rgba(245, 158, 11, 0.3);
+  }
+}
+
+.quest-active {
+  animation: quest-pulse 2s ease-in-out infinite;
+}
+
+/* Vote button styles */
+.vote-btn-approve {
+  background: linear-gradient(135deg, #166534, #15803d);
+  border: 1px solid rgba(74, 222, 128, 0.4);
+  box-shadow: 0 4px 20px rgba(22, 101, 52, 0.4);
+}
+
+.vote-btn-approve:active {
+  transform: scale(0.96);
+  box-shadow: 0 2px 10px rgba(22, 101, 52, 0.3);
+}
+
+.vote-btn-reject {
+  background: linear-gradient(135deg, #7f1d1d, #991b1b);
+  border: 1px solid rgba(252, 165, 165, 0.3);
+  box-shadow: 0 4px 20px rgba(127, 29, 29, 0.4);
+}
+
+.vote-btn-reject:active {
+  transform: scale(0.96);
+  box-shadow: 0 2px 10px rgba(127, 29, 29, 0.3);
+}
+
+/* Player card hover effect */
+.player-card {
+  transition: all 0.2s ease;
+}
+
+.player-card:active {
+  transform: scale(0.97);
+}
+
+/* Night overlay */
+.night-overlay {
+  background: radial-gradient(ellipse at center, rgba(10, 10, 30, 0.9) 0%, rgba(0, 0, 5, 0.98) 100%);
+}
+
+/* Mobile safe area */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Prevent zoom on double tap */
+* {
+  touch-action: manipulation;
+}
+
+/* Font override for headings */
+h1, h2, h3 {
+  font-family: 'Cinzel', serif;
+}
