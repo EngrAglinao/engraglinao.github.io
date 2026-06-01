@@ -1,165 +1,207 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=IM+Fell+English:ital@0;1&display=swap');
 @import "tailwindcss";
 
-/* Custom utilities */
-@layer utilities {
-  .text-shadow-glow {
-    text-shadow: 0 0 20px rgba(251, 191, 36, 0.6);
-  }
-  .border-glow-amber {
-    box-shadow: 0 0 15px rgba(251, 191, 36, 0.3), inset 0 0 15px rgba(251, 191, 36, 0.05);
-  }
-  .border-glow-blue {
-    box-shadow: 0 0 15px rgba(59, 130, 246, 0.3), inset 0 0 15px rgba(59, 130, 246, 0.05);
-  }
-  .border-glow-red {
-    box-shadow: 0 0 15px rgba(239, 68, 68, 0.3), inset 0 0 15px rgba(239, 68, 68, 0.05);
-  }
-  .active\:scale-98:active {
-    transform: scale(0.98);
-  }
+/* ─── Base ──────────────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Prevent text selection on game elements */
-.no-select {
-  user-select: none;
-  -webkit-user-select: none;
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #09090b;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+  min-height: 100dvh;
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
+#root {
+  min-height: 100dvh;
 }
 
-/* Card flip styles */
-.perspective-1000 {
-  perspective: 1000px;
-}
+/* ─── Scrollbar ─────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #92400e55; border-radius: 4px; }
 
-.preserve-3d {
-  transform-style: preserve-3d;
-}
+/* ─── Typography ────────────────────────────────────────────── */
+.font-serif { font-family: 'Cinzel', Georgia, serif !important; }
+.font-body  { font-family: 'IM Fell English', Georgia, serif !important; }
 
-.backface-hidden {
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
+/* ─── Animations ────────────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+.animate-fade-in { animation: fade-in 0.35s ease-out forwards; }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 4px;
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+.animate-slide-up { animation: slide-up 0.4s cubic-bezier(0.16,1,0.3,1) forwards; }
 
-::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2);
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
 }
+.animate-scale-in { animation: scale-in 0.3s cubic-bezier(0.16,1,0.3,1) forwards; }
 
-::-webkit-scrollbar-thumb {
-  background: rgba(251, 191, 36, 0.3);
-  border-radius: 2px;
+@keyframes card-flip-show {
+  from { transform: rotateY(90deg); opacity: 0; }
+  to   { transform: rotateY(0deg); opacity: 1; }
 }
+.animate-card-flip { animation: card-flip-show 0.5s cubic-bezier(0.16,1,0.3,1) forwards; }
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(251, 191, 36, 0.5);
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 12px rgba(217, 119, 6, 0.3); }
+  50%       { box-shadow: 0 0 28px rgba(217, 119, 6, 0.7), 0 0 60px rgba(217,119,6,0.2); }
 }
+.pulse-glow { animation: pulse-glow 2.5s ease-in-out infinite; }
 
-/* Animations */
-@keyframes twinkle {
-  0% { opacity: 0.1; transform: scale(0.8); }
-  100% { opacity: 0.9; transform: scale(1.2); }
+@keyframes evil-pulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(220, 38, 38, 0.3); }
+  50%       { box-shadow: 0 0 28px rgba(220, 38, 38, 0.7), 0 0 60px rgba(220,38,38,0.2); }
 }
+.evil-pulse { animation: evil-pulse 2.5s ease-in-out infinite; }
 
-@keyframes float-up {
-  0% { transform: translateY(0) scale(1); opacity: 1; }
-  100% { transform: translateY(-60px) scale(0); opacity: 0; }
+@keyframes good-pulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(59, 130, 246, 0.3); }
+  50%       { box-shadow: 0 0 28px rgba(59, 130, 246, 0.7), 0 0 60px rgba(59,130,246,0.2); }
 }
+.good-pulse { animation: good-pulse 2.5s ease-in-out infinite; }
 
 @keyframes shimmer {
-  0% { background-position: -200% center; }
+  0%   { background-position: -200% center; }
   100% { background-position: 200% center; }
 }
-
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.animate-float-up {
-  animation: float-up 2s ease-out forwards;
-}
-
-.animate-shimmer {
+.shimmer-text {
+  background: linear-gradient(90deg, #d97706, #fbbf24, #f59e0b, #d97706);
   background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   animation: shimmer 3s linear infinite;
 }
 
-.animate-spin-slow {
-  animation: spin-slow 8s linear infinite;
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+.animate-float { animation: float 3s ease-in-out infinite; }
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.animate-spin-slow { animation: spin-slow 8s linear infinite; }
+
+/* ─── Card 3D Styles ────────────────────────────────────────── */
+.card-3d-container {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+.card-3d-inner {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-3d-inner.flipped {
+  transform: rotateY(180deg);
+}
+.card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.card-back {
+  /* front side showing */
+}
+.card-front {
+  transform: rotateY(180deg);
 }
 
-/* Quest token pulse */
-@keyframes quest-pulse {
-  0%, 100% {
-    box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.7), 0 0 40px rgba(245, 158, 11, 0.3);
-  }
+/* ─── Glass Morphism ────────────────────────────────────────── */
+.glass {
+  background: rgba(17, 17, 24, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.06);
 }
 
+.glass-amber {
+  background: rgba(120, 53, 15, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(217,119,6,0.25);
+}
+
+/* ─── Button Active States ──────────────────────────────────── */
+.btn-press {
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.btn-press:active {
+  transform: scale(0.96);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
+}
+
+/* ─── Ornamental Divider ────────────────────────────────────── */
+.divider-ornament::before,
+.divider-ornament::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(217,119,6,0.5), transparent);
+}
+
+/* ─── Particle-like dots bg ─────────────────────────────────── */
+.bg-stars {
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.15) 0%, transparent 100%),
+    radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,0.1) 0%, transparent 100%),
+    radial-gradient(1px 1px at 50% 70%, rgba(255,255,255,0.12) 0%, transparent 100%),
+    radial-gradient(1px 1px at 10% 90%, rgba(255,255,255,0.08) 0%, transparent 100%),
+    radial-gradient(1px 1px at 70% 50%, rgba(255,255,255,0.1) 0%, transparent 100%);
+}
+
+/* ─── Vote Pill ─────────────────────────────────────────────── */
+.vote-approve {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  border: 1px solid #3b82f6;
+}
+.vote-reject {
+  background: linear-gradient(135deg, #b91c1c, #991b1b);
+  border: 1px solid #ef4444;
+}
+
+/* ─── Quest Result Colors ───────────────────────────────────── */
+.quest-success {
+  background: linear-gradient(135deg, #1e3a5f, #1e3a8a);
+  border: 2px solid #3b82f6;
+}
+.quest-fail {
+  background: linear-gradient(135deg, #4c0519, #7f1d1d);
+  border: 2px solid #ef4444;
+}
 .quest-active {
-  animation: quest-pulse 2s ease-in-out infinite;
+  background: linear-gradient(135deg, #451a03, #78350f);
+  border: 2px solid #d97706;
+}
+.quest-pending {
+  background: rgba(30,30,40,0.5);
+  border: 2px dashed #374151;
 }
 
-/* Vote button styles */
-.vote-btn-approve {
-  background: linear-gradient(135deg, #166534, #15803d);
-  border: 1px solid rgba(74, 222, 128, 0.4);
-  box-shadow: 0 4px 20px rgba(22, 101, 52, 0.4);
-}
+/* ─── Mobile safe areas ─────────────────────────────────────── */
+.safe-bottom { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+.safe-top    { padding-top: max(16px, env(safe-area-inset-top)); }
 
-.vote-btn-approve:active {
-  transform: scale(0.96);
-  box-shadow: 0 2px 10px rgba(22, 101, 52, 0.3);
-}
-
-.vote-btn-reject {
-  background: linear-gradient(135deg, #7f1d1d, #991b1b);
-  border: 1px solid rgba(252, 165, 165, 0.3);
-  box-shadow: 0 4px 20px rgba(127, 29, 29, 0.4);
-}
-
-.vote-btn-reject:active {
-  transform: scale(0.96);
-  box-shadow: 0 2px 10px rgba(127, 29, 29, 0.3);
-}
-
-/* Player card hover effect */
-.player-card {
-  transition: all 0.2s ease;
-}
-
-.player-card:active {
-  transform: scale(0.97);
-}
-
-/* Night overlay */
-.night-overlay {
-  background: radial-gradient(ellipse at center, rgba(10, 10, 30, 0.9) 0%, rgba(0, 0, 5, 0.98) 100%);
-}
-
-/* Mobile safe area */
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .safe-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-}
-
-/* Prevent zoom on double tap */
-* {
-  touch-action: manipulation;
-}
-
-/* Font override for headings */
-h1, h2, h3 {
-  font-family: 'Cinzel', serif;
+/* ─── No select on interactive elements ─────────────────────── */
+button, .no-select {
+  -webkit-user-select: none;
+  user-select: none;
 }

@@ -1,142 +1,117 @@
-import { GameState, Player, QUEST_TEAM_SIZES, QUEST_FAIL_REQUIRED } from '../types';
+import { useGame } from '../context/GameContext';
+import { QUEST_SIZES, FAILS_REQUIRED } from '../types';
 
-interface QuestBoardProps {
-  gameState: GameState;
-  myPlayer: Player;
-  compact?: boolean;
-}
+export default function QuestBoard() {
+  const { currentRoom } = useGame();
+  if (!currentRoom) return null;
 
-export default function QuestBoard({ gameState, myPlayer, compact = false }: QuestBoardProps) {
-  const players = Object.values(gameState.players || {});
+  const players = Object.values(currentRoom.players);
   const playerCount = players.length;
-  const questSizes = QUEST_TEAM_SIZES[playerCount] || [2,3,2,3,3];
-  const failRequired = QUEST_FAIL_REQUIRED[playerCount] || [1,1,1,1,1];
-  const results = gameState.questResults || [];
-  const successCount = results.filter(r => r.success).length;
-  const failCount = results.filter(r => !r.success).length;
-  const currentRound = gameState.currentRound || 1;
+  const questSizes = QUEST_SIZES[playerCount] || QUEST_SIZES[5];
+  const failsRequired = FAILS_REQUIRED[playerCount] || FAILS_REQUIRED[5];
+  const questResults = currentRoom.questResults || [];
+  const currentRound = currentRoom.currentRound;
 
-  const leaderIndex = gameState.currentLeaderIndex || 0;
-  const leaderId = gameState.currentLeaderId || players[leaderIndex]?.id;
-  const leader = players.find(p => p.id === leaderId) || players[leaderIndex];
-  const rejectedVotes = gameState.rejectedVotes || 0;
+  const goodWins = questResults.filter(r => r.success).length;
+  const evilWins = questResults.filter(r => !r.success).length;
 
   return (
-    <div className={`bg-white/5 border border-amber-400/20 rounded-2xl ${compact ? 'p-3' : 'p-4'} w-full`}>
-      {/* Title */}
-      <div className="text-center mb-3">
-        <p className="text-amber-400/70 text-xs tracking-widest">⚔️ QUEST BOARD ⚔️</p>
-      </div>
-
+    <div className="bg-gray-900/90 border border-amber-800/40 rounded-2xl p-4 mb-4">
       {/* Score */}
-      <div className="flex items-center justify-center gap-4 mb-4">
-        <div className="text-center">
-          <div className="text-3xl font-bold text-blue-400">{successCount}</div>
-          <div className="text-xs text-blue-300/70">Good</div>
+      <div className="flex justify-between items-center mb-3">
+        <div className="flex items-center gap-2">
+          <div className="flex gap-1">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i}
+                className={`w-5 h-5 rounded-full border-2 transition-all ${
+                  i < goodWins ? 'bg-blue-500 border-blue-400' : 'bg-transparent border-blue-800/50'
+                }`}
+              />
+            ))}
+          </div>
+          <span className="text-blue-400 text-sm font-bold">Good</span>
         </div>
-        <div className="text-gray-600 text-2xl font-light">—</div>
-        <div className="text-center">
-          <div className="text-3xl font-bold text-red-400">{failCount}</div>
-          <div className="text-xs text-red-300/70">Evil</div>
+        <span className="text-amber-500 text-lg font-black">⚜️</span>
+        <div className="flex items-center gap-2">
+          <span className="text-red-400 text-sm font-bold">Evil</span>
+          <div className="flex gap-1">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i}
+                className={`w-5 h-5 rounded-full border-2 transition-all ${
+                  i < evilWins ? 'bg-red-500 border-red-400' : 'bg-transparent border-red-800/50'
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Quest Tokens */}
-      <div className="flex justify-center gap-2 mb-4">
+      {/* Quest Slots */}
+      <div className="flex gap-2 justify-center">
         {questSizes.map((size, i) => {
-          const result = results.find(r => r.round === i + 1);
-          const isCurrent = i + 1 === currentRound;
-          const isDone = !!result;
-          const isSuccess = result?.success;
-          const needsTwo = failRequired[i] > 1;
+          const questNum = i + 1;
+          const result = questResults.find(r => r.round === questNum);
+          const isCurrentRound = questNum === currentRound;
+          const twoFailsRequired = failsRequired[i] > 1;
 
           return (
-            <div key={i} className="flex flex-col items-center gap-1">
-              <div className={`relative w-12 h-12 rounded-full border-2 flex flex-col items-center justify-center transition-all ${
-                isDone
-                  ? isSuccess
-                    ? 'bg-blue-500/30 border-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.5)]'
-                    : 'bg-red-500/30 border-red-400 shadow-[0_0_15px_rgba(239,68,68,0.5)]'
-                  : isCurrent
-                  ? 'bg-amber-500/20 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.4)] animate-pulse'
-                  : 'bg-white/5 border-white/20'
+            <div key={i}
+              className={`flex-1 flex flex-col items-center rounded-xl border-2 p-2 transition-all ${
+                result
+                  ? result.success
+                    ? 'bg-blue-900/60 border-blue-500'
+                    : 'bg-red-900/60 border-red-500'
+                  : isCurrentRound
+                    ? 'bg-amber-900/40 border-amber-500 ring-2 ring-amber-500/30'
+                    : 'bg-gray-800/40 border-gray-700/40'
+              }`}
+            >
+              {/* Quest Number */}
+              <span className={`text-xs font-bold mb-1 ${
+                result
+                  ? result.success ? 'text-blue-300' : 'text-red-300'
+                  : isCurrentRound ? 'text-amber-400' : 'text-gray-500'
+              }`}>Q{questNum}</span>
+
+              {/* Result Icon */}
+              <div className="text-lg mb-1">
+                {result
+                  ? result.success ? '✅' : '❌'
+                  : isCurrentRound ? '⚡' : '○'
+                }
+              </div>
+
+              {/* Team Size */}
+              <span className={`text-xs font-semibold ${
+                isCurrentRound ? 'text-amber-300' : 'text-gray-500'
               }`}>
-                {isDone ? (
-                  <span className="text-xl">{isSuccess ? '✅' : '❌'}</span>
-                ) : isCurrent ? (
-                  <span className="text-lg">⚔️</span>
-                ) : (
-                  <span className="text-white/30 text-sm">○</span>
-                )}
-                {needsTwo && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-amber-500 rounded-full text-black text-xs flex items-center justify-center font-bold leading-none">2</span>
-                )}
-              </div>
-              <div className="text-center">
-                <span className="text-xs font-bold text-white/60">{size}</span>
-                {needsTwo && <span className="text-xs text-amber-400 block leading-none">★</span>}
-              </div>
+                👥{size}
+              </span>
+
+              {/* Double fail indicator */}
+              {twoFailsRequired && (
+                <span className="text-yellow-500 text-xs mt-0.5" title="Requires 2 fails">2✗</span>
+              )}
+
+              {/* Fail count on completed */}
+              {result && !result.success && result.fails > 0 && (
+                <span className="text-red-400 text-xs">{result.fails}✗</span>
+              )}
             </div>
           );
         })}
       </div>
 
-      {/* Win progress bar */}
-      <div className="mb-3">
-        <div className="flex gap-1 h-2">
-          <div className="flex-1 flex gap-0.5">
-            {[0,1,2].map(i => (
-              <div key={i} className={`flex-1 rounded-full transition-all ${i < successCount ? 'bg-blue-500' : 'bg-white/10'}`} />
-            ))}
-          </div>
-          <div className="w-px bg-white/20" />
-          <div className="flex-1 flex gap-0.5">
-            {[0,1,2].map(i => (
-              <div key={i} className={`flex-1 rounded-full transition-all ${i < failCount ? 'bg-red-500' : 'bg-white/10'}`} />
-            ))}
-          </div>
-        </div>
-        <div className="flex justify-between mt-1">
-          <span className="text-blue-400 text-xs">Good needs 3</span>
-          <span className="text-red-400 text-xs">Evil needs 3</span>
-        </div>
-      </div>
-
-      {/* Current state */}
-      {!compact && (
-        <div className="space-y-2">
-          {/* Leader */}
-          {leader && (
-            <div className="flex items-center justify-between bg-amber-500/10 border border-amber-400/20 rounded-xl px-3 py-2">
-              <span className="text-amber-300 text-xs">👑 Quest Leader</span>
-              <div className="flex items-center gap-1.5">
-                <span className="text-lg">{leader.avatar}</span>
-                <span className="text-white text-xs font-semibold">
-                  {leader.name} {leader.id === myPlayer.id ? '(You)' : ''}
-                </span>
-              </div>
-            </div>
-          )}
-
-          {/* Rejected votes tracker */}
-          <div className="flex items-center justify-between bg-white/5 border border-white/10 rounded-xl px-3 py-2">
-            <span className="text-gray-400 text-xs">Team Rejections</span>
-            <div className="flex gap-1">
-              {[0,1,2,3,4].map(i => (
-                <div key={i} className={`w-4 h-4 rounded-full border ${
-                  i < rejectedVotes ? 'bg-red-500 border-red-400' : 'bg-white/5 border-white/20'
-                }`} />
-              ))}
-            </div>
-          </div>
-
-          {/* ★ note for double-fail quests */}
-          {failRequired[currentRound - 1] > 1 && (
-            <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-3 py-2">
-              <p className="text-amber-300 text-xs">★ This quest requires 2 fail votes to fail</p>
-            </div>
-          )}
-        </div>
+      {/* Win condition message */}
+      {goodWins >= 2 && evilWins < 3 && (
+        <p className="text-blue-300 text-xs text-center mt-2">
+          ⚔️ Good needs {3 - goodWins} more quest{3 - goodWins !== 1 ? 's' : ''} to win!
+        </p>
+      )}
+      {evilWins >= 2 && goodWins < 3 && (
+        <p className="text-red-300 text-xs text-center mt-2">
+          💀 Evil needs {3 - evilWins} more quest{3 - evilWins !== 1 ? 's' : ''} to win!
+        </p>
       )}
     </div>
   );

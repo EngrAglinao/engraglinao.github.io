@@ -1,92 +1,85 @@
-export type Role =
-  | 'merlin'
-  | 'percival'
-  | 'loyal_servant'
-  | 'morgana'
-  | 'assassin'
-  | 'mordred'
-  | 'oberon'
-  | 'minion';
+export type CharacterName =
+  | 'Merlin'
+  | 'Percival'
+  | 'Morgana'
+  | 'Mordred'
+  | 'Oberon'
+  | 'Assassin'
+  | 'Loyal Servant'
+  | 'Minion of Mordred';
 
-export type Alignment = 'good' | 'evil';
+export type Team = 'good' | 'evil';
 
 export type GamePhase =
   | 'lobby'
   | 'night'
-  | 'team_selection'
+  | 'day'
   | 'team_vote'
-  | 'quest_vote'
-  | 'quest_result'
+  | 'quest'
   | 'assassination'
-  | 'game_over';
+  | 'end';
 
-export interface RoleDefinition {
-  id: Role;
-  name: string;
-  alignment: Alignment;
+export interface Character {
+  name: CharacterName;
+  team: Team;
   description: string;
-  nightInfo: string;
   image: string;
-  minPlayers: number;
-  special: boolean;
+  sees: CharacterName[];
+  seenAs?: string;
+  special?: string;
 }
 
 export interface Player {
   id: string;
   name: string;
   avatar: string;
-  role?: Role;
+  email?: string;
   isHost: boolean;
-  isConnected: boolean;
-  ipAddress?: string;
+  isAdmin: boolean;
+  character?: CharacterName;
+  connected: boolean;
   hasVoted?: boolean;
   vote?: string;
   isOnQuest?: boolean;
-  isSelected?: boolean;
+  isLeader?: boolean;
 }
 
 export interface QuestResult {
   round: number;
   success: boolean;
   teamSize: number;
-  failVotes: number;
-  team: string[];
+  fails: number;
 }
 
-export interface GameState {
+export interface Room {
   id: string;
-  phase: GamePhase;
-  players: Record<string, Player>;
+  code: string;
   hostId: string;
+  players: Record<string, Player>;
+  phase: GamePhase;
+  questResults: QuestResult[];
   currentRound: number;
   currentLeaderIndex: number;
-  rejectedVotes: number;
-  selectedTeam: string[];
-  questResults: QuestResult[];
-  availableRoles: Role[];
-  teamVotes: Record<string, 'approve' | 'reject'>;
+  teamProposal: string[];
+  votes: Record<string, 'approve' | 'reject'>;
   questVotes: Record<string, 'success' | 'fail'>;
+  consecutiveRejections: number;
   assassinTarget?: string;
-  winner?: 'good' | 'evil';
-  winReason?: string;
+  winner?: Team;
+  enabledCharacters: CharacterName[];
+  revealRoles?: boolean;
   nightPhaseComplete?: boolean;
+  createdAt: number;
+  gameStarted: boolean;
+}
+
+export interface AppSettings {
   gameName: string;
-  gameIcon?: string;
-  createdAt: number;
-  currentLeaderId?: string;
+  gameIcon: string;
 }
 
-export interface RoomInfo {
-  id: string;
-  hostId: string;
-  hostName: string;
-  playerCount: number;
-  maxPlayers: number;
-  status: 'waiting' | 'playing';
-  createdAt: number;
-}
-
-export const QUEST_TEAM_SIZES: Record<number, number[]> = {
+// Quest team sizes per player count [round1, round2, round3, round4, round5]
+export const QUEST_SIZES: Record<number, number[]> = {
   5:  [2, 3, 2, 3, 3],
   6:  [2, 3, 4, 3, 4],
   7:  [2, 3, 3, 4, 4],
@@ -95,7 +88,8 @@ export const QUEST_TEAM_SIZES: Record<number, number[]> = {
   10: [3, 4, 4, 5, 5],
 };
 
-export const QUEST_FAIL_REQUIRED: Record<number, number[]> = {
+// Number of fails required per quest per player count
+export const FAILS_REQUIRED: Record<number, number[]> = {
   5:  [1, 1, 1, 1, 1],
   6:  [1, 1, 1, 1, 1],
   7:  [1, 1, 1, 2, 1],
@@ -104,99 +98,131 @@ export const QUEST_FAIL_REQUIRED: Record<number, number[]> = {
   10: [1, 1, 1, 2, 1],
 };
 
-export const PLAYER_ROLE_COUNTS: Record<number, { good: number; evil: number }> = {
-  5:  { good: 3, evil: 2 },
-  6:  { good: 4, evil: 2 },
-  7:  { good: 4, evil: 3 },
-  8:  { good: 5, evil: 3 },
-  9:  { good: 6, evil: 3 },
-  10: { good: 6, evil: 4 },
-};
-
-export const ROLE_DEFINITIONS: Record<Role, RoleDefinition> = {
-  merlin: {
-    id: 'merlin',
+export const ALL_CHARACTERS: Character[] = [
+  {
     name: 'Merlin',
-    alignment: 'good',
-    description: 'Knows who the evil players are (except Mordred). Must guide the good team without revealing identity.',
-    nightInfo: 'You see all Evil players except Mordred.',
-    image: '/cards/merlin.png',
-    minPlayers: 5,
-    special: true,
+    team: 'good',
+    description: 'Knows all Evil players except Mordred. Must stay hidden from the Assassin.',
+    image: '/images/merlin.jpg',
+    sees: ['Morgana', 'Oberon', 'Assassin', 'Minion of Mordred'],
+    special: 'If Good wins, Assassin may guess Merlin. If correct, Evil wins.',
   },
-  percival: {
-    id: 'percival',
+  {
     name: 'Percival',
-    alignment: 'good',
-    description: 'Sees two players — Merlin and Morgana — but does not know which is which.',
-    nightInfo: 'You see Merlin and Morgana, but cannot tell them apart.',
-    image: '/cards/percival.png',
-    minPlayers: 5,
-    special: true,
+    team: 'good',
+    description: 'Sees Merlin and Morgana but cannot tell which is which.',
+    image: '/images/percival.jpg',
+    sees: ['Merlin', 'Morgana'],
+    seenAs: 'Merlin or Morgana (unknown)',
   },
-  loyal_servant: {
-    id: 'loyal_servant',
-    name: 'Loyal Servant',
-    alignment: 'good',
-    description: 'A loyal knight of Arthur with no special knowledge. Use logic and deduction to root out evil.',
-    nightInfo: 'You have no special knowledge. Use your wits.',
-    image: '/cards/loyal_servant.png',
-    minPlayers: 5,
-    special: false,
-  },
-  morgana: {
-    id: 'morgana',
+  {
     name: 'Morgana',
-    alignment: 'evil',
-    description: 'Evil sorceress who appears as Merlin to Percival. Knows fellow evil allies.',
-    nightInfo: 'You appear as Merlin to Percival. You know your evil allies.',
-    image: '/cards/morgana.png',
-    minPlayers: 5,
-    special: true,
+    team: 'evil',
+    description: 'Appears as Merlin to Percival. Knows other Evil players.',
+    image: '/images/morgana.jpg',
+    sees: ['Assassin', 'Mordred', 'Minion of Mordred'],
+    seenAs: 'Merlin (to Percival)',
+    special: 'Confuses Percival about who the real Merlin is.',
   },
-  assassin: {
-    id: 'assassin',
-    name: 'Assassin',
-    alignment: 'evil',
-    description: 'If Good succeeds 3 quests, the Assassin gets one chance to identify and kill Merlin.',
-    nightInfo: 'If Good wins, you may assassinate Merlin to steal victory.',
-    image: '/cards/assassin.png',
-    minPlayers: 5,
-    special: true,
-  },
-  mordred: {
-    id: 'mordred',
+  {
     name: 'Mordred',
-    alignment: 'evil',
-    description: 'Hidden from Merlin. Knows evil allies. The most dangerous hidden enemy.',
-    nightInfo: 'Merlin cannot see you. You know your evil allies.',
-    image: '/cards/mordred.png',
-    minPlayers: 7,
-    special: true,
+    team: 'evil',
+    description: 'Hidden from Merlin. Knows other Evil players.',
+    image: '/images/mordred.jpg',
+    sees: ['Morgana', 'Assassin', 'Minion of Mordred'],
+    special: 'Merlin cannot see Mordred — the ultimate hidden threat.',
   },
-  oberon: {
-    id: 'oberon',
+  {
     name: 'Oberon',
-    alignment: 'evil',
-    description: 'Evil but unknown to other evil players. Neither knows nor is known by evil allies.',
-    nightInfo: 'You are alone. Other evil players do not know you, and you do not know them.',
-    image: '/cards/oberon.png',
-    minPlayers: 7,
-    special: true,
+    team: 'evil',
+    description: 'Does not know other Evil players, and they do not know Oberon.',
+    image: '/images/oberon.jpg',
+    sees: [],
+    special: 'Completely isolated from the Evil team. A rogue agent.',
   },
-  minion: {
-    id: 'minion',
+  {
+    name: 'Assassin',
+    team: 'evil',
+    description: 'Knows Evil teammates. If Good wins 3 quests, may assassinate Merlin.',
+    image: '/images/assassin.jpg',
+    sees: ['Morgana', 'Mordred', 'Minion of Mordred'],
+    special: 'If Assassin correctly identifies Merlin, Evil wins despite quest results.',
+  },
+  {
+    name: 'Loyal Servant',
+    team: 'good',
+    description: 'A loyal servant of King Arthur with no special knowledge.',
+    image: '/images/loyal_servant.jpg',
+    sees: [],
+  },
+  {
     name: 'Minion of Mordred',
-    alignment: 'evil',
-    description: 'A generic evil player who knows fellow evil allies (except Oberon).',
-    nightInfo: 'You know your evil allies (except Oberon).',
-    image: '/cards/minion.png',
-    minPlayers: 5,
-    special: false,
+    team: 'evil',
+    description: 'A minion serving Mordred. Knows all Evil teammates.',
+    image: '/images/minion.jpg',
+    sees: ['Morgana', 'Mordred', 'Assassin'],
   },
-};
-
-export const AVATARS = [
-  '👑', '⚔️', '🛡️', '🏹', '🔮', '🗡️', '🪄', '🏰', '⚡', '🌙',
-  '🌟', '🦅', '🐉', '🍀', '🔱', '🎭', '🌹', '🦁', '🦊', '🐺',
 ];
+
+export function getCharacter(name: CharacterName): Character {
+  return ALL_CHARACTERS.find(c => c.name === name)!;
+}
+
+// Generate character assignment for a given player count & enabled characters
+export function assignCharacters(
+  playerCount: number,
+  enabledSpecials: CharacterName[]
+): CharacterName[] {
+  const goodSpecials: CharacterName[] = ['Merlin', 'Percival'].filter(c =>
+    enabledSpecials.includes(c as CharacterName)
+  ) as CharacterName[];
+
+  const evilSpecials: CharacterName[] = ['Morgana', 'Mordred', 'Oberon', 'Assassin'].filter(c =>
+    enabledSpecials.includes(c as CharacterName)
+  ) as CharacterName[];
+
+  const evilCount = playerCount <= 6 ? 2 : playerCount <= 9 ? 3 : 4;
+  const goodCount = playerCount - evilCount;
+
+  const evilRoles: CharacterName[] = [...evilSpecials];
+  while (evilRoles.length < evilCount) {
+    evilRoles.push('Minion of Mordred');
+  }
+  evilRoles.splice(evilCount);
+
+  const goodRoles: CharacterName[] = [...goodSpecials];
+  while (goodRoles.length < goodCount) {
+    goodRoles.push('Loyal Servant');
+  }
+  goodRoles.splice(goodCount);
+
+  // Ensure Assassin is always in evil if Merlin is enabled and no other evil special
+  if (
+    goodSpecials.includes('Merlin') &&
+    !evilRoles.includes('Assassin') &&
+    evilRoles.includes('Minion of Mordred')
+  ) {
+    const idx = evilRoles.indexOf('Minion of Mordred');
+    evilRoles[idx] = 'Assassin';
+  }
+
+  return shuffle([...goodRoles, ...evilRoles]);
+}
+
+export function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+export function generateRoomCode(): string {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) {
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return code;
+}
