@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Are You a Functional Human Being Today?</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    /* =============================================
+       GLOBAL & BACKGROUND
+    ============================================= */
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+      --yellow: #FFE566;
+      --pink: #FF6EB4;
+      --cyan: #5EF6FF;
+      --purple: #C084FC;
+      --green: #86EFAC;
+      --orange: #FFA040;
+      --black: #1a1a2e;
+      --white: #FFFEF7;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background-color: var(--black);
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: var(--white);
+    }
+
+    /* =============================================
+       ANIMATED BACKGROUND BLOBS
+    ============================================= */
+    .bg-blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.25;
+      pointer-events: none;
+      z-index: 0;
+      animation: blobFloat linear infinite;
+    }
+    .blob-1 { width: 400px; height: 400px; background: var(--pink); top: -100px; left: -100px; animation-duration: 18s; }
+    .blob-2 { width: 350px; height: 350px; background: var(--cyan); bottom: -80px; right: -80px; animation-duration: 22s; animation-delay: -7s; }
+    .blob-3 { width: 280px; height: 280px; background: var(--purple); top: 40%; left: 60%; animation-duration: 15s; animation-delay: -3s; }
+    .blob-4 { width: 220px; height: 220px; background: var(--yellow); top: 60%; left: 10%; animation-duration: 19s; animation-delay: -10s; }
+
+    @keyframes blobFloat {
+      0%   { transform: translate(0, 0) scale(1); }
+      25%  { transform: translate(30px, -40px) scale(1.05); }
+      50%  { transform: translate(-20px, 30px) scale(0.95); }
+      75%  { transform: translate(40px, 20px) scale(1.08); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+
+    /* =============================================
+       FLOATING EMOJI PARTICLES
+    ============================================= */
+    .particle {
+      position: fixed;
+      font-size: 1.8rem;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.15;
+      animation: particleFloat linear infinite;
+    }
+    @keyframes particleFloat {
+      0%   { transform: translateY(0px) rotate(0deg); opacity: 0.15; }
+      50%  { transform: translateY(-30px) rotate(180deg); opacity: 0.25; }
+      100% { transform: translateY(0px) rotate(360deg); opacity: 0.15; }
+    }
+
+    /* =============================================
+       PHASE SECTIONS
+    ============================================= */
+    .phase {
+      position: relative;
+      z-index: 10;
+      display: none;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 2rem;
+    }
+    .phase.active {
+      display: flex;
+    }
+
+    /* =============================================
+       PHASE 1 - THE BAIT
+    ============================================= */
+    .main-card {
+      background: rgba(255,255,255,0.05);
+      border: 3px solid rgba(255,255,255,0.15);
+      border-radius: 28px;
+      padding: 3rem 2.5rem;
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+      animation: cardPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    }
+    @keyframes cardPop {
+      0%   { opacity: 0; transform: scale(0.7) translateY(40px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .question-label {
+      display: inline-block;
+      background: var(--yellow);
+      color: var(--black);
+      font-weight: 800;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.35rem 1rem;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+      border: 2px solid var(--black);
+    }
+
+    .main-question {
+      font-size: clamp(1.5rem, 4vw, 2.4rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+      color: var(--white);
+    }
+
+    .sub-question {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 2.5rem;
+    }
+
+    .attempt-counter {
+      font-size: 0.8rem;
+      color: var(--pink);
+      margin-bottom: 1rem;
+      min-height: 1.2em;
+      font-weight: 600;
+    }
+
+    .btn-no {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: var(--pink);
+      color: var(--black);
+      font-weight: 800;
+      font-size: 1.2rem;
+      padding: 1rem 2.5rem;
+      border-radius: 16px;
+      border: 3px solid var(--black);
+      cursor: pointer;
+      box-shadow: 5px 5px 0 var(--black);
+      transition: transform 0.12s, box-shadow 0.12s;
+      user-select: none;
+    }
+    .btn-no:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 7px 7px 0 var(--black);
+    }
+    .btn-no:active {
+      transform: translate(3px, 3px);
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    /* YES button - fixed position so it can teleport anywhere */
+    #btn-yes {
+      position: fixed;
+      background: var(--cyan);
+      color: var(--black);
+      font-weight: 800;
+      font-size: 1.2rem;
+      padding: 1rem 2.5rem;
+      border-radius: 16px;
+      border: 3px solid var(--black);
+      cursor: pointer;
+      box-shadow: 5px 5px 0 var(--black);
+      transition: left 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  top 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      z-index: 9999;
+      user-select: none;
+      white-space: nowrap;
+      display: none;
+    }
+    #btn-yes.visible { display: inline-flex; align-items: center; gap: 0.5rem; }
+    #btn-yes.surrendered {
+      transition: left 0.25s, top 0.25s, transform 0.1s !important;
+      animation: btnShake 0.5s ease-in-out infinite;
+    }
+    #btn-yes:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 7px 7px 0 var(--black);
+    }
+    #btn-yes:active {
+      transform: translate(3px, 3px);
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* Placeholder for YES button positioning */
+    #yes-placeholder {
+      display: inline-block;
+      background: var(--cyan);
+      color: var(--black);
+      font-weight: 800;
+      font-size: 1.2rem;
+      padding: 1rem 2.5rem;
+      border-radius: 16px;
+      border: 3px solid var(--black);
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    @keyframes btnShake {
+      0%, 100% { transform: rotate(0deg); }
+      20%       { transform: rotate(-3deg) translateX(-3px); }
+      40%       { transform: rotate(3deg) translateX(3px); }
+      60%       { transform: rotate(-2deg) translateX(-2px); }
+      80%       { transform: rotate(2deg) translateX(2px); }
+    }
+
+    /* =============================================
+       PHASE 2 - CAPTCHA
+    ============================================= */
+    .captcha-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      backdrop-filter: blur(6px);
+      display: none;
+    }
+    .captcha-overlay.active { display: flex; }
+
+    .captcha-box {
+      background: #f9f9f9;
+      color: #222;
+      border-radius: 12px;
+      border: 3px solid #222;
+      box-shadow: 8px 8px 0 #222;
+      max-width: 520px;
+      width: 100%;
+      overflow: hidden;
+      animation: cardPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    }
+
+    .captcha-header {
+      background: #4285F4;
+      color: white;
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+    .captcha-header .logo {
+      display: flex; align-items: center; gap: 0.5rem; font-size: 1rem;
+    }
+    .captcha-header .logo span { font-size: 1.4rem; }
+
+    .captcha-body { padding: 1.25rem; }
+    .captcha-prompt {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+      color: #1a1a2e;
+    }
+    .captcha-subprompt {
+      font-size: 0.8rem;
+      color: #555;
+      margin-bottom: 1rem;
+    }
+
+    .captcha-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 1rem;
+    }
+    .captcha-cell {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 3px solid transparent;
+      cursor: pointer;
+      position: relative;
+      transition: border-color 0.15s;
+    }
+    .captcha-cell img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+    }
+    .captcha-cell.selected { border-color: #4285F4; }
+    .captcha-cell.selected::after {
+      content: '✓';
+      position: absolute;
+      top: 6px; right: 6px;
+      background: #4285F4;
+      color: white;
+      border-radius: 50%;
+      width: 22px; height: 22px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 900;
+    }
+
+    /* Round 3 special: single pixel target */
+    .pixel-canvas-wrap {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+      border: 2px solid #ccc;
+    }
+    .pixel-canvas-wrap img {
+      width: 100%; display: block;
+    }
+    .pixel-crosshair {
+      position: absolute;
+      width: 26px; height: 26px;
+      border: 2px solid red;
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      display: none;
+    }
+    .pixel-crosshair::before, .pixel-crosshair::after {
+      content: '';
+      position: absolute;
+      background: red;
+    }
+    .pixel-crosshair::before { width: 1px; height: 100%; left: 50%; top: 0; }
+    .pixel-crosshair::after  { width: 100%; height: 1px; top: 50%; left: 0; }
+
+    /* Round 3: banana drawing choice */
+    .banana-options {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .banana-choice {
+      flex: 1;
+      min-width: 100px;
+      aspect-ratio: 1;
+      border-radius: 10px;
+      border: 3px solid #ccc;
+      overflow: hidden;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem;
+      background: #fff;
+      transition: border-color 0.15s, transform 0.15s;
+      position: relative;
+    }
+    .banana-choice:hover { border-color: #4285F4; transform: scale(1.03); }
+    .banana-choice.selected { border-color: #4285F4; background: #e8f0fe; }
+    .banana-choice.selected::after {
+      content: '✓';
+      position: absolute;
+      top: 6px; right: 6px;
+      background: #4285F4;
+      color: white;
+      border-radius: 50%;
+      width: 22px; height: 22px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 900;
+    }
+    .banana-choice .label {
+      position: absolute;
+      bottom: 4px;
+      font-size: 0.6rem;
+      color: #888;
+      font-weight: 600;
+      text-align: center;
+      padding: 0 4px;
+    }
+
+    .captcha-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.25rem 1.25rem;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .captcha-error {
+      color: #e53e3e;
+      font-size: 0.82rem;
+      font-weight: 700;
+      min-height: 1.2em;
+      animation: shake 0.4s ease;
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-8px); }
+      40%      { transform: translateX(8px); }
+      60%      { transform: translateX(-6px); }
+      80%      { transform: translateX(6px); }
+    }
+
+    .btn-verify {
+      background: #4285F4;
+      color: white;
+      font-weight: 800;
+      font-size: 0.95rem;
+      padding: 0.65rem 1.75rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      box-shadow: 3px 3px 0 #1a56db;
+    }
+    .btn-verify:hover { background: #3172e3; transform: translate(-1px, -1px); }
+    .btn-verify:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #1a56db; }
+
+    .recaptcha-branding {
+      font-size: 0.65rem;
+      color: #999;
+      text-align: center;
+    }
+    .recaptcha-branding strong { color: #4285F4; }
+
+    /* =============================================
+       PHASE 3 - FINALE
+    ============================================= */
+    .finale-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .finale-overlay.active { display: flex; }
+
+    .finale-card {
+      background: linear-gradient(135deg, #FFE566, #FF6EB4, #5EF6FF, #C084FC);
+      background-size: 300% 300%;
+      animation: gradientFlow 3s ease infinite, cardPop 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+      border-radius: 28px;
+      border: 4px solid #1a1a2e;
+      box-shadow: 12px 12px 0 #1a1a2e;
+      max-width: 500px;
+      width: 100%;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    @keyframes gradientFlow {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .finale-emoji {
+      font-size: 4rem;
+      animation: emojiPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both 0.3s;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    @keyframes emojiPop {
+      0%   { transform: scale(0) rotate(-20deg); opacity: 0; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    .finale-title {
+      font-size: clamp(1.2rem, 4vw, 1.8rem);
+      font-weight: 900;
+      color: #1a1a2e;
+      margin-bottom: 0.75rem;
+      line-height: 1.2;
+    }
+    .finale-subtitle {
+      font-size: 1rem;
+      color: rgba(26,26,46,0.7);
+      margin-bottom: 1.75rem;
+    }
+    .finale-answer {
+      background: #1a1a2e;
+      color: var(--yellow);
+      border-radius: 14px;
+      padding: 1.25rem;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      border: 3px solid #1a1a2e;
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+      animation: textPulse 2s ease-in-out infinite;
+    }
+    @keyframes textPulse {
+      0%, 100% { box-shadow: 4px 4px 0 rgba(0,0,0,0.3), 0 0 0 rgba(255,229,102,0); }
+      50%       { box-shadow: 4px 4px 0 rgba(0,0,0,0.3), 0 0 20px rgba(255,229,102,0.6); }
+    }
+
+    .btn-restart {
+      background: #1a1a2e;
+      color: var(--white);
+      font-weight: 800;
+      font-size: 0.95rem;
+      padding: 0.75rem 2rem;
+      border-radius: 12px;
+      border: 3px solid #1a1a2e;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+    .btn-restart:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 rgba(0,0,0,0.3); }
+
+    /* =============================================
+       CONFETTI
+    ============================================= */
+    .confetti-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 499;
+      overflow: hidden;
+    }
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      top: -20px;
+      animation: confettiFall linear forwards;
+      border-radius: 2px;
+    }
+    @keyframes confettiFall {
+      0%   { transform: translateY(0) rotate(0deg) scaleX(1);   opacity: 1; }
+      80%  { opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg) scaleX(-1); opacity: 0; }
+    }
+
+    /* =============================================
+       MISC UTILITIES
+    ============================================= */
+    .round-badge {
+      display: inline-block;
+      background: #FFEDD5;
+      color: #C2410C;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      border: 2px solid #C2410C;
+      margin-bottom: 0.75rem;
+    }
+
+    .impossible-tag {
+      display: inline-block;
+      background: #FEF9C3;
+      color: #854D0E;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+      border: 1.5px solid #854D0E;
+    }
+
+    .progress-dots {
+      display: flex; gap: 6px; align-items: center;
+    }
+    .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #ddd;
+      border: 2px solid #ccc;
+    }
+    .dot.done { background: #4285F4; border-color: #4285F4; }
+    .dot.active { background: white; border-color: #4285F4; box-shadow: 0 0 0 3px #bfdbfe; }
+
+    /* Spinning loader on verify */
+    .loading-spin {
+      width: 16px; height: 16px;
+      border: 3px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      display: inline-block;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      background: #1a1a2e;
+      color: var(--yellow);
+      padding: 0.75rem 1.5rem;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      z-index: 9999;
+      border: 2px solid var(--yellow);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* NO button consequence modal */
+    .no-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 300;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      backdrop-filter: blur(4px);
+    }
+    .no-modal.active { display: flex; }
+    .no-modal-card {
+      background: var(--white);
+      color: var(--black);
+      border-radius: 20px;
+      border: 3px solid var(--black);
+      box-shadow: 8px 8px 0 var(--black);
+      padding: 2rem;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      animation: cardPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    }
+    .no-modal-card h3 { font-size: 1.5rem; font-weight: 900; margin-bottom: 0.5rem; }
+    .no-modal-card p { color: #555; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .btn-ok {
+      background: var(--pink);
+      color: var(--black);
+      font-weight: 800;
+      padding: 0.7rem 2rem;
+      border-radius: 12px;
+      border: 3px solid var(--black);
+      cursor: pointer;
+      box-shadow: 4px 4px 0 var(--black);
+      font-size: 0.95rem;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .btn-ok:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--black); }
+
+    /* Responsive tweaks */
+    @media (max-width: 480px) {
+      .main-card { padding: 2rem 1.25rem; }
+      .captcha-grid { gap: 4px; }
+      .finale-card { padding: 2rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =============================================
+       ANIMATED BACKGROUND
+  ============================================= -->
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+  <div class="bg-blob blob-3"></div>
+  <div class="bg-blob blob-4"></div>
+
+  <!-- Floating emoji particles -->
+  <div class="particle" style="left:5%;top:15%;animation-duration:6s;animation-delay:0s;">✨</div>
+  <div class="particle" style="left:90%;top:25%;animation-duration:8s;animation-delay:-2s;">🤔</div>
+  <div class="particle" style="left:15%;top:75%;animation-duration:7s;animation-delay:-4s;">💀</div>
+  <div class="particle" style="left:80%;top:70%;animation-duration:9s;animation-delay:-1s;">🤯</div>
+  <div class="particle" style="left:50%;top:5%;animation-duration:5s;animation-delay:-3s;">⭐</div>
+  <div class="particle" style="left:30%;top:90%;animation-duration:10s;animation-delay:-6s;">🌀</div>
+  <div class="particle" style="left:70%;top:88%;animation-duration:6.5s;animation-delay:-5s;">💫</div>
+
+  <!-- =============================================
+       PHASE 1: THE BAIT
+  ============================================= -->
+  <div class="phase active" id="phase-1">
+    <div class="main-card">
+      <span class="question-label">⚠️ Important Daily Check-In ⚠️</span>
+
+      <h1 class="main-question">
+        Is it Yes or No?<br/>
+      </h1>
+      <p class="sub-question">What do you think is my answer?</p>
+
+      <div class="attempt-counter" id="attempt-counter">&nbsp;</div>
+
+      <div class="btn-row">
+        <!-- YES placeholder keeps layout stable -->
+        <div id="yes-placeholder">YES 👍</div>
+        <!-- NO button stays in place -->
+        <button class="btn-no" id="btn-no" onclick="handleNo()">NO 😔</button>
+      </div>
+
+      <p style="margin-top:1.5rem;font-size:0.7rem;color:rgba(255,255,255,0.25);">
+        By hovering, you agree to our Terms of Confusion™
+      </p>
+    </div>
+  </div>
+
+  <!-- YES button is fixed-position so it can move freely -->
+  <button id="btn-yes" class="visible" onclick="handleYesClick()" aria-label="Yes button">
+    YES 👍
+  </button>
+
+  <!-- =============================================
+       NO BUTTON CONSEQUENCE MODAL
+  ============================================= -->
+  <div class="no-modal" id="no-modal">
+    <div class="no-modal-card">
+      <div style="font-size:3rem;margin-bottom:0.5rem;">😤</div>
+      <h3>Excuse me?!</h3>
+      <p>
+        That is simply not an acceptable answer.<br/>
+        Please try again and choose the <strong>correct</strong> option.<br/>
+        <em>(There's only one correct option. You know which one.)</em>
+      </p>
+      <button class="btn-ok" onclick="closeNoModal()">Fine. I'll try again. 🙄</button>
+    </div>
+  </div>
+
+  <!-- =============================================
+       PHASE 2: THE IMPOSSIBLE CAPTCHA
+  ============================================= -->
+  <div class="captcha-overlay" id="captcha-overlay">
+    <div class="captcha-box">
+
+      <div class="captcha-header">
+        <div class="logo">
+          <span>🤖</span>
+          <div>
+            <div style="font-size:0.95rem;font-weight:800;">reCAPTCHA</div>
+            <div style="font-size:0.65rem;opacity:0.8;font-weight:400;">I'm not a robot™</div>
+          </div>
+        </div>
+        <div class="progress-dots">
+          <div class="dot active" id="dot-1"></div>
+          <div class="dot" id="dot-2"></div>
+          <div class="dot" id="dot-3"></div>
+        </div>
+      </div>
+
+      <!-- Round 1: Select buses (no buses exist) -->
+      <div id="captcha-round-1">
+        <div class="captcha-body">
+          <div class="round-badge">Round 1 of 3</div>
+          <div class="captcha-prompt">
+            Select all images containing a <strong>BUS</strong>
+            <span class="impossible-tag">Standard Challenge</span>
+          </div>
+          <div class="captcha-subprompt">Click all squares that contain buses. Click verify once done.</div>
+          <div class="captcha-grid" id="grid-1">
+            <!-- Images injected by JS -->
+          </div>
+        </div>
+        <div class="captcha-footer">
+          <div>
+            <div class="captcha-error" id="error-1">&nbsp;</div>
+            <div class="recaptcha-branding">Protected by <strong>reCAPTCHA</strong> · Privacy · Terms</div>
+          </div>
+          <button class="btn-verify" id="verify-btn-1" onclick="verifyRound1()">VERIFY</button>
+        </div>
+      </div>
+
+      <!-- Round 2: Select financial stability / existential dread -->
+      <div id="captcha-round-2" style="display:none;">
+        <div class="captcha-body">
+          <div class="round-badge">Round 2 of 3</div>
+          <div class="captcha-prompt">
+            Select all images containing <strong>Financial Stability</strong>
+            <span class="impossible-tag">Increased Security</span>
+          </div>
+          <div class="captcha-subprompt">This is for your safety. And ours. Mostly ours.</div>
+          <div class="captcha-grid" id="grid-2">
+            <!-- Images injected by JS -->
+          </div>
+        </div>
+        <div class="captcha-footer">
+          <div>
+            <div class="captcha-error" id="error-2">&nbsp;</div>
+            <div class="recaptcha-branding">Protected by <strong>reCAPTCHA</strong> · Privacy · Terms</div>
+          </div>
+          <button class="btn-verify" id="verify-btn-2" onclick="verifyRound2()">VERIFY</button>
+        </div>
+      </div>
+
+      <!-- Round 3: The solvable but absurd one - click the banana drawing -->
+      <div id="captcha-round-3" style="display:none;">
+        <div class="captcha-body">
+          <div class="round-badge" style="background:#DCFCE7;color:#166534;border-color:#166534;">Round 3 of 3 — FINAL</div>
+          <div class="captcha-prompt">
+            Click the <strong>ultra-realistic drawing</strong> of a banana
+          </div>
+          <div class="captcha-subprompt">Only one of these is an ultra-realistic drawing. Choose wisely. Your freedom depends on it.</div>
+
+          <div class="banana-options" id="banana-options">
+            <!-- Options injected by JS -->
+          </div>
+        </div>
+        <div class="captcha-footer">
+          <div>
+            <div class="captcha-error" id="error-3">&nbsp;</div>
+            <div class="recaptcha-branding">Protected by <strong>reCAPTCHA</strong> · Privacy · Terms</div>
+          </div>
+          <button class="btn-verify" id="verify-btn-3" onclick="verifyRound3()">VERIFY</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =============================================
+       PHASE 3: THE FINALE
+  ============================================= -->
+  <div class="finale-overlay" id="finale-overlay">
+    <div class="finale-card" id="finale-card">
+      <span class="finale-emoji">🎉</span>
+      <h2 class="finale-title">Congratulations,<br/>You Did It!</h2>
+      <p class="finale-subtitle">After all that suffering, I will personally answer your question now:</p>
+
+      <div class="finale-answer" id="finale-answer">
+        Loading your personalized answer...<br/>
+        Please hold. 🕐
+      </div>
+
+      <div style="font-size:0.8rem;color:#1a1a2e;opacity:0.6;margin-bottom:1.25rem;">
+        🏆 Survived: 1 impossible question · 1 moving button · 3 captcha rounds<br/>
+        You are legally certified as a functional human being.™
+      </div>
+
+      <button class="btn-restart" onclick="restartAll()">🔄 Torture a friend (restart)</button>
+    </div>
+  </div>
+
+  <!-- Confetti container -->
+  <div class="confetti-container" id="confetti-container"></div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast"></div>
+
+  <!-- =============================================
+       BACKGROUND PHASE 1 (for captured click)
+  ============================================= -->
+  <div class="phase" id="phase-2" style="min-height:100vh;align-items:center;justify-content:center;">
+    <!-- Phase 2 content is the captcha overlay above -->
+  </div>
+
+  <script>
+    // =============================================
+    // IMAGE ASSETS - Easily swap URLs here
+    // =============================================
+    const IMAGES = {
+      // Round 1: "Select buses" - absolutely no buses
+      round1: [
+        /* IMG_R1_1 - Cat close-up */
+        { url: "https://images.pexels.com/photos/29983805/pexels-photo-29983805.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=200", label: "A cat" },
+        /* IMG_R1_2 - Potatoes */
+        { url: "https://images.pexels.com/photos/37740954/pexels-photo-37740954.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=200", label: "Potatoes" },
+        /* IMG_R1_3 - UFO-like building */
+        { url: "https://images.pexels.com/photos/6040269/pexels-photo-6040269.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=200", label: "Not a bus" },
+        /* IMG_R1_4 - Dog with sunglasses */
+        { url: "https://images.pexels.com/photos/33110531/pexels-photo-33110531.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=200", label: "Cool dog" },
+        /* IMG_R1_5 - Pizza */
+        { url: "https://images.pexels.com/photos/30504705/pexels-photo-30504705.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=200", label: "Pizza" },
+        /* IMG_R1_6 - Sweet potato */
+        { url: "https://images.pexels.com/photos/9219084/pexels-photo-9219084.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=200", label: "Sweet potato" },
+      ],
+
+      // Round 2: "Select financial stability" - also impossible
+      round2: [
+        /* IMG_R2_1 - Rubber duck */
+        { url: "https://images.pexels.com/photos/31558264/pexels-photo-31558264.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=200", label: "Rubber duck" },
+        /* IMG_R2_2 - Bananas pattern */
+        { url: "https://images.pexels.com/photos/16829202/pexels-photo-16829202.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=200", label: "Banana pattern" },
+        /* IMG_R2_3 - Cat laptop */
+        { url: "https://images.pexels.com/photos/4053516/pexels-photo-4053516.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=200", label: "Cat on laptop" },
+        /* IMG_R2_4 - Dog with drink */
+        { url: "https://images.pexels.com/photos/28893215/pexels-photo-28893215.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=200", label: "Dog with drink" },
+        /* IMG_R2_5 - Mushroom pizza */
+        { url: "https://images.pexels.com/photos/29699537/pexels-photo-29699537.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=200", label: "More pizza" },
+        /* IMG_R2_6 - Stationery ducks */
+        { url: "https://images.pexels.com/photos/7434242/pexels-photo-7434242.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=200", label: "Duck stationery" },
+      ],
+
+      // Round 3: Banana images (actual real photo) + silly drawings
+      round3: [
+        /* IMG_R3_BANANA - Real banana photo - this is the CORRECT answer */
+        { url: "https://images.pexels.com/photos/16829201/pexels-photo-16829201.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=200", label: "Ultra-Realistic Banana Drawing™", isCorrect: true, emoji: null },
+        /* IMG_R3_WRONG_1 - A potato */
+        { url: null, label: "Banana (trust me)", isCorrect: false, emoji: "🥔" },
+        /* IMG_R3_WRONG_2 - A fish */
+        { url: null, label: "Definitely Banana", isCorrect: false, emoji: "🐟" },
+        /* IMG_R3_WRONG_3 - A rocket */
+        { url: null, label: "Yellow Banana-ish", isCorrect: false, emoji: "🚀" },
+      ]
+    };
+
+    // =============================================
+    // STATE
+    // =============================================
+    let hoverAttempts = 0;
+    let isSurrendered = false;
+    let captchaRound = 1;
+    let round3SelectedIndex = null;
+    const MAX_ATTEMPTS = 3;
+
+    // =============================================
+    // INIT
+    // =============================================
+    document.addEventListener('DOMContentLoaded', () => {
+      positionYesButtonNearPlaceholder();
+      setupYesButton();
+      buildCaptchaGrids();
+      buildBananaOptions();
+    });
+
+    // =============================================
+    // YES BUTTON LOGIC
+    // =============================================
+    function positionYesButtonNearPlaceholder() {
+      const placeholder = document.getElementById('yes-placeholder');
+      const yesBtn = document.getElementById('btn-yes');
+      const rect = placeholder.getBoundingClientRect();
+      yesBtn.style.left = rect.left + 'px';
+      yesBtn.style.top  = rect.top + 'px';
+    }
+
+    function getRandomSafePosition(btnWidth, btnHeight) {
+      const margin = 20;
+      const maxX = window.innerWidth  - btnWidth  - margin;
+      const maxY = window.innerHeight - btnHeight - margin;
+      return {
+        x: Math.random() * (maxX - margin) + margin,
+        y: Math.random() * (maxY - margin) + margin,
+      };
+    }
+
+    function teleportYes() {
+      if (isSurrendered) return;
+      const btn = document.getElementById('btn-yes');
+      const w = btn.offsetWidth  || 130;
+      const h = btn.offsetHeight || 52;
+      const pos = getRandomSafePosition(w, h);
+      btn.style.left = pos.x + 'px';
+      btn.style.top  = pos.y + 'px';
+      hoverAttempts++;
+      updateAttemptCounter();
+      if (hoverAttempts >= MAX_ATTEMPTS) {
+        surrender();
+      }
+    }
+
+    function setupYesButton() {
+      const btn = document.getElementById('btn-yes');
+
+      // Desktop: mouseenter teleports it
+      btn.addEventListener('mouseenter', () => {
+        if (!isSurrendered) teleportYes();
+      });
+
+      // Mobile: touchstart fires before the tap registers, so teleport first
+      btn.addEventListener('touchstart', (e) => {
+        if (!isSurrendered) {
+          e.preventDefault();
+          teleportYes();
+        }
+      }, { passive: false });
+
+      // Position YES on window resize
+      window.addEventListener('resize', () => {
+        if (!isSurrendered) positionYesButtonNearPlaceholder();
+      });
+    }
+
+    function updateAttemptCounter() {
+      const el = document.getElementById('attempt-counter');
+      const remaining = MAX_ATTEMPTS - hoverAttempts;
+      if (hoverAttempts === 0) {
+        el.innerHTML = '&nbsp;';
+      } else if (isSurrendered) {
+        el.textContent = `😅 The YES button has given up. Click it now.`;
+      } else {
+        const msgs = [
+          `🏃 Nice try! The button is faster than you. (${remaining} attempt${remaining !== 1 ? 's' : ''} left before it surrenders)`,
+          `💨 Almost! The button is mocking you. (${remaining} last chance!)`,
+        ];
+        el.textContent = msgs[Math.min(hoverAttempts - 1, msgs.length - 1)];
+      }
+    }
+
+    function surrender() {
+      isSurrendered = true;
+      const btn = document.getElementById('btn-yes');
+
+      // Move to center of screen
+      const w = btn.offsetWidth  || 130;
+      const h = btn.offsetHeight || 52;
+      btn.style.left = ((window.innerWidth  - w) / 2) + 'px';
+      btn.style.top  = ((window.innerHeight - h) / 2) + 'px';
+      btn.classList.add('surrendered');
+
+      updateAttemptCounter();
+      showToast("🏳️ The YES button has surrendered. Go on, click it.");
+    }
+
+    function handleYesClick() {
+      if (!isSurrendered) {
+        // If they somehow click without triggering hover (e.g., keyboard), teleport
+        teleportYes();
+        return;
+      }
+      // Surrender phase: open captcha
+      openCaptcha();
+    }
+
+    function handleNo() {
+      document.getElementById('no-modal').classList.add('active');
+    }
+
+    function closeNoModal() {
+      document.getElementById('no-modal').classList.remove('active');
+    }
+
+    // =============================================
+    // CAPTCHA LOGIC
+    // =============================================
+    function buildCaptchaGrids() {
+      // Round 1
+      const grid1 = document.getElementById('grid-1');
+      IMAGES.round1.forEach((img, i) => {
+        const cell = document.createElement('div');
+        cell.className = 'captcha-cell';
+        cell.dataset.idx = i;
+        cell.innerHTML = `<img src="${img.url}" alt="${img.label}" loading="lazy"/>`;
+        cell.addEventListener('click', () => cell.classList.toggle('selected'));
+        grid1.appendChild(cell);
+      });
+
+      // Round 2
+      const grid2 = document.getElementById('grid-2');
+      IMAGES.round2.forEach((img, i) => {
+        const cell = document.createElement('div');
+        cell.className = 'captcha-cell';
+        cell.dataset.idx = i;
+        cell.innerHTML = `<img src="${img.url}" alt="${img.label}" loading="lazy"/>`;
+        cell.addEventListener('click', () => cell.classList.toggle('selected'));
+        grid2.appendChild(cell);
+      });
+    }
+
+    function buildBananaOptions() {
+      const container = document.getElementById('banana-options');
+      // Shuffle order so the correct answer isn't always first
+      const shuffled = [...IMAGES.round3].sort(() => Math.random() - 0.5);
+
+      shuffled.forEach((item, i) => {
+        const div = document.createElement('div');
+        div.className = 'banana-choice';
+        div.dataset.correct = item.isCorrect ? 'true' : 'false';
+
+        if (item.url) {
+          div.innerHTML = `<img src="${item.url}" alt="${item.label}" style="width:100%;height:100%;object-fit:cover;border-radius:7px;"/>
+            <span class="label">${item.label}</span>`;
+        } else {
+          div.innerHTML = `<span style="font-size:3.5rem;">${item.emoji}</span>
+            <span class="label">${item.label}</span>`;
+        }
+
+        div.addEventListener('click', () => {
+          document.querySelectorAll('.banana-choice').forEach(b => b.classList.remove('selected'));
+          div.classList.add('selected');
+          round3SelectedIndex = i;
+        });
+
+        container.appendChild(div);
+      });
+    }
+
+    function openCaptcha() {
+      document.getElementById('btn-yes').classList.remove('visible');
+      document.getElementById('captcha-overlay').classList.add('active');
+      captchaRound = 1;
+    }
+
+    function setVerifyLoading(btnId, loading) {
+      const btn = document.getElementById(btnId);
+      if (loading) {
+        btn.innerHTML = '<span class="loading-spin"></span> Verifying...';
+        btn.disabled = true;
+      } else {
+        btn.innerHTML = 'VERIFY';
+        btn.disabled = false;
+      }
+    }
+
+    function shakeError(errorId, message) {
+      const el = document.getElementById(errorId);
+      el.textContent = message;
+      el.style.animation = 'none';
+      void el.offsetWidth; // reflow to restart animation
+      el.style.animation = 'shake 0.4s ease';
+    }
+
+    function verifyRound1() {
+      setVerifyLoading('verify-btn-1', true);
+      setTimeout(() => {
+        setVerifyLoading('verify-btn-1', false);
+        // Always wrong - there are no buses!
+        shakeError('error-1', '❌ Incorrect. No buses were selected correctly. (Hint: there are no buses.)');
+
+        // After short delay, transition to round 2
+        setTimeout(() => {
+          advanceCaptchaRound(2);
+        }, 1600);
+      }, 1200);
+    }
+
+    function verifyRound2() {
+      setVerifyLoading('verify-btn-2', true);
+      setTimeout(() => {
+        setVerifyLoading('verify-btn-2', false);
+        // Also always wrong
+        shakeError('error-2', '❌ Financial stability not detected in any image. (Or anywhere, tbh.)');
+
+        setTimeout(() => {
+          advanceCaptchaRound(3);
+        }, 1600);
+      }, 1200);
+    }
+
+    function verifyRound3() {
+      // Check if a banana-choice is selected
+      const selected = document.querySelector('.banana-choice.selected');
+      if (!selected) {
+        shakeError('error-3', '⚠️ Please select an ultra-realistic banana drawing first.');
+        return;
+      }
+
+      const isCorrect = selected.dataset.correct === 'true';
+
+      setVerifyLoading('verify-btn-3', true);
+      setTimeout(() => {
+        setVerifyLoading('verify-btn-3', false);
+        if (isCorrect) {
+          // 🎉 Winner!
+          document.getElementById('captcha-overlay').classList.remove('active');
+          showFinale();
+        } else {
+          shakeError('error-3', '❌ That is not an ultra-realistic banana drawing. Look harder. 🧐');
+          round3SelectedIndex = null;
+          document.querySelectorAll('.banana-choice').forEach(b => b.classList.remove('selected'));
+        }
+      }, 1000);
+    }
+
+    function advanceCaptchaRound(round) {
+      // Hide all rounds
+      document.getElementById('captcha-round-1').style.display = 'none';
+      document.getElementById('captcha-round-2').style.display = 'none';
+      document.getElementById('captcha-round-3').style.display = 'none';
+
+      // Update dots
+      for (let i = 1; i <= 3; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        dot.classList.remove('active', 'done');
+        if (i < round) dot.classList.add('done');
+        if (i === round) dot.classList.add('active');
+      }
+
+      // Show current round
+      document.getElementById(`captcha-round-${round}`).style.display = 'block';
+      captchaRound = round;
+    }
+
+    // =============================================
+    // FINALE
+    // =============================================
+    function showFinale() {
+      // Reveal the finale overlay
+      document.getElementById('finale-overlay').classList.add('active');
+
+      // Set the personalized answer
+      setTimeout(() => {
+        document.getElementById('finale-answer').innerHTML =
+          `<span style="font-size:1.5rem;">📢</span><br/><br/>
+          <em>"Based on a thorough analysis of your button-chasing skills and captcha performance..."</em><br/><br/>
+          <strong style="font-size:1.15rem;">You are, in fact, NOT a functional human being today.</strong><br/><br/>
+          <span style="font-size:0.85rem;opacity:0.7;">But hey — neither is anyone else. 🤝</span>`;
+      }, 500);
+
+      // Trigger confetti
+      launchConfetti();
+    }
+
+    // =============================================
+    // CONFETTI
+    // =============================================
+    const CONFETTI_COLORS = ['#FFE566','#FF6EB4','#5EF6FF','#C084FC','#86EFAC','#FFA040','#ffffff'];
+    const CONFETTI_SHAPES = ['square', 'circle', 'rect'];
+
+    function launchConfetti() {
+      const container = document.getElementById('confetti-container');
+      container.innerHTML = '';
+
+      for (let i = 0; i < 120; i++) {
+        setTimeout(() => {
+          const piece = document.createElement('div');
+          piece.className = 'confetti-piece';
+
+          const color = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
+          const shape = CONFETTI_SHAPES[Math.floor(Math.random() * CONFETTI_SHAPES.length)];
+          const size  = Math.random() * 10 + 6;
+          const left  = Math.random() * 100;
+          const dur   = Math.random() * 2.5 + 2;
+          const delay = Math.random() * 2;
+
+          piece.style.cssText = `
+            left: ${left}%;
+            width: ${shape === 'rect' ? size * 0.4 : size}px;
+            height: ${size}px;
+            background: ${color};
+            border-radius: ${shape === 'circle' ? '50%' : shape === 'rect' ? '2px' : '2px'};
+            animation-duration: ${dur}s;
+            animation-delay: ${delay}s;
+            opacity: 0;
+          `;
+
+          container.appendChild(piece);
+
+          // Remove after animation
+          setTimeout(() => piece.remove(), (dur + delay + 0.5) * 1000);
+        }, i * 20);
+      }
+
+      // Second wave
+      setTimeout(launchConfetti2, 1200);
+    }
+
+    function launchConfetti2() {
+      const container = document.getElementById('confetti-container');
+      for (let i = 0; i < 60; i++) {
+        setTimeout(() => {
+          const piece = document.createElement('div');
+          piece.className = 'confetti-piece';
+          const color = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
+          const size  = Math.random() * 8 + 5;
+          const left  = Math.random() * 100;
+          const dur   = Math.random() * 2 + 2;
+
+          piece.style.cssText = `
+            left: ${left}%;
+            width: ${size}px;
+            height: ${size}px;
+            background: ${color};
+            border-radius: 50%;
+            animation-duration: ${dur}s;
+            animation-delay: 0s;
+            opacity: 0;
+          `;
+          container.appendChild(piece);
+          setTimeout(() => piece.remove(), (dur + 0.5) * 1000);
+        }, i * 30);
+      }
+    }
+
+    // =============================================
+    // TOAST
+    // =============================================
+    let toastTimer = null;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
+    // =============================================
+    // RESTART
+    // =============================================
+    function restartAll() {
+      // Reset state
+      hoverAttempts = 0;
+      isSurrendered = false;
+      captchaRound = 1;
+      round3SelectedIndex = null;
+
+      // Hide finale & confetti
+      document.getElementById('finale-overlay').classList.remove('active');
+      document.getElementById('confetti-container').innerHTML = '';
+
+      // Hide captcha
+      document.getElementById('captcha-overlay').classList.remove('active');
+
+      // Reset captcha rounds
+      advanceCaptchaRound(1);
+      document.getElementById('captcha-round-1').style.display = 'block';
+      document.querySelectorAll('.captcha-cell').forEach(c => c.classList.remove('selected'));
+      document.querySelectorAll('.banana-choice').forEach(b => b.classList.remove('selected'));
+      document.getElementById('error-1').innerHTML = '&nbsp;';
+      document.getElementById('error-2').innerHTML = '&nbsp;';
+      document.getElementById('error-3').innerHTML = '&nbsp;';
+
+      // Reset YES button
+      const btn = document.getElementById('btn-yes');
+      btn.classList.remove('surrendered');
+      btn.classList.add('visible');
+
+      // Reset counter
+      document.getElementById('attempt-counter').innerHTML = '&nbsp;';
+
+      // Reposition
+      setTimeout(positionYesButtonNearPlaceholder, 50);
+    }
+
+    // =============================================
+    // PREVENT YES BUTTON FROM GOING OFF-SCREEN ON RESIZE
+    // =============================================
+    window.addEventListener('resize', () => {
+      const btn = document.getElementById('btn-yes');
+      const w = btn.offsetWidth  || 130;
+      const h = btn.offsetHeight || 52;
+      let x = parseFloat(btn.style.left) || 0;
+      let y = parseFloat(btn.style.top)  || 0;
+
+      if (x + w > window.innerWidth)  x = window.innerWidth  - w - 20;
+      if (y + h > window.innerHeight) y = window.innerHeight - h - 20;
+      if (x < 0) x = 20;
+      if (y < 0) y = 20;
+
+      btn.style.left = x + 'px';
+      btn.style.top  = y + 'px';
+    });
+
+    // Handle initial YES button position after fonts/layout settle
+    window.addEventListener('load', () => {
+      positionYesButtonNearPlaceholder();
+    });
+  </script>
+</body>
+</html>
