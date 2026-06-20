@@ -1,0 +1,1765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Data Manager</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: #272829;
+      background: white;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    a {
+      color: #149ddd;
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: #37b3ed;
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    header {
+      background: #040b14;
+      color: white;
+      padding: 30px;
+      text-align: center;
+      position: relative;
+    }
+
+    header h1 {
+      font-size: 2.2em;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .back-to-index {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #149ddd;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-size: 0.9em;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(20, 157, 221, 0.3);
+    }
+
+    .back-to-index:hover {
+      background: #2eafec;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(20, 157, 221, 0.4);
+    }
+
+    .tab-content h2 {
+      font-size: 1.8em;
+      font-weight: bold;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      position: relative;
+      color: #173b6c;
+    }
+
+    .tab-content h2::after {
+      content: "";
+      position: absolute;
+      display: block;
+      width: 50px;
+      height: 3px;
+      background: #149ddd;
+      bottom: 0;
+      left: 0;
+    }
+
+    .tabs {
+      display: grid;
+      grid-auto-flow: column;
+      gap: 0;
+      overflow-x: auto;
+      border-bottom: 1px solid #e0e0e0;
+      background: #f5f8fd;
+      padding: 0 8px;
+      scrollbar-width: none;
+    }
+
+    .tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab-btn {
+      min-width: 130px;
+      padding: 14px 18px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: 700;
+      border-bottom: 3px solid transparent;
+      transition: all 0.25s ease;
+      color: #a8a9b4;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      background: rgba(20, 157, 221, 0.1);
+      color: #fff;
+    }
+
+    .tab-btn.active {
+      color: #149ddd;
+      border-bottom-color: #149ddd;
+      background: white;
+    }
+
+    .tab-content {
+      display: none;
+      padding: 24px 28px 32px;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="url"],
+    input[type="number"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 0.95em;
+      font-family: inherit;
+      transition: border-color 0.3s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="url"]:focus,
+    input[type="number"]:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: #149ddd;
+      box-shadow: 0 0 0 3px rgba(20, 157, 221, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 5px;
+      font-size: 0.95em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: #149ddd;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #2eafec;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #c82333;
+    }
+
+    .btn-small {
+      padding: 8px 12px;
+      font-size: 0.85em;
+    }
+
+    .card {
+      background: #f5f8fd;
+      border: 1px solid #e0e6ed;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .card-content {
+      display: none;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #ddd;
+    }
+
+    .card-content.show {
+      display: block;
+    }
+
+    .list-item {
+      background: #f9fbff;
+      padding: 14px 16px;
+      margin: 10px 0;
+      border-left: 4px solid #667eea;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .list-item-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .list-item-content ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 6px 0 0;
+    }
+
+    .list-item-content ul li {
+      margin-bottom: 4px;
+    }
+
+    .success-message {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .success-message.show {
+      display: block;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .two-column {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    @media (max-width: 992px) {
+      .two-column {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .tab-btn {
+        min-width: 110px;
+        padding: 12px 14px;
+      }
+
+      .container {
+        margin: 10px;
+      }
+
+      .tab-content {
+        padding: 18px 16px 24px;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .card-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .list-item {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.85);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .loading-overlay.show {
+      display: flex;
+    }
+
+    .loading-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 18px 22px;
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .loading-spinner {
+      width: 18px;
+      height: 18px;
+      border: 3px solid rgba(20, 157, 221, 0.25);
+      border-top-color: #149ddd;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .json-preview {
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 15px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      max-height: 400px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 8px;
+      padding: 24px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .modal-title {
+      font-size: 1.5em;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: #666;
+      padding: 8px;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background-color 0.3s;
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      background-color: #f0f0f0;
+      color: #333;
+    }
+
+    .modal-body {
+      margin-bottom: 24px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      padding-top: 16px;
+      border-top: 1px solid #eee;
+    }
+
+    /* Responsive Modal */
+    @media (max-width: 768px) {
+      .modal-overlay {
+        padding: 15px;
+      }
+      
+      .modal-content {
+        padding: 20px;
+        max-width: 95vw;
+      }
+      
+      .modal-title {
+        font-size: 1.4em;
+      }
+      
+      .modal-footer {
+        flex-direction: column;
+      }
+      
+      .modal-footer button {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .modal-content {
+        padding: 16px;
+        max-width: 100vw;
+        margin: 10px;
+      }
+      
+      .modal-title {
+        font-size: 1.3em;
+      }
+    }
+
+    /* Additional responsive improvements */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+
+      header {
+        padding: 20px;
+        text-align: center;
+      }
+
+      header h1 {
+        font-size: 2em;
+      }
+
+      .back-to-index {
+        padding: 10px 16px;
+        font-size: 0.85em;
+      }
+
+      .tabs {
+        padding: 0;
+      }
+
+      .tab-btn {
+        font-size: 14px;
+        padding: 12px 16px;
+        min-width: 120px;
+      }
+
+      .tab-content h2 {
+        font-size: 24px;
+        padding-bottom: 15px;
+      }
+
+      .tab-content h2::after {
+        width: 40px;
+      }
+
+      .form-group {
+        margin-bottom: 12px;
+      }
+
+      label {
+        font-size: 14px;
+        margin-bottom: 6px;
+      }
+
+      input, textarea, select {
+        font-size: 16px; /* Prevents zoom on iOS */
+        padding: 10px;
+      }
+
+      button {
+        font-size: 14px;
+        padding: 10px 16px;
+      }
+
+      .btn-small {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+
+      .card {
+        padding: 12px;
+      }
+
+      .list-item {
+        padding: 12px;
+      }
+
+      .card-actions {
+        gap: 6px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header h1 {
+        font-size: 1.8em;
+      }
+
+      .back-to-index {
+        padding: 10px 16px;
+        font-size: 0.8em;
+        bottom: 15px;
+        right: 15px;
+      }
+
+      .tab-btn {
+        min-width: 100px;
+        padding: 10px 12px;
+        font-size: 13px;
+      }
+
+      .tab-content {
+        padding: 15px 12px 20px;
+      }
+
+      .tab-content h2 {
+        font-size: 22px;
+      }
+
+      input, textarea, select {
+        padding: 8px;
+      }
+
+      button {
+        padding: 8px 12px;
+      }
+
+      .list-item-content {
+        font-size: 14px;
+      }
+
+      .card-title {
+        font-size: 14px;
+      }
+    }
+
+    /* Ensure buttons are properly sized on all devices */
+    button:focus {
+      outline: 2px solid #149ddd;
+      outline-offset: 2px;
+    }
+
+    /* Improve touch targets for mobile */
+    @media (hover: none) and (pointer: coarse) {
+      button, .tab-btn {
+        min-height: 44px;
+      }
+
+      .modal-close {
+        width: 44px;
+        height: 44px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-to-index">← View Portfolio</a>
+  <div class="container">
+    <header>
+      <h1>📊 Portfolio Data Manager</h1>
+      <p>Manage your portfolio data and sync to index.html</p>
+    </header>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('about')">About Me</button>
+      <button class="tab-btn" onclick="switchTab('social')">Social Links</button>
+      <button class="tab-btn" onclick="switchTab('skills')">Skills</button>
+      <button class="tab-btn" onclick="switchTab('education')">Education</button>
+      <button class="tab-btn" onclick="switchTab('experience')">Experience</button>
+      <button class="tab-btn" onclick="switchTab('export')">Export/Import</button>
+    </div>
+
+    <div class="success-message" id="successMessage"></div>
+    <div id="loadingOverlay" class="loading-overlay" aria-live="polite" aria-busy="false">
+      <div class="loading-card">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Updating...</div>
+      </div>
+    </div>
+
+    <!-- About Me Tab -->
+    <div class="tab-content active" id="about">
+      <h2>About Me Information</h2>
+      <div class="two-column">
+        <div>
+          <div class="form-group">
+            <label>Title</label>
+            <input type="text" id="title" placeholder="e.g., Computer Engineer & Graphics Specialist">
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="email" placeholder="Enter email">
+          </div>
+        </div>
+        <div>
+          <div class="form-group">
+            <label>Contact</label>
+            <input type="text" id="contact" placeholder="Enter contact number">
+          </div>
+          <div class="form-group">
+            <label>City</label>
+            <input type="text" id="city" placeholder="Enter city">
+          </div>
+        </div>
+      </div>
+      <div class="two-column">
+        <div class="form-group">
+          <label>Website</label>
+          <input type="url" id="website" placeholder="Enter website URL">
+        </div>
+        <div class="form-group">
+          <label>Birth Date</label>
+          <input type="text" id="birthDate" placeholder="e.g., 22 May 1997">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Bio</label>
+        <textarea id="bio" placeholder="Enter your bio"></textarea>
+      </div>
+      <div class="two-column">
+        <div class="form-group">
+          <label>Degree</label>
+          <input type="text" id="degree" placeholder="e.g., Bachelors Degree">
+        </div>
+        <div class="form-group">
+          <label>Freelance Status</label>
+          <input type="text" id="freelance" placeholder="e.g., Available">
+        </div>
+      </div>
+      <div class="button-group">
+        <button class="btn-primary" onclick="saveAbout()">Save About Me</button>
+      </div>
+    </div>
+
+    <!-- Social Links Tab -->
+    <div class="tab-content" id="social">
+      <h2>Social Media Links</h2>
+      <div class="form-group">
+        <label>Facebook</label>
+        <input type="url" id="facebook" placeholder="Enter Facebook URL">
+      </div>
+      <div class="form-group">
+        <label>Instagram</label>
+        <input type="url" id="instagram" placeholder="Enter Instagram URL">
+      </div>
+      <div class="form-group">
+        <label>LinkedIn</label>
+        <input type="url" id="linkedin" placeholder="Enter LinkedIn URL">
+      </div>
+      <div class="button-group">
+        <button class="btn-primary" onclick="saveSocial()">Save Social Links</button>
+      </div>
+    </div>
+
+    <!-- Skills Tab -->
+    <div class="tab-content" id="skills">
+      <h2>Skills Management</h2>
+      <div class="button-group">
+        <button class="btn-primary" onclick="openAddSkillForm()">+ Add Skill</button>
+      </div>
+      
+      <div id="addSkillModal" class="modal-overlay">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Add New Skill</h3>
+            <button class="modal-close" onclick="closeAddSkillForm()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Skill Name</label>
+              <input type="text" id="newSkillName" placeholder="e.g., Figma">
+            </div>
+            <div class="form-group">
+              <label>Skill Type</label>
+              <select id="newSkillType">
+                <option value="App">App</option>
+                <option value="Ability">Ability</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group" id="newSkillCustomTypeGroup" style="display: none;">
+              <label>Custom Skill Type</label>
+              <input type="text" id="newCustomSkillType" placeholder="e.g., Language, Framework, Tool">
+            </div>
+            <div class="form-group" id="newSkillIconGroup">
+              <label id="iconLabel">Icon URL</label>
+              <input type="text" id="newSkillIcon" placeholder="e.g., https://example.com/icon.svg">
+            </div>
+            <div class="form-group" id="newSkillIconColorGroup">
+              <label>Icon Color</label>
+              <input type="text" id="newSkillIconColor" placeholder="e.g., #f24e1e">
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea id="newSkillDescription" rows="3" placeholder="Short description for this item"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-primary" onclick="addSkill()">Add Skill</button>
+            <button class="btn-secondary" onclick="closeAddSkillForm()">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Skill Modal -->
+      <div id="editSkillModal" class="modal-overlay">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Edit Skill</h3>
+            <button class="modal-close" onclick="closeEditSkillForm()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Skill Name</label>
+              <input type="text" id="editSkillName" placeholder="e.g., Figma">
+            </div>
+            <div class="form-group">
+              <label>Skill Type</label>
+              <select id="editSkillType">
+                <option value="App">App</option>
+                <option value="Ability">Ability</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group" id="editSkillCustomTypeGroup" style="display: none;">
+              <label>Custom Skill Type</label>
+              <input type="text" id="editCustomSkillType" placeholder="e.g., Language, Framework, Tool">
+            </div>
+            <div class="form-group" id="editSkillIconGroup">
+              <label id="editIconLabel">Icon URL</label>
+              <input type="text" id="editSkillIcon" placeholder="e.g., https://example.com/icon.svg">
+            </div>
+            <div class="form-group" id="editSkillIconColorGroup">
+              <label>Icon Color</label>
+              <input type="text" id="editSkillIconColor" placeholder="e.g., #f24e1e">
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea id="editSkillDescription" rows="3" placeholder="Short description for this item"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-primary" onclick="updateSkill()">Update Skill</button>
+            <button class="btn-secondary" onclick="closeEditSkillForm()">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="skillsList"></div>
+    </div>
+
+    <!-- Education Tab -->
+    <div class="tab-content" id="education">
+      <h2>Education Management</h2>
+      <div class="button-group">
+        <button class="btn-primary" onclick="openAddEducationForm()">+ Add Education</button>
+      </div>
+
+      <div id="addEducationModal" class="modal-overlay">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Add New Education</h3>
+            <button class="modal-close" onclick="closeAddEducationForm()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Level</label>
+              <input type="text" id="newEducLevel" placeholder="e.g., Tertiary">
+            </div>
+            <div class="form-group">
+              <label>Years</label>
+              <input type="text" id="newEducYears" placeholder="e.g., 2014-2020">
+            </div>
+            <div class="form-group">
+              <label>Degree/School</label>
+              <input type="text" id="newEducDegree" placeholder="e.g., Bachelor of Science in Computer Engineering">
+            </div>
+            <div class="form-group">
+              <label>School/Location</label>
+              <input type="text" id="newEducSchool" placeholder="Enter school/location">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-primary" onclick="addEducation()">Add Education</button>
+            <button class="btn-secondary" onclick="closeAddEducationForm()">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Education Modal -->
+      <div id="editEducationModal" class="modal-overlay">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Edit Education</h3>
+            <button class="modal-close" onclick="closeEditEducationForm()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Level</label>
+              <input type="text" id="editEducLevel" placeholder="e.g., Tertiary">
+            </div>
+            <div class="form-group">
+              <label>Years</label>
+              <input type="text" id="editEducYears" placeholder="e.g., 2014-2020">
+            </div>
+            <div class="form-group">
+              <label>Degree/School</label>
+              <input type="text" id="editEducDegree" placeholder="e.g., Bachelor of Science in Computer Engineering">
+            </div>
+            <div class="form-group">
+              <label>School/Location</label>
+              <input type="text" id="editEducSchool" placeholder="Enter school/location">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-primary" onclick="updateEducation()">Update Education</button>
+            <button class="btn-secondary" onclick="closeEditEducationForm()">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="educationList"></div>
+    </div>
+
+    <!-- Experience Tab -->
+    <div class="tab-content" id="experience">
+      <h2>Experience Management</h2>
+      <div class="button-group">
+        <button class="btn-primary" onclick="openAddExperienceForm()">+ Add Experience</button>
+      </div>
+
+      <div id="addExperienceModal" class="modal-overlay">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Add New Experience</h3>
+            <button class="modal-close" onclick="closeAddExperienceForm()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Position</label>
+              <input type="text" id="newExpPosition" placeholder="e.g., Graphics Specialist">
+            </div>
+            <div class="form-group">
+              <label>Years</label>
+              <input type="text" id="newExpYears" placeholder="e.g., May 21, 2021 - May 14, 2022">
+            </div>
+            <div class="form-group">
+              <label>Company</label>
+              <input type="text" id="newExpCompany" placeholder="e.g., Integreon Managed Solutions">
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <div id="newExpDescriptionList" style="margin-bottom: 10px;"></div>
+              <button type="button" class="btn-secondary btn-small" onclick="addExperienceBullet('newExpDescriptionList')">+ Add Bullet</button>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-primary" onclick="addExperience()">Add Experience</button>
+            <button class="btn-secondary" onclick="closeAddExperienceForm()">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Experience Modal -->
+      <div id="editExperienceModal" class="modal-overlay">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Edit Experience</h3>
+            <button class="modal-close" onclick="closeEditExperienceForm()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Position</label>
+              <input type="text" id="editExpPosition" placeholder="e.g., Graphics Specialist">
+            </div>
+            <div class="form-group">
+              <label>Years</label>
+              <input type="text" id="editExpYears" placeholder="e.g., May 21, 2021 - May 14, 2022">
+            </div>
+            <div class="form-group">
+              <label>Company</label>
+              <input type="text" id="editExpCompany" placeholder="e.g., Integreon Managed Solutions">
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <div id="editExpDescriptionList" style="margin-bottom: 10px;"></div>
+              <button type="button" class="btn-secondary btn-small" onclick="addExperienceBullet('editExpDescriptionList')">+ Add Bullet</button>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-primary" onclick="updateExperience()">Update Experience</button>
+            <button class="btn-secondary" onclick="closeEditExperienceForm()">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="experienceList"></div>
+    </div>
+
+    <!-- Export/Import Tab -->
+    <div class="tab-content" id="export">
+      <h2>Data Export & Import</h2>
+      <div class="button-group">
+        <button class="btn-primary" onclick="exportData()">📥 Export JSON</button>
+        <button class="btn-secondary" onclick="syncToFile()">💾 Sync to File</button>
+        <button class="btn-secondary" onclick="clearLocalStorage()">🗑️ Clear Local Data</button>
+      </div>
+      <div class="form-group">
+        <label>Current Data (Read-only)</label>
+        <div class="json-preview" id="jsonPreview"></div>
+      </div>
+      <div class="form-group">
+        <label>Instructions:</label>
+        <div style="background: #f0f8ff; padding: 15px; border-radius: 5px; border-left: 4px solid #667eea;">
+          <strong>How to sync changes to your website:</strong><br>
+          1. Make changes in the tabs above<br>
+          2. Click "💾 Sync to File" to download updated data.json<br>
+          3. Replace your existing data.json file with the downloaded one<br>
+          4. Refresh index.html to see the changes<br><br>
+          <em>Note: Changes are automatically reflected in index.html when you refresh the page, but the file sync ensures permanent storage.</em>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let data = {};
+
+    // Load data on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      loadData();
+    });
+
+    function loadData() {
+      // First try to load from localStorage (for unsaved changes)
+      const localData = localStorage.getItem('portfolioData');
+      if (localData) {
+        data = JSON.parse(localData);
+        console.log('Loaded data from localStorage');
+        normalizeData();
+        populateFields();
+        displaySkills();
+        displayEducation();
+        displayExperience();
+        displayJsonPreview();
+      } else {
+        // Fall back to data.json file
+        fetch('data.json')
+          .then(response => response.json())
+          .then(json => {
+            data = json;
+            console.log('Loaded data from data.json');
+            normalizeData();
+            populateFields();
+            displaySkills();
+            displayEducation();
+            displayExperience();
+            displayJsonPreview();
+          })
+          .catch(error => console.error('Error loading data.json:', error));
+      }
+    }
+
+    function normalizeData() {
+      // Normalize experience descriptions to arrays
+      if (data.experience) {
+        data.experience.forEach(exp => {
+          if (typeof exp.description === 'string') {
+            exp.description = exp.description.split(',').map(line => line.trim()).filter(Boolean);
+          }
+        });
+      }
+    }
+
+    function populateFields() {
+      // About Me
+      document.getElementById('title').value = data.profile?.title || '';
+      document.getElementById('email').value = data.profile?.email || '';
+      document.getElementById('contact').value = data.profile?.contact || '';
+      document.getElementById('city').value = data.profile?.city || '';
+      document.getElementById('website').value = data.profile?.website || '';
+      document.getElementById('birthDate').value = data.profile?.birthDate || '';
+      document.getElementById('bio').value = data.profile?.bio || '';
+      document.getElementById('degree').value = data.profile?.degree || '';
+      document.getElementById('freelance').value = data.profile?.freelance || '';
+
+      // Social
+      document.getElementById('facebook').value = data.social?.facebook || '';
+      document.getElementById('instagram').value = data.social?.instagram || '';
+      document.getElementById('linkedin').value = data.social?.linkedin || '';
+    }
+
+    function switchTab(tabName) {
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      // Show selected tab
+      document.getElementById(tabName).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    function startLoading(message = 'Updating...') {
+      const overlay = document.getElementById('loadingOverlay');
+      if (!overlay) return;
+      overlay.querySelector('.loading-text').textContent = message;
+      overlay.setAttribute('aria-busy', 'true');
+      overlay.classList.add('show');
+    }
+
+    function stopLoading() {
+      const overlay = document.getElementById('loadingOverlay');
+      if (!overlay) return;
+      overlay.setAttribute('aria-busy', 'false');
+      overlay.classList.remove('show');
+    }
+
+    function saveAbout() {
+      data.profile = {
+        name: data.profile?.name || 'Danny Aglinao', // Keep existing name
+        fullName: data.profile?.fullName || 'Dan Aglinao', // Keep existing full name
+        title: document.getElementById('title').value,
+        bio: document.getElementById('bio').value,
+        profileImage: data.profile?.profileImage || 'assets/img/profile-img.jpg',
+        birthDate: document.getElementById('birthDate').value,
+        website: document.getElementById('website').value,
+        contact: document.getElementById('contact').value,
+        email: document.getElementById('email').value,
+        city: document.getElementById('city').value,
+        degree: document.getElementById('degree').value,
+        freelance: document.getElementById('freelance').value
+      };
+      startLoading('Saving profile...');
+      saveDataToFile();
+      stopLoading();
+      showSuccess('About Me updated successfully! Changes will be reflected on the portfolio after refresh.');
+    }
+
+    function saveSocial() {
+      data.social = {
+        facebook: document.getElementById('facebook').value,
+        instagram: document.getElementById('instagram').value,
+        linkedin: document.getElementById('linkedin').value
+      };
+      startLoading('Saving social links...');
+      saveDataToFile();
+      stopLoading();
+      showSuccess('Social links updated successfully! Changes will be reflected on the portfolio after refresh.');
+    }
+
+    function displayProfile() {
+      // Profile display logic here
+    }
+
+    function displaySocial() {
+      // Social display logic here
+    }
+
+    function updateSkillFormFields(prefix) {
+      const type = document.getElementById(prefix + 'SkillType').value;
+      const iconGroup = document.getElementById(prefix + 'SkillIconGroup');
+      const iconColorGroup = document.getElementById(prefix + 'SkillIconColorGroup');
+      const customTypeGroup = document.getElementById(prefix + 'SkillCustomTypeGroup');
+      const iconLabel = document.getElementById(prefix + 'IconLabel');
+      const iconInput = document.getElementById(prefix + 'SkillIcon');
+
+      if (type === 'App') {
+        iconGroup.style.display = 'block';
+        iconColorGroup.style.display = 'block';
+        customTypeGroup.style.display = 'none';
+        iconLabel.textContent = 'Icon URL';
+        iconInput.placeholder = 'e.g., https://example.com/icon.svg';
+      } else if (type === 'Ability') {
+        iconGroup.style.display = 'none';
+        iconColorGroup.style.display = 'none';
+        customTypeGroup.style.display = 'none';
+      } else {
+        iconGroup.style.display = 'none';
+        iconColorGroup.style.display = 'none';
+        customTypeGroup.style.display = 'block';
+      }
+    }
+
+    document.getElementById('newSkillType').addEventListener('change', () => updateSkillFormFields('new'));
+    document.getElementById('editSkillType').addEventListener('change', () => updateSkillFormFields('edit'));
+
+    function closeAddSkillForm() {
+      document.getElementById('addSkillModal').classList.remove('show');
+      document.getElementById('newSkillName').value = '';
+      document.getElementById('newSkillType').value = 'App';
+      document.getElementById('newCustomSkillType').value = '';
+      updateSkillFormFields('new');
+      document.getElementById('newSkillIcon').value = '';
+      document.getElementById('newSkillIconColor').value = '';
+      document.getElementById('newSkillDescription').value = '';
+    }
+
+    function openAddSkillForm() {
+      document.getElementById('addSkillModal').classList.add('show');
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('addSkillModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeAddSkillForm();
+      }
+    });
+
+    function addSkill() {
+      const name = document.getElementById('newSkillName').value.trim();
+      const type = document.getElementById('newSkillType').value;
+      const customType = document.getElementById('newCustomSkillType').value.trim();
+      const icon = document.getElementById('newSkillIcon').value.trim();
+      const iconColor = document.getElementById('newSkillIconColor').value.trim();
+      const description = document.getElementById('newSkillDescription').value.trim();
+
+      if (!name || !type) {
+        alert('Please fill in all fields');
+        return;
+      }
+      if (type === 'App' && !icon) {
+        alert('Please add an icon URL for app skills');
+        return;
+      }
+      if (type === 'Ability' && !description) {
+        alert('Please add a description for ability skills');
+        return;
+      }
+      if (type === 'Other' && !customType) {
+        alert('Please add a custom skill type name');
+        return;
+      }
+
+      if (!data.skills) data.skills = [];
+      const actualType = type === 'Other' ? customType : type;
+      const skillObj = { name, type: actualType, description };
+      if (type === 'App') {
+        skillObj.iconUrl = icon;
+        skillObj.iconColor = iconColor;
+      }
+      data.skills.push(skillObj);
+      startLoading('Saving skill...');
+      saveDataToFile();
+      stopLoading();
+      displaySkills();
+      closeAddSkillForm();
+      showSuccess('Skill added successfully! Changes will be reflected on the portfolio after refresh.');
+    }
+
+    function editSkill(index) {
+      const skill = data.skills[index];
+      document.getElementById('editSkillName').value = skill.name;
+      if (skill.type === 'App' || skill.type === 'Ability') {
+        document.getElementById('editSkillType').value = skill.type;
+        document.getElementById('editCustomSkillType').value = '';
+      } else {
+        document.getElementById('editSkillType').value = 'Other';
+        document.getElementById('editCustomSkillType').value = skill.type;
+      }
+      updateSkillFormFields('edit');
+      document.getElementById('editSkillIcon').value = skill.iconUrl || '';
+      document.getElementById('editSkillIconColor').value = skill.iconColor || '';
+      document.getElementById('editSkillDescription').value = skill.description || '';
+      document.getElementById('editSkillModal').classList.add('show');
+      document.getElementById('editSkillModal').dataset.editIndex = index;
+    }
+
+    function updateSkill() {
+      const index = parseInt(document.getElementById('editSkillModal').dataset.editIndex);
+      const name = document.getElementById('editSkillName').value.trim();
+      const type = document.getElementById('editSkillType').value;
+      const customType = document.getElementById('editCustomSkillType').value.trim();
+      const icon = document.getElementById('editSkillIcon').value.trim();
+      const iconColor = document.getElementById('editSkillIconColor').value.trim();
+      const description = document.getElementById('editSkillDescription').value.trim();
+
+      if (!name || !type) {
+        alert('Please fill in all fields');
+        return;
+      }
+      if (type === 'App' && !icon) {
+        alert('Please add an icon URL for app skills');
+        return;
+      }
+      if (type === 'Ability' && !description) {
+        alert('Please add a description for ability skills');
+        return;
+      }
+      if (type === 'Other' && !customType) {
+        alert('Please add a custom skill type name');
+        return;
+      }
+
+      const actualType = type === 'Other' ? customType : type;
+      const skillObj = { name, type: actualType, description };
+      if (type === 'App') {
+        skillObj.iconUrl = icon;
+        skillObj.iconColor = iconColor;
+      }
+      data.skills[index] = skillObj;
+      startLoading('Saving skill...');
+      saveDataToFile();
+      stopLoading();
+      displaySkills();
+      closeEditSkillForm();
+      showSuccess('Skill updated successfully! Changes will be reflected on the portfolio after refresh.');
+    }
+
+    function closeEditSkillForm() {
+      document.getElementById('editSkillModal').classList.remove('show');
+      document.getElementById('editSkillName').value = '';
+      document.getElementById('editSkillType').value = 'App';
+      document.getElementById('editCustomSkillType').value = '';
+      updateSkillFormFields('edit');
+      document.getElementById('editSkillIcon').value = '';
+      document.getElementById('editSkillIconColor').value = '';
+      document.getElementById('editSkillDescription').value = '';
+      delete document.getElementById('editSkillModal').dataset.editIndex;
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('editSkillModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeEditSkillForm();
+      }
+    });
+
+    function displaySkills() {
+      const list = document.getElementById('skillsList');
+      list.innerHTML = '';
+      
+      if (!data.skills) return;
+
+      data.skills.forEach((skill, index) => {
+        const item = document.createElement('div');
+        item.className = 'list-item';
+        const iconHtml = skill.iconUrl ? `<img src="${skill.iconUrl}" alt="${skill.name}" style="width: 20px; height: 20px; object-fit: contain;">` : `<i class="bx ${skill.icon || 'bxs-star'}"></i>`;
+        item.innerHTML = `
+          <div class="list-item-content">
+            <span class="skill-type">${skill.type}</span>
+            ${iconHtml}
+            <strong>${skill.name}</strong>
+            ${skill.description ? `<p>${skill.description}</p>` : ''}
+          </div>
+          <div class="card-actions">
+            <button class="btn-secondary btn-small" onclick="editSkill(${index})">Edit</button>
+            <button class="btn-danger btn-small" onclick="deleteSkill(${index})">Delete</button>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function openAddEducationForm() {
+      document.getElementById('addEducationModal').classList.add('show');
+    }
+
+    function closeAddEducationForm() {
+      document.getElementById('addEducationModal').classList.remove('show');
+      document.getElementById('newEducLevel').value = '';
+      document.getElementById('newEducYears').value = '';
+      document.getElementById('newEducDegree').value = '';
+      document.getElementById('newEducSchool').value = '';
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('addEducationModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeAddEducationForm();
+      }
+    });
+
+    function addEducation() {
+      const level = document.getElementById('newEducLevel').value;
+      const years = document.getElementById('newEducYears').value;
+      const degree = document.getElementById('newEducDegree').value;
+      const school = document.getElementById('newEducSchool').value;
+
+      if (!level || !years || !degree || !school) {
+        alert('Please fill in all fields');
+        return;
+      }
+
+      if (!data.education) data.education = [];
+      data.education.push({ level, years, degree, school });
+      startLoading('Saving education...');
+      saveDataToFile();
+      stopLoading();
+      displayEducation();
+      closeAddEducationForm();
+      showSuccess('Education added successfully! Changes will be reflected on the portfolio after refresh.');
+    }
+
+    function editEducation(index) {
+      const edu = data.education[index];
+      document.getElementById('editEducLevel').value = edu.level;
+      document.getElementById('editEducYears').value = edu.years;
+      document.getElementById('editEducDegree').value = edu.degree
+      document.getElementById('editEducSchool').value = edu.school;
+      document.getElementById('editEducationModal').classList.add('show');
+      document.getElementById('editEducationModal').dataset.editIndex = index;
+    }
+    
+
+    function updateEducation() {
+      const index = parseInt(document.getElementById('editEducationModal').dataset.editIndex);
+      const level = document.getElementById('editEducLevel').value;
+      const years = document.getElementById('editEducYears').value;
+      const degree = document.getElementById('editEducDegree').value;
+      const school = document.getElementById('editEducSchool').value;
+
+      if (!level || !years || !degree || !school) {
+        alert('Please fill in all fields');
+        return;
+      }
+
+      data.education[index] = { level, years, degree, school };
+      startLoading('Saving education...');
+      saveDataToFile();
+      stopLoading();
+      displayEducation();
+      closeEditEducationForm();
+      showSuccess('Education updated successfully! Changes will be reflected on the portfolio after refresh.');
+    }
+
+    function closeEditEducationForm() {
+      document.getElementById('editEducationModal').classList.remove('show');
+      document.getElementById('editEducLevel').value = '';
+      document.getElementById('editEducYears').value = '';
+      document.getElementById('editEducDegree').value = '';
+      document.getElementById('editEducSchool').value = '';
+      delete document.getElementById('editEducationModal').dataset.editIndex;
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('editEducationModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeEditEducationForm();
+      }
+    });
+
+    function displayEducation() {
+      const list = document.getElementById('educationList');
+      list.innerHTML = '';
+      
+      if (!data.education) return;
+
+      data.education.forEach((edu, index) => {
+        const item = document.createElement('div');
+        item.className = 'list-item';
+        item.innerHTML = `
+          <div class="list-item-content">
+            <strong>${edu.degree}</strong> (${edu.years})<br>
+            <small>${edu.level} | ${edu.school}</small>
+          </div>
+          <div class="card-actions">
+            <button class="btn-secondary btn-small" onclick="editEducation(${index})">Edit</button>
+            <button class="btn-danger btn-small" onclick="deleteEducation(${index})">Delete</button>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function openAddExperienceForm() {
+      initializeExperienceBullets('newExpDescriptionList', ['']);
+      document.getElementById('addExperienceModal').classList.add('show');
+    }
+
+    function closeAddExperienceForm() {
+      document.getElementById('addExperienceModal').classList.remove('show');
+      document.getElementById('newExpPosition').value = '';
+      document.getElementById('newExpYears').value = '';
+      document.getElementById('newExpCompany').value = '';
+      clearExperienceBullets('newExpDescriptionList');
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('addExperienceModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeAddExperienceForm();
+      }
+    });
+
+    function addExperienceBullet(listId, value = '') {
+      const list = document.getElementById(listId);
+      const bulletItem = document.createElement('div');
+      bulletItem.style.display = 'flex';
+      bulletItem.style.alignItems = 'center';
+      bulletItem.style.gap = '8px';
+      bulletItem.style.marginBottom = '8px';
+      bulletItem.innerHTML = `
+        <input type="text" class="experience-bullet" value="${value}" placeholder="Bullet text" style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 0.95em;">
+        <button type="button" class="btn-danger btn-small" onclick="removeExperienceBullet(this)">Remove</button>
+      `;
+      list.appendChild(bulletItem);
+    }
+
+    function removeExperienceBullet(button) {
+      const item = button.closest('div');
+      if (item) item.remove();
+    }
+
+    function getExperienceBullets(listId) {
+      const inputs = document.querySelectorAll(`#${listId} .experience-bullet`);
+      return Array.from(inputs).map(input => input.value.trim()).filter(Boolean);
+    }
+
+    function clearExperienceBullets(listId) {
+      const list = document.getElementById(listId);
+      if (list) list.innerHTML = '';
+    }
+
+    function initializeExperienceBullets(listId, values = ['']) {
+      const list = document.getElementById(listId);
+      if (!list) return;
+      list.innerHTML = '';
+      const bullets = Array.isArray(values) ? values : [values];
+      bullets.forEach(value => addExperienceBullet(listId, value));
+    }
+
+    function addExperience() {
+      const position = document.getElementById('newExpPosition').value;
+      const years = document.getElementById('newExpYears').value;
+      const company = document.getElementById('newExpCompany').value;
+      const description = getExperienceBullets('newExpDescriptionList');
+
+      if (!position || !years || !company || description.length === 0) {
+        alert('Please fill in all fields and add at least one bullet.');
+        return;
+      }
+
+      if (!data.experience) data.experience = [];
+      data.experience.push({ position, years, company, description });
+      startLoading('Saving experience...');
+      saveDataToFile();
+      stopLoading();
+      displayExperience();
+      closeAddExperienceForm();
+      showSuccess('Experience added successfully! Changes will be reflected on the portfolio after refresh.');
+    }
+
+    function editExperience(index) {
+      const exp = data.experience[index];
+      document.getElementById('editExpPosition').value = exp.position;
+      document.getElementById('editExpYears').value = exp.years;
+      document.getElementById('editExpCompany').value = exp.company;
+      const bullets = Array.isArray(exp.description) ? exp.description : String(exp.description).split(',').map(line => line.trim()).filter(Boolean);
+      initializeExperienceBullets('editExpDescriptionList', bullets.length ? bullets : ['']);
+      document.getElementById('editExperienceModal').classList.add('show');
+      document.getElementById('editExperienceModal').dataset.editIndex = index;
+    }
+
+    function updateExperience() {
+      const index = parseInt(document.getElementById('editExperienceModal').dataset.editIndex);
+      const position = document.getElementById('editExpPosition').value;
+      const years = document.getElementById('editExpYears').value;
+      const company = document.getElementById('editExpCompany').value;
+      const description = getExperienceBullets('editExpDescriptionList');
+
+      if (!position || !years || !company || description.length === 0) {
+        alert('Please fill in all fields and add at least one bullet.');
+        return;
+      }
+
+      data.experience[index] = { position, years, company, description };
+      startLoading('Saving experience...');
+      saveDataToFile();
+      stopLoading();
+      displayExperience();
+      closeEditExperienceForm();
+      showSuccess('Experience updated successfully! Changes will be reflected on the portfolio after refresh.');
+    }
+
+    function closeEditExperienceForm() {
+      document.getElementById('editExperienceModal').classList.remove('show');
+      document.getElementById('editExpPosition').value = '';
+      document.getElementById('editExpYears').value = '';
+      document.getElementById('editExpCompany').value = '';
+      clearExperienceBullets('editExpDescriptionList');
+      delete document.getElementById('editExperienceModal').dataset.editIndex;
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('editExperienceModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeEditExperienceForm();
+      }
+    });
+
+    function displayExperience() {
+      const list = document.getElementById('experienceList');
+      list.innerHTML = '';
+      
+      if (!data.experience) return;
+
+      data.experience.forEach((exp, index) => {
+        const bullets = Array.isArray(exp.description)
+          ? exp.description
+          : String(exp.description).split(',').map(line => line.trim()).filter(Boolean);
+
+        const descriptionHtml = bullets.length
+          ? `<ul>${bullets.map(bullet => `<li>${bullet}</li>`).join('')}</ul>`
+          : '';
+
+        const item = document.createElement('div');
+        item.className = 'list-item';
+        item.innerHTML = `
+          <div class="list-item-content">
+            <strong>${exp.position}</strong> at ${exp.company}<br>
+            <small>${exp.years}</small><br>
+            ${descriptionHtml}
+          </div>
+          <div class="card-actions">
+            <button class="btn-secondary btn-small" onclick="editExperience(${index})">Edit</button>
+            <button class="btn-danger btn-small" onclick="deleteExperience(${index})">Delete</button>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function deleteSkill(index) {
+      if (confirm('Are you sure you want to delete this skill?')) {
+        data.skills.splice(index, 1);
+        startLoading('Deleting skill...');
+        saveDataToFile();
+        stopLoading();
+        displaySkills();
+        showSuccess('Skill deleted successfully! Changes will be reflected on the portfolio after refresh.');
+      }
+    }
+
+    function deleteEducation(index) {
+      if (confirm('Are you sure you want to delete this education entry?')) {
+        data.education.splice(index, 1);
+        startLoading('Deleting education...');
+        saveDataToFile();
+        stopLoading();
+        displayEducation();
+        showSuccess('Education entry deleted successfully! Changes will be reflected on the portfolio after refresh.');
+      }
+    }
+
+    function deleteExperience(index) {
+      if (confirm('Are you sure you want to delete this experience entry?')) {
+        data.experience.splice(index, 1);
+        startLoading('Deleting experience...');
+        saveDataToFile();
+        stopLoading();
+        displayExperience();
+        showSuccess('Experience entry deleted successfully! Changes will be reflected on the portfolio after refresh.');
+      }
+    }
+
+    function saveDataToFile() {
+      // Save to localStorage for immediate use
+      localStorage.setItem('portfolioData', JSON.stringify(data));
+      displayJsonPreview();
+      
+      // Also update the global data variable for immediate sync
+      window.portfolioData = data;
+    }
+
+    function displayJsonPreview() {
+      try {
+        const preview = document.getElementById('jsonPreview');
+        if (!preview) return;
+        preview.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        console.warn('Unable to update JSON preview:', error);
+      }
+    }
+
+    function exportData() {
+      const dataStr = JSON.stringify(data, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'data.json';
+      link.click();
+      showSuccess('Data exported successfully!');
+    }
+
+    function syncToFile() {
+      const dataStr = JSON.stringify(data, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'data.json';
+      link.click();
+      URL.revokeObjectURL(url);
+      showSuccess('data.json file downloaded! Replace your existing data.json file with this one to make changes permanent.');
+    }
+
+    function clearLocalStorage() {
+      if (confirm('Are you sure you want to clear all local changes? This will reload the original data.json file.')) {
+        localStorage.removeItem('portfolioData');
+        location.reload();
+      }
+    }
+
+    function syncToIndex() {
+      alert('Changes are automatically synced to index.html when you refresh the page!\n\nTo make changes permanent:\n1. Click "💾 Sync to File" \n2. Download the new data.json\n3. Replace your existing data.json file\n4. Refresh index.html');
+      showSuccess('Sync information displayed!');
+    }
+
+    function showSuccess(message) {
+      const msgEl = document.getElementById('successMessage');
+      msgEl.textContent = message;
+      msgEl.classList.add('show');
+      setTimeout(() => {
+        msgEl.classList.remove('show');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
