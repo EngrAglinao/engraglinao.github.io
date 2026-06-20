@@ -4,1549 +4,1131 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Engr. Aglinao — Portfolio</title>
-  <meta name="description" content="Professional portfolio of Engr. Aglinao — Engineer, Developer, and Innovator." />
-
-  <!-- Tailwind CSS via Browser CDN -->
+  <meta name="description" content="Professional portfolio and resume of Engr. Aglinao — Engineer, Innovator, and Creative Technologist." />
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
-  <!-- FontAwesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
-    /* ── Base ─────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; }
-    html { font-family: 'Inter', sans-serif; }
-    body { background: #0a0f1e; color: #e2e8f0; overflow-x: hidden; }
+    /* ── Custom Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #f59e0b; border-radius: 3px; }
 
-    /* ── Scrollbar ────────────────────────────────────── */
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: #0a0f1e; }
-    ::-webkit-scrollbar-thumb { background: #f59e0b; border-radius: 99px; }
-
-    /* ── Skeleton pulse ──────────────────────────────── */
-    @keyframes shimmer {
-      0%   { background-position: -800px 0; }
-      100% { background-position:  800px 0; }
+    /* ── Skeleton Pulse ── */
+    @keyframes skeleton-pulse {
+      0%, 100% { opacity: 0.4; }
+      50%       { opacity: 1; }
     }
-    .skeleton {
-      background: linear-gradient(90deg, #1e293b 25%, #263354 50%, #1e293b 75%);
-      background-size: 800px 100%;
-      animation: shimmer 1.6s infinite linear;
-      border-radius: 6px;
-    }
+    .skeleton { animation: skeleton-pulse 1.6s ease-in-out infinite; background: #1e293b; border-radius: 6px; }
 
-    /* ── Gradient text ────────────────────────────────── */
-    .grad-text {
-      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 40%, #fb923c 100%);
+    /* ── Gradient Text ── */
+    .gradient-text {
+      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #fcd34d 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
-    /* ── Timeline ─────────────────────────────────────── */
-    .timeline-line {
+    /* ── Timeline node ── */
+    .timeline-node::before {
+      content: '';
       position: absolute;
-      left: 19px;
-      top: 0; bottom: 0;
+      left: -1px;
+      top: 0;
+      bottom: 0;
       width: 2px;
-      background: linear-gradient(180deg, #f59e0b, #1e293b);
-    }
-    .timeline-node {
-      width: 40px; height: 40px;
-      border: 2px solid #f59e0b;
-      border-radius: 50%;
-      background: #0a0f1e;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      position: relative; z-index: 2;
-      box-shadow: 0 0 16px rgba(245,158,11,0.35);
+      background: linear-gradient(180deg, #f59e0b, transparent);
     }
 
-    /* ── Carousel ─────────────────────────────────────── */
-    .carousel-track {
-      display: flex;
-      gap: 1.25rem;
-      transition: transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94);
-      will-change: transform;
-    }
-    .portfolio-card {
-      min-width: 290px;
-      max-width: 290px;
-      cursor: pointer;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .portfolio-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 24px 48px rgba(245,158,11,0.18);
-    }
+    /* ── Card Hover ── */
+    .portfolio-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .portfolio-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(245,158,11,0.15); }
 
-    /* ── Modal ────────────────────────────────────────── */
-    .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.92);
-      backdrop-filter: blur(8px);
-      z-index: 9999;
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-    .modal-overlay.active { opacity: 1; pointer-events: all; }
-    .modal-box {
-      background: #111827;
-      border: 1px solid #1e293b;
-      border-radius: 16px;
-      width: 90vw; max-width: 900px;
-      max-height: 90vh;
-      display: flex; flex-direction: column;
-      transform: scale(0.92);
-      transition: transform 0.3s ease;
-      overflow: hidden;
-    }
-    .modal-overlay.active .modal-box { transform: scale(1); }
+    /* ── Carousel ── */
+    #carousel-track { transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
 
-    /* ── App grid cards ───────────────────────────────── */
-    .app-card {
-      transition: transform 0.2s ease, border-color 0.2s ease;
-    }
-    .app-card:hover {
-      transform: translateY(-3px);
-      border-color: #f59e0b !important;
-    }
+    /* ── Modal Backdrop ── */
+    #modal-backdrop { backdrop-filter: blur(8px); }
 
-    /* ── Nav glassmorphism ────────────────────────────── */
-    .glass-nav {
-      background: rgba(10,15,30,0.85);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(245,158,11,0.12);
-    }
+    /* ── Nav scroll effect ── */
+    #main-nav { transition: background 0.3s ease, box-shadow 0.3s ease; }
+    #main-nav.scrolled { background: rgba(2, 6, 23, 0.98) !important; box-shadow: 0 1px 0 rgba(245,158,11,0.2); }
 
-    /* ── Section fade-in ──────────────────────────────── */
-    .fade-section {
-      opacity: 0;
-      transform: translateY(28px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
-    }
-    .fade-section.visible { opacity: 1; transform: translateY(0); }
-
-    /* ── Contact form ─────────────────────────────────── */
-    .form-input {
-      background: #111827;
-      border: 1px solid #1e293b;
-      color: #e2e8f0;
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      width: 100%;
-      outline: none;
-      transition: border-color 0.2s ease;
-      font-family: 'Inter', sans-serif;
-    }
-    .form-input:focus { border-color: #f59e0b; }
-    .form-input::placeholder { color: #475569; }
-
-    /* ── Badge type ───────────────────────────────────── */
-    .type-badge {
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      padding: 2px 8px;
-      border-radius: 99px;
-      text-transform: uppercase;
-    }
-
-    /* ═══════════════════════════════════════════════════
-       PRINT / LIVE RESUME STYLES
-       ═══════════════════════════════════════════════════ */
-    #resume-workspace { display: none; }
-
+    /* ── Print Styles — Swiss Resume ── */
     @media print {
-      /* Hide everything on the actual site */
-      body > *:not(#resume-workspace) { display: none !important; }
-      #resume-workspace { display: block !important; }
-
-      @page {
-        size: A4;
-        margin: 0;
-      }
-
-      body {
+      * { visibility: hidden !important; }
+      #resume-print-workspace, #resume-print-workspace * { visibility: visible !important; }
+      #resume-print-workspace {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
         background: #fff !important;
-        color: #000 !important;
-        font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+        z-index: 99999 !important;
+        overflow: visible !important;
+        display: block !important;
       }
-
-      .resume-page {
-        width: 210mm;
-        min-height: 297mm;
-        padding: 0;
-        margin: 0 auto;
-        display: grid;
-        grid-template-columns: 68mm 1fr;
-        background: #fff;
-        page-break-after: always;
-      }
-
-      .resume-sidebar {
-        background: #111827 !important;
-        color: #f8fafc !important;
-        padding: 10mm 8mm;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-
-      .resume-main {
-        padding: 10mm 10mm 10mm 8mm;
-        background: #fff !important;
-        color: #111 !important;
-      }
-
-      .resume-section-title {
-        font-size: 7.5pt;
-        font-weight: 800;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        border-bottom: 1.5pt solid #f59e0b;
-        padding-bottom: 2mm;
-        margin-bottom: 3mm;
-        color: #f59e0b !important;
-        -webkit-print-color-adjust: exact;
-      }
-
-      .resume-name {
-        font-size: 20pt;
-        font-weight: 900;
-        letter-spacing: -0.03em;
-        line-height: 1.1;
-        color: #f8fafc !important;
-        -webkit-print-color-adjust: exact;
-      }
-
-      .resume-role {
-        font-size: 8pt;
-        color: #94a3b8 !important;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        margin-top: 1mm;
-        -webkit-print-color-adjust: exact;
-      }
-
-      .resume-exp-title {
-        font-size: 9.5pt;
-        font-weight: 700;
-        color: #111 !important;
-      }
-
-      .resume-exp-org {
-        font-size: 8pt;
-        color: #f59e0b !important;
-        font-weight: 600;
-        -webkit-print-color-adjust: exact;
-      }
-
-      .resume-exp-date {
-        font-size: 7pt;
-        color: #64748b !important;
-        font-family: 'JetBrains Mono', monospace;
-      }
-
-      .resume-exp-desc {
-        font-size: 7.5pt;
-        color: #374151 !important;
-        line-height: 1.5;
-        margin-top: 1mm;
-      }
-
-      .resume-exp-item {
-        border-left: 2pt solid #e5e7eb;
-        padding-left: 4mm;
-        margin-bottom: 4mm;
-      }
-
-      .resume-skill-pill {
-        display: inline-block;
-        background: #1e293b !important;
-        color: #cbd5e1 !important;
-        font-size: 6.5pt;
-        padding: 1mm 2.5mm;
-        border-radius: 2mm;
-        margin: 0.5mm;
-        -webkit-print-color-adjust: exact;
-      }
-
-      .resume-contact-item {
-        font-size: 7.5pt;
-        color: #94a3b8 !important;
-        display: flex;
-        align-items: center;
-        gap: 2mm;
-        margin-bottom: 2mm;
-        -webkit-print-color-adjust: exact;
-      }
-
-      .swiss-divider {
-        height: 0.5pt;
-        background: #e5e7eb !important;
-        margin: 3mm 0;
-        -webkit-print-color-adjust: exact;
-      }
+      body { margin: 0 !important; padding: 0 !important; background: #fff !important; }
+      @page { margin: 12mm 14mm; size: A4; }
     }
+
+    /* ── Hero Particle Canvas ── */
+    #hero-canvas { position: absolute; inset: 0; pointer-events: none; }
+
+    /* ── Tooltip ── */
+    .app-card:hover .app-tooltip { opacity: 1; transform: translateY(0); }
+    .app-tooltip { opacity: 0; transform: translateY(4px); transition: all 0.2s ease; pointer-events: none; }
+
+    /* ── Contact input focus ── */
+    .contact-input:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,0.15); }
+
+    /* ── Section fade-in ── */
+    .section-reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .section-reveal.visible { opacity: 1; transform: translateY(0); }
   </style>
 </head>
-<body class="antialiased">
 
-  <!-- ══════════════════════════════════════════════════
-       HIDDEN RESUME WORKSPACE (print target)
-       ══════════════════════════════════════════════════ -->
-  <div id="resume-workspace" aria-hidden="true"></div>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased overflow-x-hidden">
 
-  <!-- ══════════════════════════════════════════════════
-       NAVIGATION
-       ══════════════════════════════════════════════════ -->
-  <header id="site-header" class="glass-nav fixed top-0 left-0 right-0 z-50 transition-all duration-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <nav class="flex items-center justify-between h-16">
-        <!-- Logo -->
-        <a href="#hero" class="flex items-center gap-2 group">
-          <span class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-black"
-                style="background:linear-gradient(135deg,#f59e0b,#fb923c);">EA</span>
-          <span class="font-bold text-white tracking-tight hidden sm:block">Engr. Aglinao</span>
-        </a>
+<!-- ════════════════════════════════════════════
+     LOADING SKELETON OVERLAY
+════════════════════════════════════════════ -->
+<div id="loading-skeleton" class="fixed inset-0 bg-slate-950 z-50 flex flex-col p-8 gap-6 overflow-hidden">
+  <div class="flex items-center justify-between">
+    <div class="skeleton h-8 w-40 rounded"></div>
+    <div class="flex gap-4">
+      <div class="skeleton h-8 w-20 rounded"></div>
+      <div class="skeleton h-8 w-20 rounded"></div>
+      <div class="skeleton h-8 w-24 rounded-full"></div>
+    </div>
+  </div>
+  <div class="flex flex-col items-center gap-6 mt-10">
+    <div class="skeleton h-16 w-3/4 rounded"></div>
+    <div class="skeleton h-8 w-1/2 rounded"></div>
+    <div class="skeleton h-12 w-40 rounded-full"></div>
+  </div>
+  <div class="grid grid-cols-3 gap-4 mt-8">
+    <div class="skeleton h-32 rounded-xl"></div>
+    <div class="skeleton h-32 rounded-xl"></div>
+    <div class="skeleton h-32 rounded-xl"></div>
+  </div>
+  <div class="grid grid-cols-4 gap-4">
+    <div class="skeleton h-44 rounded-xl"></div>
+    <div class="skeleton h-44 rounded-xl"></div>
+    <div class="skeleton h-44 rounded-xl"></div>
+    <div class="skeleton h-44 rounded-xl"></div>
+  </div>
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-slate-600 text-sm flex items-center gap-2">
+    <i class="fa-solid fa-circle-notch fa-spin text-amber-500"></i>
+    Connecting to Firebase…
+  </div>
+</div>
 
-        <!-- Desktop nav links -->
-        <div class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-400">
-          <a href="#about"      class="hover:text-amber-400 transition-colors">About</a>
-          <a href="#experience" class="hover:text-amber-400 transition-colors">Experience</a>
-          <a href="#portfolio"  class="hover:text-amber-400 transition-colors">Portfolio</a>
-          <a href="#apps"       class="hover:text-amber-400 transition-colors">Apps</a>
-          <a href="#contact"    class="hover:text-amber-400 transition-colors">Contact</a>
+<!-- ════════════════════════════════════════════
+     NAVIGATION
+════════════════════════════════════════════ -->
+<nav id="main-nav" class="fixed top-0 left-0 right-0 z-40 bg-transparent px-6 lg:px-12 py-4">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <!-- Logo -->
+    <a href="#hero" class="flex items-center gap-2 group">
+      <div class="w-9 h-9 rounded-lg bg-amber-500 flex items-center justify-center font-black text-slate-900 text-sm group-hover:bg-amber-400 transition-colors">EA</div>
+      <span class="font-semibold text-slate-200 hidden sm:block">Engr. Aglinao</span>
+    </a>
+    <!-- Desktop Links -->
+    <div class="hidden md:flex items-center gap-7 text-sm font-medium text-slate-400">
+      <a href="#about" class="hover:text-amber-400 transition-colors">About</a>
+      <a href="#experience" class="hover:text-amber-400 transition-colors">Experience</a>
+      <a href="#portfolio" class="hover:text-amber-400 transition-colors">Portfolio</a>
+      <a href="#apps" class="hover:text-amber-400 transition-colors">Skills</a>
+      <a href="#contact" class="hover:text-amber-400 transition-colors">Contact</a>
+    </div>
+    <!-- CTA -->
+    <div class="flex items-center gap-3">
+      <button onclick="generateLiveResume()" class="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-sm px-4 py-2 rounded-full transition-all hover:shadow-lg hover:shadow-amber-500/30 active:scale-95">
+        <i class="fa-solid fa-file-pdf"></i>
+        <span class="hidden sm:block">Generate Live Resume</span>
+      </button>
+      <!-- Mobile Menu -->
+      <button id="mobile-menu-btn" class="md:hidden text-slate-400 hover:text-amber-400 transition-colors p-2">
+        <i class="fa-solid fa-bars text-lg"></i>
+      </button>
+    </div>
+  </div>
+  <!-- Mobile Menu Dropdown -->
+  <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 right-0 bg-slate-900 border-t border-slate-800 px-6 py-4 flex flex-col gap-4 text-sm font-medium text-slate-400">
+    <a href="#about" class="hover:text-amber-400 transition-colors" onclick="document.getElementById('mobile-menu').classList.add('hidden')">About</a>
+    <a href="#experience" class="hover:text-amber-400 transition-colors" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Experience</a>
+    <a href="#portfolio" class="hover:text-amber-400 transition-colors" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Portfolio</a>
+    <a href="#apps" class="hover:text-amber-400 transition-colors" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Skills</a>
+    <a href="#contact" class="hover:text-amber-400 transition-colors" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Contact</a>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════════
+     HERO / ABOUT
+════════════════════════════════════════════ -->
+<section id="hero" class="relative min-h-screen flex items-center overflow-hidden bg-slate-950">
+  <canvas id="hero-canvas"></canvas>
+  <!-- Radial glow -->
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-amber-500/5 blur-3xl"></div>
+    <div class="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-slate-800/40 blur-3xl"></div>
+  </div>
+  <div id="about" class="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 w-full pt-28 pb-20">
+    <div class="grid lg:grid-cols-5 gap-12 lg:gap-16 items-center">
+      <!-- Text Content -->
+      <div class="lg:col-span-3 section-reveal">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="h-px w-12 bg-amber-500"></div>
+          <span class="text-amber-500 text-sm font-semibold tracking-widest uppercase">Portfolio</span>
         </div>
+        <h1 class="text-5xl lg:text-7xl font-black leading-none mb-6">
+          <span id="hero-headline" class="text-slate-100">Engineer.</span><br />
+          <span class="gradient-text">Innovator.</span><br />
+          <span class="text-slate-500">Creator.</span>
+        </h1>
+        <p id="hero-bio" class="text-slate-400 text-lg leading-relaxed max-w-xl mb-8">
+          Loading biography...
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <a id="master-resume-btn" href="#" target="_blank" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-amber-500/40 text-slate-200 font-semibold px-6 py-3 rounded-full transition-all hover:shadow-lg active:scale-95">
+            <i class="fa-solid fa-download text-amber-400"></i>
+            Download Master Resume
+          </a>
+          <a href="#contact" class="flex items-center gap-2 text-slate-400 hover:text-amber-400 font-medium px-6 py-3 rounded-full border border-slate-800 hover:border-slate-700 transition-all">
+            <i class="fa-solid fa-paper-plane"></i>
+            Get in Touch
+          </a>
+        </div>
+      </div>
+      <!-- Avatar / Stats Panel -->
+      <div class="lg:col-span-2 section-reveal" style="transition-delay:0.2s">
+        <div class="relative">
+          <div class="w-full max-w-sm mx-auto lg:mx-0 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 rounded-3xl p-8 shadow-2xl">
+            <!-- Avatar -->
+            <div class="flex flex-col items-center mb-8">
+              <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-4xl font-black text-slate-900 mb-4 shadow-xl">EA</div>
+              <div class="text-center">
+                <div class="font-bold text-slate-100 text-lg">Engr. Aglinao</div>
+                <div class="text-amber-500 text-sm font-medium">Engineer & Innovator</div>
+              </div>
+            </div>
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-slate-950/60 rounded-xl p-4 text-center border border-slate-700/30">
+                <div id="stat-experience" class="text-2xl font-black text-amber-400">—</div>
+                <div class="text-slate-500 text-xs mt-1">Years Exp.</div>
+              </div>
+              <div class="bg-slate-950/60 rounded-xl p-4 text-center border border-slate-700/30">
+                <div id="stat-projects" class="text-2xl font-black text-amber-400">—</div>
+                <div class="text-slate-500 text-xs mt-1">Projects</div>
+              </div>
+            </div>
+            <!-- Status Badge -->
+            <div class="flex items-center gap-2 mt-6 bg-emerald-950/50 border border-emerald-800/40 rounded-xl px-4 py-3">
+              <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+              <span class="text-emerald-400 text-sm font-medium">Available for opportunities</span>
+            </div>
+          </div>
+          <!-- Decorative element -->
+          <div class="absolute -top-4 -right-4 w-24 h-24 border-2 border-amber-500/20 rounded-2xl -z-10"></div>
+          <div class="absolute -bottom-4 -left-4 w-16 h-16 border-2 border-slate-700/50 rounded-xl -z-10"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-600">
+      <span class="text-xs tracking-widest uppercase">Scroll</span>
+      <div class="w-px h-12 bg-gradient-to-b from-slate-600 to-transparent animate-bounce"></div>
+    </div>
+  </div>
+</section>
 
-        <!-- Generate Resume CTA -->
-        <button onclick="generateLiveResume()"
-          class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-black transition-all duration-200 hover:scale-105 active:scale-95"
-          style="background:linear-gradient(135deg,#f59e0b,#fb923c);">
-          <i class="fa-solid fa-file-pdf text-xs"></i>
-          <span class="hidden sm:inline">Generate Live Resume</span>
-          <span class="sm:hidden">Resume</span>
+<!-- ════════════════════════════════════════════
+     EXPERIENCE TIMELINE
+════════════════════════════════════════════ -->
+<section id="experience" class="py-24 bg-slate-900">
+  <div class="max-w-7xl mx-auto px-6 lg:px-12">
+    <div class="section-reveal mb-16">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="h-px w-12 bg-amber-500"></div>
+        <span class="text-amber-500 text-sm font-semibold tracking-widest uppercase">Career</span>
+      </div>
+      <h2 class="text-4xl lg:text-5xl font-black text-slate-100">Experience <span class="gradient-text">Timeline</span></h2>
+      <p class="text-slate-500 mt-3 max-w-xl">A chronological journey through roles, organizations, and milestones that shaped my professional identity.</p>
+    </div>
+    <!-- Timeline Container -->
+    <div id="timeline-container" class="relative pl-8 border-l-2 border-slate-800 flex flex-col gap-0">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     PORTFOLIO CARAVAN (CAROUSEL)
+════════════════════════════════════════════ -->
+<section id="portfolio" class="py-24 bg-slate-950 overflow-hidden">
+  <div class="max-w-7xl mx-auto px-6 lg:px-12">
+    <div class="section-reveal mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="h-px w-12 bg-amber-500"></div>
+          <span class="text-amber-500 text-sm font-semibold tracking-widest uppercase">Work</span>
+        </div>
+        <h2 class="text-4xl lg:text-5xl font-black text-slate-100">Portfolio <span class="gradient-text">Caravan</span></h2>
+        <p class="text-slate-500 mt-3 max-w-xl">Selected works spanning presentations, web builds, publications, and interactive media.</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="carousel-prev" class="w-12 h-12 rounded-full border border-slate-700 hover:border-amber-500 text-slate-400 hover:text-amber-400 transition-all flex items-center justify-center group">
+          <i class="fa-solid fa-chevron-left group-hover:-translate-x-0.5 transition-transform"></i>
         </button>
-      </nav>
-    </div>
-  </header>
-
-  <!-- ══════════════════════════════════════════════════
-       HERO / ABOUT ME
-       ══════════════════════════════════════════════════ -->
-  <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-    <!-- Background gradient mesh -->
-    <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-      <div class="absolute top-0 left-1/4 w-96 h-96 rounded-full opacity-10 blur-3xl"
-           style="background:radial-gradient(circle,#f59e0b,transparent 70%);"></div>
-      <div class="absolute bottom-0 right-1/4 w-80 h-80 rounded-full opacity-8 blur-3xl"
-           style="background:radial-gradient(circle,#fb923c,transparent 70%);"></div>
-      <div class="absolute top-1/2 left-0 w-72 h-72 rounded-full opacity-5 blur-3xl"
-           style="background:radial-gradient(circle,#6366f1,transparent 70%);"></div>
-    </div>
-
-    <!-- Grid overlay -->
-    <div class="absolute inset-0 opacity-3 pointer-events-none"
-         style="background-image:linear-gradient(rgba(245,158,11,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,0.04) 1px,transparent 1px);background-size:60px 60px;">
-    </div>
-
-    <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <!-- Eyebrow -->
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase text-amber-400 mb-6"
-           style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);">
-        <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-        Available for Opportunities
-      </div>
-
-      <!-- Headline — dynamically updated from Firestore -->
-      <h1 id="hero-headline" class="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight leading-none mb-6">
-        <span id="hero-headline-text" class="grad-text">Engineer. Creator.<br/>Innovator.</span>
-      </h1>
-
-      <!-- Bio paragraph -->
-      <p id="hero-bio" class="max-w-2xl mx-auto text-slate-400 text-base sm:text-lg leading-relaxed mb-10">
-        <span id="hero-bio-text">Loading profile…</span>
-      </p>
-
-      <!-- Skeleton overlay for hero (hidden once loaded) -->
-      <div id="hero-skeleton" class="space-y-4 max-w-2xl mx-auto mb-10 hidden">
-        <div class="skeleton h-4 w-3/4 mx-auto"></div>
-        <div class="skeleton h-4 w-full mx-auto"></div>
-        <div class="skeleton h-4 w-5/6 mx-auto"></div>
-      </div>
-
-      <!-- Action buttons -->
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <a id="master-resume-btn" href="#"
-           class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-black transition-all duration-200 hover:scale-105 active:scale-95"
-           style="background:linear-gradient(135deg,#f59e0b,#fb923c);">
-          <i class="fa-solid fa-download"></i>
-          Download Master Resume
-        </a>
-        <a href="#about"
-           class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-slate-300 border transition-all duration-200 hover:border-amber-400 hover:text-amber-400"
-           style="border-color:#1e293b;background:rgba(30,41,59,0.5);">
-          <i class="fa-solid fa-chevron-down"></i>
-          Explore Profile
-        </a>
-      </div>
-
-      <!-- Scroll hint -->
-      <div class="mt-16 flex justify-center animate-bounce opacity-40">
-        <i class="fa-solid fa-angles-down text-amber-400 text-xl"></i>
+        <button id="carousel-next" class="w-12 h-12 rounded-full border border-slate-700 hover:border-amber-500 text-slate-400 hover:text-amber-400 transition-all flex items-center justify-center group">
+          <i class="fa-solid fa-chevron-right group-hover:translate-x-0.5 transition-transform"></i>
+        </button>
       </div>
     </div>
-  </section>
+    <!-- Carousel -->
+    <div class="relative overflow-hidden">
+      <div id="carousel-track" class="flex gap-6">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+    <!-- Dots -->
+    <div id="carousel-dots" class="flex justify-center gap-2 mt-8"></div>
+  </div>
+</section>
 
-  <!-- ══════════════════════════════════════════════════
-       ABOUT ME (full bio block)
-       ══════════════════════════════════════════════════ -->
-  <section id="about" class="py-24 fade-section">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid md:grid-cols-2 gap-16 items-center">
-        <!-- Left: avatar / stat cards -->
-        <div class="flex flex-col items-center md:items-start gap-6">
-          <!-- Avatar placeholder -->
-          <div class="relative">
-            <div class="w-48 h-48 rounded-2xl overflow-hidden border-2 border-amber-400/30"
-                 style="box-shadow:0 0 40px rgba(245,158,11,0.2);">
-              <div class="w-full h-full flex items-center justify-center text-6xl font-black grad-text"
-                   style="background:#111827;">EA</div>
-            </div>
-            <div class="absolute -bottom-3 -right-3 w-10 h-10 rounded-full bg-amber-400 flex items-center justify-center">
-              <i class="fa-solid fa-check text-black text-sm"></i>
-            </div>
-          </div>
+<!-- ════════════════════════════════════════════
+     APPLICATION MATRIX (SKILLS)
+════════════════════════════════════════════ -->
+<section id="apps" class="py-24 bg-slate-900">
+  <div class="max-w-7xl mx-auto px-6 lg:px-12">
+    <div class="section-reveal mb-16">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="h-px w-12 bg-amber-500"></div>
+        <span class="text-amber-500 text-sm font-semibold tracking-widest uppercase">Capabilities</span>
+      </div>
+      <h2 class="text-4xl lg:text-5xl font-black text-slate-100">Application <span class="gradient-text">Matrix</span></h2>
+      <p class="text-slate-500 mt-3 max-w-xl">Software fluencies, technical tools, and digital competencies categorized by discipline.</p>
+    </div>
+    <div id="apps-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+</section>
 
-          <!-- Stats -->
-          <div class="grid grid-cols-2 gap-4 w-full max-w-xs">
-            <div class="p-4 rounded-xl text-center" style="background:#111827;border:1px solid #1e293b;">
-              <div class="text-2xl font-black grad-text">5+</div>
-              <div class="text-xs text-slate-500 mt-1">Years Experience</div>
-            </div>
-            <div class="p-4 rounded-xl text-center" style="background:#111827;border:1px solid #1e293b;">
-              <div class="text-2xl font-black grad-text">20+</div>
-              <div class="text-xs text-slate-500 mt-1">Projects</div>
-            </div>
-            <div class="p-4 rounded-xl text-center" style="background:#111827;border:1px solid #1e293b;">
-              <div class="text-2xl font-black grad-text">∞</div>
-              <div class="text-xs text-slate-500 mt-1">Curiosity</div>
-            </div>
-            <div class="p-4 rounded-xl text-center" style="background:#111827;border:1px solid #1e293b;">
-              <div class="text-2xl font-black grad-text">01</div>
-              <div class="text-xs text-slate-500 mt-1">Mission</div>
-            </div>
-          </div>
+<!-- ════════════════════════════════════════════
+     CONTACT LAYER
+════════════════════════════════════════════ -->
+<section id="contact" class="py-24 bg-slate-950">
+  <div class="max-w-7xl mx-auto px-6 lg:px-12">
+    <div class="section-reveal grid lg:grid-cols-2 gap-16 items-start">
+      <!-- Left Info -->
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="h-px w-12 bg-amber-500"></div>
+          <span class="text-amber-500 text-sm font-semibold tracking-widest uppercase">Connect</span>
         </div>
-
-        <!-- Right: bio text -->
-        <div>
-          <p class="text-xs font-bold tracking-widest uppercase text-amber-400 mb-3">// About Me</p>
-          <h2 class="text-3xl sm:text-4xl font-black text-white mb-6 leading-tight">
-            Turning Ideas Into<br /><span class="grad-text">Engineered Reality</span>
-          </h2>
-          <div id="about-bio-full" class="space-y-4 text-slate-400 leading-relaxed">
-            <p>Loading biography…</p>
+        <h2 class="text-4xl lg:text-5xl font-black text-slate-100 mb-6">Let's Build <span class="gradient-text">Something.</span></h2>
+        <p class="text-slate-400 text-lg leading-relaxed mb-10">
+          Open for collaborations, consulting opportunities, and creative projects. Drop a message and I'll respond within 24 hours.
+        </p>
+        <div class="flex flex-col gap-5">
+          <div class="flex items-center gap-4 group">
+            <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 group-hover:bg-amber-500/20 transition-colors">
+              <i class="fa-solid fa-location-dot"></i>
+            </div>
+            <div>
+              <div class="text-slate-300 font-medium">Location</div>
+              <div class="text-slate-500 text-sm">Philippines</div>
+            </div>
           </div>
-
-          <!-- Social links -->
-          <div class="flex items-center gap-4 mt-8">
-            <a href="https://github.com/engraglinao" target="_blank" rel="noopener"
-               class="w-10 h-10 rounded-lg flex items-center justify-center text-slate-400 hover:text-amber-400 hover:border-amber-400 transition-colors border"
-               style="border-color:#1e293b;background:#111827;">
+          <div class="flex items-center gap-4 group">
+            <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 group-hover:bg-amber-500/20 transition-colors">
               <i class="fa-brands fa-github"></i>
-            </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener"
-               class="w-10 h-10 rounded-lg flex items-center justify-center text-slate-400 hover:text-amber-400 hover:border-amber-400 transition-colors border"
-               style="border-color:#1e293b;background:#111827;">
-              <i class="fa-brands fa-linkedin-in"></i>
-            </a>
-            <a href="mailto:hello@aglinao.dev"
-               class="w-10 h-10 rounded-lg flex items-center justify-center text-slate-400 hover:text-amber-400 hover:border-amber-400 transition-colors border"
-               style="border-color:#1e293b;background:#111827;">
-              <i class="fa-solid fa-envelope"></i>
-            </a>
+            </div>
+            <div>
+              <div class="text-slate-300 font-medium">GitHub</div>
+              <div class="text-slate-500 text-sm">github.com/engraglinao</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 group">
+            <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 group-hover:bg-amber-500/20 transition-colors">
+              <i class="fa-solid fa-briefcase"></i>
+            </div>
+            <div>
+              <div class="text-slate-300 font-medium">Status</div>
+              <div class="text-emerald-400 text-sm font-medium">Available for Work</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- ══════════════════════════════════════════════════
-       EXPERIENCE TIMELINE
-       ══════════════════════════════════════════════════ -->
-  <section id="experience" class="py-24 fade-section" style="background:rgba(17,24,39,0.5);">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16">
-        <p class="text-xs font-bold tracking-widest uppercase text-amber-400 mb-3">// Experience</p>
-        <h2 class="text-3xl sm:text-4xl font-black text-white">Professional Timeline</h2>
-      </div>
-
-      <!-- Skeleton state -->
-      <div id="exp-skeleton" class="space-y-8">
-        <div class="flex gap-6">
-          <div class="skeleton w-10 h-10 rounded-full flex-shrink-0"></div>
-          <div class="flex-1 space-y-2">
-            <div class="skeleton h-4 w-1/3"></div>
-            <div class="skeleton h-3 w-1/4"></div>
-            <div class="skeleton h-3 w-full"></div>
-            <div class="skeleton h-3 w-5/6"></div>
+      <!-- Contact Form -->
+      <div>
+        <form id="contact-form" onsubmit="submitContactForm(event)" class="bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-xl flex flex-col gap-5">
+          <div>
+            <label class="block text-slate-400 text-sm font-medium mb-2">Full Name</label>
+            <input id="cf-name" type="text" placeholder="Your full name" required
+              class="contact-input w-full bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-600 rounded-xl px-4 py-3 text-sm transition-all" />
           </div>
-        </div>
-        <div class="flex gap-6">
-          <div class="skeleton w-10 h-10 rounded-full flex-shrink-0"></div>
-          <div class="flex-1 space-y-2">
-            <div class="skeleton h-4 w-1/3"></div>
-            <div class="skeleton h-3 w-1/4"></div>
-            <div class="skeleton h-3 w-full"></div>
-            <div class="skeleton h-3 w-5/6"></div>
+          <div>
+            <label class="block text-slate-400 text-sm font-medium mb-2">Email Address</label>
+            <input id="cf-email" type="email" placeholder="your@email.com" required
+              class="contact-input w-full bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-600 rounded-xl px-4 py-3 text-sm transition-all" />
           </div>
-        </div>
-      </div>
-
-      <!-- Timeline render target -->
-      <div id="timeline-container" class="relative" style="display:none;">
-        <div class="timeline-line"></div>
-        <div id="timeline-items" class="space-y-10 pl-16"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ══════════════════════════════════════════════════
-       PORTFOLIO CAROUSEL
-       ══════════════════════════════════════════════════ -->
-  <section id="portfolio" class="py-24 fade-section overflow-hidden">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-end justify-between mb-12">
-        <div>
-          <p class="text-xs font-bold tracking-widest uppercase text-amber-400 mb-3">// Portfolio</p>
-          <h2 class="text-3xl sm:text-4xl font-black text-white">Work Caravan</h2>
-        </div>
-        <div class="flex items-center gap-3">
-          <button id="carousel-prev" onclick="carouselPrev()"
-                  class="w-11 h-11 rounded-xl flex items-center justify-center text-slate-300 hover:text-amber-400 transition-all hover:scale-105"
-                  style="background:#111827;border:1px solid #1e293b;">
-            <i class="fa-solid fa-chevron-left"></i>
+          <div>
+            <label class="block text-slate-400 text-sm font-medium mb-2">Message</label>
+            <textarea id="cf-message" rows="5" placeholder="Tell me about your project or opportunity..." required
+              class="contact-input w-full bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-600 rounded-xl px-4 py-3 text-sm transition-all resize-none"></textarea>
+          </div>
+          <button type="submit" id="cf-submit" class="flex items-center justify-center gap-2 w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-3.5 rounded-xl transition-all hover:shadow-lg hover:shadow-amber-500/30 active:scale-95">
+            <i class="fa-solid fa-paper-plane"></i>
+            Send Message
           </button>
-          <button id="carousel-next" onclick="carouselNext()"
-                  class="w-11 h-11 rounded-xl flex items-center justify-center text-slate-300 hover:text-amber-400 transition-all hover:scale-105"
-                  style="background:#111827;border:1px solid #1e293b;">
-            <i class="fa-solid fa-chevron-right"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Carousel viewport -->
-      <div id="carousel-viewport" class="overflow-hidden rounded-2xl cursor-grab active:cursor-grabbing" style="touch-action:pan-y;">
-        <div id="carousel-skeleton" class="flex gap-5">
-          <div class="skeleton min-w-[290px] h-64 rounded-xl"></div>
-          <div class="skeleton min-w-[290px] h-64 rounded-xl"></div>
-          <div class="skeleton min-w-[290px] h-64 rounded-xl"></div>
-        </div>
-        <div id="carousel-track" class="carousel-track" style="display:none;"></div>
-      </div>
-
-      <!-- Dot indicators -->
-      <div id="carousel-dots" class="flex items-center justify-center gap-2 mt-6"></div>
-    </div>
-  </section>
-
-  <!-- ══════════════════════════════════════════════════
-       APPLICATION MATRIX
-       ══════════════════════════════════════════════════ -->
-  <section id="apps" class="py-24 fade-section" style="background:rgba(17,24,39,0.5);">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16">
-        <p class="text-xs font-bold tracking-widest uppercase text-amber-400 mb-3">// Tech Stack</p>
-        <h2 class="text-3xl sm:text-4xl font-black text-white">Application Matrix</h2>
-        <p class="text-slate-400 mt-3 max-w-xl mx-auto">Tools, platforms, and technologies I leverage to build and ship.</p>
-      </div>
-
-      <!-- Skeleton -->
-      <div id="apps-skeleton" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
-        <div class="skeleton h-24 rounded-xl"></div>
-        <div class="skeleton h-24 rounded-xl"></div>
-        <div class="skeleton h-24 rounded-xl"></div>
-        <div class="skeleton h-24 rounded-xl"></div>
-        <div class="skeleton h-24 rounded-xl"></div>
-        <div class="skeleton h-24 rounded-xl"></div>
-      </div>
-
-      <!-- App grid render target -->
-      <div id="apps-container" style="display:none;"></div>
-    </div>
-  </section>
-
-  <!-- ══════════════════════════════════════════════════
-       CONTACT
-       ══════════════════════════════════════════════════ -->
-  <section id="contact" class="py-24 fade-section">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid md:grid-cols-2 gap-16">
-        <!-- Left info -->
-        <div>
-          <p class="text-xs font-bold tracking-widest uppercase text-amber-400 mb-3">// Contact</p>
-          <h2 class="text-3xl sm:text-4xl font-black text-white mb-6">Let's Build<br/><span class="grad-text">Something Great</span></h2>
-          <p class="text-slate-400 leading-relaxed mb-8">
-            Whether you have a project in mind, a collaboration proposal, or simply want to connect — I'm always open to conversations that matter.
-          </p>
-          <div class="space-y-4">
-            <div class="flex items-center gap-4">
-              <div class="w-10 h-10 rounded-lg flex items-center justify-center"
-                   style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);">
-                <i class="fa-solid fa-envelope text-amber-400"></i>
-              </div>
-              <span class="text-slate-300">hello@aglinao.dev</span>
-            </div>
-            <div class="flex items-center gap-4">
-              <div class="w-10 h-10 rounded-lg flex items-center justify-center"
-                   style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);">
-                <i class="fa-brands fa-github text-amber-400"></i>
-              </div>
-              <span class="text-slate-300">github.com/engraglinao</span>
-            </div>
-            <div class="flex items-center gap-4">
-              <div class="w-10 h-10 rounded-lg flex items-center justify-center"
-                   style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);">
-                <i class="fa-solid fa-map-pin text-amber-400"></i>
-              </div>
-              <span class="text-slate-300">Philippines</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right: contact form -->
-        <div>
-          <form id="contact-form" onsubmit="submitContactForm(event)"
-                class="p-8 rounded-2xl space-y-5"
-                style="background:#111827;border:1px solid #1e293b;">
-            <div>
-              <label class="block text-sm font-medium text-slate-300 mb-2">Full Name</label>
-              <input id="cf-name" type="text" placeholder="Jane Doe" class="form-input" required />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-slate-300 mb-2">Email Address</label>
-              <input id="cf-email" type="email" placeholder="jane@example.com" class="form-input" required />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-slate-300 mb-2">Message</label>
-              <textarea id="cf-message" rows="5" placeholder="Tell me about your project or idea…"
-                        class="form-input resize-none" required></textarea>
-            </div>
-            <button type="submit" id="cf-submit"
-                    class="w-full py-3 rounded-xl font-semibold text-black transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-                    style="background:linear-gradient(135deg,#f59e0b,#fb923c);">
-              <span id="cf-btn-text"><i class="fa-solid fa-paper-plane mr-2"></i>Send Message</span>
-            </button>
-            <p id="cf-feedback" class="text-center text-sm hidden"></p>
-          </form>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ══════════════════════════════════════════════════
-       FOOTER
-       ══════════════════════════════════════════════════ -->
-  <footer class="py-12 border-t" style="border-color:#1e293b;background:#080c1a;">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid sm:grid-cols-3 gap-8 mb-8">
-        <!-- Brand -->
-        <div>
-          <div class="flex items-center gap-2 mb-3">
-            <span class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-black"
-                  style="background:linear-gradient(135deg,#f59e0b,#fb923c);">EA</span>
-            <span class="font-bold text-white">Engr. Aglinao</span>
-          </div>
-          <p class="text-xs text-slate-500 leading-relaxed">
-            Engineered with precision.<br/>Deployed with purpose.
-          </p>
-        </div>
-
-        <!-- System meta -->
-        <div class="text-xs text-slate-500 space-y-1 font-mono">
-          <p><span class="text-amber-400/60">STACK</span> &nbsp; Firebase · Tailwind · Vanilla JS</p>
-          <p><span class="text-amber-400/60">HOST &nbsp;</span> GitHub Pages</p>
-          <p><span class="text-amber-400/60">DB &nbsp;&nbsp;&nbsp;</span> Firestore (NoSQL)</p>
-          <p><span class="text-amber-400/60">BUILD</span> &nbsp; Static SPA — No Bundler</p>
-        </div>
-
-        <!-- Credits -->
-        <div class="text-xs text-slate-500 space-y-1">
-          <p class="text-slate-400 font-semibold mb-2">Attributions</p>
-          <p>Icons — Font Awesome 6</p>
-          <p>Type — Inter · JetBrains Mono</p>
-          <p>Media — Pexels (CC0)</p>
-          <p>Hosting — GitHub Pages</p>
-        </div>
-      </div>
-
-      <div class="pt-6 border-t flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600"
-           style="border-color:#1e293b;">
-        <span>© <span id="footer-year"></span> Engr. Aglinao. All rights reserved.</span>
-        <span class="font-mono">v2.0.0 · Built on Firebase Firestore</span>
-      </div>
-    </div>
-  </footer>
-
-  <!-- ══════════════════════════════════════════════════
-       MEDIA MODAL
-       ══════════════════════════════════════════════════ -->
-  <div id="media-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Media Preview">
-    <div class="modal-box">
-      <!-- Modal header -->
-      <div class="flex items-center justify-between px-6 py-4" style="border-bottom:1px solid #1e293b;">
-        <div>
-          <h3 id="modal-title" class="font-bold text-white text-base"></h3>
-          <p id="modal-desc" class="text-xs text-slate-400 mt-0.5"></p>
-        </div>
-        <button onclick="closeModal()" class="w-9 h-9 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-all">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
-      </div>
-      <!-- Modal content area -->
-      <div id="modal-content" class="flex-1 overflow-auto p-6" style="min-height:300px;"></div>
-      <!-- Modal footer -->
-      <div class="px-6 py-4 flex items-center justify-between" style="border-top:1px solid #1e293b;">
-        <span id="modal-type-badge" class="type-badge"></span>
-        <a id="modal-ext-link" href="#" target="_blank" rel="noopener"
-           class="inline-flex items-center gap-2 text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors">
-          Open Original <i class="fa-solid fa-arrow-up-right-from-square"></i>
-        </a>
+          <div id="cf-status" class="hidden text-center text-sm font-medium py-2 rounded-lg"></div>
+        </form>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- ══════════════════════════════════════════════════
-       TOAST NOTIFICATION
-       ══════════════════════════════════════════════════ -->
-  <div id="toast" class="fixed bottom-6 right-6 z-[9998] transition-all duration-300 translate-y-20 opacity-0 pointer-events-none">
-    <div id="toast-inner" class="flex items-center gap-3 px-5 py-3 rounded-xl shadow-2xl text-sm font-medium"
-         style="background:#1e293b;border:1px solid #334155;color:#e2e8f0;">
-      <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
-      <span id="toast-msg"></span>
+<!-- ════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════ -->
+<footer class="bg-slate-950 border-t border-slate-800/60 py-12 px-6 lg:px-12">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid md:grid-cols-3 gap-8 mb-10">
+      <div>
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center font-black text-slate-900 text-xs">EA</div>
+          <span class="font-semibold text-slate-200">Engr. Aglinao</span>
+        </div>
+        <p class="text-slate-600 text-sm leading-relaxed">A dynamically powered portfolio site built on Firebase Firestore and served via GitHub Pages.</p>
+      </div>
+      <div>
+        <h4 class="text-slate-400 font-semibold text-sm mb-4 uppercase tracking-widest">Technical Assembly</h4>
+        <ul class="text-slate-600 text-sm flex flex-col gap-2">
+          <li class="flex items-center gap-2"><i class="fa-brands fa-html5 text-amber-500/60 w-4"></i> Semantic HTML5 + Tailwind CSS</li>
+          <li class="flex items-center gap-2"><i class="fa-brands fa-js text-amber-500/60 w-4"></i> Vanilla ES6+ JavaScript</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-fire text-amber-500/60 w-4"></i> Firebase Firestore Database</li>
+          <li class="flex items-center gap-2"><i class="fa-brands fa-github text-amber-500/60 w-4"></i> Hosted on GitHub Pages</li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-slate-400 font-semibold text-sm mb-4 uppercase tracking-widest">System Metadata</h4>
+        <ul class="text-slate-600 text-sm flex flex-col gap-2">
+          <li class="flex items-center justify-between"><span>Build Type</span><span class="text-slate-500">Static SPA</span></li>
+          <li class="flex items-center justify-between"><span>DB Engine</span><span class="text-slate-500">Firestore NoSQL</span></li>
+          <li class="flex items-center justify-between"><span>Render Mode</span><span class="text-slate-500">Client-Side</span></li>
+          <li class="flex items-center justify-between"><span>Last Updated</span><span id="footer-year" class="text-slate-500">—</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-slate-800/60 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <p class="text-slate-700 text-xs">© <span id="copyright-year"></span> Engr. Aglinao. All rights reserved.</p>
+      <p class="text-slate-700 text-xs">Powered by <span class="text-amber-500/60">Firebase</span> · Built with <span class="text-amber-500/60">Tailwind CSS</span></p>
     </div>
   </div>
-
-  <!-- ══════════════════════════════════════════════════
-       FIREBASE v9 (ESM via CDN)
-       ══════════════════════════════════════════════════ -->
-  <script type="module">
-    import { initializeApp }
-      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import {
-      getFirestore, doc, getDoc, collection, getDocs, addDoc,
-      query, orderBy, serverTimestamp
-    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-
-    /* ────────────────────────────────────────────────────
-       FIREBASE CONFIG — Replace with your project values
-       ──────────────────────────────────────────────────── */
-    const firebaseConfig = {
-      apiKey: "AIzaSyCjDqSdEVrmbV78ObzAMUWnqzgeDVsLX0Q",
-      authDomain: "my-portfolio-54e15.firebaseapp.com",
-      projectId: "my-portfolio-54e15",
-      storageBucket: "my-portfolio-54e15.firebasestorage.app",
-      messagingSenderId: "127704809723",
-      appId: "1:127704809723:web:ea6b69141b1081cfd3705e"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db  = getFirestore(app);
-
-    /* ────────────────────────────────────────────────────
-       GLOBAL DATA STORE (shared with non-module scripts)
-       ──────────────────────────────────────────────────── */
-    window.__portfolioData = {
-      about:      {},
-      experience: [],
-      portfolio:  [],
-      apps:       []
-    };
-
-    /* ────────────────────────────────────────────────────
-       FETCH  —  About / Hero
-       ──────────────────────────────────────────────────── */
-    async function fetchAbout() {
-      try {
-        const snap = await getDoc(doc(db, 'portfolio_data', 'about'));
-        if (snap.exists()) {
-          const d = snap.data();
-          window.__portfolioData.about = d;
-
-          // Hero headline
-          const hlEl = document.getElementById('hero-headline-text');
-          if (hlEl && d.headline) hlEl.textContent = d.headline;
-
-          // Hero bio summary
-          const bioEl = document.getElementById('hero-bio-text');
-          if (bioEl && d.bio) bioEl.textContent = d.bio.substring(0, 220) + '…';
-
-          // Full bio block
-          const fullBio = document.getElementById('about-bio-full');
-          if (fullBio && d.bio) {
-            fullBio.innerHTML = d.bio.split('\n').filter(p => p.trim())
-              .map(p => `<p>${p}</p>`).join('');
-          }
-
-          // Master resume button
-          const resumeBtn = document.getElementById('master-resume-btn');
-          if (resumeBtn && d.resume_url) {
-            resumeBtn.href = d.resume_url;
-            resumeBtn.setAttribute('download', '');
-          }
-        }
-      } catch (err) {
-        console.warn('[Firebase] About fetch failed:', err.message);
-        loadAboutFallback();
-      }
-    }
-
-    function loadAboutFallback() {
-      const fallback = {
-        headline:   'Engineer. Creator.\nInnovator.',
-        bio:        'A dedicated engineer and technologist with a passion for solving real-world problems through elegant code, robust systems, and thoughtful design. Experienced across full-stack development, systems engineering, and digital product creation — building solutions that are scalable, maintainable, and genuinely useful.',
-        resume_url: '#'
-      };
-      window.__portfolioData.about = fallback;
-
-      const hlEl = document.getElementById('hero-headline-text');
-      if (hlEl) hlEl.textContent = fallback.headline;
-
-      const bioEl = document.getElementById('hero-bio-text');
-      if (bioEl) bioEl.textContent = fallback.bio.substring(0, 220) + '…';
-
-      const fullBio = document.getElementById('about-bio-full');
-      if (fullBio) {
-        fullBio.innerHTML = fallback.bio.split('\n').filter(p => p.trim())
-          .map(p => `<p>${p}</p>`).join('');
-      }
-    }
-
-    /* ────────────────────────────────────────────────────
-       FETCH  —  Experience
-       ──────────────────────────────────────────────────── */
-    async function fetchExperience() {
-      const skeletonEl = document.getElementById('exp-skeleton');
-      const containerEl = document.getElementById('timeline-container');
-      const itemsEl = document.getElementById('timeline-items');
-
-      try {
-        const q = query(collection(db, 'experience'), orderBy('order', 'asc'));
-        const snap = await getDocs(q);
-        const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        window.__portfolioData.experience = items;
-        renderTimeline(items, itemsEl, skeletonEl, containerEl);
-      } catch (err) {
-        console.warn('[Firebase] Experience fetch failed:', err.message);
-        renderTimeline(experienceFallback(), itemsEl, skeletonEl, containerEl);
-      }
-    }
-
-    function experienceFallback() {
-      return [
-        {
-          role:         'Senior Systems Engineer',
-          organization: 'TechCorp International',
-          date_range:   'Jan 2022 — Present',
-          description:  'Led end-to-end architecture of distributed systems serving 500K+ daily active users. Spearheaded migration to microservices, reducing latency by 40%. Managed cross-functional teams and stakeholder alignment.',
-          icon:         'fa-microchip'
-        },
-        {
-          role:         'Software Developer',
-          organization: 'Innovate Solutions PH',
-          date_range:   'Mar 2020 — Dec 2021',
-          description:  'Developed full-stack web applications using React and Node.js. Built internal tooling that automated 30% of repetitive deployment workflows. Mentored two junior developers.',
-          icon:         'fa-code'
-        },
-        {
-          role:         'IT Project Coordinator',
-          organization: 'Government Agency — DepEd',
-          date_range:   'Jun 2018 — Feb 2020',
-          description:  'Coordinated ICT infrastructure rollouts across 50+ schools. Managed vendor contracts, hardware procurement, and network setup for government digital initiatives.',
-          icon:         'fa-network-wired'
-        }
-      ];
-    }
-
-    function renderTimeline(items, itemsEl, skeletonEl, containerEl) {
-      skeletonEl.style.display = 'none';
-      containerEl.style.display = 'block';
-      itemsEl.innerHTML = '';
-
-      const typeColors = ['#f59e0b','#fb923c','#34d399','#60a5fa','#a78bfa','#f472b6'];
-
-      items.forEach((item, i) => {
-        const color = typeColors[i % typeColors.length];
-        const li = document.createElement('div');
-        li.className = 'flex gap-6 items-start';
-        li.innerHTML = `
-          <div class="timeline-node flex-shrink-0" style="border-color:${color};box-shadow:0 0 16px ${color}44;">
-            <i class="fa-solid ${item.icon || 'fa-briefcase'} text-sm" style="color:${color};"></i>
-          </div>
-          <div class="flex-1 pb-10">
-            <div class="p-5 rounded-xl transition-all duration-200 hover:border-amber-400/30"
-                 style="background:#111827;border:1px solid #1e293b;">
-              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-2">
-                <h3 class="font-bold text-white text-base">${escHtml(item.role)}</h3>
-                <span class="text-xs font-mono text-slate-500 flex-shrink-0">${escHtml(item.date_range)}</span>
-              </div>
-              <p class="text-sm font-semibold mb-2" style="color:${color};">${escHtml(item.organization)}</p>
-              <p class="text-sm text-slate-400 leading-relaxed">${escHtml(item.description)}</p>
-            </div>
-          </div>`;
-        itemsEl.appendChild(li);
-      });
-    }
-
-    /* ────────────────────────────────────────────────────
-       FETCH  —  Portfolio (Carousel)
-       ──────────────────────────────────────────────────── */
-    async function fetchPortfolio() {
-      try {
-        const q = query(collection(db, 'portfolio'), orderBy('order', 'asc'));
-        const snap = await getDocs(q);
-        const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        window.__portfolioData.portfolio = items;
-        renderCarousel(items);
-      } catch (err) {
-        console.warn('[Firebase] Portfolio fetch failed:', err.message);
-        renderCarousel(portfolioFallback());
-      }
-    }
-
-    function portfolioFallback() {
-      return [
-        {
-          title:       'Smart Campus System',
-          description: 'An IoT-integrated campus management platform connecting 200+ devices for attendance, access control, and energy monitoring.',
-          type:        'Site',
-          link:        'https://example.com',
-          thumbnail:   'https://images.pexels.com/photos/6985132/pexels-photo-6985132.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=600',
-          order:       1
-        },
-        {
-          title:       'Annual Report 2023',
-          description: 'Comprehensive annual report presentation covering departmental KPIs, budget allocation, and strategic roadmap.',
-          type:        'PPT',
-          link:        'https://docs.google.com/presentation/d/example/edit',
-          thumbnail:   'https://images.pexels.com/photos/7135037/pexels-photo-7135037.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=600',
-          order:       2
-        },
-        {
-          title:       'System Architecture Blueprint',
-          description: 'Technical architecture diagram for a distributed microservices ecosystem designed for enterprise-scale deployment.',
-          type:        'Image',
-          link:        'https://images.pexels.com/photos/6985268/pexels-photo-6985268.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=800&w=1200',
-          thumbnail:   'https://images.pexels.com/photos/6985268/pexels-photo-6985268.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=600',
-          order:       3
-        },
-        {
-          title:       'Technical Research Paper',
-          description: 'Published research on adaptive load balancing algorithms for edge computing environments.',
-          type:        'PDF',
-          link:        'https://www.w3.org/WAI/WCAG21/wcag21.pdf',
-          thumbnail:   'https://images.pexels.com/photos/6985132/pexels-photo-6985132.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=600',
-          order:       4
-        },
-        {
-          title:       'Mobile App Prototype',
-          description: 'High-fidelity Figma prototype for a community services mobile application targeting local government units.',
-          type:        'URL',
-          link:        'https://figma.com',
-          thumbnail:   'https://images.pexels.com/photos/7135037/pexels-photo-7135037.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=600',
-          order:       5
-        }
-      ];
-    }
-
-    function renderCarousel(items) {
-      window.__portfolioData.portfolio = items;
-      const skeletonEl = document.getElementById('carousel-skeleton');
-      const trackEl    = document.getElementById('carousel-track');
-      const dotsEl     = document.getElementById('carousel-dots');
-
-      skeletonEl.style.display = 'none';
-      trackEl.style.display    = 'flex';
-      trackEl.innerHTML        = '';
-      dotsEl.innerHTML         = '';
-
-      const typeMeta = {
-        PPT:   { color: '#f97316', icon: 'fa-file-powerpoint', label: 'PowerPoint' },
-        Image: { color: '#34d399', icon: 'fa-image',           label: 'Image'      },
-        URL:   { color: '#60a5fa', icon: 'fa-link',            label: 'Link'       },
-        Site:  { color: '#a78bfa', icon: 'fa-globe',           label: 'Website'    },
-        PDF:   { color: '#f43f5e', icon: 'fa-file-pdf',        label: 'PDF'        }
-      };
-
-      items.forEach((item, i) => {
-        const meta = typeMeta[item.type] || typeMeta.URL;
-        const card = document.createElement('div');
-        card.className = 'portfolio-card rounded-xl overflow-hidden';
-        card.style.cssText = `background:#111827;border:1px solid #1e293b;`;
-        card.dataset.index = i;
-        card.setAttribute('role', 'button');
-        card.setAttribute('tabindex', '0');
-        card.setAttribute('aria-label', `Open ${item.title}`);
-
-        card.innerHTML = `
-          <div class="relative h-44 overflow-hidden bg-slate-800">
-            ${item.thumbnail
-              ? `<img src="${escAttr(item.thumbnail)}" alt="${escAttr(item.title)}"
-                      class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                      loading="lazy" onerror="this.style.display='none'" />`
-              : ''}
-            <div class="absolute inset-0 flex items-center justify-center"
-                 style="background:rgba(0,0,0,0.4);">
-              <div class="w-12 h-12 rounded-full flex items-center justify-center"
-                   style="background:${meta.color}22;border:1.5px solid ${meta.color};">
-                <i class="fa-solid ${meta.icon} text-lg" style="color:${meta.color};"></i>
-              </div>
-            </div>
-            <div class="absolute top-3 left-3">
-              <span class="type-badge" style="background:${meta.color}22;color:${meta.color};border:1px solid ${meta.color}44;">
-                ${escHtml(item.type)}
-              </span>
-            </div>
-          </div>
-          <div class="p-4">
-            <h3 class="font-bold text-white text-sm mb-1 truncate">${escHtml(item.title)}</h3>
-            <p class="text-xs text-slate-400 leading-relaxed line-clamp-2">${escHtml(item.description)}</p>
-            <div class="flex items-center gap-1 mt-3 text-xs font-semibold" style="color:${meta.color};">
-              <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
-              <span>View ${meta.label}</span>
-            </div>
-          </div>`;
-
-        card.addEventListener('click',  () => openModal(item));
-        card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openModal(item); });
-        trackEl.appendChild(card);
-
-        // Dot
-        const dot = document.createElement('button');
-        dot.className = 'w-2 h-2 rounded-full transition-all duration-300';
-        dot.style.background = i === 0 ? '#f59e0b' : '#1e293b';
-        dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
-        dot.addEventListener('click', () => { window.__carouselIndex = i; updateCarousel(); });
-        dotsEl.appendChild(dot);
-      });
-
-      window.__carouselItems = items;
-      window.__carouselIndex = 0;
-      updateCarousel();
-    }
-
-    /* ────────────────────────────────────────────────────
-       FETCH  —  Apps / Tools
-       ──────────────────────────────────────────────────── */
-    async function fetchApps() {
-      try {
-        const snap = await getDocs(collection(db, 'apps'));
-        const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        window.__portfolioData.apps = items;
-        renderApps(items);
-      } catch (err) {
-        console.warn('[Firebase] Apps fetch failed:', err.message);
-        renderApps(appsFallback());
-      }
-    }
-
-    function appsFallback() {
-      return [
-        { name: 'VS Code',       icon: 'fa-code',               color: '#60a5fa', category: 'IDE'         },
-        { name: 'Firebase',      icon: 'fa-fire',               color: '#fb923c', category: 'Backend'     },
-        { name: 'Git',           icon: 'fa-code-branch',        color: '#f43f5e', category: 'VCS'         },
-        { name: 'JavaScript',    icon: 'fa-js',                 color: '#fbbf24', category: 'Language'    },
-        { name: 'Python',        icon: 'fa-python',             color: '#34d399', category: 'Language'    },
-        { name: 'Linux',         icon: 'fa-linux',              color: '#a78bfa', category: 'OS'          },
-        { name: 'Docker',        icon: 'fa-docker',             color: '#60a5fa', category: 'DevOps'      },
-        { name: 'Figma',         icon: 'fa-figma',              color: '#f97316', category: 'Design'      },
-        { name: 'Tailwind CSS',  icon: 'fa-wind',               color: '#38bdf8', category: 'CSS'         },
-        { name: 'PostgreSQL',    icon: 'fa-database',           color: '#6ee7b7', category: 'Database'    },
-        { name: 'Node.js',       icon: 'fa-node-js',            color: '#4ade80', category: 'Runtime'     },
-        { name: 'GitHub',        icon: 'fa-github',             color: '#e2e8f0', category: 'Platform'    },
-        { name: 'HTML5',         icon: 'fa-html5',              color: '#fb923c', category: 'Markup'      },
-        { name: 'CSS3',          icon: 'fa-css3-alt',           color: '#60a5fa', category: 'Style'       },
-        { name: 'React',         icon: 'fa-react',              color: '#38bdf8', category: 'Framework'   },
-        { name: 'Arduino',       icon: 'fa-microchip',          color: '#34d399', category: 'Hardware'    },
-        { name: 'Notion',        icon: 'fa-n',                  color: '#e2e8f0', category: 'Productivity' },
-        { name: 'Postman',       icon: 'fa-paper-plane',        color: '#f97316', category: 'API'         }
-      ];
-    }
-
-    function renderApps(items) {
-      window.__portfolioData.apps = items;
-      const skeletonEl   = document.getElementById('apps-skeleton');
-      const containerEl  = document.getElementById('apps-container');
-      skeletonEl.style.display  = 'none';
-      containerEl.style.display = 'block';
-
-      // Group by category
-      const groups = {};
-      items.forEach(item => {
-        const cat = item.category || 'General';
-        if (!groups[cat]) groups[cat] = [];
-        groups[cat].push(item);
-      });
-
-      containerEl.innerHTML = '';
-      Object.entries(groups).forEach(([cat, tools]) => {
-        const section = document.createElement('div');
-        section.className = 'mb-10';
-        section.innerHTML = `
-          <h3 class="text-xs font-bold tracking-widest uppercase text-slate-500 mb-4 flex items-center gap-2">
-            <span class="w-4 h-px bg-amber-400 inline-block"></span>${escHtml(cat)}
-          </h3>
-          <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3" id="cat-${escAttr(cat)}"></div>`;
-        containerEl.appendChild(section);
-
-        const grid = section.querySelector(`#cat-${CSS.escape(cat)}`);
-        tools.forEach(tool => {
-          const card = document.createElement('div');
-          card.className = 'app-card p-4 rounded-xl flex flex-col items-center justify-center gap-2 text-center';
-          card.style.cssText = `background:#111827;border:1px solid #1e293b;`;
-          card.innerHTML = `
-            <div class="w-10 h-10 rounded-lg flex items-center justify-center"
-                 style="background:${tool.color}15;border:1px solid ${tool.color}30;">
-              <i class="fa-brands ${tool.icon} fa-solid text-base" style="color:${tool.color};"></i>
-            </div>
-            <span class="text-xs font-medium text-slate-300">${escHtml(tool.name)}</span>`;
-          grid.appendChild(card);
-        });
-      });
-    }
-
-    /* ────────────────────────────────────────────────────
-       CONTACT FORM  —  Firestore Write
-       ──────────────────────────────────────────────────── */
-    window.submitContactForm = async (e) => {
-      e.preventDefault();
-      const btn     = document.getElementById('cf-submit');
-      const btnText = document.getElementById('cf-btn-text');
-      const feedback = document.getElementById('cf-feedback');
-
-      const name    = document.getElementById('cf-name').value.trim();
-      const email   = document.getElementById('cf-email').value.trim();
-      const message = document.getElementById('cf-message').value.trim();
-
-      if (!name || !email || !message) return;
-
-      btn.disabled = true;
-      btnText.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Sending…';
-
-      try {
-        await addDoc(collection(db, 'messages'), {
-          name,
-          email,
-          message,
-          submitted_at: serverTimestamp(),
-          read: false
-        });
-
-        btnText.innerHTML = '<i class="fa-solid fa-check mr-2"></i>Message Sent!';
-        document.getElementById('contact-form').reset();
-        showToast('Message sent successfully! I\'ll be in touch soon.', 'success');
-
-        setTimeout(() => {
-          btn.disabled = false;
-          btnText.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i>Send Message';
-        }, 3000);
-      } catch (err) {
-        console.error('[Firebase] Contact form error:', err);
-        btn.disabled = false;
-        btnText.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i>Send Message';
-        showToast('Failed to send. Please try again or email directly.', 'error');
-      }
-    };
-
-    /* ────────────────────────────────────────────────────
-       BOOTSTRAP  —  Load all data
-       ──────────────────────────────────────────────────── */
-    (async () => {
-      await Promise.allSettled([
-        fetchAbout(),
-        fetchExperience(),
-        fetchPortfolio(),
-        fetchApps()
-      ]);
-      window.dispatchEvent(new Event('portfolioReady'));
-    })();
-  </script>
-
-  <!-- ══════════════════════════════════════════════════
-       NON-MODULE SCRIPTS (carousel, modal, resume gen)
-       ══════════════════════════════════════════════════ -->
-  <script>
-    /* ── Utility helpers ───────────────────────────────── */
-    function escHtml(str) {
-      if (typeof str !== 'string') return '';
-      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-                .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-    }
-    function escAttr(str) {
-      if (typeof str !== 'string') return '';
-      return str.replace(/"/g, '&quot;');
-    }
-
-    /* ── Footer year ───────────────────────────────────── */
-    document.getElementById('footer-year').textContent = new Date().getFullYear();
-
-    /* ── Scroll-based nav shadow ───────────────────────── */
-    window.addEventListener('scroll', () => {
-      const hdr = document.getElementById('site-header');
-      hdr.classList.toggle('shadow-2xl', window.scrollY > 20);
-    }, { passive: true });
-
-    /* ── Intersection Observer (fade-in sections) ──────── */
-    const fadeObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          fadeObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.08 });
-    document.querySelectorAll('.fade-section').forEach(el => fadeObserver.observe(el));
-
-    /* ── Toast ─────────────────────────────────────────── */
-    function showToast(msg, type = 'success') {
-      const toast  = document.getElementById('toast');
-      const inner  = document.getElementById('toast-inner');
-      const icon   = document.getElementById('toast-icon');
-      const msgEl  = document.getElementById('toast-msg');
-
-      msgEl.textContent = msg;
-      icon.className = type === 'success'
-        ? 'fa-solid fa-circle-check text-emerald-400'
-        : 'fa-solid fa-circle-xmark text-rose-400';
-      inner.style.borderColor = type === 'success' ? '#34d39944' : '#f43f5e44';
-
-      toast.classList.remove('translate-y-20','opacity-0');
-      toast.classList.add('translate-y-0','opacity-100');
-      setTimeout(() => {
-        toast.classList.add('translate-y-20','opacity-0');
-        toast.classList.remove('translate-y-0','opacity-100');
-      }, 4000);
-    }
-
-    /* ══════════════════════════════════════════════════
-       CAROUSEL ENGINE
-       ══════════════════════════════════════════════════ */
-    window.__carouselIndex = 0;
-    window.__carouselItems = [];
-
-    function updateCarousel() {
-      const track    = document.getElementById('carousel-track');
-      const dotsEl   = document.getElementById('carousel-dots');
-      const viewport = document.getElementById('carousel-viewport');
-      if (!track) return;
-
-      const cardWidth     = 290 + 20; // card + gap
-      const visibleCards  = Math.floor((viewport.offsetWidth + 20) / cardWidth) || 1;
-      const maxIndex      = Math.max(0, window.__carouselItems.length - visibleCards);
-      window.__carouselIndex = Math.min(Math.max(window.__carouselIndex, 0), maxIndex);
-
-      track.style.transform = `translateX(-${window.__carouselIndex * cardWidth}px)`;
-
-      // Update dots
-      const dots = dotsEl.querySelectorAll('button');
-      dots.forEach((d, i) => {
-        d.style.background = i === window.__carouselIndex ? '#f59e0b' : '#1e293b';
-        d.style.width      = i === window.__carouselIndex ? '20px' : '8px';
-      });
-    }
-
-    window.carouselNext = function () {
-      const cards   = window.__carouselItems.length;
-      const viewport = document.getElementById('carousel-viewport');
-      const cardWidth = 290 + 20;
-      const visibleCards = Math.floor((viewport.offsetWidth + 20) / cardWidth) || 1;
-      const maxIndex = Math.max(0, cards - visibleCards);
-      window.__carouselIndex = window.__carouselIndex >= maxIndex ? 0 : window.__carouselIndex + 1;
-      updateCarousel();
-    };
-
-    window.carouselPrev = function () {
-      const cards   = window.__carouselItems.length;
-      const viewport = document.getElementById('carousel-viewport');
-      const cardWidth = 290 + 20;
-      const visibleCards = Math.floor((viewport.offsetWidth + 20) / cardWidth) || 1;
-      const maxIndex = Math.max(0, cards - visibleCards);
-      window.__carouselIndex = window.__carouselIndex <= 0 ? maxIndex : window.__carouselIndex - 1;
-      updateCarousel();
-    };
-
-    // Touch/drag support
-    (function () {
-      let startX = 0, isDragging = false;
-      const vp = document.getElementById('carousel-viewport');
-      if (!vp) return;
-      vp.addEventListener('mousedown',  e => { startX = e.clientX; isDragging = true; });
-      vp.addEventListener('mousemove',  e => { if (!isDragging) return; e.preventDefault(); });
-      vp.addEventListener('mouseup',    e => {
-        if (!isDragging) return;
-        isDragging = false;
-        const diff = startX - e.clientX;
-        if (Math.abs(diff) > 40) diff > 0 ? carouselNext() : carouselPrev();
-      });
-      vp.addEventListener('mouseleave', () => { isDragging = false; });
-      vp.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
-      vp.addEventListener('touchend',   e => {
-        const diff = startX - e.changedTouches[0].clientX;
-        if (Math.abs(diff) > 40) diff > 0 ? carouselNext() : carouselPrev();
-      }, { passive: true });
-    })();
-
-    window.addEventListener('resize', updateCarousel, { passive: true });
-
-    /* ══════════════════════════════════════════════════
-       MODAL ENGINE
-       ══════════════════════════════════════════════════ */
-    const typeBadgeMeta = {
-      PPT:   { bg: '#f97316', label: 'PowerPoint Presentation' },
-      Image: { bg: '#34d399', label: 'Image Asset'            },
-      URL:   { bg: '#60a5fa', label: 'External Link'          },
-      Site:  { bg: '#a78bfa', label: 'Live Website'           },
-      PDF:   { bg: '#f43f5e', label: 'PDF Document'           }
-    };
-
-    window.openModal = function (item) {
-      const overlay   = document.getElementById('media-modal');
-      const titleEl   = document.getElementById('modal-title');
-      const descEl    = document.getElementById('modal-desc');
-      const contentEl = document.getElementById('modal-content');
-      const badgeEl   = document.getElementById('modal-type-badge');
-      const linkEl    = document.getElementById('modal-ext-link');
-
-      titleEl.textContent = item.title;
-      descEl.textContent  = item.description;
-      linkEl.href         = item.link || '#';
-
-      const meta = typeBadgeMeta[item.type] || { bg: '#94a3b8', label: item.type };
-      badgeEl.textContent     = meta.label;
-      badgeEl.style.cssText   = `background:${meta.bg}22;color:${meta.bg};border:1px solid ${meta.bg}44;`;
-
-      // Build content based on type
-      contentEl.innerHTML = '';
-
-      if (item.type === 'Image') {
-        contentEl.innerHTML = `
-          <div class="flex items-center justify-center h-full min-h-64">
-            <img src="${escAttr(item.link)}" alt="${escAttr(item.title)}"
-                 class="max-w-full max-h-[60vh] rounded-lg object-contain shadow-2xl"
-                 loading="lazy" />
-          </div>`;
-      } else if (item.type === 'PDF') {
-        contentEl.innerHTML = `
-          <iframe src="${escAttr(item.link)}"
-                  class="w-full rounded-lg" style="height:60vh;border:none;"
-                  title="${escAttr(item.title)}">
-            <p class="text-slate-400 text-sm">
-              Your browser cannot display PDFs inline.
-              <a href="${escAttr(item.link)}" target="_blank" rel="noopener"
-                 class="text-amber-400 underline">Open PDF directly</a>.
-            </p>
-          </iframe>`;
-      } else if (item.type === 'Site' || item.type === 'URL') {
-        contentEl.innerHTML = `
-          <iframe src="${escAttr(item.link)}"
-                  class="w-full rounded-lg" style="height:60vh;border:none;"
-                  title="${escAttr(item.title)}"
-                  sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
-          </iframe>`;
-      } else if (item.type === 'PPT') {
-        // Office Online viewer for PowerPoint
-        const encodedUrl = encodeURIComponent(item.link || '');
-        contentEl.innerHTML = `
-          <iframe src="https://view.officeapps.live.com/op/embed.aspx?src=${encodedUrl}"
-                  class="w-full rounded-lg" style="height:60vh;border:none;"
-                  title="${escAttr(item.title)}"
-                  allowfullscreen>
-          </iframe>`;
+</footer>
+
+<!-- ════════════════════════════════════════════
+     MEDIA MODAL
+════════════════════════════════════════════ -->
+<div id="modal-backdrop" class="fixed inset-0 bg-slate-950/90 z-50 hidden items-center justify-center p-4">
+  <div id="modal-box" class="relative bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
+    <div class="flex items-center justify-between p-6 border-b border-slate-800 flex-shrink-0">
+      <div>
+        <h3 id="modal-title" class="text-slate-100 font-bold text-lg"></h3>
+        <div class="flex items-center gap-2 mt-1">
+          <span id="modal-type-badge" class="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30"></span>
+          <span id="modal-desc" class="text-slate-500 text-sm"></span>
+        </div>
+      </div>
+      <button onclick="closeModal()" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-100 flex items-center justify-center transition-colors ml-4 flex-shrink-0">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div id="modal-content" class="flex-1 overflow-auto p-2 min-h-0 flex items-center justify-center bg-slate-950">
+      <!-- Injected dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     HIDDEN RESUME PRINT WORKSPACE
+════════════════════════════════════════════ -->
+<div id="resume-print-workspace" style="display:none; position:absolute; left:-9999px; top:0;"></div>
+
+<!-- ════════════════════════════════════════════
+     FIREBASE SDK (v9 Modular via ESM CDN)
+════════════════════════════════════════════ -->
+<script type="module">
+  // ╔══════════════════════════════════════════════════════════════╗
+  // ║          FIREBASE CONFIGURATION — UNIFIED SOURCE OF TRUTH   ║
+  // ║  Mirror this exact block in manage.html to keep both files  ║
+  // ║  connected to the same Firestore database instance.         ║
+  // ╚══════════════════════════════════════════════════════════════╝
+  import { initializeApp }                    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, getDoc,
+           collection, getDocs, addDoc,
+           serverTimestamp }                  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey:            "YOUR_API_KEY",
+    authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId:         "YOUR_PROJECT_ID",
+    storageBucket:     "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId:             "YOUR_APP_ID"
+  };
+  // ── End of Firebase Config Block ──────────────────────────────
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  // ── State Arrays (global for resume generator) ──
+  window.__portfolioState = {
+    about:      {},
+    experience: [],
+    portfolio:  [],
+    apps:       []
+  };
+
+  // ══════════════════════════════════════════════
+  //  FETCH ALL DATA FROM FIRESTORE
+  // ══════════════════════════════════════════════
+  async function fetchAllData() {
+    try {
+      // 1. About
+      const aboutSnap = await getDoc(doc(db, "portfolio_data", "about"));
+      if (aboutSnap.exists()) {
+        window.__portfolioState.about = aboutSnap.data();
+        renderAbout(aboutSnap.data());
       } else {
-        contentEl.innerHTML = `
-          <div class="flex flex-col items-center justify-center h-64 gap-4 text-slate-400">
-            <i class="fa-solid fa-file text-5xl text-slate-600"></i>
-            <p class="text-sm">Preview not available for this type.</p>
-            <a href="${escAttr(item.link)}" target="_blank" rel="noopener"
-               class="px-4 py-2 rounded-lg text-sm font-semibold text-black"
-               style="background:#f59e0b;">Open File</a>
-          </div>`;
+        renderAboutFallback();
       }
 
-      overlay.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    };
+      // 2. Experience
+      const expSnap = await getDocs(collection(db, "experience"));
+      const expData = [];
+      expSnap.forEach(d => expData.push({ id: d.id, ...d.data() }));
+      expData.sort((a, b) => (b.order || 0) - (a.order || 0));
+      window.__portfolioState.experience = expData;
+      renderExperience(expData);
 
-    window.closeModal = function () {
-      const overlay = document.getElementById('media-modal');
-      overlay.classList.remove('active');
-      document.body.style.overflow = '';
-      document.getElementById('modal-content').innerHTML = '';
-    };
+      // 3. Portfolio
+      const portSnap = await getDocs(collection(db, "portfolio"));
+      const portData = [];
+      portSnap.forEach(d => portData.push({ id: d.id, ...d.data() }));
+      window.__portfolioState.portfolio = portData;
+      renderCarousel(portData);
 
-    // Close on backdrop click
-    document.getElementById('media-modal').addEventListener('click', function (e) {
-      if (e.target === this) closeModal();
-    });
+      // 4. Apps / Skills
+      const appsSnap = await getDocs(collection(db, "apps"));
+      const appsData = [];
+      appsSnap.forEach(d => appsData.push({ id: d.id, ...d.data() }));
+      window.__portfolioState.apps = appsData;
+      renderApps(appsData);
 
-    // Close on Escape key
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeModal();
-    });
+      // Stats
+      document.getElementById('stat-projects').textContent = portData.length || '—';
 
-    /* ══════════════════════════════════════════════════
-       LIVE RESUME GENERATOR  (Swiss Minimalist)
-       ══════════════════════════════════════════════════ */
-    window.generateLiveResume = function () {
-      const data = window.__portfolioData || {};
-      const about = data.about || {};
-      const experience = data.experience || [];
-      const apps = data.apps || [];
+    } catch (err) {
+      console.error("Firebase fetch error:", err);
+      renderAboutFallback();
+      renderExperienceFallback();
+      renderCarouselFallback();
+      renderAppsFallback();
+    } finally {
+      hideSkeleton();
+    }
+  }
 
-      const workspace = document.getElementById('resume-workspace');
+  // ══════════════════════════════════════════════
+  //  RENDER: ABOUT
+  // ══════════════════════════════════════════════
+  function renderAbout(data) {
+    const headline = data.headline || "Engineer. Innovator.";
+    const bio      = data.bio      || "Welcome to my portfolio.";
+    const resumeUrl = data.masterResumeUrl || "#";
+    const yearsExp  = data.yearsExperience || "—";
 
-      // Build skill pills string
-      const skillPills = apps
-        .slice(0, 24)
-        .map(a => `<span class="resume-skill-pill">${escHtml(a.name)}</span>`)
-        .join('');
+    document.getElementById('hero-headline').textContent  = headline;
+    document.getElementById('hero-bio').textContent       = bio;
+    document.getElementById('master-resume-btn').href     = resumeUrl;
+    document.getElementById('stat-experience').textContent = yearsExp;
+  }
 
-      // Build experience blocks
-      const expBlocks = experience.map(exp => `
-        <div class="resume-exp-item">
-          <div class="resume-exp-title">${escHtml(exp.role || '')}</div>
-          <div class="resume-exp-org">${escHtml(exp.organization || '')}</div>
-          <div class="resume-exp-date">${escHtml(exp.date_range || '')}</div>
-          <div class="resume-exp-desc">${escHtml(exp.description || '')}</div>
-        </div>`).join('');
+  function renderAboutFallback() {
+    document.getElementById('hero-headline').textContent =
+      "Engineer. Innovator.";
+    document.getElementById('hero-bio').textContent =
+      "A versatile engineer and creative technologist with a passion for building elegant solutions to complex problems. Experienced in systems design, digital fabrication, and interdisciplinary project leadership.";
+    document.getElementById('stat-experience').textContent = "5+";
+    document.getElementById('stat-projects').textContent   = "20+";
+  }
 
-      // Bio text (first 500 chars)
-      const bioText = (about.bio || 'Professional engineer with a passion for technology and innovation.').substring(0, 500);
+  // ══════════════════════════════════════════════
+  //  RENDER: EXPERIENCE TIMELINE
+  // ══════════════════════════════════════════════
+  function renderExperience(data) {
+    const container = document.getElementById('timeline-container');
+    if (!data.length) { renderExperienceFallback(); return; }
+    container.innerHTML = data.map((item, i) => `
+      <div class="relative pl-8 pb-12 group timeline-node">
+        <!-- Node dot -->
+        <div class="absolute -left-[11px] top-1.5 w-5 h-5 rounded-full border-2 border-amber-500 bg-slate-900 group-hover:bg-amber-500 transition-colors shadow-lg shadow-amber-500/20"></div>
+        <!-- Date badge -->
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-xs font-bold px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
+            ${escHtml(item.startDate || '')} – ${escHtml(item.endDate || 'Present')}
+          </span>
+          ${item.current ? '<span class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-900/50 text-emerald-400 border border-emerald-700/40">Current</span>' : ''}
+        </div>
+        <h3 class="text-slate-100 font-bold text-lg mb-0.5">${escHtml(item.role || item.title || 'Role')}</h3>
+        <div class="text-amber-400 text-sm font-semibold mb-3">${escHtml(item.organization || item.company || '')}</div>
+        <p class="text-slate-400 text-sm leading-relaxed max-w-2xl">${escHtml(item.description || '')}</p>
+        ${item.tags ? `<div class="flex flex-wrap gap-2 mt-4">${item.tags.split(',').map(t=>`<span class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">${escHtml(t.trim())}</span>`).join('')}</div>` : ''}
+      </div>
+    `).join('');
+  }
 
-      workspace.innerHTML = `
-        <div class="resume-page">
-          <!-- SIDEBAR -->
-          <div class="resume-sidebar">
-            <div style="margin-bottom:8mm;">
-              <div class="resume-name">Engr.<br/>Aglinao</div>
-              <div class="resume-role">${escHtml(about.headline ? about.headline.split('\n')[0] : 'Systems Engineer')}</div>
-            </div>
+  function renderExperienceFallback() {
+    const container = document.getElementById('timeline-container');
+    const fallback = [
+      { role: "Senior Engineer", organization: "Tech Solutions Inc.", startDate: "2021", endDate: "Present", description: "Led cross-functional engineering teams to deliver large-scale infrastructure projects on time and within budget.", current: true, tags: "Project Management,Systems Design,Leadership" },
+      { role: "Design Engineer", organization: "Creative Lab Corp.", startDate: "2018", endDate: "2021", description: "Designed and prototyped innovative product solutions using CAD software, digital fabrication, and rapid iteration methodology.", tags: "CAD,Prototyping,R&D" },
+      { role: "Junior Engineer", organization: "BuildRight Agency", startDate: "2016", endDate: "2018", description: "Supported senior engineers on civil construction and structural assessment projects across multiple regional sites.", tags: "Structural Analysis,Site Assessment,AutoCAD" }
+    ];
+    window.__portfolioState.experience = fallback;
+    renderExperience(fallback);
+  }
 
-            <div style="height:0.5pt;background:#374151;margin:4mm 0;"></div>
+  // ══════════════════════════════════════════════
+  //  RENDER: CAROUSEL
+  // ══════════════════════════════════════════════
+  let carouselIndex = 0;
+  let carouselItems = [];
+  const CARDS_VISIBLE = () => window.innerWidth >= 1024 ? 3 : window.innerWidth >= 640 ? 2 : 1;
 
-            <div style="margin-bottom:6mm;">
-              <div class="resume-section-title">Contact</div>
-              <div class="resume-contact-item">
-                <span>✉</span><span>hello@aglinao.dev</span>
-              </div>
-              <div class="resume-contact-item">
-                <span>⌂</span><span>Philippines</span>
-              </div>
-              <div class="resume-contact-item">
-                <span>◈</span><span>github.com/engraglinao</span>
-              </div>
-            </div>
+  function typeIcon(type) {
+    const map = { PPT: 'fa-file-powerpoint', PDF: 'fa-file-pdf', Image: 'fa-image', URL: 'fa-link', Site: 'fa-globe', Video: 'fa-video' };
+    return map[type] || 'fa-file';
+  }
+  function typeColor(type) {
+    const map = { PPT: 'text-orange-400', PDF: 'text-red-400', Image: 'text-blue-400', URL: 'text-purple-400', Site: 'text-emerald-400', Video: 'text-cyan-400' };
+    return map[type] || 'text-slate-400';
+  }
 
-            <div style="margin-bottom:6mm;">
-              <div class="resume-section-title">Core Skills</div>
-              <div style="line-height:1.8;">${skillPills}</div>
-            </div>
-
-            <div style="margin-bottom:6mm;">
-              <div class="resume-section-title">Education</div>
-              <div style="font-size:7.5pt;color:#cbd5e1;line-height:1.5;">
-                <div style="font-weight:700;color:#f8fafc;">Bachelor of Science</div>
-                <div>in Engineering</div>
-                <div style="font-size:6.5pt;color:#64748b;">University of the Philippines</div>
-                <div style="font-size:6.5pt;color:#64748b;">2014 — 2018</div>
-              </div>
-            </div>
-
-            <div>
-              <div class="resume-section-title">Languages</div>
-              <div style="font-size:7.5pt;color:#cbd5e1;line-height:1.8;">
-                <div>English — Professional</div>
-                <div>Filipino — Native</div>
-              </div>
+  function renderCarousel(data) {
+    const track = document.getElementById('carousel-track');
+    if (!data.length) { renderCarouselFallback(); return; }
+    carouselItems = data;
+    track.innerHTML = data.map((item, i) => `
+      <div class="portfolio-card flex-shrink-0 w-[calc(100%-1rem)] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]
+                  bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden cursor-pointer group"
+           onclick="openModal(${i})" role="button" aria-label="View ${escHtml(item.title)}">
+        <!-- Thumbnail -->
+        <div class="relative h-44 bg-slate-800 overflow-hidden">
+          ${item.thumbnail
+            ? `<img src="${escHtml(item.thumbnail)}" alt="${escHtml(item.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />`
+            : `<div class="w-full h-full flex items-center justify-center"><i class="fa-solid ${typeIcon(item.type)} text-5xl ${typeColor(item.type)} opacity-40"></i></div>`
+          }
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div class="absolute top-3 right-3">
+            <span class="text-xs font-bold px-2 py-1 rounded-full bg-slate-900/80 backdrop-blur-sm border border-slate-700/50 ${typeColor(item.type)}">
+              <i class="fa-solid ${typeIcon(item.type)} mr-1"></i>${escHtml(item.type || 'Asset')}
+            </span>
+          </div>
+          <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <div class="w-12 h-12 rounded-full bg-amber-500/90 flex items-center justify-center shadow-xl">
+              <i class="fa-solid fa-expand text-slate-900"></i>
             </div>
           </div>
+        </div>
+        <!-- Card Body -->
+        <div class="p-5">
+          <h3 class="text-slate-100 font-bold mb-1.5 group-hover:text-amber-400 transition-colors line-clamp-1">${escHtml(item.title || 'Untitled')}</h3>
+          <p class="text-slate-500 text-sm line-clamp-2">${escHtml(item.description || '')}</p>
+        </div>
+      </div>
+    `).join('');
+    buildCarouselDots();
+    updateCarousel();
+  }
 
-          <!-- MAIN CONTENT -->
-          <div class="resume-main">
-            <div style="margin-bottom:5mm;padding-bottom:3mm;border-bottom:1pt solid #e5e7eb;">
-              <div style="font-size:7pt;color:#94a3b8;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:2mm;">
-                CURRICULUM VITAE — ${new Date().toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'})}
-              </div>
-              <div style="font-size:8.5pt;color:#374151;line-height:1.6;max-width:100mm;">
-                ${escHtml(bioText)}
-              </div>
-            </div>
+  function renderCarouselFallback() {
+    const fallback = [
+      { title: "Annual Report 2023", description: "Comprehensive annual report presentation for stakeholder review.", type: "PPT", thumbnail: "" },
+      { title: "Product Landing Page", description: "A high-conversion product showcase website built from scratch.", type: "Site", thumbnail: "" },
+      { title: "Infrastructure Study", description: "Technical PDF documentation for infrastructure development project.", type: "PDF", thumbnail: "" },
+      { title: "Design Portfolio", description: "Visual design portfolio showcasing branding and UI work.", type: "Image", thumbnail: "" },
+      { title: "Resource Dashboard", description: "Interactive resource management web application.", type: "URL", thumbnail: "" }
+    ];
+    window.__portfolioState.portfolio = fallback;
+    renderCarousel(fallback);
+  }
 
-            <div style="margin-bottom:5mm;">
-              <div class="resume-section-title">Professional Experience</div>
-              ${expBlocks || `<div class="resume-exp-item">
-                <div class="resume-exp-title">Senior Systems Engineer</div>
-                <div class="resume-exp-org">TechCorp International</div>
-                <div class="resume-exp-date">Jan 2022 — Present</div>
-                <div class="resume-exp-desc">Led architecture of distributed systems serving 500K+ daily users.</div>
-              </div>`}
-            </div>
+  function buildCarouselDots() {
+    const dotsContainer = document.getElementById('carousel-dots');
+    const total = carouselItems.length;
+    dotsContainer.innerHTML = Array.from({length: total}, (_, i) =>
+      `<button onclick="goToCarouselSlide(${i})" class="carousel-dot w-2 h-2 rounded-full transition-all ${i===0 ? 'bg-amber-500 w-6':'bg-slate-700'}" aria-label="Slide ${i+1}"></button>`
+    ).join('');
+  }
 
-            <div class="swiss-divider"></div>
+  function updateCarousel() {
+    const track = document.getElementById('carousel-track');
+    const cv = CARDS_VISIBLE();
+    const cardWidth = track.querySelector('.portfolio-card')?.offsetWidth || 300;
+    const gap = 24;
+    const maxIndex = Math.max(0, carouselItems.length - cv);
+    carouselIndex = Math.max(0, Math.min(carouselIndex, maxIndex));
+    track.style.transform = `translateX(-${carouselIndex * (cardWidth + gap)}px)`;
+    // Update dots
+    document.querySelectorAll('.carousel-dot').forEach((dot, i) => {
+      dot.className = `carousel-dot rounded-full transition-all ${i === carouselIndex ? 'bg-amber-500 w-6 h-2' : 'w-2 h-2 bg-slate-700'}`;
+    });
+  }
 
-            <div style="margin-bottom:5mm;">
-              <div class="resume-section-title">Portfolio Highlights</div>
-              ${(data.portfolio || []).slice(0, 3).map(p => `
-                <div style="margin-bottom:3mm;padding-left:3mm;border-left:1.5pt solid #f59e0b;">
-                  <div style="font-size:8pt;font-weight:700;color:#111;">${escHtml(p.title || '')}</div>
-                  <div style="font-size:7pt;color:#4b5563;margin-top:0.5mm;">${escHtml((p.description||'').substring(0,140))}</div>
-                </div>`).join('')}
-            </div>
+  window.goToCarouselSlide = function(i) {
+    carouselIndex = i;
+    updateCarousel();
+  };
 
-            <div class="swiss-divider"></div>
+  document.getElementById('carousel-prev').addEventListener('click', () => {
+    carouselIndex = Math.max(0, carouselIndex - 1);
+    updateCarousel();
+  });
+  document.getElementById('carousel-next').addEventListener('click', () => {
+    carouselIndex = Math.min(carouselItems.length - CARDS_VISIBLE(), carouselIndex + 1);
+    updateCarousel();
+  });
 
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6mm;">
-              <div>
-                <div class="resume-section-title">Technical Domains</div>
-                <div style="font-size:7.5pt;color:#374151;line-height:1.8;">
-                  <div>◆ Systems Architecture</div>
-                  <div>◆ Full-Stack Development</div>
-                  <div>◆ Cloud & DevOps</div>
-                  <div>◆ Database Design</div>
-                  <div>◆ IoT Integration</div>
-                </div>
-              </div>
-              <div>
-                <div class="resume-section-title">Soft Skills</div>
-                <div style="font-size:7.5pt;color:#374151;line-height:1.8;">
-                  <div>◆ Strategic Planning</div>
-                  <div>◆ Team Leadership</div>
-                  <div>◆ Stakeholder Mgmt.</div>
-                  <div>◆ Technical Writing</div>
-                  <div>◆ Agile / Scrum</div>
-                </div>
-              </div>
-            </div>
+  // Touch/swipe
+  let touchStartX = 0;
+  const carouselEl = document.getElementById('carousel-track').parentElement;
+  carouselEl.addEventListener('touchstart', e => touchStartX = e.touches[0].clientX, { passive: true });
+  carouselEl.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) {
+      if (dx < 0) carouselIndex = Math.min(carouselItems.length - CARDS_VISIBLE(), carouselIndex + 1);
+      else         carouselIndex = Math.max(0, carouselIndex - 1);
+      updateCarousel();
+    }
+  });
+  window.addEventListener('resize', updateCarousel);
 
-            <div style="margin-top:6mm;padding-top:3mm;border-top:0.5pt solid #e5e7eb;font-size:6.5pt;color:#9ca3af;display:flex;justify-content:space-between;">
-              <span>Generated via engraglinao.github.io</span>
-              <span>References available upon request</span>
-            </div>
-          </div>
+  // ══════════════════════════════════════════════
+  //  RENDER: APPS / SKILLS
+  // ══════════════════════════════════════════════
+  const categoryColors = {
+    Engineering: 'from-blue-900/40 to-blue-950/40 border-blue-700/30',
+    Design:      'from-purple-900/40 to-purple-950/40 border-purple-700/30',
+    Software:    'from-emerald-900/40 to-emerald-950/40 border-emerald-700/30',
+    Office:      'from-amber-900/40 to-amber-950/40 border-amber-700/30',
+    Other:       'from-slate-800/40 to-slate-900/40 border-slate-700/30'
+  };
+  const categoryIconColors = {
+    Engineering: 'text-blue-400', Design: 'text-purple-400',
+    Software: 'text-emerald-400', Office: 'text-amber-400', Other: 'text-slate-400'
+  };
+
+  function renderApps(data) {
+    const grid = document.getElementById('apps-grid');
+    if (!data.length) { renderAppsFallback(); return; }
+    grid.innerHTML = data.map(item => `
+      <div class="app-card relative group bg-gradient-to-br ${categoryColors[item.category] || categoryColors.Other}
+                  border rounded-2xl p-5 flex flex-col items-center gap-3 cursor-default hover:scale-105 transition-transform">
+        <div class="${categoryIconColors[item.category] || categoryIconColors.Other} text-3xl">
+          <i class="fa-solid ${item.icon || 'fa-cube'}"></i>
+        </div>
+        <div class="text-slate-300 text-xs font-bold text-center">${escHtml(item.name)}</div>
+        <div class="text-slate-600 text-xs text-center">${escHtml(item.category || '')}</div>
+        ${item.level ? `<div class="app-tooltip absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-800 border border-slate-700 text-slate-300 text-xs px-3 py-1.5 rounded-lg whitespace-nowrap shadow-xl">${escHtml(item.level)}</div>` : ''}
+      </div>
+    `).join('');
+  }
+
+  function renderAppsFallback() {
+    const fallback = [
+      { name: "AutoCAD", category: "Engineering", icon: "fa-drafting-compass", level: "Advanced" },
+      { name: "Revit", category: "Engineering", icon: "fa-building", level: "Intermediate" },
+      { name: "Adobe XD", category: "Design", icon: "fa-pen-nib", level: "Advanced" },
+      { name: "Figma", category: "Design", icon: "fa-vector-square", level: "Intermediate" },
+      { name: "VS Code", category: "Software", icon: "fa-code", level: "Advanced" },
+      { name: "Firebase", category: "Software", icon: "fa-fire", level: "Intermediate" },
+      { name: "MS Office", category: "Office", icon: "fa-file-word", level: "Advanced" },
+      { name: "Excel", category: "Office", icon: "fa-file-excel", level: "Expert" },
+      { name: "PowerPoint", category: "Office", icon: "fa-file-powerpoint", level: "Expert" },
+      { name: "Blender", category: "Design", icon: "fa-cube", level: "Intermediate" },
+      { name: "Python", category: "Software", icon: "fa-python", level: "Intermediate" },
+      { name: "Git / GitHub", category: "Software", icon: "fa-code-branch", level: "Advanced" }
+    ];
+    window.__portfolioState.apps = fallback;
+    renderApps(fallback);
+  }
+
+  // ══════════════════════════════════════════════
+  //  MODAL
+  // ══════════════════════════════════════════════
+  window.openModal = function(index) {
+    const item = carouselItems[index] || window.__portfolioState.portfolio[index];
+    if (!item) return;
+    const backdrop   = document.getElementById('modal-backdrop');
+    const titleEl    = document.getElementById('modal-title');
+    const typeEl     = document.getElementById('modal-type-badge');
+    const descEl     = document.getElementById('modal-desc');
+    const contentEl  = document.getElementById('modal-content');
+
+    titleEl.textContent = item.title || 'Preview';
+    typeEl.textContent  = item.type  || 'Asset';
+    descEl.textContent  = item.description || '';
+    contentEl.innerHTML = buildModalContent(item);
+
+    backdrop.style.display = 'flex';
+    backdrop.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  };
+
+  function buildModalContent(item) {
+    const url = item.fileUrl || item.link || '';
+    switch (item.type) {
+      case 'Image':
+        return `<img src="${escHtml(url)}" alt="${escHtml(item.title)}" class="max-w-full max-h-[70vh] object-contain rounded-xl shadow-2xl" />`;
+      case 'PDF':
+        return `<iframe src="${escHtml(url)}" class="w-full h-[70vh] rounded-xl border border-slate-700" title="${escHtml(item.title)}"></iframe>`;
+      case 'PPT':
+        return `<iframe src="https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}" class="w-full h-[70vh] rounded-xl border border-slate-700" title="${escHtml(item.title)}"></iframe>`;
+      case 'Site':
+      case 'URL':
+        return `<iframe src="${escHtml(url)}" class="w-full h-[70vh] rounded-xl border border-slate-700" title="${escHtml(item.title)}" sandbox="allow-scripts allow-same-origin"></iframe>`;
+      case 'Video':
+        return `<video controls class="max-w-full max-h-[70vh] rounded-xl shadow-2xl"><source src="${escHtml(url)}" /></video>`;
+      default:
+        return `<div class="flex flex-col items-center gap-4 text-slate-500 py-12">
+          <i class="fa-solid fa-link text-4xl"></i>
+          <p class="text-sm">No preview available.</p>
+          <a href="${escHtml(url)}" target="_blank" rel="noopener" class="text-amber-400 hover:text-amber-300 underline text-sm">Open Link <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i></a>
         </div>`;
+    }
+  }
 
-      // Trigger print dialog
-      setTimeout(() => window.print(), 100);
-    };
-  </script>
+  window.closeModal = function() {
+    document.getElementById('modal-backdrop').style.display = 'none';
+    document.getElementById('modal-content').innerHTML = '';
+    document.body.style.overflow = '';
+  };
+
+  document.getElementById('modal-backdrop').addEventListener('click', e => {
+    if (e.target === document.getElementById('modal-backdrop')) window.closeModal();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') window.closeModal(); });
+
+  // ══════════════════════════════════════════════
+  //  CONTACT FORM — Firestore Write
+  // ══════════════════════════════════════════════
+  window.submitContactForm = async function(e) {
+    e.preventDefault();
+    const btn    = document.getElementById('cf-submit');
+    const status = document.getElementById('cf-status');
+    const name   = document.getElementById('cf-name').value.trim();
+    const email  = document.getElementById('cf-email').value.trim();
+    const message = document.getElementById('cf-message').value.trim();
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Sending…';
+
+    try {
+      await addDoc(collection(db, "messages"), {
+        name, email, message,
+        timestamp: serverTimestamp(),
+        read: false
+      });
+      status.className = 'text-center text-sm font-medium py-2 rounded-lg bg-emerald-900/40 text-emerald-400 border border-emerald-700/40';
+      status.textContent = '✓ Message sent successfully! I\'ll reply soon.';
+      status.classList.remove('hidden');
+      document.getElementById('contact-form').reset();
+    } catch (err) {
+      status.className = 'text-center text-sm font-medium py-2 rounded-lg bg-red-900/40 text-red-400 border border-red-700/40';
+      status.textContent = '✗ Failed to send. Please try again.';
+      status.classList.remove('hidden');
+      console.error(err);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send Message';
+      setTimeout(() => status.classList.add('hidden'), 5000);
+    }
+  };
+
+  // ══════════════════════════════════════════════
+  //  SKELETON HIDE
+  // ══════════════════════════════════════════════
+  function hideSkeleton() {
+    const sk = document.getElementById('loading-skeleton');
+    sk.style.transition = 'opacity 0.6s ease';
+    sk.style.opacity = '0';
+    setTimeout(() => { sk.style.display = 'none'; }, 650);
+  }
+
+  // ══════════════════════════════════════════════
+  //  BOOT
+  // ══════════════════════════════════════════════
+  fetchAllData();
+
+  // ── SCROLL: Nav style + Section Reveal ────────
+  const navEl = document.getElementById('main-nav');
+  const reveals = document.querySelectorAll('.section-reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => io.observe(el));
+
+  window.addEventListener('scroll', () => {
+    navEl.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // ── Mobile Menu ────────────────────────────────
+  document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+    document.getElementById('mobile-menu').classList.toggle('hidden');
+  });
+
+  // ── Footer Year ────────────────────────────────
+  const yr = new Date().getFullYear();
+  document.getElementById('footer-year').textContent    = yr;
+  document.getElementById('copyright-year').textContent = yr;
+
+</script>
+
+<!-- ════════════════════════════════════════════
+     LIVE RESUME GENERATOR + HERO CANVAS
+     (Non-Firebase JS — outside module scope)
+════════════════════════════════════════════ -->
+<script>
+  // ── Hero Particle Canvas ────────────────────────
+  (function initCanvas() {
+    const canvas = document.getElementById('hero-canvas');
+    const ctx    = canvas.getContext('2d');
+    let   particles = [];
+
+    function resize() {
+      canvas.width  = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    }
+
+    function createParticle() {
+      return {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.5 + 0.3,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        alpha: Math.random() * 0.5 + 0.1
+      };
+    }
+
+    function initParticles() {
+      resize();
+      particles = Array.from({ length: 80 }, createParticle);
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > canvas.width)  p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(245,158,11,${p.alpha})`;
+        ctx.fill();
+      });
+      // Draw lines between nearby particles
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 100) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(245,158,11,${0.08 * (1 - dist / 100)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('resize', initParticles);
+    initParticles();
+    draw();
+  })();
+
+  // ── Utility ────────────────────────────────────
+  function escHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+  window.escHtml = escHtml;
+
+  // ══════════════════════════════════════════════
+  //  DYNAMIC LIVE RESUME GENERATOR
+  //  Swiss Minimalist Aesthetic — Print Optimized
+  // ══════════════════════════════════════════════
+  window.generateLiveResume = function() {
+    const state = window.__portfolioState || {};
+    const about = state.about || {};
+    const exp   = state.experience || [];
+    const port  = state.portfolio  || [];
+    const apps  = state.apps       || [];
+
+    const headline     = about.headline     || 'Engineer & Innovator';
+    const bio          = about.bio          || 'A versatile engineer and creative technologist.';
+    const yearsExp     = about.yearsExperience || '—';
+    const contactEmail = about.email        || 'hello@engraglinao.com';
+    const contactPhone = about.phone        || '+63 XXX XXX XXXX';
+    const contactCity  = about.city         || 'Philippines';
+    const linkedIn     = about.linkedIn     || 'linkedin.com/in/engraglinao';
+    const github       = about.github       || 'github.com/engraglinao';
+
+    const expRows = exp.map(e => `
+      <div style="margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid #e5e7eb;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap;">
+          <div>
+            <div style="font-weight:700; font-size:11pt; color:#111827; letter-spacing:-0.3px;">${escHtml(e.role || e.title || '')}</div>
+            <div style="font-size:9.5pt; color:#6b7280; font-weight:600; margin-top:1px;">${escHtml(e.organization || e.company || '')}</div>
+          </div>
+          <div style="font-size:8.5pt; color:#9ca3af; white-space:nowrap; font-weight:500; padding-top:2px;">
+            ${escHtml(e.startDate || '')} – ${escHtml(e.endDate || 'Present')}
+          </div>
+        </div>
+        <p style="margin-top:6px; font-size:9pt; color:#374151; line-height:1.6;">${escHtml(e.description || '')}</p>
+        ${e.tags ? `<div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:4px;">${e.tags.split(',').map(t=>`<span style="font-size:7.5pt; padding:2px 7px; background:#f3f4f6; border:1px solid #e5e7eb; border-radius:20px; color:#4b5563; font-weight:500;">${escHtml(t.trim())}</span>`).join('')}</div>` : ''}
+      </div>
+    `).join('');
+
+    const portRows = port.slice(0, 5).map(p => `
+      <div style="margin-bottom:10px; display:flex; gap:10px; align-items:flex-start;">
+        <span style="font-size:7.5pt; font-weight:700; color:#d97706; min-width:34px; padding-top:1px;">${escHtml(p.type || '—')}</span>
+        <div>
+          <div style="font-weight:600; font-size:9.5pt; color:#111827;">${escHtml(p.title || '')}</div>
+          <div style="font-size:8.5pt; color:#6b7280; line-height:1.5;">${escHtml(p.description || '')}</div>
+        </div>
+      </div>
+    `).join('');
+
+    const skillGroups = {};
+    apps.forEach(a => {
+      const cat = a.category || 'Other';
+      if (!skillGroups[cat]) skillGroups[cat] = [];
+      skillGroups[cat].push(a.name);
+    });
+    const skillRows = Object.entries(skillGroups).map(([cat, names]) => `
+      <div style="margin-bottom:8px;">
+        <div style="font-size:8pt; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:1px; margin-bottom:3px;">${escHtml(cat)}</div>
+        <div style="font-size:9pt; color:#374151;">${names.map(n => escHtml(n)).join(' · ')}</div>
+      </div>
+    `).join('');
+
+    const workspace = document.getElementById('resume-print-workspace');
+    workspace.style.display = 'block';
+    workspace.innerHTML = `
+      <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; max-width:210mm; min-height:297mm; background:#ffffff; color:#111827; margin:0 auto; padding:0;">
+
+        <!-- Header Bar -->
+        <div style="background:#111827; color:#f9fafb; padding:28px 36px 24px; display:flex; justify-content:space-between; align-items:flex-end; gap:20px;">
+          <div>
+            <div style="font-size:22pt; font-weight:900; letter-spacing:-1px; color:#ffffff;">ENGR. AGLINAO</div>
+            <div style="font-size:10pt; color:#fbbf24; font-weight:600; margin-top:4px; letter-spacing:1.5px; text-transform:uppercase;">${escHtml(headline)}</div>
+          </div>
+          <div style="text-align:right; font-size:8pt; color:#9ca3af; line-height:1.7;">
+            <div>${escHtml(contactEmail)}</div>
+            <div>${escHtml(contactPhone)}</div>
+            <div>${escHtml(contactCity)}</div>
+            <div>${escHtml(linkedIn)}</div>
+            <div>${escHtml(github)}</div>
+          </div>
+        </div>
+
+        <!-- Body -->
+        <div style="display:grid; grid-template-columns:1fr 2fr; gap:0;">
+
+          <!-- LEFT COLUMN -->
+          <div style="background:#f9fafb; padding:24px 24px 24px 36px; border-right:2px solid #e5e7eb;">
+
+            <!-- Profile -->
+            <div style="margin-bottom:24px;">
+              <div style="font-size:7.5pt; font-weight:800; text-transform:uppercase; letter-spacing:2px; color:#d97706; border-bottom:2px solid #fbbf24; padding-bottom:4px; margin-bottom:10px;">Profile</div>
+              <p style="font-size:8.5pt; color:#374151; line-height:1.7; margin:0;">${escHtml(bio)}</p>
+            </div>
+
+            <!-- Skills -->
+            <div style="margin-bottom:24px;">
+              <div style="font-size:7.5pt; font-weight:800; text-transform:uppercase; letter-spacing:2px; color:#d97706; border-bottom:2px solid #fbbf24; padding-bottom:4px; margin-bottom:10px;">Skills & Tools</div>
+              ${skillRows || '<div style="color:#9ca3af;font-size:8.5pt;">No skills data.</div>'}
+            </div>
+
+            <!-- Stats -->
+            <div>
+              <div style="font-size:7.5pt; font-weight:800; text-transform:uppercase; letter-spacing:2px; color:#d97706; border-bottom:2px solid #fbbf24; padding-bottom:4px; margin-bottom:10px;">At a Glance</div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div style="background:#fff; border:1px solid #e5e7eb; border-radius:6px; padding:10px; text-align:center;">
+                  <div style="font-size:16pt; font-weight:900; color:#d97706;">${escHtml(String(yearsExp))}</div>
+                  <div style="font-size:7pt; color:#9ca3af; margin-top:2px; text-transform:uppercase; letter-spacing:0.5px;">Years Exp.</div>
+                </div>
+                <div style="background:#fff; border:1px solid #e5e7eb; border-radius:6px; padding:10px; text-align:center;">
+                  <div style="font-size:16pt; font-weight:900; color:#d97706;">${port.length || '—'}</div>
+                  <div style="font-size:7pt; color:#9ca3af; margin-top:2px; text-transform:uppercase; letter-spacing:0.5px;">Projects</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN -->
+          <div style="padding:24px 36px 24px 28px;">
+
+            <!-- Experience -->
+            <div style="margin-bottom:24px;">
+              <div style="font-size:7.5pt; font-weight:800; text-transform:uppercase; letter-spacing:2px; color:#d97706; border-bottom:2px solid #fbbf24; padding-bottom:4px; margin-bottom:14px;">Professional Experience</div>
+              ${expRows || '<div style="color:#9ca3af;font-size:9pt;">No experience data available.</div>'}
+            </div>
+
+            <!-- Portfolio -->
+            <div>
+              <div style="font-size:7.5pt; font-weight:800; text-transform:uppercase; letter-spacing:2px; color:#d97706; border-bottom:2px solid #fbbf24; padding-bottom:4px; margin-bottom:14px;">Selected Works</div>
+              ${portRows || '<div style="color:#9ca3af;font-size:9pt;">No portfolio data available.</div>'}
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="background:#f3f4f6; border-top:1px solid #e5e7eb; padding:12px 36px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:7.5pt; color:#9ca3af;">Generated ${new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'})}</span>
+          <span style="font-size:7.5pt; color:#9ca3af;">engraglinao.github.io</span>
+        </div>
+      </div>
+    `;
+
+    // Slight delay to ensure DOM paint, then print
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        window.print();
+        setTimeout(() => {
+          workspace.style.display = 'none';
+          workspace.innerHTML = '';
+        }, 2000);
+      }, 100);
+    });
+  };
+</script>
+
 </body>
 </html>
