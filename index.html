@@ -3,1132 +3,945 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Engr. Aglinao — Portfolio</title>
-  <meta name="description" content="Professional portfolio and resume of Engr. Aglinao — Engineer, Innovator, and Creative Technologist." />
+  <title>Portfolio — Loading...</title>
+  <meta name="description" content="Professional Portfolio & Resume" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Tailwind CSS Browser -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
   <style>
-    /* ── Custom Scrollbar ── */
+    :root {
+      --accent: #6366f1;
+      --accent-light: #818cf8;
+      --accent-dark: #4f46e5;
+      --accent-glow: rgba(99,102,241,0.18);
+      --sidebar-bg: #1e2433;
+      --sidebar-text: #e2e8f0;
+    }
+
+    * { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    /* ─── DARK MODE ─── */
+    html.dark body { background: #0f1117; color: #e2e8f0; }
+    html.dark .card-bg { background: #1a1f2e; border-color: #2d3448; }
+    html.dark .nav-bg { background: rgba(15,17,23,0.92); border-color: #2d3448; }
+    html.dark .section-alt { background: #13161f; }
+    html.dark .hero-bg { background: linear-gradient(135deg,#0f1117 0%,#1a1f2e 60%,#1e1a3a 100%); }
+    html.dark .timeline-line { background: #2d3448; }
+    html.dark .skill-card { background: #1a1f2e; border-color: #2d3448; }
+    html.dark .text-muted { color: #94a3b8; }
+    html.dark .input-field { background: #1a1f2e; border-color: #2d3448; color: #e2e8f0; }
+    html.dark .footer-bg { background: #0a0c12; }
+    html.dark .modal-bg { background: #1a1f2e; }
+    html.dark .section-bg-accent { background: linear-gradient(135deg,#1a1f2e 0%,#1e1a3a 100%); }
+
+    /* ─── LIGHT MODE ─── */
+    html:not(.dark) body { background: #f8fafc; color: #1e293b; }
+    html:not(.dark) .card-bg { background: #ffffff; border-color: #e2e8f0; }
+    html:not(.dark) .nav-bg { background: rgba(248,250,252,0.92); border-color: #e2e8f0; }
+    html:not(.dark) .section-alt { background: #f1f5f9; }
+    html:not(.dark) .hero-bg { background: linear-gradient(135deg,#f8fafc 0%,#ede9fe 60%,#e0e7ff 100%); }
+    html:not(.dark) .timeline-line { background: #cbd5e1; }
+    html:not(.dark) .skill-card { background: #ffffff; border-color: #e2e8f0; }
+    html:not(.dark) .text-muted { color: #64748b; }
+    html:not(.dark) .input-field { background: #ffffff; border-color: #cbd5e1; color: #1e293b; }
+    html:not(.dark) .footer-bg { background: #1e2433; color: #e2e8f0; }
+    html:not(.dark) .modal-bg { background: #ffffff; }
+    html:not(.dark) .section-bg-accent { background: linear-gradient(135deg,#ede9fe 0%,#e0e7ff 100%); }
+
+    /* ─── SHARED ─── */
+    .accent { color: var(--accent); }
+    .accent-bg { background: var(--accent); }
+    .accent-border { border-color: var(--accent); }
+    .nav-bg { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid; }
+    .card-bg { border: 1px solid; border-radius: 1rem; }
+    .btn-accent {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      color: #fff; border-radius: 0.625rem; font-weight: 600;
+      transition: all .2s; box-shadow: 0 4px 18px var(--accent-glow);
+    }
+    .btn-accent:hover { transform: translateY(-2px); box-shadow: 0 8px 28px var(--accent-glow); }
+    .btn-outline {
+      border: 2px solid var(--accent); color: var(--accent); border-radius: 0.625rem;
+      font-weight: 600; transition: all .2s; background: transparent;
+    }
+    .btn-outline:hover { background: var(--accent); color: #fff; transform: translateY(-2px); }
+
+    /* ─── HERO ─── */
+    .hero-bg { min-height: 100vh; }
+    .hero-pill {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: var(--accent-glow); border: 1px solid var(--accent);
+      color: var(--accent); border-radius: 9999px; padding: .35rem .9rem;
+      font-size: .8rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+    }
+    .avatar-ring { border: 4px solid var(--accent); box-shadow: 0 0 0 4px var(--accent-glow); }
+
+    /* ─── TIMELINE ─── */
+    .timeline-wrapper { position: relative; }
+    .timeline-wrapper::before {
+      content: ''; position: absolute; left: 19px; top: 0; bottom: 0; width: 2px;
+    }
+    .timeline-dot {
+      width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: .8rem; z-index: 1; position: relative;
+      box-shadow: 0 0 0 4px var(--accent-glow);
+    }
+
+    /* ─── CAROUSEL ─── */
+    .carousel-track { display: flex; gap: 1.5rem; transition: transform .4s cubic-bezier(.4,0,.2,1); }
+    .carousel-card {
+      min-width: 280px; max-width: 280px; border-radius: 1rem; overflow: hidden;
+      border: 1px solid; transition: transform .2s, box-shadow .2s; cursor: pointer;
+    }
+    html.dark .carousel-card { background:#1a1f2e; border-color:#2d3448; }
+    html:not(.dark) .carousel-card { background:#fff; border-color:#e2e8f0; }
+    .carousel-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px var(--accent-glow); }
+    .carousel-viewport { overflow: hidden; }
+    .carousel-btn {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--accent); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all .2s; border: none;
+      box-shadow: 0 4px 14px var(--accent-glow);
+    }
+    .carousel-btn:hover { background: var(--accent-dark); transform: scale(1.1); }
+    .carousel-btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+
+    /* ─── SKILL CARDS ─── */
+    .skill-card { border-radius: .75rem; transition: transform .2s, box-shadow .2s; cursor: default; border: 1px solid; }
+    .skill-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px var(--accent-glow); }
+    .icon-box {
+      width: 40px; height: 40px; border-radius: .5rem; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .9rem; color: #fff;
+    }
+
+    /* ─── MODAL ─── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.7);
+      backdrop-filter: blur(6px); z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .2s;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: all; }
+    .modal-bg { border-radius: 1.25rem; max-width: 90vw; max-height: 90vh; overflow: auto; }
+
+    /* ─── INPUT ─── */
+    .input-field { border: 1px solid; border-radius: .6rem; padding: .7rem 1rem; width: 100%; outline: none; transition: border-color .2s; font-size: .95rem; }
+    .input-field:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+
+    /* ─── LOADER ─── */
+    .loader-ring { width: 56px; height: 56px; border: 4px solid transparent; border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .fade-in { animation: fadeIn .5s ease forwards; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+    .section-hidden { display: none !important; }
+
+    /* ─── SCROLLBAR ─── */
     ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #0f172a; }
-    ::-webkit-scrollbar-thumb { background: #f59e0b; border-radius: 3px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 9999px; }
 
-    /* ── Skeleton Pulse ── */
-    @keyframes skeleton-pulse {
-      0%, 100% { opacity: 0.4; }
-      50%       { opacity: 1; }
-    }
-    .skeleton { animation: skeleton-pulse 1.6s ease-in-out infinite; background: #1e293b; border-radius: 6px; }
+    /* ─── NAV ACTIVE ─── */
+    .nav-link { position: relative; font-weight: 500; transition: color .2s; }
+    .nav-link::after { content:''; position:absolute; bottom:-2px; left:0; right:0; height:2px; background:var(--accent); transform:scaleX(0); transition:transform .2s; border-radius:9999px; }
+    .nav-link:hover::after, .nav-link.active::after { transform:scaleX(1); }
+    .nav-link:hover, .nav-link.active { color: var(--accent); }
 
-    /* ── Gradient Text ── */
-    .gradient-text {
-      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #fcd34d 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    /* ── Timeline node ── */
-    .timeline-node::before {
-      content: '';
-      position: absolute;
-      left: -1px;
-      top: 0;
-      bottom: 0;
-      width: 2px;
-      background: linear-gradient(180deg, #f59e0b, transparent);
-    }
-
-    /* ── Card Hover ── */
-    .portfolio-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-    .portfolio-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(245,158,11,0.15); }
-
-    /* ── Carousel ── */
-    #carousel-track { transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
-
-    /* ── Modal Backdrop ── */
-    #modal-backdrop { backdrop-filter: blur(8px); }
-
-    /* ── Nav scroll effect ── */
-    #main-nav { transition: background 0.3s ease, box-shadow 0.3s ease; }
-    #main-nav.scrolled { background: rgba(2, 6, 23, 0.98) !important; box-shadow: 0 1px 0 rgba(245,158,11,0.2); }
-
-    /* ── Print Styles — Swiss Resume ── */
+    /* ─── PRINT STYLES ─── */
     @media print {
-      * { visibility: hidden !important; }
-      #resume-print-workspace, #resume-print-workspace * { visibility: visible !important; }
-      #resume-print-workspace {
-        position: fixed !important;
-        inset: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
-        background: #fff !important;
-        z-index: 99999 !important;
-        overflow: visible !important;
-        display: block !important;
-      }
-      body { margin: 0 !important; padding: 0 !important; background: #fff !important; }
-      @page { margin: 12mm 14mm; size: A4; }
+      body > *:not(#resume-workspace) { display: none !important; }
+      #resume-workspace { display: block !important; position: static !important; width: 100% !important; }
+      #resume-workspace * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      @page { margin: 0; size: A4; }
     }
 
-    /* ── Hero Particle Canvas ── */
-    #hero-canvas { position: absolute; inset: 0; pointer-events: none; }
+    /* ─── SECTION BG VARIANTS ─── */
+    .bg-neutral { /* uses .section-alt */ }
+    .bg-accent-gradient { /* uses .section-bg-accent */ }
 
-    /* ── Tooltip ── */
-    .app-card:hover .app-tooltip { opacity: 1; transform: translateY(0); }
-    .app-tooltip { opacity: 0; transform: translateY(4px); transition: all 0.2s ease; pointer-events: none; }
-
-    /* ── Contact input focus ── */
-    .contact-input:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,0.15); }
-
-    /* ── Section fade-in ── */
-    .section-reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
-    .section-reveal.visible { opacity: 1; transform: translateY(0); }
+    /* ─── TYPE BADGE ─── */
+    .type-badge { display: inline-block; padding: .2rem .6rem; border-radius: 9999px; font-size: .72rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
   </style>
 </head>
+<body>
 
-<body class="bg-slate-950 text-slate-100 font-sans antialiased overflow-x-hidden">
-
-<!-- ════════════════════════════════════════════
-     LOADING SKELETON OVERLAY
-════════════════════════════════════════════ -->
-<div id="loading-skeleton" class="fixed inset-0 bg-slate-950 z-50 flex flex-col p-8 gap-6 overflow-hidden">
-  <div class="flex items-center justify-between">
-    <div class="skeleton h-8 w-40 rounded"></div>
-    <div class="flex gap-4">
-      <div class="skeleton h-8 w-20 rounded"></div>
-      <div class="skeleton h-8 w-20 rounded"></div>
-      <div class="skeleton h-8 w-24 rounded-full"></div>
-    </div>
-  </div>
-  <div class="flex flex-col items-center gap-6 mt-10">
-    <div class="skeleton h-16 w-3/4 rounded"></div>
-    <div class="skeleton h-8 w-1/2 rounded"></div>
-    <div class="skeleton h-12 w-40 rounded-full"></div>
-  </div>
-  <div class="grid grid-cols-3 gap-4 mt-8">
-    <div class="skeleton h-32 rounded-xl"></div>
-    <div class="skeleton h-32 rounded-xl"></div>
-    <div class="skeleton h-32 rounded-xl"></div>
-  </div>
-  <div class="grid grid-cols-4 gap-4">
-    <div class="skeleton h-44 rounded-xl"></div>
-    <div class="skeleton h-44 rounded-xl"></div>
-    <div class="skeleton h-44 rounded-xl"></div>
-    <div class="skeleton h-44 rounded-xl"></div>
-  </div>
-  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-slate-600 text-sm flex items-center gap-2">
-    <i class="fa-solid fa-circle-notch fa-spin text-amber-500"></i>
-    Connecting to Firebase…
-  </div>
+<!-- ═══════════════════════ LOADING SCREEN ═══════════════════════ -->
+<div id="loading-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center" style="background:#0f1117;">
+  <div class="loader-ring mb-6"></div>
+  <p style="color:#6366f1;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;letter-spacing:.08em;font-size:.9rem;">LOADING PORTFOLIO</p>
 </div>
 
-<!-- ════════════════════════════════════════════
-     NAVIGATION
-════════════════════════════════════════════ -->
-<nav id="main-nav" class="fixed top-0 left-0 right-0 z-40 bg-transparent px-6 lg:px-12 py-4">
-  <div class="max-w-7xl mx-auto flex items-center justify-between">
-    <!-- Logo -->
-    <a href="#hero" class="flex items-center gap-2 group">
-      <div class="w-9 h-9 rounded-lg bg-amber-500 flex items-center justify-center font-black text-slate-900 text-sm group-hover:bg-amber-400 transition-colors">EA</div>
-      <span class="font-semibold text-slate-200 hidden sm:block">Engr. Aglinao</span>
-    </a>
-    <!-- Desktop Links -->
-    <div class="hidden md:flex items-center gap-7 text-sm font-medium text-slate-400">
-      <a href="#about" class="hover:text-amber-400 transition-colors">About</a>
-      <a href="#experience" class="hover:text-amber-400 transition-colors">Experience</a>
-      <a href="#portfolio" class="hover:text-amber-400 transition-colors">Portfolio</a>
-      <a href="#apps" class="hover:text-amber-400 transition-colors">Skills</a>
-      <a href="#contact" class="hover:text-amber-400 transition-colors">Contact</a>
+<!-- ═══════════════════════ NAVIGATION ═══════════════════════ -->
+<nav id="main-nav" class="nav-bg fixed top-0 left-0 right-0 z-40 px-6 py-3">
+  <div class="max-w-6xl mx-auto flex items-center justify-between">
+    <a href="#hero" id="nav-brand" class="font-bold text-xl accent">ENG</a>
+    <div class="hidden md:flex items-center gap-6 text-sm">
+      <a href="#about" class="nav-link">About</a>
+      <a href="#experience" class="nav-link">Experience</a>
+      <a href="#portfolio" class="nav-link">Portfolio</a>
+      <a href="#skills" class="nav-link">Skills</a>
+      <a href="#contact" class="nav-link">Contact</a>
     </div>
-    <!-- CTA -->
     <div class="flex items-center gap-3">
-      <button onclick="generateLiveResume()" class="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-sm px-4 py-2 rounded-full transition-all hover:shadow-lg hover:shadow-amber-500/30 active:scale-95">
-        <i class="fa-solid fa-file-pdf"></i>
-        <span class="hidden sm:block">Generate Live Resume</span>
+      <button id="theme-toggle" class="btn-outline px-3 py-2 text-sm" title="Toggle theme">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
       </button>
-      <!-- Mobile Menu -->
-      <button id="mobile-menu-btn" class="md:hidden text-slate-400 hover:text-amber-400 transition-colors p-2">
-        <i class="fa-solid fa-bars text-lg"></i>
+      <button onclick="generateLiveResume()" class="btn-accent px-4 py-2 text-sm flex items-center gap-2">
+        <i class="fa-solid fa-file-pdf"></i>
+        <span class="hidden sm:inline">Live Resume</span>
       </button>
     </div>
-  </div>
-  <!-- Mobile Menu Dropdown -->
-  <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 right-0 bg-slate-900 border-t border-slate-800 px-6 py-4 flex flex-col gap-4 text-sm font-medium text-slate-400">
-    <a href="#about" class="hover:text-amber-400 transition-colors" onclick="document.getElementById('mobile-menu').classList.add('hidden')">About</a>
-    <a href="#experience" class="hover:text-amber-400 transition-colors" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Experience</a>
-    <a href="#portfolio" class="hover:text-amber-400 transition-colors" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Portfolio</a>
-    <a href="#apps" class="hover:text-amber-400 transition-colors" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Skills</a>
-    <a href="#contact" class="hover:text-amber-400 transition-colors" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Contact</a>
   </div>
 </nav>
 
-<!-- ════════════════════════════════════════════
-     HERO / ABOUT
-════════════════════════════════════════════ -->
-<section id="hero" class="relative min-h-screen flex items-center overflow-hidden bg-slate-950">
-  <canvas id="hero-canvas"></canvas>
-  <!-- Radial glow -->
-  <div class="absolute inset-0 pointer-events-none">
-    <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-amber-500/5 blur-3xl"></div>
-    <div class="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-slate-800/40 blur-3xl"></div>
-  </div>
-  <div id="about" class="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 w-full pt-28 pb-20">
-    <div class="grid lg:grid-cols-5 gap-12 lg:gap-16 items-center">
-      <!-- Text Content -->
-      <div class="lg:col-span-3 section-reveal">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="h-px w-12 bg-amber-500"></div>
-          <span class="text-amber-500 text-sm font-semibold tracking-widest uppercase">Portfolio</span>
+<!-- ═══════════════════════ HERO / ABOUT ═══════════════════════ -->
+<section id="hero" class="hero-bg flex items-center pt-20">
+  <div class="max-w-6xl mx-auto px-6 py-24 w-full">
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+      <div class="fade-in" style="animation-delay:.1s">
+        <div class="hero-pill mb-6" id="hero-pill">
+          <i class="fa-solid fa-circle-dot fa-beat" style="color:var(--accent)"></i>
+          <span>Available for Work</span>
         </div>
-        <h1 class="text-5xl lg:text-7xl font-black leading-none mb-6">
-          <span id="hero-headline" class="text-slate-100">Engineer.</span><br />
-          <span class="gradient-text">Innovator.</span><br />
-          <span class="text-slate-500">Creator.</span>
+        <h1 class="text-5xl lg:text-6xl font-extrabold leading-tight mb-6" id="hero-name">
+          Loading...
         </h1>
-        <p id="hero-bio" class="text-slate-400 text-lg leading-relaxed max-w-xl mb-8">
-          Loading biography...
+        <p class="text-lg leading-relaxed text-muted mb-8" id="hero-bio">
+          Fetching biography from database...
         </p>
         <div class="flex flex-wrap gap-4">
-          <a id="master-resume-btn" href="#" target="_blank" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-amber-500/40 text-slate-200 font-semibold px-6 py-3 rounded-full transition-all hover:shadow-lg active:scale-95">
-            <i class="fa-solid fa-download text-amber-400"></i>
-            Download Master Resume
+          <a id="resume-download-btn" href="#" download class="btn-accent px-6 py-3 flex items-center gap-2">
+            <i class="fa-solid fa-download"></i> Download Resume
           </a>
-          <a href="#contact" class="flex items-center gap-2 text-slate-400 hover:text-amber-400 font-medium px-6 py-3 rounded-full border border-slate-800 hover:border-slate-700 transition-all">
-            <i class="fa-solid fa-paper-plane"></i>
-            Get in Touch
+          <a href="#contact" class="btn-outline px-6 py-3 flex items-center gap-2">
+            <i class="fa-solid fa-envelope"></i> Get In Touch
           </a>
         </div>
+        <div class="flex gap-6 mt-8" id="hero-socials"></div>
       </div>
-      <!-- Avatar / Stats Panel -->
-      <div class="lg:col-span-2 section-reveal" style="transition-delay:0.2s">
+      <div class="flex justify-center fade-in" style="animation-delay:.25s">
         <div class="relative">
-          <div class="w-full max-w-sm mx-auto lg:mx-0 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 rounded-3xl p-8 shadow-2xl">
-            <!-- Avatar -->
-            <div class="flex flex-col items-center mb-8">
-              <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-4xl font-black text-slate-900 mb-4 shadow-xl">EA</div>
-              <div class="text-center">
-                <div class="font-bold text-slate-100 text-lg">Engr. Aglinao</div>
-                <div class="text-amber-500 text-sm font-medium">Engineer & Innovator</div>
-              </div>
-            </div>
-            <!-- Quick Stats -->
-            <div class="grid grid-cols-2 gap-4">
-              <div class="bg-slate-950/60 rounded-xl p-4 text-center border border-slate-700/30">
-                <div id="stat-experience" class="text-2xl font-black text-amber-400">—</div>
-                <div class="text-slate-500 text-xs mt-1">Years Exp.</div>
-              </div>
-              <div class="bg-slate-950/60 rounded-xl p-4 text-center border border-slate-700/30">
-                <div id="stat-projects" class="text-2xl font-black text-amber-400">—</div>
-                <div class="text-slate-500 text-xs mt-1">Projects</div>
-              </div>
-            </div>
-            <!-- Status Badge -->
-            <div class="flex items-center gap-2 mt-6 bg-emerald-950/50 border border-emerald-800/40 rounded-xl px-4 py-3">
-              <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-              <span class="text-emerald-400 text-sm font-medium">Available for opportunities</span>
-            </div>
+          <div class="w-72 h-72 lg:w-80 lg:h-80 rounded-full overflow-hidden avatar-ring">
+            <img id="hero-avatar" src="https://images.pexels.com/photos/16313659/pexels-photo-16313659.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=400" alt="Profile" class="w-full h-full object-cover" />
           </div>
-          <!-- Decorative element -->
-          <div class="absolute -top-4 -right-4 w-24 h-24 border-2 border-amber-500/20 rounded-2xl -z-10"></div>
-          <div class="absolute -bottom-4 -left-4 w-16 h-16 border-2 border-slate-700/50 rounded-xl -z-10"></div>
+          <div class="absolute -bottom-4 -right-4 card-bg px-4 py-3 rounded-xl shadow-xl" id="hero-badge">
+            <p class="text-xs text-muted font-medium">Role</p>
+            <p class="font-bold text-sm accent" id="hero-badge-role">—</p>
+          </div>
         </div>
       </div>
     </div>
-    <!-- Scroll indicator -->
-    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-600">
-      <span class="text-xs tracking-widest uppercase">Scroll</span>
-      <div class="w-px h-12 bg-gradient-to-b from-slate-600 to-transparent animate-bounce"></div>
+
+    <!-- About subsection -->
+    <div id="about" class="mt-24 grid md:grid-cols-3 gap-8">
+      <div id="hero-stats-container" class="md:col-span-3 grid md:grid-cols-3 gap-6"></div>
     </div>
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════
-     EXPERIENCE TIMELINE
-════════════════════════════════════════════ -->
-<section id="experience" class="py-24 bg-slate-900">
-  <div class="max-w-7xl mx-auto px-6 lg:px-12">
-    <div class="section-reveal mb-16">
-      <div class="flex items-center gap-3 mb-4">
-        <div class="h-px w-12 bg-amber-500"></div>
-        <span class="text-amber-500 text-sm font-semibold tracking-widest uppercase">Career</span>
-      </div>
-      <h2 class="text-4xl lg:text-5xl font-black text-slate-100">Experience <span class="gradient-text">Timeline</span></h2>
-      <p class="text-slate-500 mt-3 max-w-xl">A chronological journey through roles, organizations, and milestones that shaped my professional identity.</p>
+<!-- ═══════════════════════ EXPERIENCE ═══════════════════════ -->
+<section id="experience" class="section-alt py-24">
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="mb-14 text-center">
+      <div class="hero-pill inline-flex mb-4"><i class="fa-solid fa-briefcase"></i><span>Career Path</span></div>
+      <h2 class="text-4xl font-extrabold" id="exp-heading">Experience</h2>
+      <p class="text-muted mt-2" id="exp-subheading">Professional journey & milestones</p>
     </div>
-    <!-- Timeline Container -->
-    <div id="timeline-container" class="relative pl-8 border-l-2 border-slate-800 flex flex-col gap-0">
-      <!-- Injected by JS -->
+    <div id="experience-container" class="timeline-wrapper pl-14 space-y-10">
+      <div class="flex items-center gap-4">
+        <div class="loader-ring" style="width:28px;height:28px;border-width:3px;"></div>
+        <p class="text-muted text-sm">Loading experience...</p>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════
-     PORTFOLIO CARAVAN (CAROUSEL)
-════════════════════════════════════════════ -->
-<section id="portfolio" class="py-24 bg-slate-950 overflow-hidden">
-  <div class="max-w-7xl mx-auto px-6 lg:px-12">
-    <div class="section-reveal mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
-      <div>
-        <div class="flex items-center gap-3 mb-4">
-          <div class="h-px w-12 bg-amber-500"></div>
-          <span class="text-amber-500 text-sm font-semibold tracking-widest uppercase">Work</span>
-        </div>
-        <h2 class="text-4xl lg:text-5xl font-black text-slate-100">Portfolio <span class="gradient-text">Caravan</span></h2>
-        <p class="text-slate-500 mt-3 max-w-xl">Selected works spanning presentations, web builds, publications, and interactive media.</p>
-      </div>
-      <div class="flex items-center gap-3">
-        <button id="carousel-prev" class="w-12 h-12 rounded-full border border-slate-700 hover:border-amber-500 text-slate-400 hover:text-amber-400 transition-all flex items-center justify-center group">
-          <i class="fa-solid fa-chevron-left group-hover:-translate-x-0.5 transition-transform"></i>
+<!-- ═══════════════════════ PORTFOLIO CAROUSEL ═══════════════════════ -->
+<section id="portfolio" class="py-24">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="mb-14 text-center">
+      <div class="hero-pill inline-flex mb-4"><i class="fa-solid fa-layer-group"></i><span>Work Samples</span></div>
+      <h2 class="text-4xl font-extrabold" id="portfolio-heading">Portfolio</h2>
+      <p class="text-muted mt-2" id="portfolio-subheading">Selected projects & deliverables</p>
+    </div>
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex gap-3">
+        <button id="carousel-prev" class="carousel-btn" onclick="carouselMove(-1)">
+          <i class="fa-solid fa-chevron-left text-sm"></i>
         </button>
-        <button id="carousel-next" class="w-12 h-12 rounded-full border border-slate-700 hover:border-amber-500 text-slate-400 hover:text-amber-400 transition-all flex items-center justify-center group">
-          <i class="fa-solid fa-chevron-right group-hover:translate-x-0.5 transition-transform"></i>
+        <button id="carousel-next" class="carousel-btn" onclick="carouselMove(1)">
+          <i class="fa-solid fa-chevron-right text-sm"></i>
         </button>
       </div>
+      <div id="carousel-dots" class="flex gap-2"></div>
     </div>
-    <!-- Carousel -->
-    <div class="relative overflow-hidden">
-      <div id="carousel-track" class="flex gap-6">
-        <!-- Injected by JS -->
-      </div>
-    </div>
-    <!-- Dots -->
-    <div id="carousel-dots" class="flex justify-center gap-2 mt-8"></div>
-  </div>
-</section>
-
-<!-- ════════════════════════════════════════════
-     APPLICATION MATRIX (SKILLS)
-════════════════════════════════════════════ -->
-<section id="apps" class="py-24 bg-slate-900">
-  <div class="max-w-7xl mx-auto px-6 lg:px-12">
-    <div class="section-reveal mb-16">
-      <div class="flex items-center gap-3 mb-4">
-        <div class="h-px w-12 bg-amber-500"></div>
-        <span class="text-amber-500 text-sm font-semibold tracking-widest uppercase">Capabilities</span>
-      </div>
-      <h2 class="text-4xl lg:text-5xl font-black text-slate-100">Application <span class="gradient-text">Matrix</span></h2>
-      <p class="text-slate-500 mt-3 max-w-xl">Software fluencies, technical tools, and digital competencies categorized by discipline.</p>
-    </div>
-    <div id="apps-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-      <!-- Injected by JS -->
-    </div>
-  </div>
-</section>
-
-<!-- ════════════════════════════════════════════
-     CONTACT LAYER
-════════════════════════════════════════════ -->
-<section id="contact" class="py-24 bg-slate-950">
-  <div class="max-w-7xl mx-auto px-6 lg:px-12">
-    <div class="section-reveal grid lg:grid-cols-2 gap-16 items-start">
-      <!-- Left Info -->
-      <div>
-        <div class="flex items-center gap-3 mb-4">
-          <div class="h-px w-12 bg-amber-500"></div>
-          <span class="text-amber-500 text-sm font-semibold tracking-widest uppercase">Connect</span>
+    <div class="carousel-viewport">
+      <div id="carousel-track" class="carousel-track">
+        <div class="flex items-center gap-3 text-muted text-sm" style="min-width:200px">
+          <div class="loader-ring" style="width:24px;height:24px;border-width:3px;"></div>Loading...
         </div>
-        <h2 class="text-4xl lg:text-5xl font-black text-slate-100 mb-6">Let's Build <span class="gradient-text">Something.</span></h2>
-        <p class="text-slate-400 text-lg leading-relaxed mb-10">
-          Open for collaborations, consulting opportunities, and creative projects. Drop a message and I'll respond within 24 hours.
-        </p>
-        <div class="flex flex-col gap-5">
-          <div class="flex items-center gap-4 group">
-            <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 group-hover:bg-amber-500/20 transition-colors">
-              <i class="fa-solid fa-location-dot"></i>
-            </div>
-            <div>
-              <div class="text-slate-300 font-medium">Location</div>
-              <div class="text-slate-500 text-sm">Philippines</div>
-            </div>
-          </div>
-          <div class="flex items-center gap-4 group">
-            <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 group-hover:bg-amber-500/20 transition-colors">
-              <i class="fa-brands fa-github"></i>
-            </div>
-            <div>
-              <div class="text-slate-300 font-medium">GitHub</div>
-              <div class="text-slate-500 text-sm">github.com/engraglinao</div>
-            </div>
-          </div>
-          <div class="flex items-center gap-4 group">
-            <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 group-hover:bg-amber-500/20 transition-colors">
-              <i class="fa-solid fa-briefcase"></i>
-            </div>
-            <div>
-              <div class="text-slate-300 font-medium">Status</div>
-              <div class="text-emerald-400 text-sm font-medium">Available for Work</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Contact Form -->
-      <div>
-        <form id="contact-form" onsubmit="submitContactForm(event)" class="bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-xl flex flex-col gap-5">
-          <div>
-            <label class="block text-slate-400 text-sm font-medium mb-2">Full Name</label>
-            <input id="cf-name" type="text" placeholder="Your full name" required
-              class="contact-input w-full bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-600 rounded-xl px-4 py-3 text-sm transition-all" />
-          </div>
-          <div>
-            <label class="block text-slate-400 text-sm font-medium mb-2">Email Address</label>
-            <input id="cf-email" type="email" placeholder="your@email.com" required
-              class="contact-input w-full bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-600 rounded-xl px-4 py-3 text-sm transition-all" />
-          </div>
-          <div>
-            <label class="block text-slate-400 text-sm font-medium mb-2">Message</label>
-            <textarea id="cf-message" rows="5" placeholder="Tell me about your project or opportunity..." required
-              class="contact-input w-full bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-600 rounded-xl px-4 py-3 text-sm transition-all resize-none"></textarea>
-          </div>
-          <button type="submit" id="cf-submit" class="flex items-center justify-center gap-2 w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-3.5 rounded-xl transition-all hover:shadow-lg hover:shadow-amber-500/30 active:scale-95">
-            <i class="fa-solid fa-paper-plane"></i>
-            Send Message
-          </button>
-          <div id="cf-status" class="hidden text-center text-sm font-medium py-2 rounded-lg"></div>
-        </form>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════
-     FOOTER
-════════════════════════════════════════════ -->
-<footer class="bg-slate-950 border-t border-slate-800/60 py-12 px-6 lg:px-12">
-  <div class="max-w-7xl mx-auto">
-    <div class="grid md:grid-cols-3 gap-8 mb-10">
-      <div>
-        <div class="flex items-center gap-2 mb-4">
-          <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center font-black text-slate-900 text-xs">EA</div>
-          <span class="font-semibold text-slate-200">Engr. Aglinao</span>
+<!-- ═══════════════════════ SKILLS / APPLICATION MATRIX ═══════════════════════ -->
+<section id="skills" class="section-alt py-24">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="mb-14 text-center">
+      <div class="hero-pill inline-flex mb-4"><i class="fa-solid fa-microchip"></i><span>Tech Stack</span></div>
+      <h2 class="text-4xl font-extrabold" id="skills-heading">Application Matrix</h2>
+      <p class="text-muted mt-2" id="skills-subheading">Tools, platforms & technical fluencies</p>
+    </div>
+    <div id="skills-container" class="space-y-10"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ CONTACT ═══════════════════════ -->
+<section id="contact" class="section-bg-accent py-24">
+  <div class="max-w-3xl mx-auto px-6">
+    <div class="mb-14 text-center">
+      <div class="hero-pill inline-flex mb-4"><i class="fa-solid fa-satellite-dish"></i><span>Contact Layer</span></div>
+      <h2 class="text-4xl font-extrabold" id="contact-heading">Get In Touch</h2>
+      <p class="text-muted mt-2" id="contact-subheading">I'll respond within 24 hours</p>
+    </div>
+    <div class="card-bg p-8 rounded-2xl">
+      <form id="contact-form" class="space-y-5" onsubmit="submitContact(event)">
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-semibold mb-2">Full Name</label>
+            <input type="text" id="c-name" class="input-field" placeholder="Your Name" required />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-2">Email Address</label>
+            <input type="email" id="c-email" class="input-field" placeholder="you@email.com" required />
+          </div>
         </div>
-        <p class="text-slate-600 text-sm leading-relaxed">A dynamically powered portfolio site built on Firebase Firestore and served via GitHub Pages.</p>
+        <div>
+          <label class="block text-sm font-semibold mb-2">Message</label>
+          <textarea id="c-message" class="input-field" rows="5" placeholder="Tell me about your project..." required></textarea>
+        </div>
+        <button type="submit" id="contact-btn" class="btn-accent w-full py-3 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-paper-plane"></i> Send Message
+        </button>
+        <div id="contact-status" class="text-center text-sm font-semibold hidden"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<footer class="footer-bg py-12">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="grid md:grid-cols-3 gap-10 mb-10">
+      <div>
+        <h3 class="font-bold text-lg accent mb-3" id="footer-brand">Portfolio</h3>
+        <p class="text-sm opacity-70 leading-relaxed" id="footer-tagline">Built with passion and precision.</p>
       </div>
       <div>
-        <h4 class="text-slate-400 font-semibold text-sm mb-4 uppercase tracking-widest">Technical Assembly</h4>
-        <ul class="text-slate-600 text-sm flex flex-col gap-2">
-          <li class="flex items-center gap-2"><i class="fa-brands fa-html5 text-amber-500/60 w-4"></i> Semantic HTML5 + Tailwind CSS</li>
-          <li class="flex items-center gap-2"><i class="fa-brands fa-js text-amber-500/60 w-4"></i> Vanilla ES6+ JavaScript</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-fire text-amber-500/60 w-4"></i> Firebase Firestore Database</li>
-          <li class="flex items-center gap-2"><i class="fa-brands fa-github text-amber-500/60 w-4"></i> Hosted on GitHub Pages</li>
+        <h4 class="font-semibold text-sm uppercase tracking-wider mb-4 opacity-60">Assembly</h4>
+        <ul class="space-y-2 text-sm opacity-70" id="footer-stack-list">
+          <li><i class="fa-brands fa-html5 mr-2 accent"></i>HTML5 Semantic Markup</li>
+          <li><i class="fa-brands fa-js mr-2 accent"></i>Vanilla ES6+ JavaScript</li>
+          <li><i class="fa-solid fa-database mr-2 accent"></i>Firebase Firestore CMS</li>
+          <li><i class="fa-solid fa-palette mr-2 accent"></i>Tailwind CSS v4</li>
         </ul>
       </div>
       <div>
-        <h4 class="text-slate-400 font-semibold text-sm mb-4 uppercase tracking-widest">System Metadata</h4>
-        <ul class="text-slate-600 text-sm flex flex-col gap-2">
-          <li class="flex items-center justify-between"><span>Build Type</span><span class="text-slate-500">Static SPA</span></li>
-          <li class="flex items-center justify-between"><span>DB Engine</span><span class="text-slate-500">Firestore NoSQL</span></li>
-          <li class="flex items-center justify-between"><span>Render Mode</span><span class="text-slate-500">Client-Side</span></li>
-          <li class="flex items-center justify-between"><span>Last Updated</span><span id="footer-year" class="text-slate-500">—</span></li>
+        <h4 class="font-semibold text-sm uppercase tracking-wider mb-4 opacity-60">System Metadata</h4>
+        <ul class="space-y-2 text-sm opacity-70" id="footer-meta-list">
+          <li><i class="fa-solid fa-code-branch mr-2 accent"></i>Version: 2.0.0</li>
+          <li><i class="fa-solid fa-server mr-2 accent"></i>Hosted: GitHub Pages</li>
+          <li><i class="fa-solid fa-shield-halved mr-2 accent"></i>CMS: Firestore</li>
+          <li><i class="fa-solid fa-calendar mr-2 accent"></i>Last Updated: <span id="last-updated">—</span></li>
         </ul>
       </div>
     </div>
-    <div class="border-t border-slate-800/60 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-      <p class="text-slate-700 text-xs">© <span id="copyright-year"></span> Engr. Aglinao. All rights reserved.</p>
-      <p class="text-slate-700 text-xs">Powered by <span class="text-amber-500/60">Firebase</span> · Built with <span class="text-amber-500/60">Tailwind CSS</span></p>
+    <div class="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <p class="text-sm opacity-50">
+        &copy; <span id="current-year"></span> <span id="footer-owner">Portfolio</span>. All rights reserved.
+      </p>
+      <div class="flex gap-4" id="footer-socials"></div>
     </div>
   </div>
 </footer>
 
-<!-- ════════════════════════════════════════════
-     MEDIA MODAL
-════════════════════════════════════════════ -->
-<div id="modal-backdrop" class="fixed inset-0 bg-slate-950/90 z-50 hidden items-center justify-center p-4">
-  <div id="modal-box" class="relative bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
-    <div class="flex items-center justify-between p-6 border-b border-slate-800 flex-shrink-0">
+<!-- ═══════════════════════ MEDIA MODAL ═══════════════════════ -->
+<div id="media-modal" class="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-bg p-0 shadow-2xl" style="width:min(700px,92vw)">
+    <div class="flex items-center justify-between px-6 py-4 border-b" id="modal-header" style="border-color:var(--accent)">
       <div>
-        <h3 id="modal-title" class="text-slate-100 font-bold text-lg"></h3>
-        <div class="flex items-center gap-2 mt-1">
-          <span id="modal-type-badge" class="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30"></span>
-          <span id="modal-desc" class="text-slate-500 text-sm"></span>
-        </div>
+        <p class="font-bold text-lg" id="modal-title">Preview</p>
+        <p class="text-xs text-muted" id="modal-subtitle">—</p>
       </div>
-      <button onclick="closeModal()" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-100 flex items-center justify-center transition-colors ml-4 flex-shrink-0">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
+      <button onclick="closeModal()" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors text-muted"><i class="fa-solid fa-xmark"></i></button>
     </div>
-    <div id="modal-content" class="flex-1 overflow-auto p-2 min-h-0 flex items-center justify-center bg-slate-950">
-      <!-- Injected dynamically -->
-    </div>
+    <div id="modal-body" class="p-6"></div>
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════
-     HIDDEN RESUME PRINT WORKSPACE
-════════════════════════════════════════════ -->
-<div id="resume-print-workspace" style="display:none; position:absolute; left:-9999px; top:0;"></div>
+<!-- ═══════════════════════ RESUME WORKSPACE ═══════════════════════ -->
+<div id="resume-workspace" style="display:none;position:absolute;left:-9999px;top:0;width:794px;"></div>
 
-<!-- ════════════════════════════════════════════
-     FIREBASE SDK (v9 Modular via ESM CDN)
-════════════════════════════════════════════ -->
+<!-- ═══════════════════════ FIREBASE ═══════════════════════ -->
 <script type="module">
-  // ╔══════════════════════════════════════════════════════════════╗
-  // ║          FIREBASE CONFIGURATION — UNIFIED SOURCE OF TRUTH   ║
-  // ║  Mirror this exact block in manage.html to keep both files  ║
-  // ║  connected to the same Firestore database instance.         ║
-  // ╚══════════════════════════════════════════════════════════════╝
-  import { initializeApp }                    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, getDoc,
-           collection, getDocs, addDoc,
-           serverTimestamp }                  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  // ─── FIREBASE CONFIGURATION ─────────────────────────────────────────────────
+  // Replace these placeholder values with your actual Firebase project credentials.
+  // Find them at: Firebase Console → Project Settings → Your Apps → SDK Setup.
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import {
+    getFirestore, doc, getDoc, collection, getDocs,
+    addDoc, serverTimestamp, query, orderBy
+  } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
   const firebaseConfig = {
-    apiKey: "AIzaSyCjDqSdEVrmbV78ObzAMUWnqzgeDVsLX0Q",
-    authDomain: "my-portfolio-54e15.firebaseapp.com",
-    projectId: "my-portfolio-54e15",
-    storageBucket: "my-portfolio-54e15.firebasestorage.app",
-    messagingSenderId: "127704809723",
-    appId: "1:127704809723:web:ea6b69141b1081cfd3705e"
+    apiKey:            "YOUR_API_KEY",
+    authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId:         "YOUR_PROJECT_ID",
+    storageBucket:     "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId:             "YOUR_APP_ID"
   };
-  // ── End of Firebase Config Block ──────────────────────────────
 
   const app = initializeApp(firebaseConfig);
   const db  = getFirestore(app);
 
-  // ── State Arrays (global for resume generator) ──
-  window.__portfolioState = {
-    about:      {},
-    experience: [],
-    portfolio:  [],
-    apps:       []
+  // ─── GLOBAL STATE ────────────────────────────────────────────────────────────
+  window.__state = {
+    hero: {}, experience: [], portfolio: [], skills: [],
+    layout: {}, socials: [], stats: []
   };
 
-  // ══════════════════════════════════════════════
-  //  FETCH ALL DATA FROM FIRESTORE
-  // ══════════════════════════════════════════════
-  async function fetchAllData() {
-    try {
-      // 1. About
-      const aboutSnap = await getDoc(doc(db, "portfolio_data", "about"));
-      if (aboutSnap.exists()) {
-        window.__portfolioState.about = aboutSnap.data();
-        renderAbout(aboutSnap.data());
-      } else {
-        renderAboutFallback();
-      }
+  // ─── HELPERS ─────────────────────────────────────────────────────────────────
+  const $ = id => document.getElementById(id);
+  const typeBadgeColor = t => ({
+    PPT:'#f97316', Image:'#06b6d4', URL:'#10b981', Site:'#6366f1', PDF:'#ef4444', Video:'#a855f7'
+  })[t] || '#6366f1';
 
-      // 2. Experience
-      const expSnap = await getDocs(collection(db, "experience"));
-      const expData = [];
-      expSnap.forEach(d => expData.push({ id: d.id, ...d.data() }));
-      expData.sort((a, b) => (b.order || 0) - (a.order || 0));
-      window.__portfolioState.experience = expData;
-      renderExperience(expData);
+  const typeIcon = t => ({
+    PPT:'fa-file-powerpoint', Image:'fa-image', URL:'fa-link',
+    Site:'fa-globe', PDF:'fa-file-pdf', Video:'fa-film'
+  })[t] || 'fa-file';
 
-      // 3. Portfolio
-      const portSnap = await getDocs(collection(db, "portfolio"));
-      const portData = [];
-      portSnap.forEach(d => portData.push({ id: d.id, ...d.data() }));
-      window.__portfolioState.portfolio = portData;
-      renderCarousel(portData);
+  // ─── THEME ───────────────────────────────────────────────────────────────────
+  function applyTheme(dark) {
+    document.documentElement.classList.toggle('dark', dark);
+    $('theme-icon').className = dark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+    localStorage.setItem('theme', dark ? 'dark' : 'light');
+  }
+  (function initTheme() {
+    const saved = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    applyTheme(saved ? saved === 'dark' : prefersDark);
+  })();
+  $('theme-toggle').addEventListener('click', () => {
+    applyTheme(!document.documentElement.classList.contains('dark'));
+  });
 
-      // 4. Apps / Skills
-      const appsSnap = await getDocs(collection(db, "apps"));
-      const appsData = [];
-      appsSnap.forEach(d => appsData.push({ id: d.id, ...d.data() }));
-      window.__portfolioState.apps = appsData;
-      renderApps(appsData);
+  // ─── LAYOUT SECTION VISIBILITY ───────────────────────────────────────────────
+  function applySectionConfig(layoutCfg) {
+    const sections = layoutCfg.sections || [];
+    sections.forEach(s => {
+      const el = document.getElementById(s.id);
+      if (!el) return;
+      if (s.visible === false) el.classList.add('section-hidden');
+      else el.classList.remove('section-hidden');
 
-      // Stats
-      document.getElementById('stat-projects').textContent = portData.length || '—';
-
-    } catch (err) {
-      console.error("Firebase fetch error:", err);
-      renderAboutFallback();
-      renderExperienceFallback();
-      renderCarouselFallback();
-      renderAppsFallback();
-    } finally {
-      hideSkeleton();
-    }
+      // Background variant
+      el.classList.remove('section-alt','section-bg-accent');
+      if (s.bg === 'alt') el.classList.add('section-alt');
+      else if (s.bg === 'accent') el.classList.add('section-bg-accent');
+    });
   }
 
-  // ══════════════════════════════════════════════
-  //  RENDER: ABOUT
-  // ══════════════════════════════════════════════
-  function renderAbout(data) {
-    const headline = data.headline || "Engineer. Innovator.";
-    const bio      = data.bio      || "Welcome to my portfolio.";
-    const resumeUrl = data.masterResumeUrl || "#";
-    const yearsExp  = data.yearsExperience || "—";
+  // ─── RENDER: HERO ─────────────────────────────────────────────────────────────
+  function renderHero(hero, socials, stats) {
+    document.title = `${hero.name || 'Portfolio'} — ${hero.role || 'Developer'}`;
+    $('nav-brand').textContent = hero.initials || 'ENG';
+    $('hero-name').innerHTML = hero.headline || hero.name || 'Your Name';
+    $('hero-bio').textContent = hero.bio || '';
+    $('hero-badge-role').textContent = hero.role || '';
+    if (hero.avatar) $('hero-avatar').src = hero.avatar;
+    if (hero.pill) document.querySelector('.hero-pill span').textContent = hero.pill;
+    $('footer-owner').textContent = hero.name || 'Portfolio';
+    $('footer-brand').textContent = hero.initials || 'Portfolio';
+    $('footer-tagline').textContent = hero.tagline || '';
 
-    document.getElementById('hero-headline').textContent  = headline;
-    document.getElementById('hero-bio').textContent       = bio;
-    document.getElementById('master-resume-btn').href     = resumeUrl;
-    document.getElementById('stat-experience').textContent = yearsExp;
+    const dl = $('resume-download-btn');
+    dl.href = hero.resumeUrl || '#';
+    if (!hero.resumeUrl) dl.style.opacity = '0.5';
+
+    // Stats
+    const sc = $('hero-stats-container');
+    sc.innerHTML = '';
+    (stats || []).forEach(s => {
+      sc.innerHTML += `
+        <div class="card-bg p-6 rounded-xl text-center fade-in">
+          <div class="text-3xl font-extrabold accent mb-1">${s.value}</div>
+          <div class="text-sm text-muted font-medium">${s.label}</div>
+        </div>`;
+    });
+
+    // Socials
+    renderSocials(socials, 'hero-socials', false);
+    renderSocials(socials, 'footer-socials', true);
   }
 
-  function renderAboutFallback() {
-    document.getElementById('hero-headline').textContent =
-      "Engineer. Innovator.";
-    document.getElementById('hero-bio').textContent =
-      "A versatile engineer and creative technologist with a passion for building elegant solutions to complex problems. Experienced in systems design, digital fabrication, and interdisciplinary project leadership.";
-    document.getElementById('stat-experience').textContent = "5+";
-    document.getElementById('stat-projects').textContent   = "20+";
+  function renderSocials(socials, containerId, footer) {
+    const el = $(containerId);
+    if (!el) return;
+    el.innerHTML = '';
+    (socials || []).forEach(s => {
+      const cls = footer
+        ? `text-lg opacity-60 hover:opacity-100 transition-opacity hover:text-indigo-400`
+        : `w-10 h-10 rounded-lg card-bg flex items-center justify-center text-muted hover:accent hover:border-indigo-400 transition-all`;
+      el.innerHTML += `<a href="${s.url}" target="_blank" title="${s.label}" class="${cls}"><i class="${s.icon}"></i></a>`;
+    });
   }
 
-  // ══════════════════════════════════════════════
-  //  RENDER: EXPERIENCE TIMELINE
-  // ══════════════════════════════════════════════
-  function renderExperience(data) {
-    const container = document.getElementById('timeline-container');
-    if (!data.length) { renderExperienceFallback(); return; }
-    container.innerHTML = data.map((item, i) => `
-      <div class="relative pl-8 pb-12 group timeline-node">
-        <!-- Node dot -->
-        <div class="absolute -left-[11px] top-1.5 w-5 h-5 rounded-full border-2 border-amber-500 bg-slate-900 group-hover:bg-amber-500 transition-colors shadow-lg shadow-amber-500/20"></div>
-        <!-- Date badge -->
-        <div class="flex items-center gap-3 mb-2">
-          <span class="text-xs font-bold px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
-            ${escHtml(item.startDate || '')} – ${escHtml(item.endDate || 'Present')}
-          </span>
-          ${item.current ? '<span class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-900/50 text-emerald-400 border border-emerald-700/40">Current</span>' : ''}
-        </div>
-        <h3 class="text-slate-100 font-bold text-lg mb-0.5">${escHtml(item.role || item.title || 'Role')}</h3>
-        <div class="text-amber-400 text-sm font-semibold mb-3">${escHtml(item.organization || item.company || '')}</div>
-        <p class="text-slate-400 text-sm leading-relaxed max-w-2xl">${escHtml(item.description || '')}</p>
-        ${item.tags ? `<div class="flex flex-wrap gap-2 mt-4">${item.tags.split(',').map(t=>`<span class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">${escHtml(t.trim())}</span>`).join('')}</div>` : ''}
-      </div>
-    `).join('');
+  // ─── RENDER: EXPERIENCE ──────────────────────────────────────────────────────
+  function renderExperience(items) {
+    const container = $('experience-container');
+    if (!items.length) { container.innerHTML = '<p class="text-muted">No experience records found.</p>'; return; }
+    container.innerHTML = '';
+    items.forEach((item, i) => {
+      const tags = (item.tags || []).map(t => `<span class="type-badge" style="background:var(--accent-glow);color:var(--accent);border:1px solid var(--accent)">${t}</span>`).join('');
+      container.innerHTML += `
+        <div class="relative flex gap-6 fade-in" style="animation-delay:${i*0.08}s">
+          <div class="timeline-line" style="position:absolute;left:0;top:20px;bottom:-40px;width:2px;${i===items.length-1?'display:none':''}"></div>
+          <div class="timeline-dot flex-shrink-0" style="position:relative;z-index:1;">
+            <i class="${item.icon || 'fa-solid fa-briefcase'}"></i>
+          </div>
+          <div class="card-bg p-6 flex-1 rounded-xl">
+            <div class="flex flex-wrap items-start justify-between gap-2 mb-2">
+              <div>
+                <h3 class="font-bold text-lg">${item.role}</h3>
+                <p class="accent font-semibold text-sm">${item.org}</p>
+              </div>
+              <span class="text-xs font-mono text-muted bg-opacity-30 px-3 py-1 rounded-full" style="background:var(--accent-glow);color:var(--accent)">
+                <i class="fa-regular fa-calendar mr-1"></i>${item.dateRange}
+              </span>
+            </div>
+            <p class="text-muted text-sm leading-relaxed mb-3">${item.description || ''}</p>
+            <div class="flex flex-wrap gap-2">${tags}</div>
+          </div>
+        </div>`;
+    });
   }
 
-  function renderExperienceFallback() {
-    const container = document.getElementById('timeline-container');
-    const fallback = [
-      { role: "Senior Engineer", organization: "Tech Solutions Inc.", startDate: "2021", endDate: "Present", description: "Led cross-functional engineering teams to deliver large-scale infrastructure projects on time and within budget.", current: true, tags: "Project Management,Systems Design,Leadership" },
-      { role: "Design Engineer", organization: "Creative Lab Corp.", startDate: "2018", endDate: "2021", description: "Designed and prototyped innovative product solutions using CAD software, digital fabrication, and rapid iteration methodology.", tags: "CAD,Prototyping,R&D" },
-      { role: "Junior Engineer", organization: "BuildRight Agency", startDate: "2016", endDate: "2018", description: "Supported senior engineers on civil construction and structural assessment projects across multiple regional sites.", tags: "Structural Analysis,Site Assessment,AutoCAD" }
-    ];
-    window.__portfolioState.experience = fallback;
-    renderExperience(fallback);
-  }
-
-  // ══════════════════════════════════════════════
-  //  RENDER: CAROUSEL
-  // ══════════════════════════════════════════════
+  // ─── RENDER: PORTFOLIO CAROUSEL ─────────────────────────────────────────────
   let carouselIndex = 0;
   let carouselItems = [];
-  const CARDS_VISIBLE = () => window.innerWidth >= 1024 ? 3 : window.innerWidth >= 640 ? 2 : 1;
+  const CARD_W = 296; // 280 + 16 gap
 
-  function typeIcon(type) {
-    const map = { PPT: 'fa-file-powerpoint', PDF: 'fa-file-pdf', Image: 'fa-image', URL: 'fa-link', Site: 'fa-globe', Video: 'fa-video' };
-    return map[type] || 'fa-file';
-  }
-  function typeColor(type) {
-    const map = { PPT: 'text-orange-400', PDF: 'text-red-400', Image: 'text-blue-400', URL: 'text-purple-400', Site: 'text-emerald-400', Video: 'text-cyan-400' };
-    return map[type] || 'text-slate-400';
-  }
-
-  function renderCarousel(data) {
-    const track = document.getElementById('carousel-track');
-    if (!data.length) { renderCarouselFallback(); return; }
-    carouselItems = data;
-    track.innerHTML = data.map((item, i) => `
-      <div class="portfolio-card flex-shrink-0 w-[calc(100%-1rem)] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]
-                  bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden cursor-pointer group"
-           onclick="openModal(${i})" role="button" aria-label="View ${escHtml(item.title)}">
-        <!-- Thumbnail -->
-        <div class="relative h-44 bg-slate-800 overflow-hidden">
-          ${item.thumbnail
-            ? `<img src="${escHtml(item.thumbnail)}" alt="${escHtml(item.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />`
-            : `<div class="w-full h-full flex items-center justify-center"><i class="fa-solid ${typeIcon(item.type)} text-5xl ${typeColor(item.type)} opacity-40"></i></div>`
-          }
-          <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <div class="absolute top-3 right-3">
-            <span class="text-xs font-bold px-2 py-1 rounded-full bg-slate-900/80 backdrop-blur-sm border border-slate-700/50 ${typeColor(item.type)}">
-              <i class="fa-solid ${typeIcon(item.type)} mr-1"></i>${escHtml(item.type || 'Asset')}
-            </span>
+  function renderPortfolio(items) {
+    carouselItems = items;
+    carouselIndex = 0;
+    const track = $('carousel-track');
+    track.innerHTML = '';
+    if (!items.length) { track.innerHTML = '<p class="text-muted text-sm">No portfolio items found.</p>'; return; }
+    items.forEach((item, i) => {
+      const color = typeBadgeColor(item.type);
+      const icon  = typeIcon(item.type);
+      track.innerHTML += `
+        <div class="carousel-card" onclick="openModal(${i})" style="min-width:280px;max-width:280px;">
+          <div class="relative h-44 overflow-hidden" style="background:linear-gradient(135deg,${color}22,${color}44)">
+            ${item.thumbnail
+              ? `<img src="${item.thumbnail}" alt="${item.title}" class="w-full h-full object-cover" />`
+              : `<div class="flex items-center justify-center h-full"><i class="fa-solid ${icon} text-5xl" style="color:${color};opacity:.6"></i></div>`
+            }
+            <span class="type-badge absolute top-3 right-3" style="background:${color};color:#fff">${item.type}</span>
           </div>
-          <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <div class="w-12 h-12 rounded-full bg-amber-500/90 flex items-center justify-center shadow-xl">
-              <i class="fa-solid fa-expand text-slate-900"></i>
-            </div>
+          <div class="p-5">
+            <h3 class="font-bold mb-1 text-sm truncate">${item.title}</h3>
+            <p class="text-muted text-xs leading-relaxed line-clamp-2 mb-3">${item.description || ''}</p>
+            <button class="btn-accent text-xs px-4 py-2 w-full flex items-center justify-center gap-2">
+              <i class="fa-solid ${icon}"></i> View ${item.type}
+            </button>
           </div>
-        </div>
-        <!-- Card Body -->
-        <div class="p-5">
-          <h3 class="text-slate-100 font-bold mb-1.5 group-hover:text-amber-400 transition-colors line-clamp-1">${escHtml(item.title || 'Untitled')}</h3>
-          <p class="text-slate-500 text-sm line-clamp-2">${escHtml(item.description || '')}</p>
-        </div>
-      </div>
-    `).join('');
-    buildCarouselDots();
-    updateCarousel();
-  }
-
-  function renderCarouselFallback() {
-    const fallback = [
-      { title: "Annual Report 2023", description: "Comprehensive annual report presentation for stakeholder review.", type: "PPT", thumbnail: "" },
-      { title: "Product Landing Page", description: "A high-conversion product showcase website built from scratch.", type: "Site", thumbnail: "" },
-      { title: "Infrastructure Study", description: "Technical PDF documentation for infrastructure development project.", type: "PDF", thumbnail: "" },
-      { title: "Design Portfolio", description: "Visual design portfolio showcasing branding and UI work.", type: "Image", thumbnail: "" },
-      { title: "Resource Dashboard", description: "Interactive resource management web application.", type: "URL", thumbnail: "" }
-    ];
-    window.__portfolioState.portfolio = fallback;
-    renderCarousel(fallback);
-  }
-
-  function buildCarouselDots() {
-    const dotsContainer = document.getElementById('carousel-dots');
-    const total = carouselItems.length;
-    dotsContainer.innerHTML = Array.from({length: total}, (_, i) =>
-      `<button onclick="goToCarouselSlide(${i})" class="carousel-dot w-2 h-2 rounded-full transition-all ${i===0 ? 'bg-amber-500 w-6':'bg-slate-700'}" aria-label="Slide ${i+1}"></button>`
-    ).join('');
-  }
-
-  function updateCarousel() {
-    const track = document.getElementById('carousel-track');
-    const cv = CARDS_VISIBLE();
-    const cardWidth = track.querySelector('.portfolio-card')?.offsetWidth || 300;
-    const gap = 24;
-    const maxIndex = Math.max(0, carouselItems.length - cv);
-    carouselIndex = Math.max(0, Math.min(carouselIndex, maxIndex));
-    track.style.transform = `translateX(-${carouselIndex * (cardWidth + gap)}px)`;
-    // Update dots
-    document.querySelectorAll('.carousel-dot').forEach((dot, i) => {
-      dot.className = `carousel-dot rounded-full transition-all ${i === carouselIndex ? 'bg-amber-500 w-6 h-2' : 'w-2 h-2 bg-slate-700'}`;
-    });
-  }
-
-  window.goToCarouselSlide = function(i) {
-    carouselIndex = i;
-    updateCarousel();
-  };
-
-  document.getElementById('carousel-prev').addEventListener('click', () => {
-    carouselIndex = Math.max(0, carouselIndex - 1);
-    updateCarousel();
-  });
-  document.getElementById('carousel-next').addEventListener('click', () => {
-    carouselIndex = Math.min(carouselItems.length - CARDS_VISIBLE(), carouselIndex + 1);
-    updateCarousel();
-  });
-
-  // Touch/swipe
-  let touchStartX = 0;
-  const carouselEl = document.getElementById('carousel-track').parentElement;
-  carouselEl.addEventListener('touchstart', e => touchStartX = e.touches[0].clientX, { passive: true });
-  carouselEl.addEventListener('touchend', e => {
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(dx) > 50) {
-      if (dx < 0) carouselIndex = Math.min(carouselItems.length - CARDS_VISIBLE(), carouselIndex + 1);
-      else         carouselIndex = Math.max(0, carouselIndex - 1);
-      updateCarousel();
-    }
-  });
-  window.addEventListener('resize', updateCarousel);
-
-  // ══════════════════════════════════════════════
-  //  RENDER: APPS / SKILLS
-  // ══════════════════════════════════════════════
-  const categoryColors = {
-    Engineering: 'from-blue-900/40 to-blue-950/40 border-blue-700/30',
-    Design:      'from-purple-900/40 to-purple-950/40 border-purple-700/30',
-    Software:    'from-emerald-900/40 to-emerald-950/40 border-emerald-700/30',
-    Office:      'from-amber-900/40 to-amber-950/40 border-amber-700/30',
-    Other:       'from-slate-800/40 to-slate-900/40 border-slate-700/30'
-  };
-  const categoryIconColors = {
-    Engineering: 'text-blue-400', Design: 'text-purple-400',
-    Software: 'text-emerald-400', Office: 'text-amber-400', Other: 'text-slate-400'
-  };
-
-  function renderApps(data) {
-    const grid = document.getElementById('apps-grid');
-    if (!data.length) { renderAppsFallback(); return; }
-    grid.innerHTML = data.map(item => `
-      <div class="app-card relative group bg-gradient-to-br ${categoryColors[item.category] || categoryColors.Other}
-                  border rounded-2xl p-5 flex flex-col items-center gap-3 cursor-default hover:scale-105 transition-transform">
-        <div class="${categoryIconColors[item.category] || categoryIconColors.Other} text-3xl">
-          <i class="fa-solid ${item.icon || 'fa-cube'}"></i>
-        </div>
-        <div class="text-slate-300 text-xs font-bold text-center">${escHtml(item.name)}</div>
-        <div class="text-slate-600 text-xs text-center">${escHtml(item.category || '')}</div>
-        ${item.level ? `<div class="app-tooltip absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-800 border border-slate-700 text-slate-300 text-xs px-3 py-1.5 rounded-lg whitespace-nowrap shadow-xl">${escHtml(item.level)}</div>` : ''}
-      </div>
-    `).join('');
-  }
-
-  function renderAppsFallback() {
-    const fallback = [
-      { name: "AutoCAD", category: "Engineering", icon: "fa-drafting-compass", level: "Advanced" },
-      { name: "Revit", category: "Engineering", icon: "fa-building", level: "Intermediate" },
-      { name: "Adobe XD", category: "Design", icon: "fa-pen-nib", level: "Advanced" },
-      { name: "Figma", category: "Design", icon: "fa-vector-square", level: "Intermediate" },
-      { name: "VS Code", category: "Software", icon: "fa-code", level: "Advanced" },
-      { name: "Firebase", category: "Software", icon: "fa-fire", level: "Intermediate" },
-      { name: "MS Office", category: "Office", icon: "fa-file-word", level: "Advanced" },
-      { name: "Excel", category: "Office", icon: "fa-file-excel", level: "Expert" },
-      { name: "PowerPoint", category: "Office", icon: "fa-file-powerpoint", level: "Expert" },
-      { name: "Blender", category: "Design", icon: "fa-cube", level: "Intermediate" },
-      { name: "Python", category: "Software", icon: "fa-python", level: "Intermediate" },
-      { name: "Git / GitHub", category: "Software", icon: "fa-code-branch", level: "Advanced" }
-    ];
-    window.__portfolioState.apps = fallback;
-    renderApps(fallback);
-  }
-
-  // ══════════════════════════════════════════════
-  //  MODAL
-  // ══════════════════════════════════════════════
-  window.openModal = function(index) {
-    const item = carouselItems[index] || window.__portfolioState.portfolio[index];
-    if (!item) return;
-    const backdrop   = document.getElementById('modal-backdrop');
-    const titleEl    = document.getElementById('modal-title');
-    const typeEl     = document.getElementById('modal-type-badge');
-    const descEl     = document.getElementById('modal-desc');
-    const contentEl  = document.getElementById('modal-content');
-
-    titleEl.textContent = item.title || 'Preview';
-    typeEl.textContent  = item.type  || 'Asset';
-    descEl.textContent  = item.description || '';
-    contentEl.innerHTML = buildModalContent(item);
-
-    backdrop.style.display = 'flex';
-    backdrop.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-  };
-
-  function buildModalContent(item) {
-    const url = item.fileUrl || item.link || '';
-    switch (item.type) {
-      case 'Image':
-        return `<img src="${escHtml(url)}" alt="${escHtml(item.title)}" class="max-w-full max-h-[70vh] object-contain rounded-xl shadow-2xl" />`;
-      case 'PDF':
-        return `<iframe src="${escHtml(url)}" class="w-full h-[70vh] rounded-xl border border-slate-700" title="${escHtml(item.title)}"></iframe>`;
-      case 'PPT':
-        return `<iframe src="https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}" class="w-full h-[70vh] rounded-xl border border-slate-700" title="${escHtml(item.title)}"></iframe>`;
-      case 'Site':
-      case 'URL':
-        return `<iframe src="${escHtml(url)}" class="w-full h-[70vh] rounded-xl border border-slate-700" title="${escHtml(item.title)}" sandbox="allow-scripts allow-same-origin"></iframe>`;
-      case 'Video':
-        return `<video controls class="max-w-full max-h-[70vh] rounded-xl shadow-2xl"><source src="${escHtml(url)}" /></video>`;
-      default:
-        return `<div class="flex flex-col items-center gap-4 text-slate-500 py-12">
-          <i class="fa-solid fa-link text-4xl"></i>
-          <p class="text-sm">No preview available.</p>
-          <a href="${escHtml(url)}" target="_blank" rel="noopener" class="text-amber-400 hover:text-amber-300 underline text-sm">Open Link <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i></a>
         </div>`;
-    }
+    });
+    updateCarouselDots();
+    updateCarouselBtns();
   }
 
-  window.closeModal = function() {
-    document.getElementById('modal-backdrop').style.display = 'none';
-    document.getElementById('modal-content').innerHTML = '';
-    document.body.style.overflow = '';
+  window.carouselMove = function(dir) {
+    const track = $('carousel-track');
+    const visible = Math.floor(track.parentElement.offsetWidth / CARD_W) || 1;
+    const max = Math.max(0, carouselItems.length - visible);
+    carouselIndex = Math.max(0, Math.min(carouselIndex + dir, max));
+    track.style.transform = `translateX(-${carouselIndex * CARD_W}px)`;
+    updateCarouselDots();
+    updateCarouselBtns();
   };
 
-  document.getElementById('modal-backdrop').addEventListener('click', e => {
-    if (e.target === document.getElementById('modal-backdrop')) window.closeModal();
-  });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') window.closeModal(); });
+  function updateCarouselBtns() {
+    const track = $('carousel-track');
+    const visible = Math.floor((track.parentElement?.offsetWidth || 900) / CARD_W) || 1;
+    const max = Math.max(0, carouselItems.length - visible);
+    $('carousel-prev').disabled = carouselIndex === 0;
+    $('carousel-next').disabled = carouselIndex >= max;
+  }
 
-  // ══════════════════════════════════════════════
-  //  CONTACT FORM — Firestore Write
-  // ══════════════════════════════════════════════
-  window.submitContactForm = async function(e) {
-    e.preventDefault();
-    const btn    = document.getElementById('cf-submit');
-    const status = document.getElementById('cf-status');
-    const name   = document.getElementById('cf-name').value.trim();
-    const email  = document.getElementById('cf-email').value.trim();
-    const message = document.getElementById('cf-message').value.trim();
+  function updateCarouselDots() {
+    const track = $('carousel-track');
+    const visible = Math.floor((track.parentElement?.offsetWidth || 900) / CARD_W) || 1;
+    const pages = Math.ceil(carouselItems.length / visible);
+    const dotsEl = $('carousel-dots');
+    dotsEl.innerHTML = '';
+    for (let i = 0; i < pages; i++) {
+      const active = i === Math.floor(carouselIndex / visible);
+      dotsEl.innerHTML += `<div style="width:${active?'24':'8'}px;height:8px;border-radius:9999px;background:${active?'var(--accent)':'var(--accent-glow)'};transition:width .2s"></div>`;
+    }
+  }
 
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Sending…';
+  window.openModal = function(idx) {
+    const item = carouselItems[idx];
+    if (!item) return;
+    $('modal-title').textContent = item.title;
+    $('modal-subtitle').textContent = item.description || '';
+    const color = typeBadgeColor(item.type);
+    $('modal-header').style.borderColor = color;
+    const body = $('modal-body');
 
-    try {
-      await addDoc(collection(db, "messages"), {
-        name, email, message,
-        timestamp: serverTimestamp(),
-        read: false
-      });
-      status.className = 'text-center text-sm font-medium py-2 rounded-lg bg-emerald-900/40 text-emerald-400 border border-emerald-700/40';
-      status.textContent = '✓ Message sent successfully! I\'ll reply soon.';
-      status.classList.remove('hidden');
-      document.getElementById('contact-form').reset();
-    } catch (err) {
-      status.className = 'text-center text-sm font-medium py-2 rounded-lg bg-red-900/40 text-red-400 border border-red-700/40';
-      status.textContent = '✗ Failed to send. Please try again.';
-      status.classList.remove('hidden');
-      console.error(err);
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send Message';
-      setTimeout(() => status.classList.add('hidden'), 5000);
+    if (item.type === 'Image') {
+      body.innerHTML = `<img src="${item.url || item.thumbnail}" alt="${item.title}" class="w-full rounded-lg" />`;
+    } else if (item.type === 'URL' || item.type === 'Site') {
+      body.innerHTML = `
+        <div class="text-center py-6">
+          <i class="fa-solid fa-globe text-5xl mb-4" style="color:${color}"></i>
+          <p class="text-muted mb-4 text-sm">${item.description || ''}</p>
+          <a href="${item.url}" target="_blank" class="btn-accent px-6 py-3 inline-flex items-center gap-2">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Open ${item.type}
+          </a>
+        </div>`;
+    } else if (item.type === 'PDF') {
+      body.innerHTML = `
+        <div class="text-center py-6">
+          <i class="fa-solid fa-file-pdf text-5xl mb-4" style="color:${color}"></i>
+          <p class="text-muted mb-4 text-sm">${item.description || ''}</p>
+          <a href="${item.url}" target="_blank" class="btn-accent px-6 py-3 inline-flex items-center gap-2">
+            <i class="fa-solid fa-download"></i> Open PDF
+          </a>
+        </div>`;
+    } else if (item.type === 'PPT') {
+      body.innerHTML = `
+        <div class="text-center py-6">
+          <i class="fa-solid fa-file-powerpoint text-5xl mb-4" style="color:${color}"></i>
+          <p class="text-muted mb-4 text-sm">${item.description || ''}</p>
+          ${item.url ? `<a href="${item.url}" target="_blank" class="btn-accent px-6 py-3 inline-flex items-center gap-2"><i class="fa-solid fa-download"></i> Download PPT</a>` : ''}
+        </div>`;
+    } else if (item.type === 'Video') {
+      body.innerHTML = `<div class="aspect-video rounded-lg overflow-hidden bg-black"><iframe src="${item.url}" class="w-full h-full" allowfullscreen frameborder="0"></iframe></div>`;
+    }
+    $('media-modal').classList.add('active');
+  };
+
+  window.closeModal = function(e) {
+    // Close when called directly (X button) or when clicking the backdrop overlay
+    if (!e || e.target === $('media-modal')) {
+      $('media-modal').classList.remove('active');
+      $('modal-body').innerHTML = '';
     }
   };
 
-  // ══════════════════════════════════════════════
-  //  SKELETON HIDE
-  // ══════════════════════════════════════════════
-  function hideSkeleton() {
-    const sk = document.getElementById('loading-skeleton');
-    sk.style.transition = 'opacity 0.6s ease';
-    sk.style.opacity = '0';
-    setTimeout(() => { sk.style.display = 'none'; }, 650);
-  }
-
-  // ══════════════════════════════════════════════
-  //  BOOT
-  // ══════════════════════════════════════════════
-  fetchAllData();
-
-  // ── SCROLL: Nav style + Section Reveal ────────
-  const navEl = document.getElementById('main-nav');
-  const reveals = document.querySelectorAll('.section-reveal');
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.1 });
-  reveals.forEach(el => io.observe(el));
-
-  window.addEventListener('scroll', () => {
-    navEl.classList.toggle('scrolled', window.scrollY > 60);
-  });
-
-  // ── Mobile Menu ────────────────────────────────
-  document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-    document.getElementById('mobile-menu').classList.toggle('hidden');
-  });
-
-  // ── Footer Year ────────────────────────────────
-  const yr = new Date().getFullYear();
-  document.getElementById('footer-year').textContent    = yr;
-  document.getElementById('copyright-year').textContent = yr;
-
-</script>
-
-<!-- ════════════════════════════════════════════
-     LIVE RESUME GENERATOR + HERO CANVAS
-     (Non-Firebase JS — outside module scope)
-════════════════════════════════════════════ -->
-<script>
-  // ── Hero Particle Canvas ────────────────────────
-  (function initCanvas() {
-    const canvas = document.getElementById('hero-canvas');
-    const ctx    = canvas.getContext('2d');
-    let   particles = [];
-
-    function resize() {
-      canvas.width  = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-    }
-
-    function createParticle() {
-      return {
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: Math.random() * 1.5 + 0.3,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        alpha: Math.random() * 0.5 + 0.1
-      };
-    }
-
-    function initParticles() {
-      resize();
-      particles = Array.from({ length: 80 }, createParticle);
-    }
-
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => {
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0 || p.x > canvas.width)  p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(245,158,11,${p.alpha})`;
-        ctx.fill();
-      });
-      // Draw lines between nearby particles
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 100) {
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(245,158,11,${0.08 * (1 - dist / 100)})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        }
-      }
-      requestAnimationFrame(draw);
-    }
-
-    window.addEventListener('resize', initParticles);
-    initParticles();
-    draw();
-  })();
-
-  // ── Utility ────────────────────────────────────
-  function escHtml(str) {
-    if (!str) return '';
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  }
-  window.escHtml = escHtml;
-
-  // ══════════════════════════════════════════════
-  //  DYNAMIC LIVE RESUME GENERATOR
-  //  Swiss Minimalist Aesthetic — Print Optimized
-  // ══════════════════════════════════════════════
-  window.generateLiveResume = function() {
-    const state = window.__portfolioState || {};
-    const about = state.about || {};
-    const exp   = state.experience || [];
-    const port  = state.portfolio  || [];
-    const apps  = state.apps       || [];
-
-    const headline     = about.headline     || 'Engineer & Innovator';
-    const bio          = about.bio          || 'A versatile engineer and creative technologist.';
-    const yearsExp     = about.yearsExperience || '—';
-    const contactEmail = about.email        || 'hello@engraglinao.com';
-    const contactPhone = about.phone        || '+63 XXX XXX XXXX';
-    const contactCity  = about.city         || 'Philippines';
-    const linkedIn     = about.linkedIn     || 'linkedin.com/in/engraglinao';
-    const github       = about.github       || 'github.com/engraglinao';
-
-    const expRows = exp.map(e => `
-      <div style="margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid #e5e7eb;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap;">
+  // ─── RENDER: SKILLS ──────────────────────────────────────────────────────────
+  function renderSkills(items) {
+    const container = $('skills-container');
+    if (!items.length) { container.innerHTML = '<p class="text-muted">No skills found.</p>'; return; }
+    const grouped = {};
+    items.forEach(s => {
+      const cat = s.category || 'Other';
+      if (!grouped[cat]) grouped[cat] = [];
+      grouped[cat].push(s);
+    });
+    container.innerHTML = '';
+    Object.entries(grouped).forEach(([cat, skills]) => {
+      const skillCards = skills.map(s => `
+        <div class="skill-card p-4 flex items-center gap-3">
+          <div class="icon-box" style="background:${s.color || 'var(--accent)'}">
+            <i class="${s.icon || 'fa-solid fa-star'}"></i>
+          </div>
           <div>
-            <div style="font-weight:700; font-size:11pt; color:#111827; letter-spacing:-0.3px;">${escHtml(e.role || e.title || '')}</div>
-            <div style="font-size:9.5pt; color:#6b7280; font-weight:600; margin-top:1px;">${escHtml(e.organization || e.company || '')}</div>
+            <p class="font-semibold text-sm">${s.name}</p>
+            <p class="text-xs text-muted">${s.level || ''}</p>
           </div>
-          <div style="font-size:8.5pt; color:#9ca3af; white-space:nowrap; font-weight:500; padding-top:2px;">
-            ${escHtml(e.startDate || '')} – ${escHtml(e.endDate || 'Present')}
-          </div>
-        </div>
-        <p style="margin-top:6px; font-size:9pt; color:#374151; line-height:1.6;">${escHtml(e.description || '')}</p>
-        ${e.tags ? `<div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:4px;">${e.tags.split(',').map(t=>`<span style="font-size:7.5pt; padding:2px 7px; background:#f3f4f6; border:1px solid #e5e7eb; border-radius:20px; color:#4b5563; font-weight:500;">${escHtml(t.trim())}</span>`).join('')}</div>` : ''}
-      </div>
-    `).join('');
-
-    const portRows = port.slice(0, 5).map(p => `
-      <div style="margin-bottom:10px; display:flex; gap:10px; align-items:flex-start;">
-        <span style="font-size:7.5pt; font-weight:700; color:#d97706; min-width:34px; padding-top:1px;">${escHtml(p.type || '—')}</span>
+        </div>`).join('');
+      container.innerHTML += `
         <div>
-          <div style="font-weight:600; font-size:9.5pt; color:#111827;">${escHtml(p.title || '')}</div>
-          <div style="font-size:8.5pt; color:#6b7280; line-height:1.5;">${escHtml(p.description || '')}</div>
-        </div>
-      </div>
-    `).join('');
-
-    const skillGroups = {};
-    apps.forEach(a => {
-      const cat = a.category || 'Other';
-      if (!skillGroups[cat]) skillGroups[cat] = [];
-      skillGroups[cat].push(a.name);
+          <h3 class="font-bold text-sm uppercase tracking-wider text-muted mb-4 flex items-center gap-2">
+            <span class="w-6 h-px" style="background:var(--accent);display:inline-block"></span>${cat}
+          </h3>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">${skillCards}</div>
+        </div>`;
     });
-    const skillRows = Object.entries(skillGroups).map(([cat, names]) => `
-      <div style="margin-bottom:8px;">
-        <div style="font-size:8pt; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:1px; margin-bottom:3px;">${escHtml(cat)}</div>
-        <div style="font-size:9pt; color:#374151;">${names.map(n => escHtml(n)).join(' · ')}</div>
-      </div>
-    `).join('');
+  }
 
-    const workspace = document.getElementById('resume-print-workspace');
-    workspace.style.display = 'block';
-    workspace.innerHTML = `
-      <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; max-width:210mm; min-height:297mm; background:#ffffff; color:#111827; margin:0 auto; padding:0;">
-
-        <!-- Header Bar -->
-        <div style="background:#111827; color:#f9fafb; padding:28px 36px 24px; display:flex; justify-content:space-between; align-items:flex-end; gap:20px;">
-          <div>
-            <div style="font-size:22pt; font-weight:900; letter-spacing:-1px; color:#ffffff;">ENGR. AGLINAO</div>
-            <div style="font-size:10pt; color:#fbbf24; font-weight:600; margin-top:4px; letter-spacing:1.5px; text-transform:uppercase;">${escHtml(headline)}</div>
-          </div>
-          <div style="text-align:right; font-size:8pt; color:#9ca3af; line-height:1.7;">
-            <div>${escHtml(contactEmail)}</div>
-            <div>${escHtml(contactPhone)}</div>
-            <div>${escHtml(contactCity)}</div>
-            <div>${escHtml(linkedIn)}</div>
-            <div>${escHtml(github)}</div>
-          </div>
-        </div>
-
-        <!-- Body -->
-        <div style="display:grid; grid-template-columns:1fr 2fr; gap:0;">
-
-          <!-- LEFT COLUMN -->
-          <div style="background:#f9fafb; padding:24px 24px 24px 36px; border-right:2px solid #e5e7eb;">
-
-            <!-- Profile -->
-            <div style="margin-bottom:24px;">
-              <div style="font-size:7.5pt; font-weight:800; text-transform:uppercase; letter-spacing:2px; color:#d97706; border-bottom:2px solid #fbbf24; padding-bottom:4px; margin-bottom:10px;">Profile</div>
-              <p style="font-size:8.5pt; color:#374151; line-height:1.7; margin:0;">${escHtml(bio)}</p>
-            </div>
-
-            <!-- Skills -->
-            <div style="margin-bottom:24px;">
-              <div style="font-size:7.5pt; font-weight:800; text-transform:uppercase; letter-spacing:2px; color:#d97706; border-bottom:2px solid #fbbf24; padding-bottom:4px; margin-bottom:10px;">Skills & Tools</div>
-              ${skillRows || '<div style="color:#9ca3af;font-size:8.5pt;">No skills data.</div>'}
-            </div>
-
-            <!-- Stats -->
-            <div>
-              <div style="font-size:7.5pt; font-weight:800; text-transform:uppercase; letter-spacing:2px; color:#d97706; border-bottom:2px solid #fbbf24; padding-bottom:4px; margin-bottom:10px;">At a Glance</div>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                <div style="background:#fff; border:1px solid #e5e7eb; border-radius:6px; padding:10px; text-align:center;">
-                  <div style="font-size:16pt; font-weight:900; color:#d97706;">${escHtml(String(yearsExp))}</div>
-                  <div style="font-size:7pt; color:#9ca3af; margin-top:2px; text-transform:uppercase; letter-spacing:0.5px;">Years Exp.</div>
-                </div>
-                <div style="background:#fff; border:1px solid #e5e7eb; border-radius:6px; padding:10px; text-align:center;">
-                  <div style="font-size:16pt; font-weight:900; color:#d97706;">${port.length || '—'}</div>
-                  <div style="font-size:7pt; color:#9ca3af; margin-top:2px; text-transform:uppercase; letter-spacing:0.5px;">Projects</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- RIGHT COLUMN -->
-          <div style="padding:24px 36px 24px 28px;">
-
-            <!-- Experience -->
-            <div style="margin-bottom:24px;">
-              <div style="font-size:7.5pt; font-weight:800; text-transform:uppercase; letter-spacing:2px; color:#d97706; border-bottom:2px solid #fbbf24; padding-bottom:4px; margin-bottom:14px;">Professional Experience</div>
-              ${expRows || '<div style="color:#9ca3af;font-size:9pt;">No experience data available.</div>'}
-            </div>
-
-            <!-- Portfolio -->
-            <div>
-              <div style="font-size:7.5pt; font-weight:800; text-transform:uppercase; letter-spacing:2px; color:#d97706; border-bottom:2px solid #fbbf24; padding-bottom:4px; margin-bottom:14px;">Selected Works</div>
-              ${portRows || '<div style="color:#9ca3af;font-size:9pt;">No portfolio data available.</div>'}
-            </div>
-          </div>
-        </div>
-
-        <!-- Footer -->
-        <div style="background:#f3f4f6; border-top:1px solid #e5e7eb; padding:12px 36px; display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-size:7.5pt; color:#9ca3af;">Generated ${new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'})}</span>
-          <span style="font-size:7.5pt; color:#9ca3af;">engraglinao.github.io</span>
-        </div>
-      </div>
-    `;
-
-    // Slight delay to ensure DOM paint, then print
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        window.print();
-        setTimeout(() => {
-          workspace.style.display = 'none';
-          workspace.innerHTML = '';
-        }, 2000);
-      }, 100);
-    });
+  // ─── CONTACT FORM SUBMIT ─────────────────────────────────────────────────────
+  window.submitContact = async function(e) {
+    e.preventDefault();
+    const btn = $('contact-btn');
+    const status = $('contact-status');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+    try {
+      await addDoc(collection(db, 'messages'), {
+        name:      $('c-name').value,
+        email:     $('c-email').value,
+        message:   $('c-message').value,
+        timestamp: serverTimestamp()
+      });
+      status.textContent = '✓ Message sent! I will get back to you soon.';
+      status.style.color = '#10b981';
+      status.classList.remove('hidden');
+      $('contact-form').reset();
+    } catch (err) {
+      status.textContent = '✗ Failed to send. Please try again or email directly.';
+      status.style.color = '#ef4444';
+      status.classList.remove('hidden');
+    }
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send Message';
+    setTimeout(() => status.classList.add('hidden'), 6000);
   };
-</script>
 
+  // ─── GENERATE LIVE RESUME ────────────────────────────────────────────────────
+  window.generateLiveResume = function() {
+    const s = window.__state;
+    const hero = s.hero || {};
+    const exp  = s.experience || [];
+    const skills = s.skills || [];
+    const isDark = document.documentElement.classList.contains('dark');
+    const accent = '#6366f1';
+
+    // Group skills
+    const skillGrouped = {};
+    skills.forEach(sk => {
+      const cat = sk.category || 'Skills';
+      if (!skillGrouped[cat]) skillGrouped[cat] = [];
+      skillGrouped[cat].push(sk);
+    });
+
+    const skillsHTML = Object.entries(skillGrouped).map(([cat, items]) => `
+      <div style="margin-bottom:10px">
+        <p style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:4px">${cat}</p>
+        ${items.map(sk => `
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+            <i class="${sk.icon||'fa-solid fa-circle-dot'}" style="font-size:10px;color:${sk.color||accent};width:14px;text-align:center"></i>
+            <span style="font-size:9px;font-weight:600">${sk.name}</span>
+          </div>`).join('')}
+      </div>`).join('');
+
+    const expHTML = exp.map((e, i) => `
+      <div style="margin-bottom:16px;${i>0?'padding-top:14px;border-top:1px solid #e2e8f0':''}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px">
+          <div>
+            <p style="font-size:11px;font-weight:800;color:#1e293b;margin:0">${e.role}</p>
+            <p style="font-size:9px;font-weight:700;color:${accent};margin:0">${e.org}</p>
+          </div>
+          <span style="font-size:7px;color:#64748b;background:#f1f5f9;padding:2px 7px;border-radius:99px;white-space:nowrap;margin-left:6px">${e.dateRange||''}</span>
+        </div>
+        <p style="font-size:8.5px;color:#475569;line-height:1.55;margin:0">${e.description||''}</p>
+        ${(e.tags||[]).length ? `<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px">${(e.tags||[]).map(t=>`<span style="font-size:7px;padding:1px 6px;background:${accent}18;color:${accent};border-radius:99px;font-weight:600">${t}</span>`).join('')}</div>` : ''}
+      </div>`).join('');
+
+    const ws = $('resume-workspace');
+    ws.style.display = 'block';
+    ws.innerHTML = `
+      <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
+        #resume-root * { font-family: 'Plus Jakarta Sans', sans-serif !important; box-sizing: border-box; }
+        @media print {
+          body > *:not(#resume-workspace) { display: none !important; }
+          #resume-workspace { display: block !important; position: static !important; left: 0 !important; width: 100% !important; }
+          @page { margin: 0; size: A4; }
+          #resume-root { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+      </style>
+      <div id="resume-root" style="display:flex;width:794px;min-height:1123px;background:#fff;font-family:'Plus Jakarta Sans',sans-serif;">
+        <!-- LEFT SIDEBAR -->
+        <div style="width:258px;background:#1e2433;color:#e2e8f0;padding:32px 20px;display:flex;flex-direction:column;gap:0;flex-shrink:0;">
+          <!-- Avatar -->
+          <div style="text-align:center;margin-bottom:20px">
+            <div style="width:90px;height:90px;border-radius:50%;overflow:hidden;border:3px solid ${accent};margin:0 auto 10px;box-shadow:0 0 0 4px ${accent}30">
+              <img src="${hero.avatar||''}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'" />
+            </div>
+            <p style="font-size:14px;font-weight:800;color:#fff;margin:0 0 2px">${hero.name||'Your Name'}</p>
+            <p style="font-size:9px;font-weight:600;color:${accent};text-transform:uppercase;letter-spacing:.08em;margin:0">${hero.role||''}</p>
+          </div>
+
+          <!-- Contact -->
+          <div style="margin-bottom:18px">
+            <p style="font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;border-bottom:1px solid #2d3448;padding-bottom:5px;margin-bottom:8px">Contact</p>
+            ${hero.email ? `<div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><i class="fa-solid fa-envelope" style="color:${accent};font-size:9px;width:12px"></i><span style="font-size:8.5px">${hero.email}</span></div>` : ''}
+            ${hero.phone ? `<div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><i class="fa-solid fa-phone" style="color:${accent};font-size:9px;width:12px"></i><span style="font-size:8.5px">${hero.phone}</span></div>` : ''}
+            ${hero.location ? `<div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><i class="fa-solid fa-location-dot" style="color:${accent};font-size:9px;width:12px"></i><span style="font-size:8.5px">${hero.location}</span></div>` : ''}
+            ${hero.website ? `<div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><i class="fa-solid fa-globe" style="color:${accent};font-size:9px;width:12px"></i><span style="font-size:8.5px">${hero.website}</span></div>` : ''}
+          </div>
+
+          <!-- Summary -->
+          ${hero.summary ? `
+          <div style="margin-bottom:18px">
+            <p style="font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;border-bottom:1px solid #2d3448;padding-bottom:5px;margin-bottom:8px">Summary</p>
+            <ul style="list-style:none;padding:0;margin:0">
+              ${(hero.summary||'').split('|').map(s=>`<li style="display:flex;gap:6px;margin-bottom:4px;font-size:8px;line-height:1.5"><span style="color:${accent};margin-top:1px">▸</span><span>${s.trim()}</span></li>`).join('')}
+            </ul>
+          </div>` : ''}
+
+          <!-- Education -->
+          ${hero.education ? `
+          <div style="margin-bottom:18px">
+            <p style="font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;border-bottom:1px solid #2d3448;padding-bottom:5px;margin-bottom:8px">Education</p>
+            ${(hero.education||[]).map(ed=>`
+            <div style="margin-bottom:8px">
+              <p style="font-size:9px;font-weight:700;color:#fff;margin:0">${ed.degree||''}</p>
+              <p style="font-size:8px;color:${accent};margin:0">${ed.school||''}</p>
+              <p style="font-size:7.5px;color:#94a3b8;margin:0">${ed.year||''}</p>
+            </div>`).join('')}
+          </div>` : ''}
+
+          <!-- Skills Sidebar -->
+          <div>
+            <p style="font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;border-bottom:1px solid #2d3448;padding-bottom:5px;margin-bottom:8px">Skills</p>
+            ${skillsHTML}
+          </div>
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div style="flex:1;padding:0;display:flex;flex-direction:column;">
+          <!-- Name Header Accent Block -->
+          <div style="background:linear-gradient(135deg,${accent},#4f46e5);padding:24px 28px 20px;color:#fff">
+            <p style="font-size:22px;font-weight:800;margin:0 0 2px;letter-spacing:-.02em">${hero.name||'Your Name'}</p>
+            <p style="font-size:10px;font-weight:600;opacity:.8;text-transform:uppercase;letter-spacing:.1em;margin:0">${hero.role||''}</p>
+          </div>
+
+          <div style="padding:22px 28px;flex:1">
+            <!-- Objective -->
+            ${hero.objective ? `
+            <div style="margin-bottom:18px">
+              <p style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:${accent};margin-bottom:6px;display:flex;align-items:center;gap:6px"><i class="fa-solid fa-bullseye" style="font-size:9px"></i> Career Objective</p>
+              <p style="font-size:9px;color:#475569;line-height:1.6;margin:0;border-left:3px solid ${accent};padding-left:10px">${hero.objective}</p>
+            </div>` : ''}
+
+            <!-- Work History -->
+            <div style="margin-bottom:18px">
+              <p style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:${accent};margin-bottom:12px;display:flex;align-items:center;gap:6px"><i class="fa-solid fa-briefcase" style="font-size:9px"></i> Work History</p>
+              ${expHTML || '<p style="font-size:9px;color:#94a3b8">No experience records.</p>'}
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => { ws.style.display = 'none'; ws.innerHTML = ''; }, 2000);
+    }, 400);
+  };
+
+  // ─── SECTION HEADING UPDATES ──────────────────────────────────────────────────
+  function applyCoreText(cfg) {
+    if (!cfg) return;
+    const map = {
+      'exp-heading':        cfg.expHeading,
+      'exp-subheading':     cfg.expSubheading,
+      'portfolio-heading':  cfg.portfolioHeading,
+      'portfolio-subheading': cfg.portfolioSubheading,
+      'skills-heading':     cfg.skillsHeading,
+      'skills-subheading':  cfg.skillsSubheading,
+      'contact-heading':    cfg.contactHeading,
+      'contact-subheading': cfg.contactSubheading,
+    };
+    Object.entries(map).forEach(([id, val]) => { if (val && $(id)) $(id).textContent = val; });
+  }
+
+  // ─── FOOTER ───────────────────────────────────────────────────────────────────
+  function renderFooter(cfg) {
+    $('current-year').textContent = new Date().getFullYear();
+    $('last-updated').textContent = cfg?.lastUpdated || new Date().toLocaleDateString();
+  }
+
+  // ─── ACTIVE NAV ON SCROLL ─────────────────────────────────────────────────────
+  function initScrollSpy() {
+    const links = document.querySelectorAll('.nav-link');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if (en.isIntersecting) {
+          links.forEach(l => l.classList.remove('active'));
+          const link = document.querySelector(`.nav-link[href="#${en.target.id}"]`);
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-40% 0px -40% 0px' });
+    ['about','experience','portfolio','skills','contact'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+  }
+
+  // ─── MAIN BOOT ───────────────────────────────────────────────────────────────
+  async function boot() {
+    try {
+      const [layoutSnap, heroSnap, socialsSnap, statsSnap, expSnap, portSnap, skillsSnap, coreTextSnap] =
+        await Promise.all([
+          getDoc(doc(db, 'config', 'layout')),
+          getDoc(doc(db, 'config', 'hero')),
+          getDoc(doc(db, 'config', 'socials')),
+          getDoc(doc(db, 'config', 'stats')),
+          getDocs(query(collection(db, 'experience'), orderBy('order', 'asc'))),
+          getDocs(query(collection(db, 'portfolio'), orderBy('order', 'asc'))),
+          getDocs(query(collection(db, 'skills'), orderBy('order', 'asc'))),
+          getDoc(doc(db, 'config', 'coreText')),
+        ]);
+
+      const layout    = layoutSnap.exists()   ? layoutSnap.data()   : {};
+      const hero      = heroSnap.exists()     ? heroSnap.data()     : {};
+      const socials   = socialsSnap.exists()  ? (socialsSnap.data().items || []) : [];
+      const stats     = statsSnap.exists()    ? (statsSnap.data().items || [])   : [];
+      const experience = expSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const portfolio  = portSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const skills     = skillsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const coreText   = coreTextSnap.exists() ? coreTextSnap.data() : {};
+
+      // Store global state
+      window.__state = { hero, experience, portfolio, skills, layout, socials, stats };
+
+      applySectionConfig(layout);
+      renderHero(hero, socials, stats);
+      renderExperience(experience);
+      renderPortfolio(portfolio);
+      renderSkills(skills);
+      applyCoreText(coreText);
+      renderFooter(layout);
+      initScrollSpy();
+
+    } catch (err) {
+      console.error('Firebase load error:', err);
+      // Show graceful fallback
+      document.querySelectorAll('.loader-ring').forEach(el => { el.style.display = 'none'; });
+      $('hero-name').innerHTML = 'Firebase Not Configured';
+      $('hero-bio').textContent = 'Please configure your Firebase credentials in index.html and manage.html, then seed your data via manage.html.';
+    } finally {
+      const ls = $('loading-screen');
+      ls.style.opacity = '0';
+      ls.style.transition = 'opacity .5s';
+      setTimeout(() => ls.style.display = 'none', 500);
+    }
+  }
+
+  boot();
+</script>
 </body>
 </html>

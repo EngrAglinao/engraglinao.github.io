@@ -1,871 +1,1165 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CMS Dashboard — Engr. Aglinao Portfolio</title>
-  <meta name="robots" content="noindex, nofollow" />
+  <title>Portfolio CMS — Admin Control Panel</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Tailwind CSS Browser -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
   <style>
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #0f172a; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-
-    .cms-input {
-      width: 100%;
-      background: #020617;
-      border: 1px solid #334155;
-      color: #e2e8f0;
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-size: 0.875rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
+    :root {
+      --accent: #6366f1;
+      --accent-light: #818cf8;
+      --accent-dark: #4f46e5;
+      --accent-glow: rgba(99,102,241,0.18);
     }
-    .cms-input:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
-    }
-    .cms-input::placeholder { color: #475569; }
+    * { font-family: 'Plus Jakarta Sans', sans-serif; }
 
-    .cms-label { display: block; font-size: 0.75rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+    html.dark body { background: #0a0c12; color: #e2e8f0; }
+    html.dark .panel-bg { background: #0f1117; border-color: #2d3448; }
+    html.dark .card-bg { background: #1a1f2e; border-color: #2d3448; }
+    html.dark .input-field { background: #1a1f2e; border-color: #2d3448; color: #e2e8f0; }
+    html.dark .tab-active { background: var(--accent); color: #fff; }
+    html.dark .tab-inactive { background: #1a1f2e; color: #94a3b8; }
+    html.dark .sidebar-bg { background: #0d0f18; border-color: #2d3448; }
+    html.dark .item-row { background: #1a1f2e; border-color: #2d3448; }
+    html.dark .header-bar { background: #0d0f18; border-color: #2d3448; }
+    html.dark .section-label { color: #94a3b8; }
+    html.dark .toast-bg { background: #1a1f2e; border-color: #2d3448; color: #e2e8f0; }
 
-    .commit-btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: #3b82f6; color: white; font-weight: 700; font-size: 0.875rem;
-      padding: 10px 22px; border-radius: 10px; border: none; cursor: pointer;
-      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
-    }
-    .commit-btn:hover { background: #2563eb; box-shadow: 0 4px 14px rgba(59,130,246,0.3); }
-    .commit-btn:active { transform: scale(0.97); }
-    .commit-btn:disabled { background: #1e3a5f; color: #475569; cursor: not-allowed; transform: none; box-shadow: none; }
+    html:not(.dark) body { background: #f1f5f9; color: #1e293b; }
+    html:not(.dark) .panel-bg { background: #f8fafc; border-color: #e2e8f0; }
+    html:not(.dark) .card-bg { background: #ffffff; border-color: #e2e8f0; }
+    html:not(.dark) .input-field { background: #ffffff; border-color: #cbd5e1; color: #1e293b; }
+    html:not(.dark) .tab-active { background: var(--accent); color: #fff; }
+    html:not(.dark) .tab-inactive { background: #e2e8f0; color: #64748b; }
+    html:not(.dark) .sidebar-bg { background: #ffffff; border-color: #e2e8f0; }
+    html:not(.dark) .item-row { background: #f8fafc; border-color: #e2e8f0; }
+    html:not(.dark) .header-bar { background: #ffffff; border-color: #e2e8f0; }
+    html:not(.dark) .section-label { color: #64748b; }
+    html:not(.dark) .toast-bg { background: #1e293b; border-color: #2d3448; color: #fff; }
 
-    .delete-btn {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: #7f1d1d; color: #fca5a5; font-size: 0.75rem; font-weight: 600;
-      padding: 5px 12px; border-radius: 6px; border: 1px solid #991b1b; cursor: pointer;
-      transition: background 0.2s;
-    }
-    .delete-btn:hover { background: #991b1b; }
+    .accent { color: var(--accent); }
+    .btn-accent { background: linear-gradient(135deg,var(--accent),var(--accent-dark)); color:#fff; border-radius:.6rem; font-weight:600; padding:.5rem 1rem; transition:all .2s; border:none; cursor:pointer; }
+    .btn-accent:hover { transform:translateY(-1px); box-shadow: 0 4px 14px var(--accent-glow); }
+    .btn-danger { background:#ef4444; color:#fff; border-radius:.6rem; font-weight:600; padding:.4rem .8rem; border:none; cursor:pointer; transition:all .2s; }
+    .btn-danger:hover { background:#dc2626; }
+    .btn-ghost { background:transparent; border:1.5px solid var(--accent); color:var(--accent); border-radius:.6rem; font-weight:600; padding:.4rem .8rem; cursor:pointer; transition:all .2s; }
+    .btn-ghost:hover { background:var(--accent); color:#fff; }
+    .btn-sm { padding:.3rem .7rem; font-size:.78rem; }
+    .btn-warning { background:#f59e0b; color:#fff; border-radius:.6rem; font-weight:600; padding:.4rem .8rem; border:none; cursor:pointer; transition:all .2s; }
+    .btn-warning:hover { background:#d97706; }
 
-    .toast {
-      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-      max-width: 340px; padding: 14px 18px; border-radius: 12px;
-      font-size: 0.875rem; font-weight: 600; display: flex; align-items: center; gap-10px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-      transform: translateY(20px); opacity: 0;
-      transition: transform 0.35s ease, opacity 0.35s ease;
-    }
-    .toast.show { transform: translateY(0); opacity: 1; }
-    .toast.success { background: #052e16; border: 1px solid #166534; color: #4ade80; }
-    .toast.error   { background: #450a0a; border: 1px solid #991b1b; color: #f87171; }
-    .toast.info    { background: #0c1a2e; border: 1px solid #1d4ed8; color: #60a5fa; }
+    .input-field { border:1px solid; border-radius:.5rem; padding:.55rem .85rem; width:100%; outline:none; transition:border-color .2s; font-size:.88rem; }
+    .input-field:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
+    textarea.input-field { resize:vertical; }
 
-    .section-card {
-      background: #0f172a;
-      border: 1px solid #1e293b;
-      border-radius: 20px;
-      padding: 28px;
-    }
-    .section-header {
-      display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
-      padding-bottom: 16px; border-bottom: 1px solid #1e293b;
-    }
-    .section-header .icon-box {
-      width: 40px; height: 40px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center; font-size: 1rem;
-    }
-    .section-header h2 { font-size: 1rem; font-weight: 700; color: #e2e8f0; }
-    .section-header p  { font-size: 0.75rem; color: #475569; margin-top: 1px; }
+    .panel-bg { border:1px solid; border-radius:1rem; }
+    .card-bg { border:1px solid; border-radius:.75rem; }
+    .item-row { border:1px solid; border-radius:.6rem; padding:.75rem 1rem; }
 
-    .record-row {
-      background: #020617; border: 1px solid #1e293b; border-radius: 12px;
-      padding: 14px 16px; margin-bottom: 10px;
-      display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
-    }
+    /* TABS */
+    .tab-btn { padding:.45rem 1rem; border-radius:.5rem; font-size:.82rem; font-weight:600; cursor:pointer; transition:all .15s; border:none; }
 
-    .type-select option { background: #0f172a; }
+    /* SPLIT LAYOUT */
+    .split-left { width:50%; overflow-y:auto; height:calc(100vh - 56px); border-right:1px solid; }
+    .split-right { width:50%; height:calc(100vh - 56px); }
+    html.dark .split-left { border-color:#2d3448; }
+    html:not(.dark) .split-left { border-color:#e2e8f0; }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .spin { animation: spin 0.8s linear infinite; }
+    /* HEADER */
+    .header-bar { border-bottom:1px solid; position:sticky; top:0; z-index:40; }
 
-    .tab-btn { transition: color 0.2s, border-color 0.2s; }
-    .tab-btn.active { color: #60a5fa; border-bottom-color: #3b82f6; }
+    /* TOAST */
+    .toast { position:fixed; bottom:1.5rem; right:1.5rem; z-index:9999; padding:.75rem 1.25rem; border-radius:.75rem; border:1px solid; font-size:.85rem; font-weight:600; display:flex; align-items:center; gap:.6rem; box-shadow:0 8px 32px rgba(0,0,0,.25); transform:translateY(80px); opacity:0; transition:all .3s; }
+    .toast.show { transform:none; opacity:1; }
+
+    /* SECTION NAV */
+    .section-nav-item { padding:.55rem .9rem; border-radius:.5rem; cursor:pointer; font-size:.85rem; font-weight:500; transition:all .15s; }
+    html.dark .section-nav-item:hover, html.dark .section-nav-item.active { background:var(--accent-glow); color:var(--accent); }
+    html:not(.dark) .section-nav-item:hover, html:not(.dark) .section-nav-item.active { background:var(--accent-glow); color:var(--accent); }
+
+    /* DRAG HANDLE */
+    .drag-handle { cursor:grab; color:#94a3b8; }
+    .drag-handle:active { cursor:grabbing; }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar-thumb { background:var(--accent); border-radius:99px; }
+
+    /* LOADER */
+    .loader-ring { width:20px; height:20px; border:3px solid transparent; border-top-color:var(--accent); border-radius:50%; animation:spin .7s linear infinite; display:inline-block; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    .fade-in { animation:fadeIn .3s ease forwards; }
+    @keyframes fadeIn { from { opacity:0;transform:translateY(8px); } to { opacity:1;transform:none; } }
+
+    label.form-label { display:block; font-size:.8rem; font-weight:700; margin-bottom:.3rem; text-transform:uppercase; letter-spacing:.04em; }
+    html.dark label.form-label { color:#94a3b8; }
+    html:not(.dark) label.form-label { color:#64748b; }
+
+    .pill-badge { display:inline-flex; align-items:center; gap:.3rem; padding:.2rem .6rem; border-radius:9999px; font-size:.72rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; background:var(--accent-glow); color:var(--accent); border:1px solid var(--accent); }
+    .collapsible-content { overflow:hidden; transition:max-height .3s ease; max-height:0; }
+    .collapsible-content.open { max-height:2000px; }
+
+    .section-divider { height:1px; margin:1.5rem 0; }
+    html.dark .section-divider { background:#2d3448; }
+    html:not(.dark) .section-divider { background:#e2e8f0; }
+
+    .reorder-btn { width:26px; height:26px; border-radius:.4rem; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; font-size:.75rem; border:none; transition:all .15s; }
+    html.dark .reorder-btn { background:#2d3448; color:#94a3b8; }
+    html:not(.dark) .reorder-btn { background:#e2e8f0; color:#64748b; }
+    .reorder-btn:hover { background:var(--accent); color:#fff; }
+
+    .visibility-toggle { width:38px; height:22px; border-radius:9999px; position:relative; cursor:pointer; transition:background .2s; border:none; }
+    .visibility-toggle.on { background:var(--accent); }
+    .visibility-toggle.off { background:#94a3b8; }
+    .visibility-toggle::after { content:''; position:absolute; top:2px; width:18px; height:18px; border-radius:50%; background:#fff; transition:left .2s; }
+    .visibility-toggle.on::after { left:18px; }
+    .visibility-toggle.off::after { left:2px; }
   </style>
 </head>
+<body>
 
-<body class="bg-slate-950 text-slate-300 min-h-screen">
-
-<!-- ════════════════════════════════════════════
-     TOAST NOTIFICATION
-════════════════════════════════════════════ -->
-<div id="toast" class="toast" role="alert" aria-live="polite">
-  <i id="toast-icon" class="fa-solid fa-circle-check mr-3 text-lg"></i>
-  <span id="toast-msg"></span>
+<!-- ═══════════════ TOAST NOTIFICATION ═══════════════ -->
+<div id="toast" class="toast toast-bg">
+  <i id="toast-icon" class="fa-solid fa-check-circle accent"></i>
+  <span id="toast-msg">Done!</span>
 </div>
 
-<!-- ════════════════════════════════════════════
-     TOP BAR
-════════════════════════════════════════════ -->
-<header class="sticky top-0 z-30 bg-slate-950/95 backdrop-blur border-b border-slate-800/60 px-6 lg:px-10 py-4 flex items-center justify-between gap-4">
+<!-- ═══════════════ HEADER BAR ═══════════════ -->
+<div class="header-bar header-bar px-5 py-3 flex items-center justify-between" style="background:inherit">
   <div class="flex items-center gap-3">
-    <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center">
+    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:var(--accent)">
       <i class="fa-solid fa-sliders text-white text-sm"></i>
     </div>
     <div>
-      <div class="text-slate-100 font-bold text-sm">CMS Dashboard</div>
-      <div class="text-slate-600 text-xs">Engr. Aglinao · Portfolio Manager</div>
+      <p class="font-bold text-sm leading-none">Portfolio CMS</p>
+      <p class="text-xs section-label leading-none mt-0.5">Admin Control Panel</p>
     </div>
   </div>
   <div class="flex items-center gap-3">
-    <div id="connection-badge" class="flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-500">
-      <span class="w-2 h-2 rounded-full bg-slate-600"></span>
-      Connecting…
+    <div id="db-status" class="pill-badge text-xs">
+      <div class="loader-ring" style="width:10px;height:10px;border-width:2px;"></div> Connecting...
     </div>
-    <button onclick="window.location.reload()" class="text-slate-500 hover:text-slate-300 text-sm px-3 py-1.5 rounded-lg hover:bg-slate-800 transition-colors" title="Refresh">
-      <i class="fa-solid fa-rotate-right"></i>
+    <button id="seed-all-btn" onclick="seedAllData()" class="btn-warning btn-sm flex items-center gap-2">
+      <i class="fa-solid fa-seedling"></i> Seed All Sample Data
     </button>
-  </div>
-</header>
-
-<!-- ════════════════════════════════════════════
-     MAIN LAYOUT
-════════════════════════════════════════════ -->
-<div class="max-w-7xl mx-auto px-4 lg:px-10 py-8">
-
-  <!-- Tab Navigation -->
-  <div class="flex gap-0 border-b border-slate-800 mb-8 overflow-x-auto">
-    <button class="tab-btn active border-b-2 border-blue-500 text-blue-400 px-5 py-3 text-sm font-semibold whitespace-nowrap" onclick="switchTab('about',this)">
-      <i class="fa-solid fa-user mr-2"></i>About
+    <button id="theme-toggle" class="btn-ghost btn-sm">
+      <i class="fa-solid fa-moon" id="theme-icon"></i>
     </button>
-    <button class="tab-btn border-b-2 border-transparent text-slate-500 px-5 py-3 text-sm font-semibold whitespace-nowrap" onclick="switchTab('experience',this)">
-      <i class="fa-solid fa-briefcase mr-2"></i>Experience
-    </button>
-    <button class="tab-btn border-b-2 border-transparent text-slate-500 px-5 py-3 text-sm font-semibold whitespace-nowrap" onclick="switchTab('portfolio',this)">
-      <i class="fa-solid fa-folder-open mr-2"></i>Portfolio
-    </button>
-    <button class="tab-btn border-b-2 border-transparent text-slate-500 px-5 py-3 text-sm font-semibold whitespace-nowrap" onclick="switchTab('apps',this)">
-      <i class="fa-solid fa-grid-2 mr-2"></i>Apps / Skills
-    </button>
-    <button class="tab-btn border-b-2 border-transparent text-slate-500 px-5 py-3 text-sm font-semibold whitespace-nowrap" onclick="switchTab('messages',this)">
-      <i class="fa-solid fa-envelope mr-2"></i>Messages
-    </button>
+    <a href="index.html" target="_blank" class="btn-ghost btn-sm flex items-center gap-2">
+      <i class="fa-solid fa-arrow-up-right-from-square"></i> View Site
+    </a>
   </div>
-
-  <!-- ── TAB: ABOUT ── -->
-  <div id="tab-about" class="tab-panel">
-    <div class="section-card">
-      <div class="section-header">
-        <div class="icon-box bg-blue-950 text-blue-400">
-          <i class="fa-solid fa-id-card"></i>
-        </div>
-        <div>
-          <h2>About Segment</h2>
-          <p>Update headline, biography, contact info and master resume link.</p>
-        </div>
-      </div>
-      <div class="grid md:grid-cols-2 gap-5">
-        <!-- Headline -->
-        <div class="md:col-span-2">
-          <label class="cms-label">Hero Headline</label>
-          <input id="about-headline" type="text" class="cms-input" placeholder="e.g. Engineer. Innovator. Creator." />
-        </div>
-        <!-- Biography -->
-        <div class="md:col-span-2">
-          <label class="cms-label">Biography Text</label>
-          <textarea id="about-bio" rows="5" class="cms-input" style="resize:vertical;" placeholder="Write a compelling biography paragraph…"></textarea>
-        </div>
-        <!-- Years Experience -->
-        <div>
-          <label class="cms-label">Years of Experience</label>
-          <input id="about-years" type="text" class="cms-input" placeholder="e.g. 7+" />
-        </div>
-        <!-- Email -->
-        <div>
-          <label class="cms-label">Contact Email</label>
-          <input id="about-email" type="email" class="cms-input" placeholder="hello@example.com" />
-        </div>
-        <!-- Phone -->
-        <div>
-          <label class="cms-label">Phone Number</label>
-          <input id="about-phone" type="text" class="cms-input" placeholder="+63 XXX XXX XXXX" />
-        </div>
-        <!-- City -->
-        <div>
-          <label class="cms-label">Location / City</label>
-          <input id="about-city" type="text" class="cms-input" placeholder="Philippines" />
-        </div>
-        <!-- LinkedIn -->
-        <div>
-          <label class="cms-label">LinkedIn URL</label>
-          <input id="about-linkedin" type="url" class="cms-input" placeholder="https://linkedin.com/in/..." />
-        </div>
-        <!-- GitHub -->
-        <div>
-          <label class="cms-label">GitHub URL</label>
-          <input id="about-github" type="url" class="cms-input" placeholder="https://github.com/..." />
-        </div>
-        <!-- Master Resume -->
-        <div class="md:col-span-2">
-          <label class="cms-label">Master Resume Download URL</label>
-          <input id="about-resume-url" type="url" class="cms-input" placeholder="https://drive.google.com/file/d/... or direct PDF link" />
-        </div>
-        <!-- Action -->
-        <div class="md:col-span-2 flex items-center gap-4 pt-2">
-          <button onclick="commitAbout()" id="about-commit-btn" class="commit-btn">
-            <i class="fa-solid fa-cloud-arrow-up"></i>
-            Commit About to Firestore
-          </button>
-          <button onclick="loadAbout()" class="text-slate-500 hover:text-slate-300 text-sm font-medium transition-colors">
-            <i class="fa-solid fa-rotate mr-1"></i> Reload Current
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── TAB: EXPERIENCE ── -->
-  <div id="tab-experience" class="tab-panel hidden">
-    <div class="grid lg:grid-cols-2 gap-6">
-      <!-- Add New Experience -->
-      <div class="section-card">
-        <div class="section-header">
-          <div class="icon-box bg-emerald-950 text-emerald-400">
-            <i class="fa-solid fa-plus"></i>
-          </div>
-          <div>
-            <h2>Add Experience Entry</h2>
-            <p>Appends a new node to the Firestore 'experience' collection.</p>
-          </div>
-        </div>
-        <div class="flex flex-col gap-4">
-          <div>
-            <label class="cms-label">Role / Job Title</label>
-            <input id="exp-role" type="text" class="cms-input" placeholder="e.g. Senior Engineer" />
-          </div>
-          <div>
-            <label class="cms-label">Organization / Company</label>
-            <input id="exp-org" type="text" class="cms-input" placeholder="e.g. Tech Solutions Inc." />
-          </div>
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="cms-label">Start Date</label>
-              <input id="exp-start" type="text" class="cms-input" placeholder="2021 or Jan 2021" />
-            </div>
-            <div>
-              <label class="cms-label">End Date</label>
-              <input id="exp-end" type="text" class="cms-input" placeholder="2024 or Present" />
-            </div>
-          </div>
-          <div class="flex items-center gap-3">
-            <label class="cms-label mb-0">Current Role?</label>
-            <input id="exp-current" type="checkbox" class="w-4 h-4 accent-blue-500" />
-          </div>
-          <div>
-            <label class="cms-label">Sort Order (higher = top)</label>
-            <input id="exp-order" type="number" class="cms-input" placeholder="10" />
-          </div>
-          <div>
-            <label class="cms-label">Description</label>
-            <textarea id="exp-desc" rows="4" class="cms-input" style="resize:vertical;" placeholder="Describe your responsibilities and achievements…"></textarea>
-          </div>
-          <div>
-            <label class="cms-label">Tags (comma-separated)</label>
-            <input id="exp-tags" type="text" class="cms-input" placeholder="Leadership, Project Management, AutoCAD" />
-          </div>
-          <button onclick="commitExperience()" id="exp-commit-btn" class="commit-btn">
-            <i class="fa-solid fa-plus-circle"></i>
-            Add to Firestore
-          </button>
-        </div>
-      </div>
-
-      <!-- Existing Experience List -->
-      <div class="section-card">
-        <div class="section-header">
-          <div class="icon-box bg-slate-800 text-slate-400">
-            <i class="fa-solid fa-list"></i>
-          </div>
-          <div>
-            <h2>Current Experience Records</h2>
-            <p>Live records from the Firestore 'experience' collection.</p>
-          </div>
-        </div>
-        <div id="experience-list">
-          <div class="text-slate-600 text-sm text-center py-8">
-            <i class="fa-solid fa-circle-notch fa-spin text-blue-500 text-xl mb-3 block"></i>
-            Loading records…
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── TAB: PORTFOLIO ── -->
-  <div id="tab-portfolio" class="tab-panel hidden">
-    <div class="grid lg:grid-cols-2 gap-6">
-      <!-- Add New Portfolio Item -->
-      <div class="section-card">
-        <div class="section-header">
-          <div class="icon-box bg-purple-950 text-purple-400">
-            <i class="fa-solid fa-folder-plus"></i>
-          </div>
-          <div>
-            <h2>Add Portfolio Caravan Node</h2>
-            <p>Appends a new card to the Firestore 'portfolio' collection.</p>
-          </div>
-        </div>
-        <div class="flex flex-col gap-4">
-          <div>
-            <label class="cms-label">Asset Title</label>
-            <input id="port-title" type="text" class="cms-input" placeholder="e.g. Annual Report 2024" />
-          </div>
-          <div>
-            <label class="cms-label">Description</label>
-            <textarea id="port-desc" rows="3" class="cms-input" style="resize:vertical;" placeholder="Brief description of this work piece…"></textarea>
-          </div>
-          <div>
-            <label class="cms-label">Asset Type</label>
-            <select id="port-type" class="cms-input type-select">
-              <option value="PPT">PPT — PowerPoint Presentation</option>
-              <option value="PDF">PDF — Document</option>
-              <option value="Image">Image — Photo / Graphic</option>
-              <option value="Site">Site — Website Preview</option>
-              <option value="URL">URL — External Link</option>
-              <option value="Video">Video — Media File</option>
-            </select>
-          </div>
-          <div>
-            <label class="cms-label">File / Target URL</label>
-            <input id="port-file-url" type="url" class="cms-input" placeholder="https://... (direct link to asset)" />
-          </div>
-          <div>
-            <label class="cms-label">Thumbnail Image URL</label>
-            <input id="port-thumbnail" type="url" class="cms-input" placeholder="https://... (preview image link)" />
-          </div>
-          <div>
-            <label class="cms-label">Sort Order (higher = first)</label>
-            <input id="port-order" type="number" class="cms-input" placeholder="10" />
-          </div>
-          <button onclick="commitPortfolio()" id="port-commit-btn" class="commit-btn" style="background:#7c3aed;">
-            <i class="fa-solid fa-upload"></i>
-            Add to Portfolio Caravan
-          </button>
-        </div>
-      </div>
-
-      <!-- Existing Portfolio List -->
-      <div class="section-card">
-        <div class="section-header">
-          <div class="icon-box bg-slate-800 text-slate-400">
-            <i class="fa-solid fa-grid"></i>
-          </div>
-          <div>
-            <h2>Current Portfolio Records</h2>
-            <p>Live records from the Firestore 'portfolio' collection.</p>
-          </div>
-        </div>
-        <div id="portfolio-list">
-          <div class="text-slate-600 text-sm text-center py-8">
-            <i class="fa-solid fa-circle-notch fa-spin text-purple-500 text-xl mb-3 block"></i>
-            Loading records…
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── TAB: APPS / SKILLS ── -->
-  <div id="tab-apps" class="tab-panel hidden">
-    <div class="grid lg:grid-cols-2 gap-6">
-      <!-- Add New App -->
-      <div class="section-card">
-        <div class="section-header">
-          <div class="icon-box bg-amber-950 text-amber-400">
-            <i class="fa-solid fa-cube"></i>
-          </div>
-          <div>
-            <h2>Add App / Skill</h2>
-            <p>Appends a new tool card to the Firestore 'apps' collection.</p>
-          </div>
-        </div>
-        <div class="flex flex-col gap-4">
-          <div>
-            <label class="cms-label">App / Skill Name</label>
-            <input id="app-name" type="text" class="cms-input" placeholder="e.g. AutoCAD, Figma, Python" />
-          </div>
-          <div>
-            <label class="cms-label">Category</label>
-            <select id="app-category" class="cms-input type-select">
-              <option value="Engineering">Engineering</option>
-              <option value="Design">Design</option>
-              <option value="Software">Software / Dev</option>
-              <option value="Office">Office / Productivity</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div>
-            <label class="cms-label">FontAwesome Icon Class</label>
-            <input id="app-icon" type="text" class="cms-input" placeholder="e.g. fa-code, fa-drafting-compass, fa-file-word" />
-            <p class="text-slate-600 text-xs mt-1.5">Find icons at <a href="https://fontawesome.com/icons" target="_blank" class="text-blue-500 hover:text-blue-400">fontawesome.com/icons</a></p>
-          </div>
-          <div>
-            <label class="cms-label">Proficiency Level</label>
-            <select id="app-level" class="cms-input type-select">
-              <option value="Beginner">Beginner</option>
-              <option value="Intermediate">Intermediate</option>
-              <option value="Advanced">Advanced</option>
-              <option value="Expert">Expert</option>
-            </select>
-          </div>
-          <button onclick="commitApp()" id="app-commit-btn" class="commit-btn" style="background:#b45309;">
-            <i class="fa-solid fa-plus-circle"></i>
-            Add to App Matrix
-          </button>
-        </div>
-      </div>
-
-      <!-- Existing Apps List -->
-      <div class="section-card">
-        <div class="section-header">
-          <div class="icon-box bg-slate-800 text-slate-400">
-            <i class="fa-solid fa-layer-group"></i>
-          </div>
-          <div>
-            <h2>Current Apps / Skills</h2>
-            <p>Live records from the Firestore 'apps' collection.</p>
-          </div>
-        </div>
-        <div id="apps-list">
-          <div class="text-slate-600 text-sm text-center py-8">
-            <i class="fa-solid fa-circle-notch fa-spin text-amber-500 text-xl mb-3 block"></i>
-            Loading records…
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── TAB: MESSAGES ── -->
-  <div id="tab-messages" class="tab-panel hidden">
-    <div class="section-card">
-      <div class="section-header">
-        <div class="icon-box bg-rose-950 text-rose-400">
-          <i class="fa-solid fa-inbox"></i>
-        </div>
-        <div>
-          <h2>Contact Messages Inbox</h2>
-          <p>Messages submitted via the contact form on index.html are stored here.</p>
-        </div>
-      </div>
-      <div id="messages-list">
-        <div class="text-slate-600 text-sm text-center py-8">
-          <i class="fa-solid fa-circle-notch fa-spin text-rose-500 text-xl mb-3 block"></i>
-          Loading messages…
-        </div>
-      </div>
-    </div>
-  </div>
-
 </div>
 
-<!-- ════════════════════════════════════════════
-     FIREBASE SDK — IDENTICAL CONFIG BLOCK
-════════════════════════════════════════════ -->
+<!-- ═══════════════ SPLIT LAYOUT ═══════════════ -->
+<div class="flex" style="height:calc(100vh - 56px)">
+
+  <!-- LEFT PANEL: CMS CONTROLS -->
+  <div class="split-left panel-bg">
+    <div class="p-5">
+
+      <!-- SECTION NAVIGATOR TABS -->
+      <div class="flex flex-wrap gap-2 mb-6" id="section-tabs">
+        <button class="tab-btn tab-active" onclick="switchTab('hero')">
+          <i class="fa-solid fa-user mr-1"></i> Hero
+        </button>
+        <button class="tab-btn tab-inactive" onclick="switchTab('experience')">
+          <i class="fa-solid fa-briefcase mr-1"></i> Experience
+        </button>
+        <button class="tab-btn tab-inactive" onclick="switchTab('portfolio')">
+          <i class="fa-solid fa-layer-group mr-1"></i> Portfolio
+        </button>
+        <button class="tab-btn tab-inactive" onclick="switchTab('skills')">
+          <i class="fa-solid fa-microchip mr-1"></i> Skills
+        </button>
+        <button class="tab-btn tab-inactive" onclick="switchTab('layout')">
+          <i class="fa-solid fa-table-columns mr-1"></i> Layout
+        </button>
+        <button class="tab-btn tab-inactive" onclick="switchTab('coretext')">
+          <i class="fa-solid fa-text-height mr-1"></i> Text
+        </button>
+        <button class="tab-btn tab-inactive" onclick="switchTab('messages')">
+          <i class="fa-solid fa-inbox mr-1"></i> Messages
+        </button>
+      </div>
+
+      <!-- ═══ TAB: HERO ═══ -->
+      <div id="tab-hero" class="tab-panel fade-in">
+        <div class="space-y-4">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="pill-badge"><i class="fa-solid fa-user"></i> Hero / About Me</div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="form-label">Full Name</label><input id="h-name" class="input-field" placeholder="John Doe" /></div>
+            <div><label class="form-label">Initials / Brand</label><input id="h-initials" class="input-field" placeholder="JD" /></div>
+          </div>
+          <div><label class="form-label">Role / Title</label><input id="h-role" class="input-field" placeholder="Senior Frontend Engineer" /></div>
+          <div><label class="form-label">Headline HTML</label><textarea id="h-headline" class="input-field" rows="2" placeholder='Building <span class="accent">Digital</span> Experiences'></textarea></div>
+          <div><label class="form-label">Biography</label><textarea id="h-bio" class="input-field" rows="4" placeholder="Short biography paragraph..."></textarea></div>
+          <div><label class="form-label">Career Objective (for Resume)</label><textarea id="h-objective" class="input-field" rows="3" placeholder="Driven engineer seeking..."></textarea></div>
+          <div><label class="form-label">Summary Bullets (pipe | separated)</label><textarea id="h-summary" class="input-field" rows="2" placeholder="5+ years experience | Full-stack expertise | Team leadership"></textarea></div>
+          <div><label class="form-label">Availability Pill Text</label><input id="h-pill" class="input-field" placeholder="Available for Work" /></div>
+          <div><label class="form-label">Avatar Image URL</label><input id="h-avatar" class="input-field" placeholder="https://..." /></div>
+          <div><label class="form-label">Tagline (Footer)</label><input id="h-tagline" class="input-field" placeholder="Building the web, one pixel at a time." /></div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="form-label">Email</label><input id="h-email" class="input-field" placeholder="you@email.com" /></div>
+            <div><label class="form-label">Phone</label><input id="h-phone" class="input-field" placeholder="+1 234 567 8900" /></div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="form-label">Location</label><input id="h-location" class="input-field" placeholder="City, Country" /></div>
+            <div><label class="form-label">Website</label><input id="h-website" class="input-field" placeholder="https://..." /></div>
+          </div>
+          <div><label class="form-label">Resume Download URL</label><input id="h-resumeurl" class="input-field" placeholder="https://..." /></div>
+
+          <div class="section-divider"></div>
+          <p class="font-bold text-sm mb-3">Education (for Resume Sidebar)</p>
+          <div id="education-list" class="space-y-2 mb-3"></div>
+          <button onclick="addEducationRow()" class="btn-ghost btn-sm flex items-center gap-2 mb-4">
+            <i class="fa-solid fa-plus"></i> Add Education
+          </button>
+
+          <div class="section-divider"></div>
+          <p class="font-bold text-sm mb-3">Stats / Counters</p>
+          <div id="stats-list" class="space-y-2 mb-3"></div>
+          <button onclick="addStatRow()" class="btn-ghost btn-sm flex items-center gap-2 mb-4">
+            <i class="fa-solid fa-plus"></i> Add Stat
+          </button>
+
+          <div class="section-divider"></div>
+          <p class="font-bold text-sm mb-3">Social Links</p>
+          <div id="socials-list" class="space-y-2 mb-3"></div>
+          <button onclick="addSocialRow()" class="btn-ghost btn-sm flex items-center gap-2 mb-4">
+            <i class="fa-solid fa-plus"></i> Add Social Link
+          </button>
+
+          <button onclick="saveHero()" class="btn-accent w-full flex items-center justify-center gap-2">
+            <i class="fa-solid fa-floppy-disk"></i> Save Hero Config
+          </button>
+        </div>
+      </div>
+
+      <!-- ═══ TAB: EXPERIENCE ═══ -->
+      <div id="tab-experience" class="tab-panel hidden fade-in">
+        <div class="flex items-center justify-between mb-4">
+          <div class="pill-badge"><i class="fa-solid fa-briefcase"></i> Experience Timeline</div>
+          <button onclick="openExpForm(null)" class="btn-accent btn-sm flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i> Add Entry
+          </button>
+        </div>
+        <div id="experience-list" class="space-y-3 mb-4">
+          <div class="flex items-center gap-2 text-sm section-label">
+            <div class="loader-ring"></div> Loading...
+          </div>
+        </div>
+
+        <!-- Experience Form -->
+        <div id="exp-form-wrap" class="card-bg p-5 hidden mt-4">
+          <p class="font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-pen accent"></i> <span id="exp-form-title">Add Experience</span></p>
+          <input type="hidden" id="exp-doc-id" />
+          <div class="space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+              <div><label class="form-label">Role / Position</label><input id="exp-role" class="input-field" placeholder="Senior Developer" /></div>
+              <div><label class="form-label">Organization</label><input id="exp-org" class="input-field" placeholder="Acme Corp" /></div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div><label class="form-label">Date Range</label><input id="exp-date" class="input-field" placeholder="Jan 2022 – Present" /></div>
+              <div><label class="form-label">FA Icon Class</label><input id="exp-icon" class="input-field" placeholder="fa-solid fa-briefcase" /></div>
+            </div>
+            <div><label class="form-label">Description</label><textarea id="exp-desc" class="input-field" rows="3" placeholder="Responsibilities and achievements..."></textarea></div>
+            <div><label class="form-label">Tags (comma separated)</label><input id="exp-tags" class="input-field" placeholder="React, Node.js, AWS" /></div>
+            <div><label class="form-label">Order (number)</label><input id="exp-order" class="input-field" type="number" placeholder="1" value="1" /></div>
+            <div class="flex gap-3">
+              <button onclick="saveExpEntry()" class="btn-accent flex items-center gap-2"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+              <button onclick="cancelExpForm()" class="btn-ghost">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ TAB: PORTFOLIO ═══ -->
+      <div id="tab-portfolio" class="tab-panel hidden fade-in">
+        <div class="flex items-center justify-between mb-4">
+          <div class="pill-badge"><i class="fa-solid fa-layer-group"></i> Portfolio Assets</div>
+          <button onclick="openPortForm(null)" class="btn-accent btn-sm flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i> Add Asset
+          </button>
+        </div>
+        <div id="portfolio-list" class="space-y-3 mb-4">
+          <div class="flex items-center gap-2 text-sm section-label">
+            <div class="loader-ring"></div> Loading...
+          </div>
+        </div>
+
+        <!-- Portfolio Form -->
+        <div id="port-form-wrap" class="card-bg p-5 hidden mt-4">
+          <p class="font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-pen accent"></i> <span id="port-form-title">Add Portfolio Item</span></p>
+          <input type="hidden" id="port-doc-id" />
+          <div class="space-y-3">
+            <div><label class="form-label">Title</label><input id="port-title" class="input-field" placeholder="Project Title" /></div>
+            <div><label class="form-label">Description</label><textarea id="port-desc" class="input-field" rows="2" placeholder="Brief description..." /></div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="form-label">Type</label>
+                <select id="port-type" class="input-field">
+                  <option>PPT</option><option>Image</option><option>URL</option>
+                  <option>Site</option><option>PDF</option><option>Video</option>
+                </select>
+              </div>
+              <div><label class="form-label">Order</label><input id="port-order" class="input-field" type="number" value="1" /></div>
+            </div>
+            <div><label class="form-label">Asset URL (link / embed)</label><input id="port-url" class="input-field" placeholder="https://..." /></div>
+            <div><label class="form-label">Thumbnail Image URL</label><input id="port-thumb" class="input-field" placeholder="https://..." /></div>
+            <div class="flex gap-3">
+              <button onclick="savePortEntry()" class="btn-accent flex items-center gap-2"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+              <button onclick="cancelPortForm()" class="btn-ghost">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ TAB: SKILLS ═══ -->
+      <div id="tab-skills" class="tab-panel hidden fade-in">
+        <div class="flex items-center justify-between mb-4">
+          <div class="pill-badge"><i class="fa-solid fa-microchip"></i> Application Matrix</div>
+          <button onclick="openSkillForm(null)" class="btn-accent btn-sm flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i> Add Skill
+          </button>
+        </div>
+        <div id="skills-list" class="space-y-3 mb-4">
+          <div class="flex items-center gap-2 text-sm section-label">
+            <div class="loader-ring"></div> Loading...
+          </div>
+        </div>
+
+        <!-- Skill Form -->
+        <div id="skill-form-wrap" class="card-bg p-5 hidden mt-4">
+          <p class="font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-pen accent"></i> <span id="skill-form-title">Add Skill</span></p>
+          <input type="hidden" id="skill-doc-id" />
+          <div class="space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+              <div><label class="form-label">Skill Name</label><input id="skill-name" class="input-field" placeholder="React.js" /></div>
+              <div><label class="form-label">Category</label><input id="skill-cat" class="input-field" placeholder="Frontend" /></div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div><label class="form-label">FA Icon Class</label><input id="skill-icon" class="input-field" placeholder="fa-brands fa-react" /></div>
+              <div><label class="form-label">Icon Color (hex)</label><input id="skill-color" class="input-field" type="color" value="#6366f1" /></div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div><label class="form-label">Proficiency Level</label><input id="skill-level" class="input-field" placeholder="Advanced" /></div>
+              <div><label class="form-label">Order</label><input id="skill-order" class="input-field" type="number" value="1" /></div>
+            </div>
+            <div class="flex gap-3">
+              <button onclick="saveSkillEntry()" class="btn-accent flex items-center gap-2"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+              <button onclick="cancelSkillForm()" class="btn-ghost">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ TAB: LAYOUT ═══ -->
+      <div id="tab-layout" class="tab-panel hidden fade-in">
+        <div class="pill-badge mb-4"><i class="fa-solid fa-table-columns"></i> Layout & Section Control</div>
+        <p class="text-sm section-label mb-5">Toggle visibility and change background style for each section. Drag order to rearrange.</p>
+
+        <div id="layout-sections-list" class="space-y-3 mb-6">
+          <div class="flex items-center gap-2 text-sm section-label">
+            <div class="loader-ring"></div> Loading...
+          </div>
+        </div>
+
+        <div class="section-divider"></div>
+        <p class="font-bold text-sm mb-3">Site Metadata</p>
+        <div class="space-y-3">
+          <div><label class="form-label">Last Updated</label><input id="layout-lastupdated" class="input-field" placeholder="2024-01-01" /></div>
+        </div>
+        <button onclick="saveLayout()" class="btn-accent w-full mt-4 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-floppy-disk"></i> Save Layout Config
+        </button>
+      </div>
+
+      <!-- ═══ TAB: CORE TEXT ═══ -->
+      <div id="tab-coretext" class="tab-panel hidden fade-in">
+        <div class="pill-badge mb-4"><i class="fa-solid fa-text-height"></i> Section Headings & Copy</div>
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="form-label">Experience Heading</label><input id="ct-exp-h" class="input-field" placeholder="Experience" /></div>
+            <div><label class="form-label">Experience Sub</label><input id="ct-exp-s" class="input-field" placeholder="Professional journey..." /></div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="form-label">Portfolio Heading</label><input id="ct-port-h" class="input-field" placeholder="Portfolio" /></div>
+            <div><label class="form-label">Portfolio Sub</label><input id="ct-port-s" class="input-field" placeholder="Selected projects..." /></div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="form-label">Skills Heading</label><input id="ct-skill-h" class="input-field" placeholder="Application Matrix" /></div>
+            <div><label class="form-label">Skills Sub</label><input id="ct-skill-s" class="input-field" placeholder="Tools & fluencies..." /></div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="form-label">Contact Heading</label><input id="ct-contact-h" class="input-field" placeholder="Get In Touch" /></div>
+            <div><label class="form-label">Contact Sub</label><input id="ct-contact-s" class="input-field" placeholder="I'll respond within..." /></div>
+          </div>
+          <button onclick="saveCoreText()" class="btn-accent w-full flex items-center justify-center gap-2">
+            <i class="fa-solid fa-floppy-disk"></i> Save Core Text
+          </button>
+        </div>
+      </div>
+
+      <!-- ═══ TAB: MESSAGES ═══ -->
+      <div id="tab-messages" class="tab-panel hidden fade-in">
+        <div class="flex items-center justify-between mb-4">
+          <div class="pill-badge"><i class="fa-solid fa-inbox"></i> Contact Messages</div>
+          <button onclick="loadMessages()" class="btn-ghost btn-sm flex items-center gap-2">
+            <i class="fa-solid fa-rotate-right"></i> Refresh
+          </button>
+        </div>
+        <div id="messages-list" class="space-y-3">
+          <div class="flex items-center gap-2 text-sm section-label">
+            <div class="loader-ring"></div> Loading...
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL: LIVE PREVIEW -->
+  <div class="split-right flex flex-col">
+    <div class="px-4 py-2 flex items-center gap-3 border-b" style="border-color:var(--accent-glow)">
+      <div class="w-2 h-2 rounded-full bg-red-400"></div>
+      <div class="w-2 h-2 rounded-full bg-yellow-400"></div>
+      <div class="w-2 h-2 rounded-full bg-green-400"></div>
+      <span class="text-xs section-label ml-2 font-mono">index.html — Live Preview</span>
+      <button onclick="refreshPreview()" class="ml-auto btn-ghost btn-sm flex items-center gap-2">
+        <i class="fa-solid fa-rotate-right text-xs"></i> Reload
+      </button>
+    </div>
+    <iframe id="preview-frame" src="index.html" class="flex-1 w-full border-0" title="Live Site Preview"></iframe>
+  </div>
+</div>
+
+<!-- ═══════════════ FIREBASE ═══════════════ -->
 <script type="module">
-  // ╔══════════════════════════════════════════════════════════════╗
-  // ║          FIREBASE CONFIGURATION — UNIFIED SOURCE OF TRUTH   ║
-  // ║  This block is IDENTICAL to the one in index.html.          ║
-  // ║  Both files connect to the SAME Firestore database.         ║
-  // ║  Replace placeholder values with your Firebase project      ║
-  // ║  credentials from: Firebase Console → Project Settings      ║
-  // ╚══════════════════════════════════════════════════════════════╝
-  import { initializeApp }                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, getDoc, setDoc,
-           collection, getDocs, addDoc, deleteDoc,
-           serverTimestamp, orderBy, query }       from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  // ─── FIREBASE CONFIGURATION ─────────────────────────────────────────────────
+  // Replace with your actual Firebase project credentials (same as index.html).
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import {
+    getFirestore, doc, getDoc, setDoc, collection, getDocs,
+    addDoc, deleteDoc, updateDoc, serverTimestamp, query, orderBy
+  } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
   const firebaseConfig = {
-    apiKey: "AIzaSyCjDqSdEVrmbV78ObzAMUWnqzgeDVsLX0Q",
-    authDomain: "my-portfolio-54e15.firebaseapp.com",
-    projectId: "my-portfolio-54e15",
-    storageBucket: "my-portfolio-54e15.firebasestorage.app",
-    messagingSenderId: "127704809723",
-    appId: "1:127704809723:web:ea6b69141b1081cfd3705e"
+    apiKey:            "YOUR_API_KEY",
+    authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId:         "YOUR_PROJECT_ID",
+    storageBucket:     "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId:             "YOUR_APP_ID"
   };
-  // ── End of Firebase Config Block ──────────────────────────────
 
   const app = initializeApp(firebaseConfig);
   const db  = getFirestore(app);
 
-  // ── Expose DB for tab loaders ──────────────────
-  window.__cmsDB = db;
+  // ─── HELPERS ─────────────────────────────────────────────────────────────────
+  const $ = id => document.getElementById(id);
+  let activeTab = 'hero';
 
-  // ── Connection Status ──────────────────────────
-  async function checkConnection() {
+  // THEME
+  function applyTheme(dark) {
+    document.documentElement.classList.toggle('dark', dark);
+    $('theme-icon').className = dark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+    localStorage.setItem('theme', dark ? 'dark' : 'light');
+  }
+  (function initTheme() {
+    const saved = localStorage.getItem('theme');
+    applyTheme(saved ? saved === 'dark' : true);
+  })();
+  $('theme-toggle').addEventListener('click', () => applyTheme(!document.documentElement.classList.contains('dark')));
+
+  // TOAST
+  function toast(msg, type='success') {
+    const t = $('toast');
+    const icons = { success:'fa-check-circle', error:'fa-circle-xmark', info:'fa-circle-info', warning:'fa-triangle-exclamation' };
+    const colors = { success:'#10b981', error:'#ef4444', info:'#6366f1', warning:'#f59e0b' };
+    $('toast-icon').className = `fa-solid ${icons[type]||'fa-check-circle'}`;
+    $('toast-icon').style.color = colors[type]||'#10b981';
+    $('toast-msg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  // PREVIEW REFRESH
+  window.refreshPreview = () => { $('preview-frame').src = $('preview-frame').src; };
+
+  // TAB SWITCHING
+  window.switchTab = function(tab) {
+    activeTab = tab;
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(b => { b.className = 'tab-btn tab-inactive'; });
+    const panel = $(`tab-${tab}`);
+    const btn = [...document.querySelectorAll('.tab-btn')].find(b => b.textContent.toLowerCase().includes(tab.slice(0,4)));
+    if (panel) { panel.classList.remove('hidden'); panel.classList.add('fade-in'); }
+    if (btn) btn.className = 'tab-btn tab-active';
+    if (tab === 'experience') loadExperience();
+    if (tab === 'portfolio')  loadPortfolio();
+    if (tab === 'skills')     loadSkills();
+    if (tab === 'layout')     loadLayout();
+    if (tab === 'coretext')   loadCoreText();
+    if (tab === 'messages')   loadMessages();
+  };
+
+  // ─── DB STATUS ────────────────────────────────────────────────────────────────
+  async function checkDbStatus() {
     try {
-      await getDoc(doc(db, "portfolio_data", "about"));
-      const badge = document.getElementById('connection-badge');
-      badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span class="text-emerald-400">Connected</span>';
-      badge.className = badge.className.replace('text-slate-500','text-emerald-400');
-      showToast('Connected to Firebase Firestore successfully.', 'info');
-    } catch(err) {
-      const badge = document.getElementById('connection-badge');
-      badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500"></span><span class="text-red-400">Disconnected</span>';
-      showToast('Firebase connection failed. Check config.', 'error');
-      console.error(err);
+      await getDoc(doc(db, 'config', 'hero'));
+      $('db-status').innerHTML = '<i class="fa-solid fa-circle-check" style="color:#10b981"></i> Firestore Connected';
+      $('db-status').style.borderColor = '#10b981';
+      $('db-status').style.color = '#10b981';
+      loadHero();
+    } catch(e) {
+      $('db-status').innerHTML = '<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> Not Configured';
+      $('db-status').style.borderColor = '#ef4444';
+      $('db-status').style.color = '#ef4444';
     }
   }
+  checkDbStatus();
 
-  // ════════════════════════════════════════════════
-  //  TOAST UTILITY
-  // ════════════════════════════════════════════════
-  let toastTimer;
-  window.showToast = function(msg, type = 'success') {
-    const el   = document.getElementById('toast');
-    const msgEl = document.getElementById('toast-msg');
-    const icon = document.getElementById('toast-icon');
-    msgEl.textContent = msg;
-    el.className = `toast show ${type}`;
-    icon.className = `fa-solid mr-3 text-lg ${type==='success'?'fa-circle-check':type==='error'?'fa-circle-xmark':'fa-circle-info'}`;
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { el.classList.remove('show'); }, 4000);
-  };
+  // ─── HERO ─────────────────────────────────────────────────────────────────────
+  let eduRows = [], statRows = [], socialRows = [];
 
-  // ── Escape HTML ────────────────────────────────
-  function esc(str) {
-    return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  async function loadHero() {
+    try {
+      const [heroSnap, socialsSnap, statsSnap] = await Promise.all([
+        getDoc(doc(db,'config','hero')),
+        getDoc(doc(db,'config','socials')),
+        getDoc(doc(db,'config','stats')),
+      ]);
+      if (heroSnap.exists()) {
+        const h = heroSnap.data();
+        $('h-name').value    = h.name||'';
+        $('h-initials').value = h.initials||'';
+        $('h-role').value    = h.role||'';
+        $('h-headline').value = h.headline||'';
+        $('h-bio').value     = h.bio||'';
+        $('h-objective').value = h.objective||'';
+        $('h-summary').value = h.summary||'';
+        $('h-pill').value    = h.pill||'';
+        $('h-avatar').value  = h.avatar||'';
+        $('h-tagline').value = h.tagline||'';
+        $('h-email').value   = h.email||'';
+        $('h-phone').value   = h.phone||'';
+        $('h-location').value = h.location||'';
+        $('h-website').value = h.website||'';
+        $('h-resumeurl').value = h.resumeUrl||'';
+        eduRows = h.education || [];
+        renderEduRows();
+      }
+      if (socialsSnap.exists()) { socialRows = socialsSnap.data().items||[]; renderSocialRows(); }
+      if (statsSnap.exists())   { statRows   = statsSnap.data().items||[];   renderStatRows(); }
+    } catch(e) { console.error(e); }
   }
 
-  // ════════════════════════════════════════════════
-  //  TAB SWITCHING
-  // ════════════════════════════════════════════════
-  window.switchTab = function(name, btn) {
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
-    document.querySelectorAll('.tab-btn').forEach(b => {
-      b.classList.remove('active','text-blue-400','border-blue-500');
-      b.classList.add('text-slate-500','border-transparent');
-    });
-    document.getElementById(`tab-${name}`).classList.remove('hidden');
-    btn.classList.add('active','text-blue-400','border-blue-500');
-    btn.classList.remove('text-slate-500','border-transparent');
-    // Lazy load
-    const loaders = { experience: loadExperience, portfolio: loadPortfolio, apps: loadApps, messages: loadMessages };
-    if (loaders[name]) loaders[name]();
+  window.saveHero = async function() {
+    try {
+      await setDoc(doc(db,'config','hero'), {
+        name:      $('h-name').value,
+        initials:  $('h-initials').value,
+        role:      $('h-role').value,
+        headline:  $('h-headline').value,
+        bio:       $('h-bio').value,
+        objective: $('h-objective').value,
+        summary:   $('h-summary').value,
+        pill:      $('h-pill').value,
+        avatar:    $('h-avatar').value,
+        tagline:   $('h-tagline').value,
+        email:     $('h-email').value,
+        phone:     $('h-phone').value,
+        location:  $('h-location').value,
+        website:   $('h-website').value,
+        resumeUrl: $('h-resumeurl').value,
+        education: eduRows,
+      });
+      await setDoc(doc(db,'config','socials'), { items: socialRows });
+      await setDoc(doc(db,'config','stats'),   { items: statRows });
+      toast('Hero config saved!');
+      refreshPreview();
+    } catch(e) { toast('Error: '+e.message,'error'); }
   };
 
-  // ════════════════════════════════════════════════
-  //  ABOUT — Load & Commit
-  // ════════════════════════════════════════════════
-  window.loadAbout = async function() {
+  // Education
+  function renderEduRows() {
+    $('education-list').innerHTML = eduRows.map((r,i) => `
+      <div class="item-row flex items-center gap-2 flex-wrap" id="edu-row-${i}">
+        <input class="input-field" style="flex:2;min-width:100px" placeholder="Degree" value="${r.degree||''}" onchange="eduRows[${i}].degree=this.value" />
+        <input class="input-field" style="flex:2;min-width:100px" placeholder="School" value="${r.school||''}" onchange="eduRows[${i}].school=this.value" />
+        <input class="input-field" style="flex:1;min-width:70px" placeholder="Year" value="${r.year||''}" onchange="eduRows[${i}].year=this.value" />
+        <button onclick="eduRows.splice(${i},1);renderEduRows()" class="btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+      </div>`).join('');
+  }
+  window.addEducationRow = () => { eduRows.push({degree:'',school:'',year:''}); renderEduRows(); };
+  window.renderEduRows = renderEduRows;
+
+  // Stats
+  function renderStatRows() {
+    $('stats-list').innerHTML = statRows.map((r,i) => `
+      <div class="item-row flex items-center gap-2" id="stat-row-${i}">
+        <input class="input-field" style="flex:1" placeholder="Value (e.g. 5+)" value="${r.value||''}" onchange="statRows[${i}].value=this.value" />
+        <input class="input-field" style="flex:2" placeholder="Label (e.g. Years Experience)" value="${r.label||''}" onchange="statRows[${i}].label=this.value" />
+        <button onclick="statRows.splice(${i},1);renderStatRows()" class="btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+      </div>`).join('');
+  }
+  window.addStatRow   = () => { statRows.push({value:'',label:''}); renderStatRows(); };
+  window.renderStatRows = renderStatRows;
+
+  // Socials
+  function renderSocialRows() {
+    $('socials-list').innerHTML = socialRows.map((r,i) => `
+      <div class="item-row flex items-center gap-2 flex-wrap" id="social-row-${i}">
+        <input class="input-field" style="flex:2;min-width:100px" placeholder="Label" value="${r.label||''}" onchange="socialRows[${i}].label=this.value" />
+        <input class="input-field" style="flex:3;min-width:120px" placeholder="URL" value="${r.url||''}" onchange="socialRows[${i}].url=this.value" />
+        <input class="input-field" style="flex:2;min-width:120px" placeholder="FA Icon (fa-brands fa-github)" value="${r.icon||''}" onchange="socialRows[${i}].icon=this.value" />
+        <button onclick="socialRows.splice(${i},1);renderSocialRows()" class="btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+      </div>`).join('');
+  }
+  window.addSocialRow  = () => { socialRows.push({label:'',url:'',icon:''}); renderSocialRows(); };
+  window.renderSocialRows = renderSocialRows;
+
+  // ─── EXPERIENCE ───────────────────────────────────────────────────────────────
+  let expDocs = [];
+  async function loadExperience() {
+    $('experience-list').innerHTML = '<div class="flex items-center gap-2 text-sm section-label"><div class="loader-ring"></div> Loading...</div>';
     try {
-      const snap = await getDoc(doc(db, "portfolio_data", "about"));
+      const snap = await getDocs(query(collection(db,'experience'), orderBy('order','asc')));
+      expDocs = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+      renderExpList();
+    } catch(e) { $('experience-list').innerHTML = `<p class="text-red-400 text-sm">${e.message}</p>`; }
+  }
+
+  function renderExpList() {
+    if (!expDocs.length) { $('experience-list').innerHTML = '<p class="text-sm section-label">No entries yet.</p>'; return; }
+    $('experience-list').innerHTML = expDocs.map((e,i) => `
+      <div class="item-row flex items-center justify-between gap-3 fade-in">
+        <div class="flex items-center gap-3 min-w-0">
+          <i class="${e.icon||'fa-solid fa-briefcase'} text-sm" style="color:var(--accent);width:18px;text-align:center"></i>
+          <div class="min-w-0">
+            <p class="font-semibold text-sm truncate">${e.role}</p>
+            <p class="text-xs section-label truncate">${e.org} · ${e.dateRange||''}</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <span class="text-xs section-label">#${e.order||i}</span>
+          <button onclick="openExpForm('${e.id}')" class="btn-ghost btn-sm"><i class="fa-solid fa-pen"></i></button>
+          <button onclick="deleteExp('${e.id}')" class="btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </div>`).join('');
+  }
+
+  window.openExpForm = function(id) {
+    $('exp-form-wrap').classList.remove('hidden');
+    if (!id) {
+      $('exp-form-title').textContent = 'Add Experience';
+      $('exp-doc-id').value = '';
+      ['exp-role','exp-org','exp-date','exp-icon','exp-desc','exp-tags'].forEach(i => $(i).value='');
+      $('exp-order').value = expDocs.length + 1;
+    } else {
+      const e = expDocs.find(x => x.id===id);
+      if (!e) return;
+      $('exp-form-title').textContent = 'Edit Experience';
+      $('exp-doc-id').value = id;
+      $('exp-role').value  = e.role||'';
+      $('exp-org').value   = e.org||'';
+      $('exp-date').value  = e.dateRange||'';
+      $('exp-icon').value  = e.icon||'';
+      $('exp-desc').value  = e.description||'';
+      $('exp-tags').value  = (e.tags||[]).join(', ');
+      $('exp-order').value = e.order||1;
+    }
+    $('exp-form-wrap').scrollIntoView({behavior:'smooth'});
+  };
+  window.cancelExpForm = () => $('exp-form-wrap').classList.add('hidden');
+
+  window.saveExpEntry = async function() {
+    const id = $('exp-doc-id').value;
+    const data = {
+      role:        $('exp-role').value,
+      org:         $('exp-org').value,
+      dateRange:   $('exp-date').value,
+      icon:        $('exp-icon').value || 'fa-solid fa-briefcase',
+      description: $('exp-desc').value,
+      tags:        $('exp-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
+      order:       parseInt($('exp-order').value)||1,
+    };
+    try {
+      if (id) await updateDoc(doc(db,'experience',id), data);
+      else    await addDoc(collection(db,'experience'), data);
+      toast(id ? 'Experience updated!' : 'Experience added!');
+      $('exp-form-wrap').classList.add('hidden');
+      await loadExperience();
+      refreshPreview();
+    } catch(e) { toast('Error: '+e.message,'error'); }
+  };
+
+  window.deleteExp = async function(id) {
+    if (!confirm('Delete this experience entry?')) return;
+    try {
+      await deleteDoc(doc(db,'experience',id));
+      toast('Entry deleted.','warning');
+      await loadExperience();
+      refreshPreview();
+    } catch(e) { toast('Error: '+e.message,'error'); }
+  };
+
+  // ─── PORTFOLIO ────────────────────────────────────────────────────────────────
+  let portDocs = [];
+  async function loadPortfolio() {
+    $('portfolio-list').innerHTML = '<div class="flex items-center gap-2 text-sm section-label"><div class="loader-ring"></div> Loading...</div>';
+    try {
+      const snap = await getDocs(query(collection(db,'portfolio'), orderBy('order','asc')));
+      portDocs = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+      renderPortList();
+    } catch(e) { $('portfolio-list').innerHTML = `<p class="text-red-400 text-sm">${e.message}</p>`; }
+  }
+
+  function renderPortList() {
+    if (!portDocs.length) { $('portfolio-list').innerHTML = '<p class="text-sm section-label">No items yet.</p>'; return; }
+    const typeColor = t => ({PPT:'#f97316',Image:'#06b6d4',URL:'#10b981',Site:'#6366f1',PDF:'#ef4444',Video:'#a855f7'})[t]||'#6366f1';
+    $('portfolio-list').innerHTML = portDocs.map((p,i) => `
+      <div class="item-row flex items-center justify-between gap-3 fade-in">
+        <div class="flex items-center gap-3 min-w-0">
+          <span style="font-size:.7rem;padding:.2rem .55rem;border-radius:9999px;background:${typeColor(p.type)}22;color:${typeColor(p.type)};font-weight:700;white-space:nowrap">${p.type}</span>
+          <div class="min-w-0">
+            <p class="font-semibold text-sm truncate">${p.title}</p>
+            <p class="text-xs section-label truncate">${p.description||'—'}</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <span class="text-xs section-label">#${p.order||i}</span>
+          <button onclick="openPortForm('${p.id}')" class="btn-ghost btn-sm"><i class="fa-solid fa-pen"></i></button>
+          <button onclick="deletePort('${p.id}')" class="btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </div>`).join('');
+  }
+
+  window.openPortForm = function(id) {
+    $('port-form-wrap').classList.remove('hidden');
+    if (!id) {
+      $('port-form-title').textContent = 'Add Portfolio Item';
+      $('port-doc-id').value = '';
+      ['port-title','port-desc','port-url','port-thumb'].forEach(i => $(i).value='');
+      $('port-order').value = portDocs.length + 1;
+    } else {
+      const p = portDocs.find(x => x.id===id);
+      if (!p) return;
+      $('port-form-title').textContent = 'Edit Portfolio Item';
+      $('port-doc-id').value = id;
+      $('port-title').value  = p.title||'';
+      $('port-desc').value   = p.description||'';
+      $('port-type').value   = p.type||'URL';
+      $('port-url').value    = p.url||'';
+      $('port-thumb').value  = p.thumbnail||'';
+      $('port-order').value  = p.order||1;
+    }
+    $('port-form-wrap').scrollIntoView({behavior:'smooth'});
+  };
+  window.cancelPortForm = () => $('port-form-wrap').classList.add('hidden');
+
+  window.savePortEntry = async function() {
+    const id = $('port-doc-id').value;
+    const data = {
+      title:       $('port-title').value,
+      description: $('port-desc').value,
+      type:        $('port-type').value,
+      url:         $('port-url').value,
+      thumbnail:   $('port-thumb').value,
+      order:       parseInt($('port-order').value)||1,
+    };
+    try {
+      if (id) await updateDoc(doc(db,'portfolio',id), data);
+      else    await addDoc(collection(db,'portfolio'), data);
+      toast(id ? 'Portfolio updated!' : 'Portfolio item added!');
+      $('port-form-wrap').classList.add('hidden');
+      await loadPortfolio();
+      refreshPreview();
+    } catch(e) { toast('Error: '+e.message,'error'); }
+  };
+
+  window.deletePort = async function(id) {
+    if (!confirm('Delete this portfolio item?')) return;
+    try {
+      await deleteDoc(doc(db,'portfolio',id));
+      toast('Item deleted.','warning');
+      await loadPortfolio();
+      refreshPreview();
+    } catch(e) { toast('Error: '+e.message,'error'); }
+  };
+
+  // ─── SKILLS ──────────────────────────────────────────────────────────────────
+  let skillDocs = [];
+  async function loadSkills() {
+    $('skills-list').innerHTML = '<div class="flex items-center gap-2 text-sm section-label"><div class="loader-ring"></div> Loading...</div>';
+    try {
+      const snap = await getDocs(query(collection(db,'skills'), orderBy('order','asc')));
+      skillDocs = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+      renderSkillList();
+    } catch(e) { $('skills-list').innerHTML = `<p class="text-red-400 text-sm">${e.message}</p>`; }
+  }
+
+  function renderSkillList() {
+    if (!skillDocs.length) { $('skills-list').innerHTML = '<p class="text-sm section-label">No skills yet.</p>'; return; }
+    $('skills-list').innerHTML = skillDocs.map((s,i) => `
+      <div class="item-row flex items-center justify-between gap-3 fade-in">
+        <div class="flex items-center gap-3 min-w-0">
+          <div style="width:30px;height:30px;border-radius:.4rem;background:${s.color||'#6366f1'};display:flex;align-items:center;justify-content:center;color:#fff;font-size:.8rem;flex-shrink:0">
+            <i class="${s.icon||'fa-solid fa-star'}"></i>
+          </div>
+          <div class="min-w-0">
+            <p class="font-semibold text-sm truncate">${s.name}</p>
+            <p class="text-xs section-label">${s.category||''} · ${s.level||''}</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <span class="text-xs section-label">#${s.order||i}</span>
+          <button onclick="openSkillForm('${s.id}')" class="btn-ghost btn-sm"><i class="fa-solid fa-pen"></i></button>
+          <button onclick="deleteSkill('${s.id}')" class="btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </div>`).join('');
+  }
+
+  window.openSkillForm = function(id) {
+    $('skill-form-wrap').classList.remove('hidden');
+    if (!id) {
+      $('skill-form-title').textContent = 'Add Skill';
+      $('skill-doc-id').value = '';
+      ['skill-name','skill-cat','skill-icon','skill-level'].forEach(i => $(i).value='');
+      $('skill-color').value = '#6366f1';
+      $('skill-order').value = skillDocs.length + 1;
+    } else {
+      const s = skillDocs.find(x => x.id===id);
+      if (!s) return;
+      $('skill-form-title').textContent = 'Edit Skill';
+      $('skill-doc-id').value  = id;
+      $('skill-name').value    = s.name||'';
+      $('skill-cat').value     = s.category||'';
+      $('skill-icon').value    = s.icon||'';
+      $('skill-color').value   = s.color||'#6366f1';
+      $('skill-level').value   = s.level||'';
+      $('skill-order').value   = s.order||1;
+    }
+    $('skill-form-wrap').scrollIntoView({behavior:'smooth'});
+  };
+  window.cancelSkillForm = () => $('skill-form-wrap').classList.add('hidden');
+
+  window.saveSkillEntry = async function() {
+    const id = $('skill-doc-id').value;
+    const data = {
+      name:     $('skill-name').value,
+      category: $('skill-cat').value,
+      icon:     $('skill-icon').value || 'fa-solid fa-star',
+      color:    $('skill-color').value,
+      level:    $('skill-level').value,
+      order:    parseInt($('skill-order').value)||1,
+    };
+    try {
+      if (id) await updateDoc(doc(db,'skills',id), data);
+      else    await addDoc(collection(db,'skills'), data);
+      toast(id ? 'Skill updated!' : 'Skill added!');
+      $('skill-form-wrap').classList.add('hidden');
+      await loadSkills();
+      refreshPreview();
+    } catch(e) { toast('Error: '+e.message,'error'); }
+  };
+
+  window.deleteSkill = async function(id) {
+    if (!confirm('Delete this skill?')) return;
+    try {
+      await deleteDoc(doc(db,'skills',id));
+      toast('Skill deleted.','warning');
+      await loadSkills();
+      refreshPreview();
+    } catch(e) { toast('Error: '+e.message,'error'); }
+  };
+
+  // ─── LAYOUT CONFIG ────────────────────────────────────────────────────────────
+  let layoutSections = [
+    { id:'hero',       label:'Hero / About',          visible:true, bg:'hero',   icon:'fa-solid fa-user' },
+    { id:'experience', label:'Experience Timeline',   visible:true, bg:'alt',    icon:'fa-solid fa-briefcase' },
+    { id:'portfolio',  label:'Portfolio Carousel',    visible:true, bg:'default',icon:'fa-solid fa-layer-group' },
+    { id:'skills',     label:'Application Matrix',    visible:true, bg:'alt',    icon:'fa-solid fa-microchip' },
+    { id:'contact',    label:'Contact Layer',          visible:true, bg:'accent', icon:'fa-solid fa-envelope' },
+  ];
+
+  async function loadLayout() {
+    try {
+      const snap = await getDoc(doc(db,'config','layout'));
+      if (snap.exists() && snap.data().sections) {
+        layoutSections = snap.data().sections;
+        $('layout-lastupdated').value = snap.data().lastUpdated||'';
+      }
+      renderLayoutList();
+    } catch(e) { console.error(e); renderLayoutList(); }
+  }
+
+  function renderLayoutList() {
+    $('layout-sections-list').innerHTML = layoutSections.map((s,i) => `
+      <div class="item-row flex items-center justify-between gap-3 fade-in" id="ls-${i}">
+        <div class="flex items-center gap-3 min-w-0 flex-1">
+          <span class="drag-handle text-lg"><i class="fa-solid fa-grip-vertical"></i></span>
+          <div class="w-7 h-7 rounded flex items-center justify-center" style="background:var(--accent-glow)">
+            <i class="${s.icon}" style="color:var(--accent);font-size:.75rem"></i>
+          </div>
+          <p class="font-medium text-sm">${s.label}</p>
+        </div>
+        <div class="flex items-center gap-3 flex-shrink-0">
+          <div>
+            <label class="form-label text-xs" style="margin-bottom:2px">BG</label>
+            <select onchange="layoutSections[${i}].bg=this.value" class="input-field text-xs py-1" style="width:90px;padding:.25rem .5rem">
+              <option value="default" ${s.bg==='default'?'selected':''}>Default</option>
+              <option value="alt"     ${s.bg==='alt'    ?'selected':''}>Alt Neutral</option>
+              <option value="accent"  ${s.bg==='accent' ?'selected':''}>Accent Grad</option>
+            </select>
+          </div>
+          <div class="text-center">
+            <label class="form-label text-xs" style="margin-bottom:4px">Visible</label>
+            <button class="visibility-toggle ${s.visible!==false?'on':'off'}" onclick="toggleSection(${i})" title="Toggle visibility"></button>
+          </div>
+          <div class="flex flex-col gap-1">
+            <button class="reorder-btn" onclick="moveSectionUp(${i})" ${i===0?'disabled':''}><i class="fa-solid fa-chevron-up"></i></button>
+            <button class="reorder-btn" onclick="moveSectionDown(${i})" ${i===layoutSections.length-1?'disabled':''}><i class="fa-solid fa-chevron-down"></i></button>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  window.toggleSection = function(i) {
+    layoutSections[i].visible = layoutSections[i].visible === false ? true : false;
+    renderLayoutList();
+  };
+  window.moveSectionUp   = function(i) { if(i>0) { [layoutSections[i-1],layoutSections[i]]=[layoutSections[i],layoutSections[i-1]]; renderLayoutList(); } };
+  window.moveSectionDown = function(i) { if(i<layoutSections.length-1) { [layoutSections[i],layoutSections[i+1]]=[layoutSections[i+1],layoutSections[i]]; renderLayoutList(); } };
+
+  window.saveLayout = async function() {
+    try {
+      await setDoc(doc(db,'config','layout'), {
+        sections:    layoutSections,
+        lastUpdated: $('layout-lastupdated').value || new Date().toISOString().slice(0,10),
+      });
+      toast('Layout config saved!');
+      refreshPreview();
+    } catch(e) { toast('Error: '+e.message,'error'); }
+  };
+
+  // ─── CORE TEXT ────────────────────────────────────────────────────────────────
+  async function loadCoreText() {
+    try {
+      const snap = await getDoc(doc(db,'config','coreText'));
       if (snap.exists()) {
         const d = snap.data();
-        document.getElementById('about-headline').value    = d.headline    || '';
-        document.getElementById('about-bio').value         = d.bio         || '';
-        document.getElementById('about-years').value       = d.yearsExperience || '';
-        document.getElementById('about-email').value       = d.email       || '';
-        document.getElementById('about-phone').value       = d.phone       || '';
-        document.getElementById('about-city').value        = d.city        || '';
-        document.getElementById('about-linkedin').value   = d.linkedIn    || '';
-        document.getElementById('about-github').value     = d.github      || '';
-        document.getElementById('about-resume-url').value = d.masterResumeUrl || '';
-        showToast('About data loaded from Firestore.', 'info');
-      } else {
-        showToast('No About document found. Fill in fields and commit.', 'info');
+        $('ct-exp-h').value     = d.expHeading||'';
+        $('ct-exp-s').value     = d.expSubheading||'';
+        $('ct-port-h').value    = d.portfolioHeading||'';
+        $('ct-port-s').value    = d.portfolioSubheading||'';
+        $('ct-skill-h').value   = d.skillsHeading||'';
+        $('ct-skill-s').value   = d.skillsSubheading||'';
+        $('ct-contact-h').value = d.contactHeading||'';
+        $('ct-contact-s').value = d.contactSubheading||'';
       }
-    } catch(err) {
-      showToast('Failed to load about data: ' + err.message, 'error');
-    }
-  };
+    } catch(e) { console.error(e); }
+  }
 
-  window.commitAbout = async function() {
-    const btn = document.getElementById('about-commit-btn');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-circle-notch spin"></i> Committing…';
-    const payload = {
-      headline:        document.getElementById('about-headline').value.trim(),
-      bio:             document.getElementById('about-bio').value.trim(),
-      yearsExperience: document.getElementById('about-years').value.trim(),
-      email:           document.getElementById('about-email').value.trim(),
-      phone:           document.getElementById('about-phone').value.trim(),
-      city:            document.getElementById('about-city').value.trim(),
-      linkedIn:        document.getElementById('about-linkedin').value.trim(),
-      github:          document.getElementById('about-github').value.trim(),
-      masterResumeUrl: document.getElementById('about-resume-url').value.trim(),
-      updatedAt:       serverTimestamp()
-    };
+  window.saveCoreText = async function() {
     try {
-      await setDoc(doc(db, "portfolio_data", "about"), payload);
-      showToast('About section committed to Firestore!', 'success');
-    } catch(err) {
-      showToast('Commit failed: ' + err.message, 'error');
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Commit About to Firestore';
-    }
-  };
-
-  // ════════════════════════════════════════════════
-  //  EXPERIENCE — Load, Commit, Delete
-  // ════════════════════════════════════════════════
-  window.loadExperience = async function() {
-    const listEl = document.getElementById('experience-list');
-    listEl.innerHTML = `<div class="text-slate-600 text-sm text-center py-6"><i class="fa-solid fa-circle-notch fa-spin text-blue-400 mr-2"></i>Loading…</div>`;
-    try {
-      const snap = await getDocs(collection(db, "experience"));
-      const items = [];
-      snap.forEach(d => items.push({ id: d.id, ...d.data() }));
-      items.sort((a,b) => (b.order||0)-(a.order||0));
-      if (!items.length) {
-        listEl.innerHTML = `<div class="text-slate-600 text-sm text-center py-6">No experience records yet. Add one!</div>`;
-        return;
-      }
-      listEl.innerHTML = items.map(item => `
-        <div class="record-row">
-          <div class="flex-1 min-w-0">
-            <div class="text-slate-200 font-semibold text-sm truncate">${esc(item.role||item.title||'—')}</div>
-            <div class="text-blue-400 text-xs font-medium mt-0.5">${esc(item.organization||item.company||'')}</div>
-            <div class="text-slate-600 text-xs mt-1">${esc(item.startDate||'')} – ${esc(item.endDate||'Present')}</div>
-            <p class="text-slate-500 text-xs mt-1.5 line-clamp-2">${esc(item.description||'')}</p>
-          </div>
-          <button onclick="deleteRecord('experience','${item.id}', loadExperience)" class="delete-btn flex-shrink-0">
-            <i class="fa-solid fa-trash-can"></i> Delete
-          </button>
-        </div>
-      `).join('');
-    } catch(err) {
-      listEl.innerHTML = `<div class="text-red-400 text-sm text-center py-4">Error: ${esc(err.message)}</div>`;
-    }
-  };
-
-  window.commitExperience = async function() {
-    const btn = document.getElementById('exp-commit-btn');
-    const role = document.getElementById('exp-role').value.trim();
-    const org  = document.getElementById('exp-org').value.trim();
-    if (!role || !org) { showToast('Role and Organization are required.', 'error'); return; }
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-circle-notch spin"></i> Adding…';
-    const payload = {
-      role,
-      organization: org,
-      startDate:  document.getElementById('exp-start').value.trim(),
-      endDate:    document.getElementById('exp-end').value.trim(),
-      current:    document.getElementById('exp-current').checked,
-      order:      parseInt(document.getElementById('exp-order').value) || 0,
-      description: document.getElementById('exp-desc').value.trim(),
-      tags:       document.getElementById('exp-tags').value.trim(),
-      createdAt:  serverTimestamp()
-    };
-    try {
-      await addDoc(collection(db, "experience"), payload);
-      showToast('Experience entry added to Firestore!', 'success');
-      ['exp-role','exp-org','exp-start','exp-end','exp-order','exp-desc','exp-tags'].forEach(id => document.getElementById(id).value = '');
-      document.getElementById('exp-current').checked = false;
-      await loadExperience();
-    } catch(err) {
-      showToast('Failed: ' + err.message, 'error');
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fa-solid fa-plus-circle"></i> Add to Firestore';
-    }
-  };
-
-  // ════════════════════════════════════════════════
-  //  PORTFOLIO — Load, Commit, Delete
-  // ════════════════════════════════════════════════
-  window.loadPortfolio = async function() {
-    const listEl = document.getElementById('portfolio-list');
-    listEl.innerHTML = `<div class="text-slate-600 text-sm text-center py-6"><i class="fa-solid fa-circle-notch fa-spin text-purple-400 mr-2"></i>Loading…</div>`;
-    try {
-      const snap = await getDocs(collection(db, "portfolio"));
-      const items = [];
-      snap.forEach(d => items.push({ id: d.id, ...d.data() }));
-      if (!items.length) {
-        listEl.innerHTML = `<div class="text-slate-600 text-sm text-center py-6">No portfolio items yet. Add one!</div>`;
-        return;
-      }
-      const typeColors = { PPT:'text-orange-400', PDF:'text-red-400', Image:'text-blue-400', URL:'text-purple-400', Site:'text-emerald-400', Video:'text-cyan-400' };
-      listEl.innerHTML = items.map(item => `
-        <div class="record-row">
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 flex-wrap mb-1">
-              <span class="text-slate-200 font-semibold text-sm">${esc(item.title||'—')}</span>
-              <span class="text-xs font-bold ${typeColors[item.type]||'text-slate-400'} bg-slate-800 px-2 py-0.5 rounded-full">${esc(item.type||'—')}</span>
-            </div>
-            <p class="text-slate-500 text-xs line-clamp-2">${esc(item.description||'')}</p>
-            ${item.fileUrl ? `<div class="text-slate-700 text-xs mt-1 truncate">${esc(item.fileUrl)}</div>` : ''}
-          </div>
-          <button onclick="deleteRecord('portfolio','${item.id}', loadPortfolio)" class="delete-btn flex-shrink-0">
-            <i class="fa-solid fa-trash-can"></i> Delete
-          </button>
-        </div>
-      `).join('');
-    } catch(err) {
-      listEl.innerHTML = `<div class="text-red-400 text-sm text-center py-4">Error: ${esc(err.message)}</div>`;
-    }
-  };
-
-  window.commitPortfolio = async function() {
-    const btn = document.getElementById('port-commit-btn');
-    const title = document.getElementById('port-title').value.trim();
-    if (!title) { showToast('Asset Title is required.', 'error'); return; }
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-circle-notch spin"></i> Uploading…';
-    const payload = {
-      title,
-      description: document.getElementById('port-desc').value.trim(),
-      type:        document.getElementById('port-type').value,
-      fileUrl:     document.getElementById('port-file-url').value.trim(),
-      thumbnail:   document.getElementById('port-thumbnail').value.trim(),
-      order:       parseInt(document.getElementById('port-order').value) || 0,
-      createdAt:   serverTimestamp()
-    };
-    try {
-      await addDoc(collection(db, "portfolio"), payload);
-      showToast('Portfolio node committed to Firestore!', 'success');
-      ['port-title','port-desc','port-file-url','port-thumbnail','port-order'].forEach(id => document.getElementById(id).value = '');
-      await loadPortfolio();
-    } catch(err) {
-      showToast('Failed: ' + err.message, 'error');
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fa-solid fa-upload"></i> Add to Portfolio Caravan';
-    }
-  };
-
-  // ════════════════════════════════════════════════
-  //  APPS — Load, Commit, Delete
-  // ════════════════════════════════════════════════
-  window.loadApps = async function() {
-    const listEl = document.getElementById('apps-list');
-    listEl.innerHTML = `<div class="text-slate-600 text-sm text-center py-6"><i class="fa-solid fa-circle-notch fa-spin text-amber-400 mr-2"></i>Loading…</div>`;
-    try {
-      const snap = await getDocs(collection(db, "apps"));
-      const items = [];
-      snap.forEach(d => items.push({ id: d.id, ...d.data() }));
-      if (!items.length) {
-        listEl.innerHTML = `<div class="text-slate-600 text-sm text-center py-6">No apps/skills yet. Add one!</div>`;
-        return;
-      }
-      const catColors = { Engineering:'text-blue-400', Design:'text-purple-400', Software:'text-emerald-400', Office:'text-amber-400', Other:'text-slate-400' };
-      listEl.innerHTML = items.map(item => `
-        <div class="record-row">
-          <div class="flex items-center gap-3 flex-1 min-w-0">
-            <div class="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center flex-shrink-0 ${catColors[item.category]||'text-slate-400'}">
-              <i class="fa-solid ${esc(item.icon||'fa-cube')} text-sm"></i>
-            </div>
-            <div class="min-w-0">
-              <div class="text-slate-200 font-semibold text-sm">${esc(item.name||'—')}</div>
-              <div class="text-slate-500 text-xs">${esc(item.category||'')} · ${esc(item.level||'')}</div>
-            </div>
-          </div>
-          <button onclick="deleteRecord('apps','${item.id}', loadApps)" class="delete-btn flex-shrink-0">
-            <i class="fa-solid fa-trash-can"></i> Delete
-          </button>
-        </div>
-      `).join('');
-    } catch(err) {
-      listEl.innerHTML = `<div class="text-red-400 text-sm text-center py-4">Error: ${esc(err.message)}</div>`;
-    }
-  };
-
-  window.commitApp = async function() {
-    const btn = document.getElementById('app-commit-btn');
-    const name = document.getElementById('app-name').value.trim();
-    if (!name) { showToast('App/Skill name is required.', 'error'); return; }
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-circle-notch spin"></i> Adding…';
-    const payload = {
-      name,
-      category:  document.getElementById('app-category').value,
-      icon:      document.getElementById('app-icon').value.trim() || 'fa-cube',
-      level:     document.getElementById('app-level').value,
-      createdAt: serverTimestamp()
-    };
-    try {
-      await addDoc(collection(db, "apps"), payload);
-      showToast('App/Skill added to Firestore!', 'success');
-      document.getElementById('app-name').value = '';
-      document.getElementById('app-icon').value = '';
-      await loadApps();
-    } catch(err) {
-      showToast('Failed: ' + err.message, 'error');
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fa-solid fa-plus-circle"></i> Add to App Matrix';
-    }
-  };
-
-  // ════════════════════════════════════════════════
-  //  MESSAGES — Load
-  // ════════════════════════════════════════════════
-  window.loadMessages = async function() {
-    const listEl = document.getElementById('messages-list');
-    listEl.innerHTML = `<div class="text-slate-600 text-sm text-center py-6"><i class="fa-solid fa-circle-notch fa-spin text-rose-400 mr-2"></i>Loading…</div>`;
-    try {
-      const snap = await getDocs(collection(db, "messages"));
-      const items = [];
-      snap.forEach(d => items.push({ id: d.id, ...d.data() }));
-      if (!items.length) {
-        listEl.innerHTML = `<div class="text-slate-600 text-sm text-center py-8"><i class="fa-solid fa-inbox text-2xl mb-3 block"></i>No messages yet.</div>`;
-        return;
-      }
-      // Sort by timestamp desc
-      items.sort((a,b) => {
-        const ta = a.timestamp?.seconds || 0;
-        const tb = b.timestamp?.seconds || 0;
-        return tb - ta;
+      await setDoc(doc(db,'config','coreText'), {
+        expHeading:         $('ct-exp-h').value,
+        expSubheading:      $('ct-exp-s').value,
+        portfolioHeading:   $('ct-port-h').value,
+        portfolioSubheading: $('ct-port-s').value,
+        skillsHeading:      $('ct-skill-h').value,
+        skillsSubheading:   $('ct-skill-s').value,
+        contactHeading:     $('ct-contact-h').value,
+        contactSubheading:  $('ct-contact-s').value,
       });
-      listEl.innerHTML = items.map(item => {
-        const ts = item.timestamp?.seconds ? new Date(item.timestamp.seconds * 1000).toLocaleString() : 'Unknown time';
-        return `
-        <div class="record-row flex-col gap-3">
-          <div class="flex items-start justify-between gap-4 flex-wrap">
-            <div>
-              <div class="text-slate-200 font-bold text-sm">${esc(item.name||'—')}</div>
-              <a href="mailto:${esc(item.email)}" class="text-blue-400 text-xs hover:text-blue-300">${esc(item.email||'')}</a>
-            </div>
-            <div class="flex items-center gap-3">
-              <span class="text-slate-600 text-xs">${esc(ts)}</span>
-              <button onclick="deleteRecord('messages','${item.id}', loadMessages)" class="delete-btn">
-                <i class="fa-solid fa-trash-can"></i> Delete
-              </button>
-            </div>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-lg p-3">
-            <p class="text-slate-300 text-sm leading-relaxed">${esc(item.message||'')}</p>
-          </div>
-        </div>
-      `}).join('');
-    } catch(err) {
-      listEl.innerHTML = `<div class="text-red-400 text-sm text-center py-4">Error: ${esc(err.message)}</div>`;
-    }
+      toast('Core text saved!');
+      refreshPreview();
+    } catch(e) { toast('Error: '+e.message,'error'); }
   };
 
-  // ════════════════════════════════════════════════
-  //  UNIVERSAL DELETE
-  // ════════════════════════════════════════════════
-  window.deleteRecord = async function(collectionName, docId, reloadFn) {
-    if (!confirm(`Delete this record permanently from '${collectionName}'? This cannot be undone.`)) return;
+  // ─── MESSAGES ─────────────────────────────────────────────────────────────────
+  window.loadMessages = async function() {
+    $('messages-list').innerHTML = '<div class="flex items-center gap-2 text-sm section-label"><div class="loader-ring"></div> Loading...</div>';
     try {
-      await deleteDoc(doc(db, collectionName, docId));
-      showToast(`Record deleted from '${collectionName}'.`, 'success');
-      if (reloadFn) reloadFn();
-    } catch(err) {
-      showToast('Delete failed: ' + err.message, 'error');
-    }
+      const snap = await getDocs(query(collection(db,'messages'), orderBy('timestamp','desc')));
+      if (snap.empty) { $('messages-list').innerHTML = '<p class="text-sm section-label">No messages yet.</p>'; return; }
+      $('messages-list').innerHTML = snap.docs.map(d => {
+        const m = d.data();
+        const ts = m.timestamp?.toDate ? m.timestamp.toDate().toLocaleString() : 'Unknown time';
+        return `
+          <div class="card-bg p-4 fade-in">
+            <div class="flex items-start justify-between gap-3 mb-2">
+              <div>
+                <p class="font-bold text-sm">${m.name||'Unknown'}</p>
+                <p class="text-xs section-label">${m.email||''} · ${ts}</p>
+              </div>
+              <button onclick="deleteMsg('${d.id}')" class="btn-danger btn-sm flex-shrink-0"><i class="fa-solid fa-trash"></i></button>
+            </div>
+            <p class="text-sm leading-relaxed">${m.message||''}</p>
+          </div>`;
+      }).join('');
+    } catch(e) { $('messages-list').innerHTML = `<p class="text-red-400 text-sm">${e.message}</p>`; }
   };
 
-  // ════════════════════════════════════════════════
-  //  INIT — load About on page ready
-  // ════════════════════════════════════════════════
-  checkConnection();
-  window.loadAbout();
+  window.deleteMsg = async function(id) {
+    if (!confirm('Delete this message?')) return;
+    try {
+      await deleteDoc(doc(db,'messages',id));
+      toast('Message deleted.','warning');
+      await loadMessages();
+    } catch(e) { toast('Error: '+e.message,'error'); }
+  };
+
+  // ─── SEED ALL SAMPLE DATA ─────────────────────────────────────────────────────
+  window.seedAllData = async function() {
+    if (!confirm('This will OVERWRITE all existing data with sample content. Are you sure?')) return;
+    $('seed-all-btn').disabled = true;
+    $('seed-all-btn').innerHTML = '<div class="loader-ring" style="width:14px;height:14px;border-width:2px;display:inline-block;margin-right:6px"></div> Seeding...';
+    try {
+      // Hero Config
+      await setDoc(doc(db,'config','hero'), {
+        name:      'Engraham Raglinao',
+        initials:  'ENG',
+        role:      'Full-Stack Frontend Engineer',
+        headline:  'Crafting <span class="accent">Digital</span> Experiences That Matter',
+        bio:       'I am a results-driven Full-Stack Frontend Engineer with over 6 years of experience designing and building high-performance web applications. My craft merges pixel-perfect UI precision with robust backend integration, delivering seamless user experiences from concept to deployment. I specialize in React ecosystems, modern JavaScript toolchains, and Firebase-powered architectures.',
+        objective: 'Seeking a challenging senior engineering role where I can leverage my deep frontend expertise and architectural thinking to build products that scale.',
+        summary:   '6+ years of full-stack development experience | Expert in React, TypeScript, and Firebase ecosystems | Strong UI/UX sensibility with Figma proficiency | Proven track record in leading technical teams',
+        pill:      'Available for Work',
+        avatar:    'https://images.pexels.com/photos/16313659/pexels-photo-16313659.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=400',
+        tagline:   'Engineering excellence, one component at a time.',
+        email:     'engraglinao@email.com',
+        phone:     '+1 (555) 012-3456',
+        location:  'San Francisco, CA',
+        website:   'https://engraglinao.github.io',
+        resumeUrl: '#',
+        education: [
+          { degree: 'B.S. Computer Science', school: 'University of Technology', year: '2018' },
+          { degree: 'Full-Stack Cert.', school: 'Frontend Masters', year: '2019' },
+        ],
+      });
+
+      // Socials
+      await setDoc(doc(db,'config','socials'), {
+        items: [
+          { label:'GitHub',   url:'https://github.com/engraglinao',   icon:'fa-brands fa-github' },
+          { label:'LinkedIn', url:'https://linkedin.com',             icon:'fa-brands fa-linkedin' },
+          { label:'Twitter',  url:'https://twitter.com',              icon:'fa-brands fa-x-twitter' },
+          { label:'Dribbble', url:'https://dribbble.com',             icon:'fa-brands fa-dribbble' },
+        ],
+      });
+
+      // Stats
+      await setDoc(doc(db,'config','stats'), {
+        items: [
+          { value:'6+',  label:'Years of Experience' },
+          { value:'50+', label:'Projects Delivered' },
+          { value:'12',  label:'Technologies Mastered' },
+        ],
+      });
+
+      // Core Text
+      await setDoc(doc(db,'config','coreText'), {
+        expHeading:          'Experience',
+        expSubheading:       'Professional journey & career milestones',
+        portfolioHeading:    'Portfolio',
+        portfolioSubheading: 'Selected projects, case studies & deliverables',
+        skillsHeading:       'Application Matrix',
+        skillsSubheading:    'Tools, platforms & technical fluencies',
+        contactHeading:      'Get In Touch',
+        contactSubheading:   "Have a project in mind? I respond within 24 hours.",
+      });
+
+      // Layout Config
+      await setDoc(doc(db,'config','layout'), {
+        lastUpdated: new Date().toISOString().slice(0,10),
+        sections: [
+          { id:'hero',       label:'Hero / About',        visible:true, bg:'hero',    icon:'fa-solid fa-user' },
+          { id:'experience', label:'Experience Timeline', visible:true, bg:'alt',     icon:'fa-solid fa-briefcase' },
+          { id:'portfolio',  label:'Portfolio Carousel',  visible:true, bg:'default', icon:'fa-solid fa-layer-group' },
+          { id:'skills',     label:'Application Matrix',  visible:true, bg:'alt',     icon:'fa-solid fa-microchip' },
+          { id:'contact',    label:'Contact Layer',        visible:true, bg:'accent',  icon:'fa-solid fa-envelope' },
+        ],
+      });
+
+      // Experience entries — delete existing first
+      const expSnap = await getDocs(collection(db,'experience'));
+      await Promise.all(expSnap.docs.map(d => deleteDoc(d.ref)));
+      const expEntries = [
+        { order:1, role:'Senior Frontend Engineer',  org:'TechNova Inc.',    dateRange:'Jan 2022 – Present',   icon:'fa-solid fa-rocket',   description:'Led the migration of a monolithic legacy system to a micro-frontend React architecture, reducing load time by 60%. Mentored a team of 4 junior developers and established engineering best practices.', tags:['React','TypeScript','Micro-frontends','AWS'] },
+        { order:2, role:'Full-Stack Developer',       org:'BuildCraft Agency', dateRange:'Mar 2020 – Dec 2021', icon:'fa-solid fa-code',     description:'Delivered 15+ client web applications across e-commerce, SaaS, and media verticals. Integrated Firebase Firestore as a real-time backend for three flagship products.', tags:['React','Firebase','Node.js','Tailwind'] },
+        { order:3, role:'Frontend Developer',         org:'Pixel Republic',   dateRange:'Jun 2018 – Feb 2020', icon:'fa-solid fa-palette',  description:'Designed and developed pixel-perfect UI components for a design agency\'s client portfolio. Collaborated directly with UX designers using Figma handoff workflows.', tags:['HTML5','SCSS','Vue.js','Figma'] },
+      ];
+      await Promise.all(expEntries.map(e => addDoc(collection(db,'experience'), e)));
+
+      // Portfolio entries — delete existing first
+      const portSnap = await getDocs(collection(db,'portfolio'));
+      await Promise.all(portSnap.docs.map(d => deleteDoc(d.ref)));
+      const portEntries = [
+        { order:1, title:'E-Commerce Redesign', type:'Site', description:'Full redesign and development of a high-traffic fashion e-commerce platform. Improved conversion rate by 35%.', url:'https://example.com', thumbnail:'https://images.pexels.com/photos/5632399/pexels-photo-5632399.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=300&w=400' },
+        { order:2, title:'Dashboard Analytics UI',type:'Image',description:'Interactive data visualization dashboard built with React and D3.js for a fintech startup.', url:'https://images.pexels.com/photos/6801648/pexels-photo-6801648.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800', thumbnail:'https://images.pexels.com/photos/6801648/pexels-photo-6801648.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=300&w=400' },
+        { order:3, title:'API Architecture Deck', type:'PPT', description:'Technical presentation detailing the micro-services API design for a healthcare platform.', url:'#', thumbnail:'' },
+        { order:4, title:'Brand Identity Guide', type:'PDF', description:'Comprehensive brand style guide including typography, color systems, and component library documentation.', url:'#', thumbnail:'' },
+        { order:5, title:'Firebase CMS Framework',type:'URL', description:'Open-source headless CMS framework built on top of Firebase Firestore with a React admin panel.', url:'https://github.com', thumbnail:'' },
+        { order:6, title:'SaaS Landing Page',     type:'Site',description:'High-converting SaaS marketing site with animated hero, pricing comparison, and integrated Stripe checkout.', url:'https://example.com', thumbnail:'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=300&w=400' },
+      ];
+      await Promise.all(portEntries.map(p => addDoc(collection(db,'portfolio'), p)));
+
+      // Skills — delete existing first
+      const skillSnap = await getDocs(collection(db,'skills'));
+      await Promise.all(skillSnap.docs.map(d => deleteDoc(d.ref)));
+      const skillEntries = [
+        // Frontend
+        { order:1, name:'React.js',    category:'Frontend', icon:'fa-brands fa-react',     color:'#61dafb', level:'Expert' },
+        { order:2, name:'TypeScript',  category:'Frontend', icon:'fa-solid fa-code',        color:'#3178c6', level:'Advanced' },
+        { order:3, name:'Tailwind CSS',category:'Frontend', icon:'fa-solid fa-wind',        color:'#06b6d4', level:'Expert' },
+        { order:4, name:'Next.js',     category:'Frontend', icon:'fa-brands fa-node-js',    color:'#000000', level:'Advanced' },
+        { order:5, name:'Vue.js',      category:'Frontend', icon:'fa-brands fa-vuejs',      color:'#42b883', level:'Proficient' },
+        // Backend
+        { order:6, name:'Node.js',     category:'Backend',  icon:'fa-brands fa-node-js',    color:'#68a063', level:'Advanced' },
+        { order:7, name:'Firebase',    category:'Backend',  icon:'fa-solid fa-fire',        color:'#ff9900', level:'Expert' },
+        { order:8, name:'REST APIs',   category:'Backend',  icon:'fa-solid fa-plug',        color:'#10b981', level:'Expert' },
+        { order:9, name:'GraphQL',     category:'Backend',  icon:'fa-solid fa-diagram-project',color:'#e535ab',level:'Proficient'},
+        // DevOps & Tools
+        { order:10,name:'Git & GitHub',category:'DevOps',   icon:'fa-brands fa-github',     color:'#333333', level:'Expert' },
+        { order:11,name:'Docker',      category:'DevOps',   icon:'fa-brands fa-docker',     color:'#2496ed', level:'Proficient' },
+        { order:12,name:'AWS',         category:'DevOps',   icon:'fa-brands fa-aws',        color:'#ff9900', level:'Intermediate' },
+        // Design
+        { order:13,name:'Figma',       category:'Design',   icon:'fa-brands fa-figma',      color:'#f24e1e', level:'Advanced' },
+        { order:14,name:'UI/UX Design',category:'Design',   icon:'fa-solid fa-pen-nib',     color:'#6366f1', level:'Advanced' },
+      ];
+      await Promise.all(skillEntries.map(s => addDoc(collection(db,'skills'), s)));
+
+      toast('✓ All sample data seeded successfully!','success');
+      await loadHero();
+      switchTab('hero');
+      refreshPreview();
+    } catch(e) {
+      toast('Seed error: '+e.message,'error');
+      console.error(e);
+    }
+    $('seed-all-btn').disabled = false;
+    $('seed-all-btn').innerHTML = '<i class="fa-solid fa-seedling"></i> Seed All Sample Data';
+  };
 
 </script>
-
 </body>
 </html>
