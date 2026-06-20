@@ -1,2050 +1,1244 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Content Management — Eng Raglinao Admin</title>
+  <title>Admin CMS — Portfolio Manager</title>
   <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
   <style>
-    :root {
-      --bg: #070c18;
-      --bg-2: #0d1526;
-      --bg-3: #111d35;
-      --border: rgba(55, 80, 130, 0.3);
-      --border-hover: rgba(99, 143, 227, 0.4);
-      --accent: #3b82f6;
-      --accent-dim: #2563eb;
-      --accent-glow: rgba(59, 130, 246, 0.15);
-      --success: #10b981;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --text-1: #e2e8f0;
-      --text-2: #94a3b8;
-      --text-3: #475569;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background-color: var(--bg);
-      color: var(--text-1);
-      -webkit-font-smoothing: antialiased;
-      min-height: 100vh;
-    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { font-family: 'Inter', sans-serif; }
+    body { background: #0d1117; color: #e2e8f0; min-height: 100vh; }
 
     ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+    ::-webkit-scrollbar-track { background: #0d1117; }
+    ::-webkit-scrollbar-thumb { background: #4ade80; border-radius: 99px; }
 
-    .font-display { font-family: 'Space Grotesk', sans-serif; }
-    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .admin-input {
+      width: 100%;
+      background: #0d1117;
+      border: 1px solid #21262d;
+      border-radius: 8px;
+      padding: 0.625rem 0.875rem;
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .admin-input:focus { border-color: #4ade80; }
+    .admin-input::placeholder { color: #4b5563; }
 
-    /* ── SIDEBAR ── */
-    .sidebar {
-      position: fixed;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 240px;
-      background: var(--bg-2);
-      border-right: 1px solid var(--border);
-      z-index: 100;
-      display: flex;
-      flex-direction: column;
-      padding: 24px 0;
-      overflow-y: auto;
-    }
-    .sidebar-logo {
-      padding: 0 20px 24px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 16px;
-    }
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 20px;
-      color: var(--text-2);
-      font-size: 0.82rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border-left: 2px solid transparent;
-      text-decoration: none;
-      font-family: 'Space Grotesk', sans-serif;
-      letter-spacing: 0.03em;
-    }
-    .nav-item:hover, .nav-item.active {
-      color: var(--text-1);
-      background: rgba(59, 130, 246, 0.08);
-      border-left-color: var(--accent);
-    }
-    .nav-item i { width: 16px; text-align: center; font-size: 0.8rem; }
-    .nav-section-label {
-      padding: 12px 20px 4px;
-      font-size: 0.62rem;
-      font-weight: 700;
-      letter-spacing: 0.18em;
+    .admin-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #6b7280;
       text-transform: uppercase;
-      color: var(--text-3);
-      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.07em;
+      margin-bottom: 0.375rem;
     }
 
-    /* ── MAIN CONTENT ── */
-    .main-content {
-      margin-left: 240px;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* ── TOP BAR ── */
-    .topbar {
-      position: sticky;
-      top: 0;
-      background: rgba(7, 12, 24, 0.92);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 28px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      z-index: 90;
-    }
-
-    /* ── CONTENT AREA ── */
-    .content-area {
-      padding: 28px;
-      flex: 1;
-    }
-
-    /* ── CARDS ── */
-    .admin-card {
-      background: var(--bg-2);
-      border: 1px solid var(--border);
+    .cms-card {
+      background: #161b22;
+      border: 1px solid #21262d;
       border-radius: 14px;
       overflow: hidden;
-      transition: border-color 0.2s ease;
-      margin-bottom: 20px;
     }
-    .admin-card:hover { border-color: var(--border-hover); }
 
-    .card-header {
-      padding: 16px 22px;
-      border-bottom: 1px solid var(--border);
+    .cms-card-header {
+      background: #1c2128;
+      border-bottom: 1px solid #21262d;
+      padding: 1rem 1.25rem;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      background: rgba(13, 21, 38, 0.7);
-    }
-    .card-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--text-1);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .card-title i { color: var(--accent); font-size: 0.8rem; }
-    .card-body { padding: 22px; }
-
-    /* ── FORM FIELDS ── */
-    .field-group { margin-bottom: 16px; }
-    .field-label {
-      display: block;
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-2);
-      margin-bottom: 6px;
-      font-family: 'Space Grotesk', sans-serif;
-    }
-    .field-label .required { color: var(--danger); margin-left: 3px; }
-
-    .form-input {
-      width: 100%;
-      background: var(--bg);
-      border: 1.5px solid rgba(55, 80, 130, 0.4);
-      border-radius: 8px;
-      color: var(--text-1);
-      padding: 10px 14px;
-      font-size: 0.875rem;
-      transition: all 0.2s ease;
-      outline: none;
-      font-family: 'Inter', sans-serif;
-    }
-    .form-input:focus {
-      border-color: var(--accent);
-      background: rgba(7, 12, 24, 1);
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
-    }
-    .form-input::placeholder { color: var(--text-3); }
-    .form-input:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    textarea.form-input {
-      resize: vertical;
-      min-height: 110px;
-      line-height: 1.6;
-    }
-    select.form-input {
-      cursor: pointer;
-      -webkit-appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2394a3b8' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 14px center;
-      padding-right: 36px;
+      gap: 0.75rem;
     }
 
-    /* ── BUTTONS ── */
-    .btn {
+    .cms-card-body { padding: 1.25rem; }
+
+    .commit-btn {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      padding: 10px 20px;
+      gap: 0.5rem;
+      padding: 0.6rem 1.25rem;
       border-radius: 8px;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      cursor: pointer;
       border: none;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.22s ease;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      font-family: 'Space Grotesk', sans-serif;
+      transition: all 0.2s ease;
     }
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none !important;
+    .commit-btn:hover { transform: translateY(-1px); }
+    .commit-btn:active { transform: translateY(0); }
+
+    .commit-btn-green {
+      background: linear-gradient(135deg, #4ade80, #22c55e);
+      color: #052e16;
     }
 
-    .btn-primary {
-      background: linear-gradient(135deg, #3b82f6, #2563eb);
-      color: #fff;
-    }
-    .btn-primary:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(59,130,246,0.3);
-      filter: brightness(1.08);
+    .commit-btn-blue {
+      background: linear-gradient(135deg, #60a5fa, #3b82f6);
+      color: #0c1226;
     }
 
-    .btn-success {
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: #fff;
-    }
-    .btn-success:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(16,185,129,0.3);
+    .commit-btn-amber {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      color: #1c1004;
     }
 
-    .btn-danger {
-      background: linear-gradient(135deg, #ef4444, #dc2626);
-      color: #fff;
-    }
-    .btn-danger:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(239,68,68,0.3);
+    .commit-btn-red {
+      background: linear-gradient(135deg, #f87171, #ef4444);
+      color: #1c0202;
     }
 
-    .btn-ghost {
-      background: rgba(59, 130, 246, 0.1);
-      color: var(--accent);
-      border: 1.5px solid rgba(59, 130, 246, 0.3);
-    }
-    .btn-ghost:hover:not(:disabled) {
-      background: rgba(59, 130, 246, 0.18);
-      transform: translateY(-1px);
-    }
-
-    .btn-sm { padding: 7px 14px; font-size: 0.75rem; }
-    .btn-full { width: 100%; justify-content: center; }
-
-    /* ── GRID ── */
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-
-    @media (max-width: 768px) {
-      .two-col, .three-col { grid-template-columns: 1fr; }
-    }
-
-    /* ── SECTION PANELS ── */
-    .panel {
-      display: none;
-    }
-    .panel.active { display: block; }
-
-    /* ── STATUS BADGES ── */
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 0.68rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .badge-success { background: rgba(16,185,129,0.12); color: #10b981; border: 1px solid rgba(16,185,129,0.2); }
-    .badge-warning { background: rgba(245,158,11,0.12); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); }
-    .badge-error   { background: rgba(239,68,68,0.12); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
-    .badge-info    { background: rgba(59,130,246,0.12); color: #3b82f6; border: 1px solid rgba(59,130,246,0.2); }
-
-    /* ── ALERT / NOTIFICATION ── */
-    .alert {
-      padding: 12px 16px;
-      border-radius: 8px;
-      font-size: 0.83rem;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin-bottom: 16px;
-      line-height: 1.5;
-    }
-    .alert-info    { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25); color: #93c5fd; }
-    .alert-warning { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25); color: #fcd34d; }
-    .alert-success { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); color: #6ee7b7; }
-    .alert-danger  { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25); color: #fca5a5; }
-
-    /* ── TOAST ── */
-    #admin-toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      pointer-events: none;
-    }
-    .toast-item {
-      background: var(--bg-3);
-      border: 1px solid var(--border);
-      color: var(--text-1);
-      padding: 12px 16px;
-      border-radius: 10px;
-      font-size: 0.825rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-      max-width: 340px;
-      transform: translateX(120%);
-      opacity: 0;
-      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-      pointer-events: all;
-    }
-    .toast-item.show {
-      transform: translateX(0);
-      opacity: 1;
-    }
-
-    /* ── DB RECORD LIST ── */
-    .record-list { display: flex; flex-direction: column; gap: 10px; }
-    .record-item {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      transition: border-color 0.2s;
-    }
-    .record-item:hover { border-color: var(--border-hover); }
-    .record-dot {
-      width: 8px;
-      height: 8px;
+    /* Status dot */
+    .status-dot {
+      width: 8px; height: 8px;
       border-radius: 50%;
-      background: var(--success);
       flex-shrink: 0;
     }
-    .record-info { flex: 1; min-width: 0; }
-    .record-title {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-1);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+
+    /* Notification toast */
+    #admin-toast {
+      position: fixed;
+      bottom: 1.5rem; right: 1.5rem;
+      z-index: 9999;
+      transition: all 0.3s ease;
     }
-    .record-meta {
+    #admin-toast.hidden { opacity: 0; transform: translateY(20px); pointer-events: none; }
+
+    /* Sidebar active */
+    .sidebar-link.active { background: rgba(74,222,128,0.1); color: #4ade80; }
+    .sidebar-link { border-radius: 8px; transition: all 0.15s ease; }
+    .sidebar-link:hover { background: rgba(255,255,255,0.05); }
+
+    /* Table styles */
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th {
+      background: #1c2128;
       font-size: 0.7rem;
-      color: var(--text-3);
-      margin-top: 2px;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .record-actions { display: flex; gap: 6px; flex-shrink: 0; }
-
-    /* ── DIVIDER ── */
-    .divider {
-      height: 1px;
-      background: var(--border);
-      margin: 20px 0;
-    }
-
-    /* ── STATS ROW ── */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-bottom: 24px;
-    }
-    .stat-card {
-      background: var(--bg-2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px 18px;
-      transition: border-color 0.2s;
-    }
-    .stat-card:hover { border-color: var(--border-hover); }
-    .stat-value {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.8rem;
       font-weight: 700;
-      color: var(--text-1);
-      line-height: 1;
-    }
-    .stat-label {
-      font-size: 0.7rem;
-      color: var(--text-3);
-      margin-top: 6px;
+      text-transform: uppercase;
       letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-family: 'JetBrains Mono', monospace;
+      color: #6b7280;
+      padding: 0.625rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid #21262d;
     }
-    .stat-icon {
-      float: right;
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.9rem;
+    .data-table td {
+      padding: 0.75rem 1rem;
+      font-size: 0.8125rem;
+      border-bottom: 1px solid #161b22;
+      color: #cbd5e1;
+      vertical-align: top;
     }
+    .data-table tr:hover td { background: #1c2128; }
+    .data-table tr:last-child td { border-bottom: none; }
 
-    /* ── CONNECTION STATUS ── */
-    .conn-status {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.72rem;
+    /* Code mono */
+    code {
       font-family: 'JetBrains Mono', monospace;
-    }
-    .conn-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-    }
-    .conn-dot.online { background: #10b981; box-shadow: 0 0 6px rgba(16,185,129,0.5); }
-    .conn-dot.offline { background: #ef4444; }
-    .conn-dot.checking { background: #f59e0b; animation: blink 1s infinite; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-    /* ── PORTFOLIO TYPE BADGES ── */
-    .type-badge {
-      display: inline-block;
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 2px 8px;
+      font-size: 0.75rem;
+      background: #0d1117;
+      border: 1px solid #21262d;
       border-radius: 4px;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .type-PPT, .type-PPTX { background: rgba(251,146,60,0.15); color: #fb923c; border: 1px solid rgba(251,146,60,0.3); }
-    .type-PDF  { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
-    .type-Image { background: rgba(167,139,250,0.12); color: #a78bfa; border: 1px solid rgba(167,139,250,0.25); }
-    .type-Site { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.25); }
-    .type-URL  { background: rgba(59,130,246,0.12); color: #60a5fa; border: 1px solid rgba(59,130,246,0.25); }
-
-    /* ── LOADING SPINNER ── */
-    .spinner {
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(255,255,255,0.2);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      display: inline-block;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── MODAL ── */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(8px);
-      z-index: 200;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-    .modal-overlay.open {
-      opacity: 1;
-      pointer-events: all;
-    }
-    .modal-box {
-      background: var(--bg-2);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      width: min(90vw, 560px);
-      max-height: 85vh;
-      overflow-y: auto;
-      transform: scale(0.95);
-      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    .modal-overlay.open .modal-box { transform: scale(1); }
-    .modal-header {
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .modal-body { padding: 20px; }
-    .modal-footer {
-      padding: 14px 20px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-    }
-    .modal-close-btn {
-      background: rgba(71,85,105,0.3);
-      border: none;
-      color: var(--text-2);
-      width: 28px;
-      height: 28px;
-      border-radius: 6px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-    }
-    .modal-close-btn:hover { color: var(--text-1); background: rgba(71,85,105,0.5); }
-
-    /* ── CONFIRM DIALOG ── */
-    #confirm-dialog {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.75);
-      backdrop-filter: blur(6px);
-      z-index: 300;
-      align-items: center;
-      justify-content: center;
-    }
-    #confirm-dialog.show { display: flex; }
-    .confirm-box {
-      background: var(--bg-2);
-      border: 1px solid rgba(239,68,68,0.3);
-      border-radius: 14px;
-      padding: 28px;
-      max-width: 400px;
-      width: 90%;
-      text-align: center;
-    }
-
-    @media (max-width: 900px) {
-      .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
-      .sidebar.open { transform: translateX(0); }
-      .main-content { margin-left: 0; }
-      .stats-row { grid-template-columns: 1fr 1fr; }
+      padding: 1px 5px;
+      color: #4ade80;
     }
   </style>
 </head>
-
 <body>
 
-  <!-- ══════════════════════════════ SIDEBAR ══════════════════════════════ -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-logo">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-        <div style="width:32px;height:32px;background:linear-gradient(135deg,#3b82f6,#2563eb);border-radius:8px;display:flex;align-items:center;justify-content:center;">
-          <i class="fa-solid fa-database" style="color:#fff;font-size:0.8rem;"></i>
-        </div>
-        <div>
-          <div class="font-display" style="font-size:0.85rem;font-weight:700;color:var(--text-1);">Portfolio CMS</div>
-          <div class="font-mono" style="font-size:0.6rem;color:var(--text-3);">Admin Dashboard</div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px;margin-top:10px;" id="sidebar-conn-status">
-        <div class="conn-dot checking"></div>
-        <span class="font-mono" style="font-size:0.62rem;color:var(--text-3);">Connecting...</span>
-      </div>
+  <!-- ══════════════════════════════════════════════════
+       ADMIN TOAST NOTIFICATION
+       ══════════════════════════════════════════════════ -->
+  <div id="admin-toast" class="hidden">
+    <div id="admin-toast-inner"
+         class="flex items-center gap-3 px-5 py-3 rounded-xl shadow-2xl text-sm font-medium border"
+         style="background:#161b22;border-color:#21262d;">
+      <i id="admin-toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
+      <span id="admin-toast-msg"></span>
     </div>
+  </div>
 
-    <div class="nav-section-label">Overview</div>
-    <a class="nav-item active" onclick="switchPanel('dashboard')" href="#">
-      <i class="fa-solid fa-gauge-high"></i> Dashboard
-    </a>
-    <a class="nav-item" onclick="switchPanel('messages')" href="#">
-      <i class="fa-solid fa-inbox"></i> Messages
-      <span id="msg-count-badge" style="margin-left:auto;background:rgba(59,130,246,0.2);color:#3b82f6;font-size:0.6rem;font-weight:700;padding:2px 7px;border-radius:10px;font-family:'JetBrains Mono',monospace;display:none;">0</span>
-    </a>
+  <!-- ══════════════════════════════════════════════════
+       LAYOUT WRAPPER
+       ══════════════════════════════════════════════════ -->
+  <div class="flex min-h-screen">
 
-    <div class="nav-section-label">Content</div>
-    <a class="nav-item" onclick="switchPanel('about')" href="#">
-      <i class="fa-solid fa-id-card"></i> About Segment
-    </a>
-    <a class="nav-item" onclick="switchPanel('experience')" href="#">
-      <i class="fa-solid fa-briefcase"></i> Experience
-    </a>
-    <a class="nav-item" onclick="switchPanel('portfolio')" href="#">
-      <i class="fa-solid fa-layer-group"></i> Portfolio Caravan
-    </a>
-    <a class="nav-item" onclick="switchPanel('skills')" href="#">
-      <i class="fa-solid fa-microchip"></i> Skills Matrix
-    </a>
+    <!-- ── Sidebar ────────────────────────────────────── -->
+    <aside class="w-60 flex-shrink-0 flex flex-col"
+           style="background:#161b22;border-right:1px solid #21262d;position:sticky;top:0;height:100vh;">
 
-    <div class="nav-section-label">System</div>
-    <a class="nav-item" onclick="switchPanel('settings')" href="#">
-      <i class="fa-solid fa-gear"></i> Configuration
-    </a>
-    <a class="nav-item" onclick="switchPanel('logs')" href="#">
-      <i class="fa-solid fa-terminal"></i> Activity Logs
-    </a>
-
-    <div style="margin-top:auto;padding:16px 20px;border-top:1px solid var(--border);">
-      <div class="font-mono" style="font-size:0.6rem;color:var(--text-3);line-height:1.7;">
-        <div>CMS v2.0.0</div>
-        <div>Firebase SDK 10.12.2</div>
-        <div>Tailwind CSS v4</div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- ══════════════════════════════ MAIN ══════════════════════════════ -->
-  <div class="main-content">
-
-    <!-- TOP BAR -->
-    <div class="topbar">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <button id="sidebar-toggle" onclick="toggleSidebar()" style="background:none;border:1px solid var(--border);color:var(--text-2);width:34px;height:34px;border-radius:8px;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:0.9rem;">
-          <i class="fa-solid fa-bars"></i>
-        </button>
-        <div>
-          <h1 class="font-display" id="panel-title" style="font-size:1rem;font-weight:700;color:var(--text-1);">Dashboard</h1>
-          <div class="font-mono" style="font-size:0.62rem;color:var(--text-3);" id="panel-subtitle">Overview of all CMS data and system status</div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div class="conn-status" id="topbar-conn">
-          <div class="conn-dot checking"></div>
-          <span style="color:var(--text-3);">Checking...</span>
-        </div>
-        <div style="width:1px;height:20px;background:var(--border);"></div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#3b82f6,#2563eb);display:flex;align-items:center;justify-content:center;">
-            <span class="font-display" style="font-size:0.7rem;font-weight:800;color:#fff;">ER</span>
+      <!-- Brand -->
+      <div class="p-5 border-b" style="border-color:#21262d;">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black"
+               style="background:linear-gradient(135deg,#4ade80,#22c55e);color:#052e16;">
+            <i class="fa-solid fa-terminal"></i>
           </div>
           <div>
-            <div class="font-display" style="font-size:0.78rem;font-weight:600;color:var(--text-1);">Eng Raglinao</div>
-            <div class="font-mono" style="font-size:0.6rem;color:var(--text-3);">Administrator</div>
+            <div class="font-bold text-white text-sm">Portfolio CMS</div>
+            <div class="text-xs text-slate-500">Admin Control Panel</div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- CONTENT -->
-    <div class="content-area">
-
-      <!-- ════════════════ PANEL: DASHBOARD ════════════════ -->
-      <div class="panel active" id="panel-dashboard">
-
-        <div class="stats-row" id="stats-row">
-          <div class="stat-card">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-              <div>
-                <div class="stat-value" id="st-exp">—</div>
-                <div class="stat-label">Experience Entries</div>
-              </div>
-              <div class="stat-icon" style="background:rgba(59,130,246,0.12);color:#3b82f6;">
-                <i class="fa-solid fa-briefcase"></i>
-              </div>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-              <div>
-                <div class="stat-value" id="st-port">—</div>
-                <div class="stat-label">Portfolio Items</div>
-              </div>
-              <div class="stat-icon" style="background:rgba(167,139,250,0.12);color:#a78bfa;">
-                <i class="fa-solid fa-layer-group"></i>
-              </div>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-              <div>
-                <div class="stat-value" id="st-skills">—</div>
-                <div class="stat-label">Skills Tracked</div>
-              </div>
-              <div class="stat-icon" style="background:rgba(52,211,153,0.12);color:#34d399;">
-                <i class="fa-solid fa-microchip"></i>
-              </div>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-              <div>
-                <div class="stat-value" id="st-msg">—</div>
-                <div class="stat-label">Inbox Messages</div>
-              </div>
-              <div class="stat-icon" style="background:rgba(251,191,36,0.12);color:#fbbf24;">
-                <i class="fa-solid fa-inbox"></i>
-              </div>
-            </div>
+      <!-- Firebase status -->
+      <div class="px-5 py-3 border-b" style="border-color:#21262d;">
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-slate-500 font-mono">FIREBASE STATUS</span>
+          <div class="flex items-center gap-1.5">
+            <div id="fb-status-dot" class="status-dot bg-slate-600"></div>
+            <span id="fb-status-text" class="text-xs text-slate-500">Connecting…</span>
           </div>
         </div>
-
-        <!-- System Status -->
-        <div class="admin-card">
-          <div class="card-header">
-            <div class="card-title"><i class="fa-solid fa-signal"></i> System Status</div>
-            <span id="db-status-badge" class="badge badge-warning">Checking</span>
-          </div>
-          <div class="card-body">
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
-              <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;">
-                <div class="font-mono" style="font-size:0.65rem;color:var(--text-3);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.1em;">Firestore</div>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div class="conn-dot checking" id="fs-dot"></div>
-                  <span class="font-mono" style="font-size:0.72rem;" id="fs-status-text">Checking...</span>
-                </div>
-              </div>
-              <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;">
-                <div class="font-mono" style="font-size:0.65rem;color:var(--text-3);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.1em;">Auth</div>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div class="conn-dot" id="auth-dot" style="background:var(--text-3);"></div>
-                  <span class="font-mono" style="font-size:0.72rem;color:var(--text-3);">Anonymous</span>
-                </div>
-              </div>
-              <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;">
-                <div class="font-mono" style="font-size:0.65rem;color:var(--text-3);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.1em;">Config</div>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div class="conn-dot" id="config-dot" style="background:var(--text-3);"></div>
-                  <span class="font-mono" style="font-size:0.72rem;" id="config-status-text" style="color:var(--text-3);">Checking...</span>
-                </div>
-              </div>
-            </div>
-            <div class="divider"></div>
-            <div class="alert alert-info">
-              <i class="fa-solid fa-circle-info" style="margin-top:1px;flex-shrink:0;"></i>
-              <div>
-                <strong>Admin Panel Notice:</strong> This management dashboard is completely disconnected from the public portfolio page. Replace the Firebase configuration placeholders in both <code style="font-family:'JetBrains Mono',monospace;font-size:0.8em;background:rgba(255,255,255,0.1);padding:1px 5px;border-radius:3px;">index.html</code> and <code style="font-family:'JetBrains Mono',monospace;font-size:0.8em;background:rgba(255,255,255,0.1);padding:1px 5px;border-radius:3px;">manage.html</code> with your actual Firebase project credentials to enable live database writes.
-              </div>
-            </div>
-            <div id="dash-log" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;max-height:160px;overflow-y:auto;">
-              <div class="font-mono" style="font-size:0.68rem;color:var(--text-3);">[INIT] Portfolio CMS initializing...</div>
-            </div>
-          </div>
-        </div>
-
       </div>
 
-      <!-- ════════════════ PANEL: ABOUT ════════════════ -->
-      <div class="panel" id="panel-about">
-        <div class="alert alert-info" style="margin-bottom:20px;">
-          <i class="fa-solid fa-circle-info" style="flex-shrink:0;margin-top:1px;"></i>
-          <div>Updates to the <strong>About Segment</strong> are written to <code style="font-family:'JetBrains Mono',monospace;font-size:0.8em;background:rgba(255,255,255,0.1);padding:1px 5px;border-radius:3px;">portfolio_data/about</code> in Firestore and appear live on the public site immediately upon refresh.</div>
+      <!-- Nav links -->
+      <nav class="flex-1 p-3 space-y-1 overflow-y-auto">
+        <p class="text-xs font-bold tracking-widest uppercase text-slate-600 px-3 py-2">Content</p>
+        <a href="#about-section"   class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-sm text-slate-400 active">
+          <i class="fa-solid fa-user w-4 text-center"></i> About / Hero
+        </a>
+        <a href="#portfolio-section" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-sm text-slate-400">
+          <i class="fa-solid fa-images w-4 text-center"></i> Portfolio
+        </a>
+        <a href="#experience-section" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-sm text-slate-400">
+          <i class="fa-solid fa-timeline w-4 text-center"></i> Experience
+        </a>
+        <a href="#apps-section" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-sm text-slate-400">
+          <i class="fa-solid fa-grid-2 w-4 text-center"></i> Apps / Tools
+        </a>
+
+        <p class="text-xs font-bold tracking-widest uppercase text-slate-600 px-3 py-2 mt-4">Comms</p>
+        <a href="#messages-section" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-sm text-slate-400">
+          <i class="fa-solid fa-inbox w-4 text-center"></i> Messages
+          <span id="msg-count-badge" class="ml-auto text-xs px-1.5 py-0.5 rounded-full font-bold hidden"
+                style="background:rgba(248,113,113,0.2);color:#f87171;">0</span>
+        </a>
+
+        <p class="text-xs font-bold tracking-widest uppercase text-slate-600 px-3 py-2 mt-4">Database</p>
+        <a href="#schema-section" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-sm text-slate-400">
+          <i class="fa-solid fa-database w-4 text-center"></i> Schema Ref
+        </a>
+      </nav>
+
+      <!-- Footer meta -->
+      <div class="p-4 border-t text-xs text-slate-600 font-mono space-y-1" style="border-color:#21262d;">
+        <div>v2.0.0 · Static CMS</div>
+        <div>Firestore SDK v10.12.2</div>
+        <div id="current-date-admin"></div>
+      </div>
+    </aside>
+
+    <!-- ── Main content area ───────────────────────────── -->
+    <main class="flex-1 overflow-y-auto">
+
+      <!-- Top bar -->
+      <div class="sticky top-0 z-40 flex items-center justify-between px-6 py-3"
+           style="background:rgba(13,17,23,0.9);backdrop-filter:blur(12px);border-bottom:1px solid #21262d;">
+        <div>
+          <h1 class="font-bold text-white text-base">Admin Dashboard</h1>
+          <p class="text-xs text-slate-500">Firestore Realtime Content Management</p>
         </div>
-
-        <div class="admin-card">
-          <div class="card-header">
-            <div class="card-title"><i class="fa-solid fa-id-card"></i> Hero / About Segment</div>
-            <span class="badge badge-info">setDoc</span>
+        <div class="flex items-center gap-3">
+          <button onclick="loadMessages()" title="Refresh Messages"
+                  class="w-9 h-9 rounded-lg flex items-center justify-center text-slate-400 hover:text-white transition-colors border"
+                  style="border-color:#21262d;background:#161b22;">
+            <i class="fa-solid fa-rotate text-sm"></i>
+          </button>
+          <div class="text-xs font-mono text-slate-500 hidden sm:block">
+            <span id="admin-clock"></span>
           </div>
-          <div class="card-body">
-            <div class="field-group">
-              <label class="field-label">Hero Headline <span class="required">*</span></label>
-              <input type="text" id="ab-headline" class="form-input" placeholder='e.g. "Crafting Digital Experiences That Actually Matter."' />
-              <div style="font-size:0.7rem;color:var(--text-3);margin-top:4px;">This is the large H1 text displayed in the hero section.</div>
+        </div>
+      </div>
+
+      <!-- ── Content sections ────────────────────────── -->
+      <div class="p-6 space-y-8 max-w-5xl">
+
+        <!-- ════════════════════════════════════════════
+             SECTION 1: ABOUT / HERO
+             ════════════════════════════════════════════ -->
+        <section id="about-section">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center"
+                 style="background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.25);">
+              <i class="fa-solid fa-user text-emerald-400 text-sm"></i>
             </div>
-            <div class="field-group">
-              <label class="field-label">Biography / About Text <span class="required">*</span></label>
-              <textarea id="ab-bio" class="form-input" placeholder="Write a detailed professional biography. This appears beneath the headline in the hero section and also inside the generated print resume..."></textarea>
+            <div>
+              <h2 class="font-bold text-white text-base">About / Hero Segment</h2>
+              <p class="text-xs text-slate-500">Updates <code>portfolio_data/about</code> document</p>
             </div>
-            <div class="field-group">
-              <label class="field-label">Master Resume Download URL</label>
-              <input type="url" id="ab-resume-url" class="form-input" placeholder="https://example.com/resume.pdf or /resume.pdf" />
-              <div style="font-size:0.7rem;color:var(--text-3);margin-top:4px;">Direct link to the static master resume PDF file. Used by the "Download Master Resume" button.</div>
+          </div>
+
+          <div class="cms-card">
+            <div class="cms-card-header">
+              <i class="fa-solid fa-pen-nib text-emerald-400 text-sm"></i>
+              <span class="font-semibold text-sm text-white">Edit Profile Content</span>
+              <span class="ml-auto text-xs text-slate-500 font-mono">setDoc → portfolio_data/about</span>
+            </div>
+            <div class="cms-card-body space-y-5">
+
+              <div>
+                <label class="admin-label" for="ab-headline">Hero Headline</label>
+                <input id="ab-headline" type="text" class="admin-input"
+                       placeholder="Engineer. Creator. Innovator." />
+                <p class="text-xs text-slate-600 mt-1">Displayed as the large bold title on the hero section.</p>
+              </div>
+
+              <div>
+                <label class="admin-label" for="ab-bio">Full Biography</label>
+                <textarea id="ab-bio" rows="6" class="admin-input resize-y"
+                          placeholder="Write a detailed professional biography. Each new line creates a new paragraph on the site."></textarea>
+                <p class="text-xs text-slate-600 mt-1">Separate paragraphs with new lines. The first 220 characters appear on the hero section; the full text appears in the About section.</p>
+              </div>
+
+              <div>
+                <label class="admin-label" for="ab-resume-url">Master Resume Download URL</label>
+                <div class="flex gap-2">
+                  <input id="ab-resume-url" type="url" class="admin-input"
+                         placeholder="https://drive.google.com/uc?export=download&id=FILE_ID" />
+                </div>
+                <p class="text-xs text-slate-600 mt-1">Direct download link for the static master resume PDF (Google Drive, Dropbox, etc.).</p>
+              </div>
+
+              <div class="flex items-center justify-between pt-2">
+                <div id="about-load-status" class="text-xs text-slate-500 flex items-center gap-2">
+                  <i class="fa-solid fa-circle-info text-slate-600"></i>
+                  Fill in fields or load existing data below.
+                </div>
+                <div class="flex gap-3">
+                  <button onclick="loadAboutData()"
+                          class="commit-btn commit-btn-blue">
+                    <i class="fa-solid fa-download"></i> Load Current
+                  </button>
+                  <button onclick="commitAbout()"
+                          class="commit-btn commit-btn-green">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Commit to Firebase
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════
+             SECTION 2: PORTFOLIO CARAVAN
+             ════════════════════════════════════════════ -->
+        <section id="portfolio-section">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center"
+                 style="background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.25);">
+              <i class="fa-solid fa-images text-blue-400 text-sm"></i>
+            </div>
+            <div>
+              <h2 class="font-bold text-white text-base">Portfolio Caravan</h2>
+              <p class="text-xs text-slate-500">Adds to <code>portfolio</code> collection</p>
+            </div>
+          </div>
+
+          <div class="grid gap-5">
+            <!-- Add new portfolio item -->
+            <div class="cms-card">
+              <div class="cms-card-header">
+                <i class="fa-solid fa-plus text-blue-400 text-sm"></i>
+                <span class="font-semibold text-sm text-white">Add New Portfolio Node</span>
+                <span class="ml-auto text-xs text-slate-500 font-mono">addDoc → portfolio</span>
+              </div>
+              <div class="cms-card-body">
+                <div class="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="admin-label" for="pt-title">Asset Title *</label>
+                    <input id="pt-title" type="text" class="admin-input" placeholder="Project / Document Name" />
+                  </div>
+                  <div>
+                    <label class="admin-label" for="pt-type">Content Type *</label>
+                    <select id="pt-type" class="admin-input" style="cursor:pointer;">
+                      <option value="">— Select Type —</option>
+                      <option value="Site">Site (Live Website)</option>
+                      <option value="URL">URL (External Link)</option>
+                      <option value="Image">Image (Direct image file)</option>
+                      <option value="PDF">PDF (Document / Paper)</option>
+                      <option value="PPT">PPT (PowerPoint via Office Online)</option>
+                    </select>
+                  </div>
+                  <div class="sm:col-span-2">
+                    <label class="admin-label" for="pt-desc">Description</label>
+                    <textarea id="pt-desc" rows="3" class="admin-input resize-none"
+                              placeholder="Brief description shown on the card and in the modal."></textarea>
+                  </div>
+                  <div>
+                    <label class="admin-label" for="pt-link">Target File / Link URL *</label>
+                    <input id="pt-link" type="url" class="admin-input"
+                           placeholder="https://... (direct URL to content)" />
+                    <p class="text-xs text-slate-600 mt-1">
+                      <strong class="text-slate-400">PPT:</strong> must be a publicly accessible .pptx URL for Office Online viewer.
+                    </p>
+                  </div>
+                  <div>
+                    <label class="admin-label" for="pt-thumbnail">Thumbnail Image URL</label>
+                    <input id="pt-thumbnail" type="url" class="admin-input"
+                           placeholder="https://... (card preview image)" />
+                  </div>
+                  <div>
+                    <label class="admin-label" for="pt-order">Display Order</label>
+                    <input id="pt-order" type="number" class="admin-input" placeholder="1" min="1" />
+                  </div>
+                  <div id="pt-thumb-preview-wrap" class="flex items-center gap-3 hidden">
+                    <img id="pt-thumb-preview" src="" alt="preview"
+                         class="w-16 h-16 rounded-lg object-cover border" style="border-color:#21262d;" />
+                    <span class="text-xs text-slate-500">Thumbnail preview</span>
+                  </div>
+                </div>
+                <div class="flex items-center justify-end gap-3 mt-5 pt-4" style="border-top:1px solid #21262d;">
+                  <button onclick="clearPortfolioForm()"
+                          class="commit-btn commit-btn-red">
+                    <i class="fa-solid fa-trash"></i> Clear Form
+                  </button>
+                  <button onclick="commitPortfolioItem()"
+                          class="commit-btn commit-btn-blue">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Add to Caravan
+                  </button>
+                </div>
+              </div>
             </div>
 
-            <div class="divider"></div>
+            <!-- Existing portfolio items -->
+            <div class="cms-card">
+              <div class="cms-card-header">
+                <i class="fa-solid fa-list text-blue-400 text-sm"></i>
+                <span class="font-semibold text-sm text-white">Existing Portfolio Items</span>
+                <button onclick="loadPortfolioItems()"
+                        class="ml-auto commit-btn commit-btn-blue" style="padding:0.35rem 0.75rem;font-size:0.75rem;">
+                  <i class="fa-solid fa-rotate"></i> Refresh
+                </button>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Title</th>
+                      <th>Type</th>
+                      <th>Link</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="portfolio-table-body">
+                    <tr>
+                      <td colspan="5" class="text-center text-slate-600 py-8">
+                        <i class="fa-solid fa-circle-notch fa-spin mr-2"></i>Click Refresh to load items
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
 
-            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
-              <button class="btn btn-ghost btn-sm" onclick="loadAboutData()">
-                <i class="fa-solid fa-rotate"></i> Load Current Data
-              </button>
-              <div style="display:flex;gap:10px;">
-                <button class="btn btn-primary" onclick="commitAbout()">
-                  <i class="fa-solid fa-cloud-arrow-up"></i> Commit to Firestore
+        <!-- ════════════════════════════════════════════
+             SECTION 3: EXPERIENCE TIMELINE
+             ════════════════════════════════════════════ -->
+        <section id="experience-section">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center"
+                 style="background:rgba(251,146,60,0.1);border:1px solid rgba(251,146,60,0.25);">
+              <i class="fa-solid fa-timeline text-orange-400 text-sm"></i>
+            </div>
+            <div>
+              <h2 class="font-bold text-white text-base">Experience Timeline</h2>
+              <p class="text-xs text-slate-500">Adds to <code>experience</code> collection</p>
+            </div>
+          </div>
+
+          <div class="cms-card">
+            <div class="cms-card-header">
+              <i class="fa-solid fa-plus text-orange-400 text-sm"></i>
+              <span class="font-semibold text-sm text-white">Add Experience Entry</span>
+              <span class="ml-auto text-xs text-slate-500 font-mono">addDoc → experience</span>
+            </div>
+            <div class="cms-card-body">
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="admin-label" for="ex-role">Job Title / Role *</label>
+                  <input id="ex-role" type="text" class="admin-input" placeholder="Senior Systems Engineer" />
+                </div>
+                <div>
+                  <label class="admin-label" for="ex-org">Organization / Company *</label>
+                  <input id="ex-org" type="text" class="admin-input" placeholder="Company Name" />
+                </div>
+                <div>
+                  <label class="admin-label" for="ex-date">Date Range *</label>
+                  <input id="ex-date" type="text" class="admin-input" placeholder="Jan 2022 — Present" />
+                </div>
+                <div>
+                  <label class="admin-label" for="ex-icon">FontAwesome Icon Class</label>
+                  <input id="ex-icon" type="text" class="admin-input" placeholder="fa-briefcase" />
+                  <p class="text-xs text-slate-600 mt-1">e.g. <code>fa-code</code>, <code>fa-microchip</code>, <code>fa-network-wired</code></p>
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="admin-label" for="ex-desc">Description</label>
+                  <textarea id="ex-desc" rows="4" class="admin-input resize-none"
+                            placeholder="Describe your key responsibilities, achievements, and impact in this role."></textarea>
+                </div>
+                <div>
+                  <label class="admin-label" for="ex-order">Display Order</label>
+                  <input id="ex-order" type="number" class="admin-input" placeholder="1" min="1" />
+                </div>
+              </div>
+              <div class="flex items-center justify-end gap-3 mt-5 pt-4" style="border-top:1px solid #21262d;">
+                <button onclick="commitExperience()"
+                        class="commit-btn commit-btn-amber">
+                  <i class="fa-solid fa-cloud-arrow-up"></i> Add Experience Entry
                 </button>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Social Links Card -->
-        <div class="admin-card">
-          <div class="card-header">
-            <div class="card-title"><i class="fa-solid fa-share-nodes"></i> Social Links</div>
-            <span class="badge badge-warning">Optional</span>
-          </div>
-          <div class="card-body">
-            <div class="two-col">
-              <div class="field-group">
-                <label class="field-label"><i class="fa-brands fa-github" style="margin-right:4px;"></i> GitHub URL</label>
-                <input type="url" id="ab-github" class="form-input" placeholder="https://github.com/username" />
-              </div>
-              <div class="field-group">
-                <label class="field-label"><i class="fa-brands fa-linkedin" style="margin-right:4px;"></i> LinkedIn URL</label>
-                <input type="url" id="ab-linkedin" class="form-input" placeholder="https://linkedin.com/in/username" />
-              </div>
-              <div class="field-group">
-                <label class="field-label"><i class="fa-brands fa-twitter" style="margin-right:4px;"></i> Twitter / X URL</label>
-                <input type="url" id="ab-twitter" class="form-input" placeholder="https://twitter.com/username" />
-              </div>
-              <div class="field-group">
-                <label class="field-label"><i class="fa-solid fa-envelope" style="margin-right:4px;"></i> Email Address</label>
-                <input type="email" id="ab-email" class="form-input" placeholder="hello@yourname.dev" />
-              </div>
-            </div>
-            <button class="btn btn-primary" onclick="commitAboutSocial()" style="margin-top:4px;">
-              <i class="fa-solid fa-cloud-arrow-up"></i> Commit Social Links
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ════════════════ PANEL: EXPERIENCE ════════════════ -->
-      <div class="panel" id="panel-experience">
-
-        <div class="admin-card" style="margin-bottom:20px;">
-          <div class="card-header">
-            <div class="card-title"><i class="fa-solid fa-plus-circle"></i> Add Experience Entry</div>
-            <span class="badge badge-info">addDoc</span>
-          </div>
-          <div class="card-body">
-            <div class="two-col">
-              <div class="field-group">
-                <label class="field-label">Job Role / Title <span class="required">*</span></label>
-                <input type="text" id="exp-role" class="form-input" placeholder="e.g. Senior Full-Stack Developer" />
-              </div>
-              <div class="field-group">
-                <label class="field-label">Organization / Company <span class="required">*</span></label>
-                <input type="text" id="exp-org" class="form-input" placeholder="e.g. Acme Digital Labs" />
-              </div>
-            </div>
-            <div class="two-col">
-              <div class="field-group">
-                <label class="field-label">Date Range <span class="required">*</span></label>
-                <input type="text" id="exp-dates" class="form-input" placeholder="Jan 2022 — Present" />
-              </div>
-              <div class="field-group">
-                <label class="field-label">Display Order</label>
-                <input type="number" id="exp-order" class="form-input" placeholder="1" min="1" />
-              </div>
-            </div>
-            <div class="field-group">
-              <label class="field-label">Description <span class="required">*</span></label>
-              <textarea id="exp-desc" class="form-input" placeholder="Describe your responsibilities, achievements, and impact in this role..."></textarea>
-            </div>
-            <button class="btn btn-success" onclick="commitExperience()">
-              <i class="fa-solid fa-plus"></i> Add Experience Entry
-            </button>
-          </div>
-        </div>
-
-        <div class="admin-card">
-          <div class="card-header">
-            <div class="card-title"><i class="fa-solid fa-list"></i> Current Experience Entries</div>
-            <button class="btn btn-ghost btn-sm" onclick="loadExperienceList()">
-              <i class="fa-solid fa-rotate"></i> Refresh
-            </button>
-          </div>
-          <div class="card-body">
-            <div class="record-list" id="exp-list">
-              <div class="font-mono" style="font-size:0.75rem;color:var(--text-3);padding:8px 0;">Loading records...</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ════════════════ PANEL: PORTFOLIO ════════════════ -->
-      <div class="panel" id="panel-portfolio">
-
-        <div class="admin-card" style="margin-bottom:20px;">
-          <div class="card-header">
-            <div class="card-title"><i class="fa-solid fa-plus-circle"></i> Add Portfolio Item</div>
-            <span class="badge badge-info">addDoc</span>
-          </div>
-          <div class="card-body">
-            <div class="two-col">
-              <div class="field-group">
-                <label class="field-label">Project Title <span class="required">*</span></label>
-                <input type="text" id="port-title" class="form-input" placeholder="e.g. EduTrack Platform" />
-              </div>
-              <div class="field-group">
-                <label class="field-label">Asset Type <span class="required">*</span></label>
-                <select id="port-type" class="form-input">
-                  <option value="">— Select Type —</option>
-                  <option value="Site">Site (iFrame Embed)</option>
-                  <option value="URL">URL (External Link)</option>
-                  <option value="Image">Image (Direct Preview)</option>
-                  <option value="PDF">PDF (iFrame Embed)</option>
-                  <option value="PPT">PPT (Office Online Viewer)</option>
-                  <option value="PPTX">PPTX (Office Online Viewer)</option>
-                </select>
-              </div>
-            </div>
-            <div class="field-group">
-              <label class="field-label">Description <span class="required">*</span></label>
-              <textarea id="port-desc" class="form-input" placeholder="Brief description of the project, its purpose, and the technologies used..." style="min-height:90px;"></textarea>
-            </div>
-            <div class="two-col">
-              <div class="field-group">
-                <label class="field-label">Target File / Link <span class="required">*</span></label>
-                <input type="url" id="port-link" class="form-input" placeholder="https://example.com or /files/deck.pptx" />
-                <div style="font-size:0.68rem;color:var(--text-3);margin-top:4px;">The URL that will be opened or embedded in the modal. For PPT/PPTX, provide a publicly accessible direct link.</div>
-              </div>
-              <div class="field-group">
-                <label class="field-label">Thumbnail Image URL</label>
-                <input type="url" id="port-thumb" class="form-input" placeholder="https://example.com/thumbnail.jpg" />
-                <div style="font-size:0.68rem;color:var(--text-3);margin-top:4px;">Card preview image. Leave empty to use a type icon placeholder.</div>
-              </div>
-            </div>
-            <div class="field-group">
-              <label class="field-label">Display Order</label>
-              <input type="number" id="port-order" class="form-input" placeholder="1" min="1" style="max-width:160px;" />
-            </div>
-
-            <!-- Thumbnail Preview -->
-            <div id="thumb-preview-wrap" style="display:none;margin-bottom:12px;">
-              <div style="font-size:0.7rem;color:var(--text-3);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em;font-family:'Space Grotesk',sans-serif;font-weight:600;">Thumbnail Preview</div>
-              <img id="thumb-preview-img" src="" alt="Thumbnail preview" style="max-width:200px;height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--border);" />
-            </div>
-
-            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-              <button class="btn btn-success" onclick="commitPortfolio()">
-                <i class="fa-solid fa-plus"></i> Add Portfolio Item
-              </button>
-              <button class="btn btn-ghost btn-sm" onclick="previewThumb()">
-                <i class="fa-solid fa-eye"></i> Preview Thumb
+          <!-- Existing entries table -->
+          <div class="cms-card mt-4">
+            <div class="cms-card-header">
+              <i class="fa-solid fa-list text-orange-400 text-sm"></i>
+              <span class="font-semibold text-sm text-white">Existing Entries</span>
+              <button onclick="loadExperienceItems()"
+                      class="ml-auto commit-btn commit-btn-amber" style="padding:0.35rem 0.75rem;font-size:0.75rem;">
+                <i class="fa-solid fa-rotate"></i> Refresh
               </button>
             </div>
-          </div>
-        </div>
-
-        <div class="admin-card">
-          <div class="card-header">
-            <div class="card-title"><i class="fa-solid fa-list"></i> Current Portfolio Items</div>
-            <button class="btn btn-ghost btn-sm" onclick="loadPortfolioList()">
-              <i class="fa-solid fa-rotate"></i> Refresh
-            </button>
-          </div>
-          <div class="card-body">
-            <div class="record-list" id="port-list">
-              <div class="font-mono" style="font-size:0.75rem;color:var(--text-3);padding:8px 0;">Loading records...</div>
+            <div class="overflow-x-auto">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Order</th>
+                    <th>Role</th>
+                    <th>Organization</th>
+                    <th>Date Range</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="experience-table-body">
+                  <tr>
+                    <td colspan="5" class="text-center text-slate-600 py-8">
+                      Click Refresh to load entries
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
-        </div>
-      </div>
+        </section>
 
-      <!-- ════════════════ PANEL: SKILLS ════════════════ -->
-      <div class="panel" id="panel-skills">
-
-        <div class="alert alert-warning" style="margin-bottom:20px;">
-          <i class="fa-solid fa-triangle-exclamation" style="flex-shrink:0;margin-top:1px;"></i>
-          <div>Skills are stored as <strong>category documents</strong> in the <code style="font-family:'JetBrains Mono',monospace;font-size:0.8em;background:rgba(255,255,255,0.1);padding:1px 5px;border-radius:3px;">skills</code> collection. Each document contains a category name, icon, and an array of skill items with their individual icons.</div>
-        </div>
-
-        <div class="admin-card" style="margin-bottom:20px;">
-          <div class="card-header">
-            <div class="card-title"><i class="fa-solid fa-plus-circle"></i> Add Skill Category</div>
-            <span class="badge badge-info">addDoc</span>
-          </div>
-          <div class="card-body">
-            <div class="two-col">
-              <div class="field-group">
-                <label class="field-label">Category Name <span class="required">*</span></label>
-                <input type="text" id="skill-cat" class="form-input" placeholder="e.g. Frontend Development" />
-              </div>
-              <div class="field-group">
-                <label class="field-label">Category Icon (FontAwesome class)</label>
-                <input type="text" id="skill-icon" class="form-input" placeholder="fa-solid fa-browser" />
-              </div>
+        <!-- ════════════════════════════════════════════
+             SECTION 4: APPS / TOOLS
+             ════════════════════════════════════════════ -->
+        <section id="apps-section">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center"
+                 style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25);">
+              <i class="fa-solid fa-grid-2 text-violet-400 text-sm"></i>
             </div>
-            <div class="field-group">
-              <label class="field-label">Skills (one per line, format: "Skill Name | fa-icon-class") <span class="required">*</span></label>
-              <textarea id="skill-items" class="form-input" style="min-height:140px;font-family:'JetBrains Mono',monospace;font-size:0.8rem;" placeholder="React / Next.js | fa-brands fa-react&#10;Vue.js | fa-brands fa-vuejs&#10;TypeScript | fa-brands fa-js&#10;Tailwind CSS | fa-solid fa-paintbrush&#10;HTML5 / CSS3 | fa-brands fa-html5"></textarea>
-              <div style="font-size:0.68rem;color:var(--text-3);margin-top:4px;">Format: <code style="font-family:'JetBrains Mono',monospace;">Skill Name | fa-icon-class</code> — One skill per line. Use any valid FontAwesome 6 class string.</div>
-            </div>
-            <button class="btn btn-success" onclick="commitSkillCategory()">
-              <i class="fa-solid fa-plus"></i> Add Skill Category
-            </button>
-          </div>
-        </div>
-
-        <div class="admin-card">
-          <div class="card-header">
-            <div class="card-title"><i class="fa-solid fa-list"></i> Current Skill Categories</div>
-            <button class="btn btn-ghost btn-sm" onclick="loadSkillsList()">
-              <i class="fa-solid fa-rotate"></i> Refresh
-            </button>
-          </div>
-          <div class="card-body">
-            <div class="record-list" id="skills-list">
-              <div class="font-mono" style="font-size:0.75rem;color:var(--text-3);padding:8px 0;">Loading records...</div>
+            <div>
+              <h2 class="font-bold text-white text-base">Application Matrix</h2>
+              <p class="text-xs text-slate-500">Adds to <code>apps</code> collection</p>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- ════════════════ PANEL: MESSAGES ════════════════ -->
-      <div class="panel" id="panel-messages">
-        <div class="admin-card">
-          <div class="card-header">
-            <div class="card-title"><i class="fa-solid fa-inbox"></i> Contact Form Submissions</div>
-            <button class="btn btn-ghost btn-sm" onclick="loadMessages()">
-              <i class="fa-solid fa-rotate"></i> Refresh
-            </button>
-          </div>
-          <div class="card-body">
-            <div id="messages-list">
-              <div class="font-mono" style="font-size:0.75rem;color:var(--text-3);padding:8px 0;">Loading messages...</div>
+          <div class="cms-card">
+            <div class="cms-card-header">
+              <i class="fa-solid fa-plus text-violet-400 text-sm"></i>
+              <span class="font-semibold text-sm text-white">Add Tool / Technology</span>
+              <span class="ml-auto text-xs text-slate-500 font-mono">addDoc → apps</span>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ════════════════ PANEL: SETTINGS ════════════════ -->
-      <div class="panel" id="panel-settings">
-        <div class="admin-card" style="margin-bottom:20px;">
-          <div class="card-header">
-            <div class="card-title"><i class="fa-solid fa-key"></i> Firebase Configuration</div>
-            <span class="badge badge-warning">Critical</span>
-          </div>
-          <div class="card-body">
-            <div class="alert alert-danger" style="margin-bottom:16px;">
-              <i class="fa-solid fa-shield-halved" style="flex-shrink:0;margin-top:1px;"></i>
-              <div><strong>Security Notice:</strong> These credentials are embedded in both HTML files. For production, consider implementing Firebase App Check, Security Rules, and restricting API keys to your domain. Never expose Admin SDK credentials here.</div>
-            </div>
-            <div class="two-col">
-              <div class="field-group">
-                <label class="field-label">API Key</label>
-                <input type="text" id="cfg-apikey" class="form-input font-mono" placeholder="AIzaSy..." value="YOUR_API_KEY_HERE" />
+            <div class="cms-card-body">
+              <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                  <label class="admin-label" for="ap-name">Tool Name *</label>
+                  <input id="ap-name" type="text" class="admin-input" placeholder="VS Code" />
+                </div>
+                <div>
+                  <label class="admin-label" for="ap-icon">FA Icon Class *</label>
+                  <input id="ap-icon" type="text" class="admin-input" placeholder="fa-code" />
+                  <p class="text-xs text-slate-600 mt-1">FontAwesome class e.g. <code>fa-python</code></p>
+                </div>
+                <div>
+                  <label class="admin-label" for="ap-color">Accent Color (hex)</label>
+                  <div class="flex gap-2 items-center">
+                    <input id="ap-color" type="text" class="admin-input" placeholder="#60a5fa" />
+                    <input type="color" id="ap-color-picker" value="#60a5fa"
+                           class="w-10 h-10 rounded cursor-pointer border-0 bg-transparent flex-shrink-0"
+                           oninput="document.getElementById('ap-color').value=this.value" />
+                  </div>
+                </div>
+                <div>
+                  <label class="admin-label" for="ap-category">Category</label>
+                  <input id="ap-category" type="text" class="admin-input" placeholder="Language / IDE / DevOps…" />
+                </div>
               </div>
-              <div class="field-group">
-                <label class="field-label">Project ID</label>
-                <input type="text" id="cfg-projectid" class="form-input font-mono" placeholder="my-portfolio-project" value="YOUR_PROJECT_ID" />
-              </div>
-              <div class="field-group">
-                <label class="field-label">Auth Domain</label>
-                <input type="text" id="cfg-authdomain" class="form-input font-mono" placeholder="project.firebaseapp.com" value="YOUR_PROJECT_ID.firebaseapp.com" />
-              </div>
-              <div class="field-group">
-                <label class="field-label">Storage Bucket</label>
-                <input type="text" id="cfg-bucket" class="form-input font-mono" placeholder="project.appspot.com" value="YOUR_PROJECT_ID.appspot.com" />
-              </div>
-              <div class="field-group">
-                <label class="field-label">Messaging Sender ID</label>
-                <input type="text" id="cfg-senderid" class="form-input font-mono" placeholder="123456789012" value="YOUR_MESSAGING_SENDER_ID" />
-              </div>
-              <div class="field-group">
-                <label class="field-label">App ID</label>
-                <input type="text" id="cfg-appid" class="form-input font-mono" placeholder="1:123:web:abc123" value="YOUR_APP_ID" />
+              <div class="flex items-center justify-end gap-3 mt-5 pt-4" style="border-top:1px solid #21262d;">
+                <button onclick="commitApp()"
+                        class="commit-btn" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);color:#fff;">
+                  <i class="fa-solid fa-cloud-arrow-up"></i> Add to Matrix
+                </button>
               </div>
             </div>
-            <div class="divider"></div>
-            <div class="alert alert-info" style="margin-bottom:14px;">
-              <i class="fa-solid fa-circle-info" style="flex-shrink:0;margin-top:1px;"></i>
-              After updating credentials above, you must manually copy these values into both <code style="font-family:'JetBrains Mono',monospace;font-size:0.8em;background:rgba(255,255,255,0.1);padding:1px 5px;border-radius:3px;">index.html</code> and <code style="font-family:'JetBrains Mono',monospace;font-size:0.8em;background:rgba(255,255,255,0.1);padding:1px 5px;border-radius:3px;">manage.html</code> firebaseConfig objects. The page must reload to apply changes.
-            </div>
-            <button class="btn btn-primary" onclick="testConnectionWithCurrentConfig()">
-              <i class="fa-solid fa-plug"></i> Test Connection
-            </button>
           </div>
-        </div>
+        </section>
 
-        <div class="admin-card">
-          <div class="card-header">
-            <div class="card-title"><i class="fa-solid fa-broom"></i> Bulk Operations</div>
-            <span class="badge badge-error">Destructive</span>
-          </div>
-          <div class="card-body">
-            <div class="alert alert-danger" style="margin-bottom:16px;">
-              <i class="fa-solid fa-triangle-exclamation" style="flex-shrink:0;margin-top:1px;"></i>
-              <strong>Warning:</strong> These operations are irreversible. Deleted documents cannot be recovered. Proceed with extreme caution.
+        <!-- ════════════════════════════════════════════
+             SECTION 5: MESSAGES INBOX
+             ════════════════════════════════════════════ -->
+        <section id="messages-section">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center"
+                 style="background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.25);">
+              <i class="fa-solid fa-inbox text-rose-400 text-sm"></i>
             </div>
-            <div style="display:flex;flex-wrap:wrap;gap:10px;">
-              <button class="btn btn-danger btn-sm" onclick="confirmBulkDelete('portfolio')">
-                <i class="fa-solid fa-trash"></i> Clear Portfolio Collection
-              </button>
-              <button class="btn btn-danger btn-sm" onclick="confirmBulkDelete('experience')">
-                <i class="fa-solid fa-trash"></i> Clear Experience Collection
-              </button>
-              <button class="btn btn-danger btn-sm" onclick="confirmBulkDelete('messages')">
-                <i class="fa-solid fa-trash"></i> Clear Messages Collection
+            <div>
+              <h2 class="font-bold text-white text-base">Messages Inbox</h2>
+              <p class="text-xs text-slate-500">Reads from <code>messages</code> collection</p>
+            </div>
+          </div>
+
+          <div class="cms-card">
+            <div class="cms-card-header">
+              <i class="fa-solid fa-envelope text-rose-400 text-sm"></i>
+              <span class="font-semibold text-sm text-white">Contact Form Submissions</span>
+              <button onclick="loadMessages()"
+                      class="ml-auto commit-btn commit-btn-red" style="padding:0.35rem 0.75rem;font-size:0.75rem;">
+                <i class="fa-solid fa-rotate"></i> Refresh
               </button>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ════════════════ PANEL: LOGS ════════════════ -->
-      <div class="panel" id="panel-logs">
-        <div class="admin-card">
-          <div class="card-header">
-            <div class="card-title"><i class="fa-solid fa-terminal"></i> Activity Log</div>
-            <div style="display:flex;gap:8px;">
-              <button class="btn btn-ghost btn-sm" onclick="clearLogs()">
-                <i class="fa-solid fa-eraser"></i> Clear
-              </button>
-              <span id="log-count" class="badge badge-info">0 entries</span>
+            <div class="overflow-x-auto">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Message</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="messages-table-body">
+                  <tr>
+                    <td colspan="5" class="text-center text-slate-600 py-10">
+                      <i class="fa-solid fa-circle-notch fa-spin mr-2"></i>Loading messages…
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
-          <div class="card-body" style="padding:0;">
-            <div id="activity-log" style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;padding:16px;max-height:65vh;overflow-y:auto;background:var(--bg);border-radius:0 0 14px 14px;">
-              <div style="color:var(--text-3);">[INIT] Activity log started. All CMS operations will appear here.</div>
+        </section>
+
+        <!-- ════════════════════════════════════════════
+             SECTION 6: SCHEMA REFERENCE
+             ════════════════════════════════════════════ -->
+        <section id="schema-section" class="pb-12">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center"
+                 style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);">
+              <i class="fa-solid fa-database text-amber-400 text-sm"></i>
+            </div>
+            <div>
+              <h2 class="font-bold text-white text-base">Firestore Schema Reference</h2>
+              <p class="text-xs text-slate-500">Collection structures for this project</p>
             </div>
           </div>
-        </div>
-      </div>
 
-    </div>
+          <div class="grid md:grid-cols-2 gap-4">
+            <!-- portfolio_data/about -->
+            <div class="cms-card">
+              <div class="cms-card-header">
+                <i class="fa-solid fa-file-code text-amber-400 text-xs"></i>
+                <code class="text-amber-400 text-xs">portfolio_data / about</code>
+                <span class="ml-auto text-xs text-slate-600">Document</span>
+              </div>
+              <div class="cms-card-body font-mono text-xs text-slate-400 space-y-1">
+                <div><span class="text-violet-400">headline</span>: <span class="text-emerald-400">string</span></div>
+                <div><span class="text-violet-400">bio</span>: <span class="text-emerald-400">string</span></div>
+                <div><span class="text-violet-400">resume_url</span>: <span class="text-emerald-400">string (URL)</span></div>
+              </div>
+            </div>
+
+            <!-- experience -->
+            <div class="cms-card">
+              <div class="cms-card-header">
+                <i class="fa-solid fa-file-code text-amber-400 text-xs"></i>
+                <code class="text-amber-400 text-xs">experience / {docId}</code>
+                <span class="ml-auto text-xs text-slate-600">Collection</span>
+              </div>
+              <div class="cms-card-body font-mono text-xs text-slate-400 space-y-1">
+                <div><span class="text-violet-400">role</span>: <span class="text-emerald-400">string</span></div>
+                <div><span class="text-violet-400">organization</span>: <span class="text-emerald-400">string</span></div>
+                <div><span class="text-violet-400">date_range</span>: <span class="text-emerald-400">string</span></div>
+                <div><span class="text-violet-400">description</span>: <span class="text-emerald-400">string</span></div>
+                <div><span class="text-violet-400">icon</span>: <span class="text-emerald-400">string (FA class)</span></div>
+                <div><span class="text-violet-400">order</span>: <span class="text-blue-400">number</span></div>
+              </div>
+            </div>
+
+            <!-- portfolio -->
+            <div class="cms-card">
+              <div class="cms-card-header">
+                <i class="fa-solid fa-file-code text-amber-400 text-xs"></i>
+                <code class="text-amber-400 text-xs">portfolio / {docId}</code>
+                <span class="ml-auto text-xs text-slate-600">Collection</span>
+              </div>
+              <div class="cms-card-body font-mono text-xs text-slate-400 space-y-1">
+                <div><span class="text-violet-400">title</span>: <span class="text-emerald-400">string</span></div>
+                <div><span class="text-violet-400">description</span>: <span class="text-emerald-400">string</span></div>
+                <div><span class="text-violet-400">type</span>: <span class="text-emerald-400">"PPT"|"Image"|"URL"|"Site"|"PDF"</span></div>
+                <div><span class="text-violet-400">link</span>: <span class="text-emerald-400">string (URL)</span></div>
+                <div><span class="text-violet-400">thumbnail</span>: <span class="text-emerald-400">string (URL)</span></div>
+                <div><span class="text-violet-400">order</span>: <span class="text-blue-400">number</span></div>
+              </div>
+            </div>
+
+            <!-- apps -->
+            <div class="cms-card">
+              <div class="cms-card-header">
+                <i class="fa-solid fa-file-code text-amber-400 text-xs"></i>
+                <code class="text-amber-400 text-xs">apps / {docId}</code>
+                <span class="ml-auto text-xs text-slate-600">Collection</span>
+              </div>
+              <div class="cms-card-body font-mono text-xs text-slate-400 space-y-1">
+                <div><span class="text-violet-400">name</span>: <span class="text-emerald-400">string</span></div>
+                <div><span class="text-violet-400">icon</span>: <span class="text-emerald-400">string (FA class)</span></div>
+                <div><span class="text-violet-400">color</span>: <span class="text-emerald-400">string (hex)</span></div>
+                <div><span class="text-violet-400">category</span>: <span class="text-emerald-400">string</span></div>
+              </div>
+            </div>
+
+            <!-- messages -->
+            <div class="cms-card md:col-span-2">
+              <div class="cms-card-header">
+                <i class="fa-solid fa-file-code text-amber-400 text-xs"></i>
+                <code class="text-amber-400 text-xs">messages / {docId}</code>
+                <span class="ml-auto text-xs text-slate-600">Collection (read-only in CMS)</span>
+              </div>
+              <div class="cms-card-body font-mono text-xs text-slate-400 grid sm:grid-cols-2 gap-2">
+                <div><span class="text-violet-400">name</span>: <span class="text-emerald-400">string</span></div>
+                <div><span class="text-violet-400">email</span>: <span class="text-emerald-400">string</span></div>
+                <div><span class="text-violet-400">message</span>: <span class="text-emerald-400">string</span></div>
+                <div><span class="text-violet-400">submitted_at</span>: <span class="text-blue-400">Timestamp (serverTimestamp)</span></div>
+                <div><span class="text-violet-400">read</span>: <span class="text-blue-400">boolean</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
   </div>
 
-  <!-- TOAST CONTAINER -->
-  <div id="admin-toast"></div>
-
-  <!-- CONFIRM DIALOG -->
-  <div id="confirm-dialog">
-    <div class="confirm-box">
-      <div style="font-size:2rem;margin-bottom:12px;">⚠️</div>
-      <h3 class="font-display" style="font-size:1rem;font-weight:700;color:var(--text-1);margin-bottom:8px;" id="confirm-title">Confirm Action</h3>
-      <p id="confirm-msg" style="font-size:0.83rem;color:var(--text-2);margin-bottom:20px;line-height:1.5;"></p>
-      <div style="display:flex;gap:10px;justify-content:center;">
-        <button class="btn btn-ghost" onclick="hideConfirm()">Cancel</button>
-        <button class="btn btn-danger" id="confirm-ok-btn" onclick="executeConfirmedAction()">Confirm Delete</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MESSAGE DETAIL MODAL -->
-  <div class="modal-overlay" id="msg-modal" onclick="closeMsgModal(event)">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h3 class="font-display" style="font-size:0.9rem;font-weight:600;color:var(--text-1);">Message Detail</h3>
-        <button class="modal-close-btn" onclick="closeMsgModalDirect()"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="modal-body" id="msg-modal-body"></div>
-      <div class="modal-footer">
-        <button class="btn btn-ghost btn-sm" onclick="closeMsgModalDirect()">Close</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════ FIREBASE + CMS JS ═══ -->
+  <!-- ══════════════════════════════════════════════════
+       FIREBASE MODULE SCRIPT
+       ══════════════════════════════════════════════════ -->
   <script type="module">
-    // ─────────────────────────────────────────────────────────────
-    // FIREBASE CONFIGURATION — Replace with your project credentials
-    // ─────────────────────────────────────────────────────────────
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { initializeApp }
+      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
     import {
       getFirestore,
-      doc,
-      getDoc,
-      setDoc,
-      addDoc,
-      deleteDoc,
-      collection,
-      getDocs,
-      query,
-      orderBy,
-      serverTimestamp,
-      updateDoc
+      doc, getDoc, setDoc,
+      collection, getDocs, addDoc, deleteDoc,
+      query, orderBy, serverTimestamp, limit
     } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
+    /* ────────────────────────────────────────────────────
+       FIREBASE CONFIG — Replace with your project values
+       ──────────────────────────────────────────────────── */
     const firebaseConfig = {
-      apiKey:            "YOUR_API_KEY_HERE",
+      apiKey:            "YOUR_API_KEY",
       authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
       projectId:         "YOUR_PROJECT_ID",
       storageBucket:     "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      messagingSenderId: "YOUR_SENDER_ID",
       appId:             "YOUR_APP_ID"
     };
 
-    // ─────────────────────────────────────────────────────────────
-    // FIREBASE INIT
-    // ─────────────────────────────────────────────────────────────
-    let firebaseApp = null;
-    let db = null;
-    let isConfigured = false;
-    let pendingDeleteAction = null;
-    let logEntries = [];
+    let app, db;
 
-    function initFirebase() {
-      try {
-        isConfigured = firebaseConfig.apiKey && firebaseConfig.apiKey !== 'YOUR_API_KEY_HERE';
-        if (isConfigured) {
-          firebaseApp = initializeApp(firebaseConfig);
-          db = getFirestore(firebaseApp);
-          appendLog('[FIREBASE] App initialized successfully.', 'success');
-          appendLog(`[FIREBASE] Project: ${firebaseConfig.projectId}`, 'info');
-        } else {
-          appendLog('[FIREBASE] No valid config detected. Running in demo mode.', 'warning');
-          appendLog('[FIREBASE] Replace placeholder credentials in firebaseConfig to enable live writes.', 'warning');
-        }
-      } catch (err) {
-        appendLog(`[FIREBASE] Init error: ${err.message}`, 'error');
-      }
+    try {
+      app = initializeApp(firebaseConfig);
+      db  = getFirestore(app);
+      window.__adminDb = db;
+      setFirebaseStatus('connected');
+      // Auto-load messages on startup
+      window.loadMessages();
+    } catch (err) {
+      console.error('[Admin] Firebase init error:', err);
+      setFirebaseStatus('error');
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // CONNECTION CHECK
-    // ─────────────────────────────────────────────────────────────
-    async function checkConnection() {
-      const fsDot = document.getElementById('fs-dot');
-      const fsText = document.getElementById('fs-status-text');
-      const configDot = document.getElementById('config-dot');
-      const configText = document.getElementById('config-status-text');
-      const dbBadge = document.getElementById('db-status-badge');
-      const sidebarConn = document.getElementById('sidebar-conn-status');
-      const topbarConn = document.getElementById('topbar-conn');
-
-      // Check config first
-      if (!isConfigured) {
-        fsDot.className = 'conn-dot offline';
-        fsText.textContent = 'Not Connected';
-        fsText.style.color = '#ef4444';
-        configDot.className = 'conn-dot offline';
-        configDot.style.background = '#ef4444';
-        configText.textContent = 'Placeholder';
-        configText.style.color = '#ef4444';
-        dbBadge.className = 'badge badge-error';
-        dbBadge.textContent = 'Disconnected';
-        sidebarConn.innerHTML = `<div class="conn-dot offline"></div><span class="font-mono" style="font-size:0.62rem;color:#ef4444;">Demo Mode</span>`;
-        topbarConn.innerHTML = `<div class="conn-dot offline"></div><span style="color:#ef4444;font-size:0.72rem;font-family:'JetBrains Mono',monospace;">Demo Mode</span>`;
-        appendLog('[CONNECTION] Firestore not reachable — demo/placeholder config detected.', 'warning');
-        return false;
-      }
-
-      try {
-        configDot.style.background = '#10b981';
-        configText.textContent = 'Valid Config';
-        configText.style.color = '#10b981';
-
-        // Attempt a lightweight read to verify connectivity
-        await getDoc(doc(db, 'portfolio_data', 'about'));
-
-        fsDot.className = 'conn-dot online';
-        fsText.textContent = 'Connected';
-        fsText.style.color = '#10b981';
-        dbBadge.className = 'badge badge-success';
-        dbBadge.textContent = 'Live';
-        sidebarConn.innerHTML = `<div class="conn-dot online"></div><span class="font-mono" style="font-size:0.62rem;color:#10b981;">Firestore Live</span>`;
-        topbarConn.innerHTML = `<div class="conn-dot online"></div><span style="color:#10b981;font-size:0.72rem;font-family:'JetBrains Mono',monospace;">Firestore Live</span>`;
-        appendLog('[CONNECTION] Firestore connection verified successfully.', 'success');
-        return true;
-      } catch (err) {
-        fsDot.className = 'conn-dot offline';
-        fsText.textContent = 'Error';
-        fsText.style.color = '#ef4444';
-        dbBadge.className = 'badge badge-error';
-        dbBadge.textContent = 'Error';
-        sidebarConn.innerHTML = `<div class="conn-dot offline"></div><span class="font-mono" style="font-size:0.62rem;color:#ef4444;">Error</span>`;
-        topbarConn.innerHTML = `<div class="conn-dot offline"></div><span style="color:#ef4444;font-size:0.72rem;font-family:'JetBrains Mono',monospace;">Error</span>`;
-        appendLog(`[CONNECTION] Error: ${err.message}`, 'error');
-        return false;
-      }
+    function setFirebaseStatus(state) {
+      const dot  = document.getElementById('fb-status-dot');
+      const text = document.getElementById('fb-status-text');
+      const states = {
+        connected: { color: '#4ade80', label: 'Connected'    },
+        error:     { color: '#f87171', label: 'Error'        },
+        writing:   { color: '#fbbf24', label: 'Writing…'     },
+        reading:   { color: '#60a5fa', label: 'Reading…'     }
+      };
+      const s = states[state] || states.connected;
+      dot.style.background = s.color;
+      text.textContent     = s.label;
+      text.style.color     = s.color;
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // STATS LOADER
-    // ─────────────────────────────────────────────────────────────
-    async function loadDashboardStats() {
-      if (!isConfigured || !db) {
-        document.getElementById('st-exp').textContent = '—';
-        document.getElementById('st-port').textContent = '—';
-        document.getElementById('st-skills').textContent = '—';
-        document.getElementById('st-msg').textContent = '—';
-        return;
-      }
-
-      try {
-        const [expSnap, portSnap, skillsSnap, msgSnap] = await Promise.all([
-          getDocs(collection(db, 'experience')),
-          getDocs(collection(db, 'portfolio')),
-          getDocs(collection(db, 'skills')),
-          getDocs(collection(db, 'messages'))
-        ]);
-
-        const expCount   = expSnap.size;
-        const portCount  = portSnap.size;
-        const skillCats  = skillsSnap.size;
-        const skillItems = skillsSnap.docs.reduce((a, d) => a + ((d.data().items || []).length), 0);
-        const msgCount   = msgSnap.size;
-        const unreadCount = msgSnap.docs.filter(d => !d.data().read).length;
-
-        document.getElementById('st-exp').textContent   = expCount;
-        document.getElementById('st-port').textContent  = portCount;
-        document.getElementById('st-skills').textContent = `${skillItems}`;
-        document.getElementById('st-msg').textContent   = msgCount;
-
-        if (unreadCount > 0) {
-          const badge = document.getElementById('msg-count-badge');
-          badge.textContent = unreadCount;
-          badge.style.display = 'inline-block';
-        }
-
-        appendLog(`[STATS] Loaded: ${expCount} exp, ${portCount} portfolio, ${skillItems} skills, ${msgCount} messages`, 'info');
-      } catch (err) {
-        appendLog(`[STATS] Failed to load stats: ${err.message}`, 'error');
-      }
+    /* ── Helper: escape HTML ───────────────────────────── */
+    function esc(str) {
+      if (typeof str !== 'string') return String(str || '');
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+                .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // ABOUT SEGMENT
-    // ─────────────────────────────────────────────────────────────
-    async function loadAboutData() {
-      if (!isConfigured || !db) {
-        showToast('warning', 'Demo Mode', 'Firebase not configured. No data to load.');
-        return;
-      }
+    /* ── Toast ─────────────────────────────────────────── */
+    function showToast(msg, type = 'success') {
+      const toast  = document.getElementById('admin-toast');
+      const inner  = document.getElementById('admin-toast-inner');
+      const icon   = document.getElementById('admin-toast-icon');
+      const msgEl  = document.getElementById('admin-toast-msg');
+
+      msgEl.textContent = msg;
+      icon.className = type === 'success'
+        ? 'fa-solid fa-circle-check text-emerald-400'
+        : 'fa-solid fa-circle-xmark text-rose-400';
+      inner.style.borderColor = type === 'success' ? '#4ade8044' : '#f8717144';
+
+      toast.classList.remove('hidden');
+      clearTimeout(toast.__timer);
+      toast.__timer = setTimeout(() => toast.classList.add('hidden'), 4000);
+    }
+
+    /* ══════════════════════════════════════════════════
+       ABOUT  —  Load & Commit
+       ══════════════════════════════════════════════════ */
+    window.loadAboutData = async function () {
+      if (!db) { showToast('Firebase not connected.', 'error'); return; }
+      const statusEl = document.getElementById('about-load-status');
+      statusEl.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2 text-blue-400"></i>Loading…';
+
       try {
+        setFirebaseStatus('reading');
         const snap = await getDoc(doc(db, 'portfolio_data', 'about'));
         if (snap.exists()) {
           const d = snap.data();
-          document.getElementById('ab-headline').value   = d.headline  || '';
-          document.getElementById('ab-bio').value        = d.bio       || '';
-          document.getElementById('ab-resume-url').value = d.resumeUrl || '';
-          document.getElementById('ab-github').value     = d.github    || '';
-          document.getElementById('ab-linkedin').value   = d.linkedin  || '';
-          document.getElementById('ab-twitter').value    = d.twitter   || '';
-          document.getElementById('ab-email').value      = d.email     || '';
-          showToast('success', 'Loaded', 'About data populated from Firestore.');
-          appendLog('[ABOUT] Current data loaded into form.', 'success');
+          document.getElementById('ab-headline').value   = d.headline   || '';
+          document.getElementById('ab-bio').value        = d.bio        || '';
+          document.getElementById('ab-resume-url').value = d.resume_url || '';
+          statusEl.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400 mr-2"></i>Current data loaded successfully.';
+          showToast('About data loaded from Firestore.', 'success');
         } else {
-          showToast('info', 'Empty', 'No about document found in Firestore.');
-          appendLog('[ABOUT] No document found at portfolio_data/about.', 'warning');
+          statusEl.innerHTML = '<i class="fa-solid fa-circle-info text-amber-400 mr-2"></i>No existing data found. Add new content.';
+          showToast('No existing about document found.', 'error');
         }
+        setFirebaseStatus('connected');
       } catch (err) {
-        showToast('error', 'Load Failed', err.message);
-        appendLog(`[ABOUT] Load error: ${err.message}`, 'error');
+        console.error('[Admin] loadAbout error:', err);
+        setFirebaseStatus('error');
+        showToast('Failed to load: ' + err.message, 'error');
       }
-    }
+    };
 
-    async function commitAbout() {
-      const headline  = document.getElementById('ab-headline').value.trim();
-      const bio       = document.getElementById('ab-bio').value.trim();
-      const resumeUrl = document.getElementById('ab-resume-url').value.trim();
+    window.commitAbout = async function () {
+      if (!db) { showToast('Firebase not connected.', 'error'); return; }
+      const headline   = document.getElementById('ab-headline').value.trim();
+      const bio        = document.getElementById('ab-bio').value.trim();
+      const resume_url = document.getElementById('ab-resume-url').value.trim();
 
       if (!headline || !bio) {
-        showToast('warning', 'Validation', 'Headline and Bio are required fields.');
-        return;
-      }
-
-      if (!isConfigured || !db) {
-        showToast('warning', 'Demo Mode', 'Firebase not configured. Data not saved.');
-        appendLog('[ABOUT] Commit blocked — demo mode.', 'warning');
+        showToast('Headline and biography are required fields.', 'error');
         return;
       }
 
       try {
-        appendLog('[ABOUT] Committing to Firestore...', 'info');
+        setFirebaseStatus('writing');
         await setDoc(doc(db, 'portfolio_data', 'about'), {
           headline,
           bio,
-          resumeUrl,
-          updatedAt: serverTimestamp()
-        }, { merge: true });
-
-        showToast('success', 'Committed', 'About segment saved to Firestore successfully.');
-        appendLog('[ABOUT] ✓ setDoc portfolio_data/about — OK', 'success');
-      } catch (err) {
-        showToast('error', 'Commit Failed', err.message);
-        appendLog(`[ABOUT] setDoc error: ${err.message}`, 'error');
-      }
-    }
-
-    async function commitAboutSocial() {
-      const github   = document.getElementById('ab-github').value.trim();
-      const linkedin = document.getElementById('ab-linkedin').value.trim();
-      const twitter  = document.getElementById('ab-twitter').value.trim();
-      const email    = document.getElementById('ab-email').value.trim();
-
-      if (!isConfigured || !db) {
-        showToast('warning', 'Demo Mode', 'Firebase not configured. Data not saved.');
-        return;
-      }
-
-      try {
-        await setDoc(doc(db, 'portfolio_data', 'about'), {
-          github, linkedin, twitter, email,
-          updatedAt: serverTimestamp()
-        }, { merge: true });
-
-        showToast('success', 'Committed', 'Social links saved to Firestore.');
-        appendLog('[ABOUT] ✓ Social links merged — OK', 'success');
-      } catch (err) {
-        showToast('error', 'Commit Failed', err.message);
-        appendLog(`[ABOUT] Social merge error: ${err.message}`, 'error');
-      }
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // EXPERIENCE
-    // ─────────────────────────────────────────────────────────────
-    async function commitExperience() {
-      const role   = document.getElementById('exp-role').value.trim();
-      const org    = document.getElementById('exp-org').value.trim();
-      const dates  = document.getElementById('exp-dates').value.trim();
-      const desc   = document.getElementById('exp-desc').value.trim();
-      const order  = parseInt(document.getElementById('exp-order').value) || 99;
-
-      if (!role || !org || !dates || !desc) {
-        showToast('warning', 'Validation', 'All required fields must be filled.');
-        return;
-      }
-
-      if (!isConfigured || !db) {
-        showToast('warning', 'Demo Mode', 'Firebase not configured. Data not saved.');
-        appendLog('[EXP] Commit blocked — demo mode.', 'warning');
-        return;
-      }
-
-      try {
-        appendLog(`[EXP] Adding entry: "${role}" at "${org}"...`, 'info');
-        const docRef = await addDoc(collection(db, 'experience'), {
-          role, organization: org, dateRange: dates, description: desc, order,
-          createdAt: serverTimestamp()
+          resume_url,
+          updated_at: serverTimestamp()
         });
-
-        showToast('success', 'Added', `Experience entry added (ID: ${docRef.id.substring(0,8)}...)`);
-        appendLog(`[EXP] ✓ addDoc experience/${docRef.id} — OK`, 'success');
-
-        // Clear fields
-        ['exp-role','exp-org','exp-dates','exp-desc','exp-order'].forEach(id => {
-          document.getElementById(id).value = '';
-        });
-
-        loadExperienceList();
+        setFirebaseStatus('connected');
+        showToast('✅ About data committed to Firestore successfully!', 'success');
       } catch (err) {
-        showToast('error', 'Commit Failed', err.message);
-        appendLog(`[EXP] addDoc error: ${err.message}`, 'error');
+        console.error('[Admin] commitAbout error:', err);
+        setFirebaseStatus('error');
+        showToast('Commit failed: ' + err.message, 'error');
       }
-    }
-
-    async function loadExperienceList() {
-      const container = document.getElementById('exp-list');
-      container.innerHTML = '<div class="font-mono" style="font-size:0.75rem;color:var(--text-3);">Fetching...</div>';
-
-      if (!isConfigured || !db) {
-        container.innerHTML = '<div class="font-mono" style="font-size:0.75rem;color:var(--text-3);">No data — Firebase not configured.</div>';
-        return;
-      }
-
-      try {
-        const snap = await getDocs(query(collection(db, 'experience'), orderBy('order', 'asc')));
-        if (snap.empty) {
-          container.innerHTML = '<div class="font-mono" style="font-size:0.75rem;color:var(--text-3);">No experience entries found. Add one above.</div>';
-          return;
-        }
-
-        container.innerHTML = snap.docs.map(d => {
-          const data = d.data();
-          return `
-            <div class="record-item">
-              <div class="record-dot"></div>
-              <div class="record-info">
-                <div class="record-title">${escHtml(data.role || '')} — <span style="color:var(--accent);">${escHtml(data.organization || '')}</span></div>
-                <div class="record-meta">${escHtml(data.dateRange || '')} · Order: ${data.order || '—'} · ID: ${d.id.substring(0,10)}...</div>
-              </div>
-              <div class="record-actions">
-                <button class="btn btn-danger btn-sm" onclick="deleteRecord('experience', '${d.id}', loadExperienceList)">
-                  <i class="fa-solid fa-trash"></i>
-                </button>
-              </div>
-            </div>
-          `;
-        }).join('');
-
-        appendLog(`[EXP] Loaded ${snap.size} experience entries.`, 'info');
-      } catch (err) {
-        container.innerHTML = `<div class="font-mono" style="font-size:0.75rem;color:#ef4444;">Error: ${err.message}</div>`;
-        appendLog(`[EXP] Load list error: ${err.message}`, 'error');
-      }
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // PORTFOLIO
-    // ─────────────────────────────────────────────────────────────
-    async function commitPortfolio() {
-      const title  = document.getElementById('port-title').value.trim();
-      const type   = document.getElementById('port-type').value;
-      const desc   = document.getElementById('port-desc').value.trim();
-      const link   = document.getElementById('port-link').value.trim();
-      const thumb  = document.getElementById('port-thumb').value.trim();
-      const order  = parseInt(document.getElementById('port-order').value) || 99;
-
-      if (!title || !type || !desc || !link) {
-        showToast('warning', 'Validation', 'Title, Type, Description, and Link are required.');
-        return;
-      }
-
-      if (!isConfigured || !db) {
-        showToast('warning', 'Demo Mode', 'Firebase not configured. Data not saved.');
-        appendLog('[PORTFOLIO] Commit blocked — demo mode.', 'warning');
-        return;
-      }
-
-      try {
-        appendLog(`[PORTFOLIO] Adding item: "${title}" (${type})...`, 'info');
-        const docRef = await addDoc(collection(db, 'portfolio'), {
-          title, type, description: desc, link, thumbnail: thumb, order,
-          createdAt: serverTimestamp()
-        });
-
-        showToast('success', 'Added', `Portfolio item added (ID: ${docRef.id.substring(0,8)}...)`);
-        appendLog(`[PORTFOLIO] ✓ addDoc portfolio/${docRef.id} — OK`, 'success');
-
-        // Clear
-        ['port-title','port-desc','port-link','port-thumb','port-order'].forEach(id => {
-          document.getElementById(id).value = '';
-        });
-        document.getElementById('port-type').value = '';
-        document.getElementById('thumb-preview-wrap').style.display = 'none';
-
-        loadPortfolioList();
-      } catch (err) {
-        showToast('error', 'Commit Failed', err.message);
-        appendLog(`[PORTFOLIO] addDoc error: ${err.message}`, 'error');
-      }
-    }
-
-    async function loadPortfolioList() {
-      const container = document.getElementById('port-list');
-      container.innerHTML = '<div class="font-mono" style="font-size:0.75rem;color:var(--text-3);">Fetching...</div>';
-
-      if (!isConfigured || !db) {
-        container.innerHTML = '<div class="font-mono" style="font-size:0.75rem;color:var(--text-3);">No data — Firebase not configured.</div>';
-        return;
-      }
-
-      try {
-        const snap = await getDocs(query(collection(db, 'portfolio'), orderBy('order', 'asc')));
-        if (snap.empty) {
-          container.innerHTML = '<div class="font-mono" style="font-size:0.75rem;color:var(--text-3);">No portfolio items found. Add one above.</div>';
-          return;
-        }
-
-        container.innerHTML = snap.docs.map(d => {
-          const data = d.data();
-          const typeCls = `type-${data.type || 'URL'}`;
-          return `
-            <div class="record-item">
-              <div class="record-dot" style="background:var(--accent);"></div>
-              <div class="record-info">
-                <div class="record-title">${escHtml(data.title || '')} <span class="type-badge ${typeCls}">${escHtml(data.type || '')}</span></div>
-                <div class="record-meta">Order: ${data.order || '—'} · Link: ${escHtml((data.link || '').substring(0,40))}... · ID: ${d.id.substring(0,10)}...</div>
-              </div>
-              <div class="record-actions">
-                <button class="btn btn-danger btn-sm" onclick="deleteRecord('portfolio', '${d.id}', loadPortfolioList)">
-                  <i class="fa-solid fa-trash"></i>
-                </button>
-              </div>
-            </div>
-          `;
-        }).join('');
-
-        appendLog(`[PORTFOLIO] Loaded ${snap.size} items.`, 'info');
-      } catch (err) {
-        container.innerHTML = `<div class="font-mono" style="font-size:0.75rem;color:#ef4444;">Error: ${err.message}</div>`;
-        appendLog(`[PORTFOLIO] Load list error: ${err.message}`, 'error');
-      }
-    }
-
-    function previewThumb() {
-      const url = document.getElementById('port-thumb').value.trim();
-      if (!url) {
-        showToast('warning', 'No URL', 'Enter a thumbnail URL first.');
-        return;
-      }
-      const wrap = document.getElementById('thumb-preview-wrap');
-      const img  = document.getElementById('thumb-preview-img');
-      img.src = url;
-      img.onerror = () => {
-        showToast('error', 'Invalid Image', 'Could not load image from the provided URL.');
-        wrap.style.display = 'none';
-      };
-      wrap.style.display = 'block';
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // SKILLS
-    // ─────────────────────────────────────────────────────────────
-    async function commitSkillCategory() {
-      const cat      = document.getElementById('skill-cat').value.trim();
-      const icon     = document.getElementById('skill-icon').value.trim();
-      const rawItems = document.getElementById('skill-items').value.trim();
-
-      if (!cat || !rawItems) {
-        showToast('warning', 'Validation', 'Category name and at least one skill are required.');
-        return;
-      }
-
-      // Parse items: "Skill Name | fa-icon-class"
-      const items = rawItems.split('\n')
-        .map(line => {
-          const parts = line.split('|').map(s => s.trim());
-          return { name: parts[0] || '', icon: parts[1] || 'fa-solid fa-star' };
-        })
-        .filter(item => item.name);
-
-      if (items.length === 0) {
-        showToast('warning', 'Validation', 'No valid skill items parsed. Check format.');
-        return;
-      }
-
-      if (!isConfigured || !db) {
-        showToast('warning', 'Demo Mode', 'Firebase not configured. Data not saved.');
-        appendLog('[SKILLS] Commit blocked — demo mode.', 'warning');
-        return;
-      }
-
-      try {
-        appendLog(`[SKILLS] Adding category: "${cat}" with ${items.length} items...`, 'info');
-        const docRef = await addDoc(collection(db, 'skills'), {
-          category: cat,
-          icon: icon || 'fa-solid fa-circle',
-          items,
-          createdAt: serverTimestamp()
-        });
-
-        showToast('success', 'Added', `Skill category "${cat}" saved (${items.length} items).`);
-        appendLog(`[SKILLS] ✓ addDoc skills/${docRef.id} — OK`, 'success');
-
-        ['skill-cat','skill-icon','skill-items'].forEach(id => {
-          document.getElementById(id).value = '';
-        });
-
-        loadSkillsList();
-      } catch (err) {
-        showToast('error', 'Commit Failed', err.message);
-        appendLog(`[SKILLS] addDoc error: ${err.message}`, 'error');
-      }
-    }
-
-    async function loadSkillsList() {
-      const container = document.getElementById('skills-list');
-      container.innerHTML = '<div class="font-mono" style="font-size:0.75rem;color:var(--text-3);">Fetching...</div>';
-
-      if (!isConfigured || !db) {
-        container.innerHTML = '<div class="font-mono" style="font-size:0.75rem;color:var(--text-3);">No data — Firebase not configured.</div>';
-        return;
-      }
-
-      try {
-        const snap = await getDocs(collection(db, 'skills'));
-        if (snap.empty) {
-          container.innerHTML = '<div class="font-mono" style="font-size:0.75rem;color:var(--text-3);">No skill categories found. Add one above.</div>';
-          return;
-        }
-
-        container.innerHTML = snap.docs.map(d => {
-          const data = d.data();
-          const itemNames = (data.items || []).map(s => s.name).join(', ');
-          return `
-            <div class="record-item">
-              <div class="record-dot" style="background:#34d399;"></div>
-              <div class="record-info">
-                <div class="record-title"><i class="${escHtml(data.icon || '')}" style="margin-right:6px;color:#34d399;font-size:0.8rem;"></i>${escHtml(data.category || '')}</div>
-                <div class="record-meta">${(data.items || []).length} skills · ${escHtml(itemNames.substring(0,60))}${itemNames.length > 60 ? '...' : ''} · ID: ${d.id.substring(0,10)}...</div>
-              </div>
-              <div class="record-actions">
-                <button class="btn btn-danger btn-sm" onclick="deleteRecord('skills', '${d.id}', loadSkillsList)">
-                  <i class="fa-solid fa-trash"></i>
-                </button>
-              </div>
-            </div>
-          `;
-        }).join('');
-
-        appendLog(`[SKILLS] Loaded ${snap.size} categories.`, 'info');
-      } catch (err) {
-        container.innerHTML = `<div class="font-mono" style="font-size:0.75rem;color:#ef4444;">Error: ${err.message}</div>`;
-        appendLog(`[SKILLS] Load list error: ${err.message}`, 'error');
-      }
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // MESSAGES
-    // ─────────────────────────────────────────────────────────────
-    async function loadMessages() {
-      const container = document.getElementById('messages-list');
-      container.innerHTML = '<div class="font-mono" style="font-size:0.75rem;color:var(--text-3);">Fetching...</div>';
-
-      if (!isConfigured || !db) {
-        container.innerHTML = '<div class="font-mono" style="font-size:0.75rem;color:var(--text-3);">No data — Firebase not configured.</div>';
-        return;
-      }
-
-      try {
-        const snap = await getDocs(collection(db, 'messages'));
-        if (snap.empty) {
-          container.innerHTML = '<div style="text-align:center;padding:40px 20px;"><div style="font-size:2rem;margin-bottom:10px;">📭</div><div class="font-mono" style="font-size:0.75rem;color:var(--text-3);">No messages yet.</div></div>';
-          return;
-        }
-
-        // Sort by timestamp desc
-        const docs = snap.docs.sort((a, b) => {
-          const ta = a.data().timestamp?.seconds || 0;
-          const tb = b.data().timestamp?.seconds || 0;
-          return tb - ta;
-        });
-
-        container.innerHTML = `<div class="record-list">` + docs.map(d => {
-          const data = d.data();
-          const isRead = data.read || false;
-          const ts = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleString() : 'Unknown date';
-          return `
-            <div class="record-item" style="${!isRead ? 'border-left:3px solid var(--accent);' : ''}">
-              <div class="record-dot" style="background:${isRead ? 'var(--text-3)' : 'var(--accent)'};"></div>
-              <div class="record-info">
-                <div class="record-title">${escHtml(data.name || 'Unknown')} ${!isRead ? '<span class="badge badge-info" style="margin-left:6px;font-size:0.55rem;">NEW</span>' : ''}</div>
-                <div class="record-meta">${escHtml(data.email || '')} · ${ts}</div>
-                <div style="font-size:0.78rem;color:var(--text-2);margin-top:4px;line-height:1.4;">${escHtml((data.message || '').substring(0,100))}${(data.message || '').length > 100 ? '...' : ''}</div>
-              </div>
-              <div class="record-actions">
-                <button class="btn btn-ghost btn-sm" onclick='openMsgModal(${JSON.stringify({ id: d.id, name: data.name, email: data.email, message: data.message, timestamp: ts, read: isRead })})'>
-                  <i class="fa-solid fa-eye"></i>
-                </button>
-                <button class="btn btn-danger btn-sm" onclick="deleteRecord('messages', '${d.id}', loadMessages)">
-                  <i class="fa-solid fa-trash"></i>
-                </button>
-              </div>
-            </div>
-          `;
-        }).join('') + `</div>`;
-
-        appendLog(`[MESSAGES] Loaded ${snap.size} messages.`, 'info');
-      } catch (err) {
-        container.innerHTML = `<div class="font-mono" style="font-size:0.75rem;color:#ef4444;">Error: ${err.message}</div>`;
-        appendLog(`[MESSAGES] Load error: ${err.message}`, 'error');
-      }
-    }
-
-    function openMsgModal(data) {
-      const modal = document.getElementById('msg-modal');
-      const body  = document.getElementById('msg-modal-body');
-      body.innerHTML = `
-        <div style="margin-bottom:16px;">
-          <div style="font-size:0.68rem;color:var(--text-3);text-transform:uppercase;letter-spacing:0.1em;font-family:'Space Grotesk',sans-serif;font-weight:600;margin-bottom:4px;">From</div>
-          <div style="font-size:0.95rem;font-weight:600;color:var(--text-1);">${escHtml(data.name || '')}</div>
-          <div style="font-size:0.82rem;color:var(--accent);">${escHtml(data.email || '')}</div>
-        </div>
-        <div style="margin-bottom:16px;">
-          <div style="font-size:0.68rem;color:var(--text-3);text-transform:uppercase;letter-spacing:0.1em;font-family:'Space Grotesk',sans-serif;font-weight:600;margin-bottom:4px;">Received</div>
-          <div class="font-mono" style="font-size:0.78rem;color:var(--text-2);">${escHtml(data.timestamp || '')}</div>
-        </div>
-        <div style="margin-bottom:4px;">
-          <div style="font-size:0.68rem;color:var(--text-3);text-transform:uppercase;letter-spacing:0.1em;font-family:'Space Grotesk',sans-serif;font-weight:600;margin-bottom:8px;">Message</div>
-          <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:0.875rem;color:var(--text-1);line-height:1.65;white-space:pre-wrap;">${escHtml(data.message || '')}</div>
-        </div>
-      `;
-      modal.classList.add('open');
-
-      // Mark as read in Firestore
-      if (!data.read && isConfigured && db) {
-        updateDoc(doc(db, 'messages', data.id), { read: true })
-          .then(() => appendLog(`[MESSAGES] Marked ${data.id.substring(0,8)}... as read.`, 'info'))
-          .catch(err => appendLog(`[MESSAGES] Mark read error: ${err.message}`, 'error'));
-      }
-    }
-
-    function closeMsgModal(e) {
-      if (e.target === document.getElementById('msg-modal')) closeMsgModalDirect();
-    }
-    function closeMsgModalDirect() {
-      document.getElementById('msg-modal').classList.remove('open');
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // DELETE RECORD
-    // ─────────────────────────────────────────────────────────────
-    async function deleteRecord(collectionName, id, reloadFn) {
-      if (!isConfigured || !db) {
-        showToast('warning', 'Demo Mode', 'Firebase not configured.');
-        return;
-      }
-      try {
-        await deleteDoc(doc(db, collectionName, id));
-        showToast('success', 'Deleted', `Record removed from ${collectionName}.`);
-        appendLog(`[DELETE] ✓ deleteDoc ${collectionName}/${id} — OK`, 'success');
-        if (typeof reloadFn === 'function') reloadFn();
-      } catch (err) {
-        showToast('error', 'Delete Failed', err.message);
-        appendLog(`[DELETE] deleteDoc error: ${err.message}`, 'error');
-      }
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // BULK DELETE (SETTINGS)
-    // ─────────────────────────────────────────────────────────────
-    function confirmBulkDelete(collectionName) {
-      pendingDeleteAction = collectionName;
-      document.getElementById('confirm-title').textContent = `Delete Entire "${collectionName}" Collection?`;
-      document.getElementById('confirm-msg').textContent = `This will permanently delete ALL documents in the "${collectionName}" Firestore collection. This action cannot be undone.`;
-      document.getElementById('confirm-dialog').classList.add('show');
-    }
-
-    async function executeConfirmedAction() {
-      hideConfirm();
-      if (!pendingDeleteAction || !isConfigured || !db) return;
-
-      const col = pendingDeleteAction;
-      pendingDeleteAction = null;
-
-      try {
-        appendLog(`[BULK DELETE] Deleting all docs in "${col}"...`, 'warning');
-        const snap = await getDocs(collection(db, col));
-        const deletePromises = snap.docs.map(d => deleteDoc(doc(db, col, d.id)));
-        await Promise.all(deletePromises);
-        showToast('success', 'Cleared', `All ${snap.size} documents deleted from "${col}".`);
-        appendLog(`[BULK DELETE] ✓ Cleared ${snap.size} docs from "${col}".`, 'success');
-        loadDashboardStats();
-      } catch (err) {
-        showToast('error', 'Bulk Delete Failed', err.message);
-        appendLog(`[BULK DELETE] Error: ${err.message}`, 'error');
-      }
-    }
-
-    function hideConfirm() {
-      document.getElementById('confirm-dialog').classList.remove('show');
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // CONNECTION TEST (SETTINGS)
-    // ─────────────────────────────────────────────────────────────
-    async function testConnectionWithCurrentConfig() {
-      showToast('info', 'Testing', 'Attempting Firestore connection...');
-      appendLog('[CONFIG] Testing connection with current config...', 'info');
-      const result = await checkConnection();
-      if (result) {
-        showToast('success', 'Connected', 'Firestore connection successful!');
-      } else {
-        showToast('error', 'Failed', 'Connection test failed. Check console for details.');
-      }
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // LOGS
-    // ─────────────────────────────────────────────────────────────
-    function appendLog(message, type = 'info') {
-      const log = document.getElementById('activity-log');
-      const dashLog = document.getElementById('dash-log');
-      const ts = new Date().toLocaleTimeString('en-US', { hour12: false });
-
-      const colors = {
-        info:    '#94a3b8',
-        success: '#34d399',
-        warning: '#fbbf24',
-        error:   '#f87171'
-      };
-
-      const entry = `<div style="color:${colors[type] || '#94a3b8'};margin-bottom:2px;">[${ts}] ${escHtml(message)}</div>`;
-      log.insertAdjacentHTML('beforeend', entry);
-      log.scrollTop = log.scrollHeight;
-
-      // Also append to dashboard log (last 8 lines)
-      dashLog.insertAdjacentHTML('beforeend', entry);
-      dashLog.scrollTop = dashLog.scrollHeight;
-
-      logEntries.push({ ts, message, type });
-      document.getElementById('log-count').textContent = `${logEntries.length} entries`;
-    }
-
-    function clearLogs() {
-      document.getElementById('activity-log').innerHTML = '<div class="font-mono" style="font-size:0.68rem;color:var(--text-3);">[LOG] Log cleared.</div>';
-      logEntries = [];
-      document.getElementById('log-count').textContent = '0 entries';
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // PANEL NAVIGATION
-    // ─────────────────────────────────────────────────────────────
-    const panelTitles = {
-      dashboard:  { title: 'Dashboard', sub: 'Overview of all CMS data and system status' },
-      about:      { title: 'About Segment', sub: 'Update hero headline, biography, and resume URL' },
-      experience: { title: 'Experience', sub: 'Manage professional experience timeline entries' },
-      portfolio:  { title: 'Portfolio Caravan', sub: 'Manage portfolio items — cards, links, media types' },
-      skills:     { title: 'Skills Matrix', sub: 'Manage technical skill categories and items' },
-      messages:   { title: 'Inbox', sub: 'View and manage contact form submissions' },
-      settings:   { title: 'Configuration', sub: 'Firebase credentials, system settings, bulk operations' },
-      logs:       { title: 'Activity Log', sub: 'Real-time log of all CMS database operations' }
     };
 
-    function switchPanel(name) {
-      // Hide all panels
-      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-      document.getElementById(`panel-${name}`).classList.add('active');
+    /* ══════════════════════════════════════════════════
+       PORTFOLIO  —  Add & Load
+       ══════════════════════════════════════════════════ */
+    window.commitPortfolioItem = async function () {
+      if (!db) { showToast('Firebase not connected.', 'error'); return; }
 
-      // Update nav active state
-      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-      event.currentTarget.classList.add('active');
+      const title     = document.getElementById('pt-title').value.trim();
+      const type      = document.getElementById('pt-type').value;
+      const desc      = document.getElementById('pt-desc').value.trim();
+      const link      = document.getElementById('pt-link').value.trim();
+      const thumbnail = document.getElementById('pt-thumbnail').value.trim();
+      const order     = parseInt(document.getElementById('pt-order').value) || 999;
 
-      // Update topbar text
-      const info = panelTitles[name] || { title: name, sub: '' };
-      document.getElementById('panel-title').textContent = info.title;
-      document.getElementById('panel-subtitle').textContent = info.sub;
+      if (!title || !type || !link) {
+        showToast('Title, type, and link are required.', 'error');
+        return;
+      }
 
-      // Lazy load data on first panel visit
-      if (name === 'experience') loadExperienceList();
-      if (name === 'portfolio')  loadPortfolioList();
-      if (name === 'skills')     loadSkillsList();
-      if (name === 'messages')   loadMessages();
-      if (name === 'about')      loadAboutData();
+      try {
+        setFirebaseStatus('writing');
+        await addDoc(collection(db, 'portfolio'), {
+          title, type, description: desc, link, thumbnail, order,
+          created_at: serverTimestamp()
+        });
+        setFirebaseStatus('connected');
+        showToast(`✅ "${title}" added to portfolio caravan!`, 'success');
+        window.clearPortfolioForm();
+        window.loadPortfolioItems();
+      } catch (err) {
+        console.error('[Admin] commitPortfolio error:', err);
+        setFirebaseStatus('error');
+        showToast('Failed: ' + err.message, 'error');
+      }
+    };
 
-      // Close mobile sidebar
-      document.getElementById('sidebar').classList.remove('open');
-
-      appendLog(`[NAV] Switched to panel: ${name}`, 'info');
-    }
-
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('open');
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // TOAST SYSTEM
-    // ─────────────────────────────────────────────────────────────
-    function showToast(type, title, message) {
-      const container = document.getElementById('admin-toast');
-      const icons = {
-        success: '<i class="fa-solid fa-circle-check" style="color:#34d399;"></i>',
-        error:   '<i class="fa-solid fa-circle-xmark" style="color:#f87171;"></i>',
-        warning: '<i class="fa-solid fa-triangle-exclamation" style="color:#fbbf24;"></i>',
-        info:    '<i class="fa-solid fa-circle-info" style="color:#60a5fa;"></i>'
-      };
-
-      const toast = document.createElement('div');
-      toast.className = 'toast-item';
-      toast.innerHTML = `
-        ${icons[type] || icons.info}
-        <div style="flex:1;min-width:0;">
-          <div style="font-weight:600;font-size:0.8rem;font-family:'Space Grotesk',sans-serif;">${escHtml(title)}</div>
-          <div style="font-size:0.75rem;color:var(--text-2);margin-top:2px;line-height:1.4;">${escHtml(message)}</div>
-        </div>
-        <button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text-3);cursor:pointer;padding:0;font-size:0.8rem;flex-shrink:0;">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      `;
-
-      container.appendChild(toast);
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => toast.classList.add('show'));
+    window.clearPortfolioForm = function () {
+      ['pt-title','pt-type','pt-desc','pt-link','pt-thumbnail','pt-order'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
       });
+    };
 
-      setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 400);
-      }, 5000);
-    }
+    window.loadPortfolioItems = async function () {
+      if (!db) { showToast('Firebase not connected.', 'error'); return; }
+      const tbody = document.getElementById('portfolio-table-body');
+      tbody.innerHTML = '<tr><td colspan="5" class="text-center text-slate-600 py-8"><i class="fa-solid fa-circle-notch fa-spin mr-2"></i>Loading…</td></tr>';
 
-    // ─────────────────────────────────────────────────────────────
-    // UTILITY
-    // ─────────────────────────────────────────────────────────────
-    function escHtml(str) {
-      if (typeof str !== 'string') return '';
-      return str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
+      try {
+        setFirebaseStatus('reading');
+        const q    = query(collection(db, 'portfolio'), orderBy('order', 'asc'));
+        const snap = await getDocs(q);
+        setFirebaseStatus('connected');
 
-    // ─────────────────────────────────────────────────────────────
-    // EXPOSE TO GLOBAL (for onclick attributes)
-    // ─────────────────────────────────────────────────────────────
-    window.loadAboutData              = loadAboutData;
-    window.commitAbout                = commitAbout;
-    window.commitAboutSocial          = commitAboutSocial;
-    window.commitExperience           = commitExperience;
-    window.loadExperienceList         = loadExperienceList;
-    window.commitPortfolio            = commitPortfolio;
-    window.loadPortfolioList          = loadPortfolioList;
-    window.previewThumb               = previewThumb;
-    window.commitSkillCategory        = commitSkillCategory;
-    window.loadSkillsList             = loadSkillsList;
-    window.loadMessages               = loadMessages;
-    window.openMsgModal               = openMsgModal;
-    window.closeMsgModal              = closeMsgModal;
-    window.closeMsgModalDirect        = closeMsgModalDirect;
-    window.deleteRecord               = deleteRecord;
-    window.confirmBulkDelete          = confirmBulkDelete;
-    window.executeConfirmedAction     = executeConfirmedAction;
-    window.hideConfirm                = hideConfirm;
-    window.testConnectionWithCurrentConfig = testConnectionWithCurrentConfig;
-    window.switchPanel                = switchPanel;
-    window.toggleSidebar              = toggleSidebar;
-    window.clearLogs                  = clearLogs;
+        if (snap.empty) {
+          tbody.innerHTML = '<tr><td colspan="5" class="text-center text-slate-600 py-8">No portfolio items yet. Add one above.</td></tr>';
+          return;
+        }
 
-    // ─────────────────────────────────────────────────────────────
-    // BOOT SEQUENCE
-    // ─────────────────────────────────────────────────────────────
-    appendLog('[BOOT] Portfolio CMS Admin Panel starting...', 'info');
-    appendLog('[BOOT] Firebase SDK 10.12.2 loaded via CDN.', 'info');
-    initFirebase();
-    await checkConnection();
-    await loadDashboardStats();
-    appendLog('[BOOT] ✓ CMS fully initialized and ready.', 'success');
+        tbody.innerHTML = '';
+        snap.docs.forEach(docSnap => {
+          const d   = docSnap.data();
+          const id  = docSnap.id;
+          const typeBg = {PPT:'#f97316',Image:'#34d399',URL:'#60a5fa',Site:'#a78bfa',PDF:'#f43f5e'};
+          const color  = typeBg[d.type] || '#94a3b8';
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="font-mono text-slate-500">${esc(String(d.order || '—'))}</td>
+            <td class="font-semibold text-white max-w-xs truncate">${esc(d.title || '')}</td>
+            <td>
+              <span style="background:${color}22;color:${color};border:1px solid ${color}44;"
+                    class="text-xs font-bold px-2 py-0.5 rounded-full">${esc(d.type || '')}</span>
+            </td>
+            <td class="max-w-xs">
+              <a href="${esc(d.link || '#')}" target="_blank" rel="noopener"
+                 class="text-blue-400 hover:text-blue-300 text-xs truncate block" style="max-width:200px;">
+                ${esc((d.link || '—').substring(0, 40))}…
+              </a>
+            </td>
+            <td>
+              <button onclick="deletePortfolioItem('${esc(id)}')"
+                      class="text-xs text-rose-400 hover:text-rose-300 transition-colors font-semibold">
+                <i class="fa-solid fa-trash mr-1"></i>Delete
+              </button>
+            </td>`;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error('[Admin] loadPortfolio error:', err);
+        setFirebaseStatus('error');
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center text-rose-400 py-8">${esc(err.message)}</td></tr>`;
+      }
+    };
 
+    window.deletePortfolioItem = async function (id) {
+      if (!confirm('Delete this portfolio item? This cannot be undone.')) return;
+      if (!db) return;
+      try {
+        setFirebaseStatus('writing');
+        await deleteDoc(doc(db, 'portfolio', id));
+        setFirebaseStatus('connected');
+        showToast('Portfolio item deleted.', 'success');
+        window.loadPortfolioItems();
+      } catch (err) {
+        showToast('Delete failed: ' + err.message, 'error');
+        setFirebaseStatus('error');
+      }
+    };
+
+    /* ══════════════════════════════════════════════════
+       EXPERIENCE  —  Add & Load
+       ══════════════════════════════════════════════════ */
+    window.commitExperience = async function () {
+      if (!db) { showToast('Firebase not connected.', 'error'); return; }
+
+      const role    = document.getElementById('ex-role').value.trim();
+      const org     = document.getElementById('ex-org').value.trim();
+      const date    = document.getElementById('ex-date').value.trim();
+      const icon    = document.getElementById('ex-icon').value.trim() || 'fa-briefcase';
+      const desc    = document.getElementById('ex-desc').value.trim();
+      const order   = parseInt(document.getElementById('ex-order').value) || 999;
+
+      if (!role || !org || !date) {
+        showToast('Role, organization, and date range are required.', 'error');
+        return;
+      }
+
+      try {
+        setFirebaseStatus('writing');
+        await addDoc(collection(db, 'experience'), {
+          role, organization: org, date_range: date, icon, description: desc,
+          order, created_at: serverTimestamp()
+        });
+        setFirebaseStatus('connected');
+        showToast(`✅ "${role}" experience entry added!`, 'success');
+        ['ex-role','ex-org','ex-date','ex-icon','ex-desc','ex-order'].forEach(id => {
+          document.getElementById(id).value = '';
+        });
+        window.loadExperienceItems();
+      } catch (err) {
+        console.error('[Admin] commitExperience error:', err);
+        setFirebaseStatus('error');
+        showToast('Failed: ' + err.message, 'error');
+      }
+    };
+
+    window.loadExperienceItems = async function () {
+      if (!db) { showToast('Firebase not connected.', 'error'); return; }
+      const tbody = document.getElementById('experience-table-body');
+      tbody.innerHTML = '<tr><td colspan="5" class="text-center text-slate-600 py-8"><i class="fa-solid fa-circle-notch fa-spin mr-2"></i>Loading…</td></tr>';
+
+      try {
+        setFirebaseStatus('reading');
+        const q    = query(collection(db, 'experience'), orderBy('order', 'asc'));
+        const snap = await getDocs(q);
+        setFirebaseStatus('connected');
+
+        if (snap.empty) {
+          tbody.innerHTML = '<tr><td colspan="5" class="text-center text-slate-600 py-8">No experience entries yet.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = '';
+        snap.docs.forEach(docSnap => {
+          const d  = docSnap.data();
+          const id = docSnap.id;
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="font-mono text-slate-500">${esc(String(d.order || '—'))}</td>
+            <td class="font-semibold text-white">${esc(d.role || '')}</td>
+            <td class="text-slate-300">${esc(d.organization || '')}</td>
+            <td class="font-mono text-xs text-slate-500">${esc(d.date_range || '')}</td>
+            <td>
+              <button onclick="deleteExperienceItem('${esc(id)}')"
+                      class="text-xs text-rose-400 hover:text-rose-300 transition-colors font-semibold">
+                <i class="fa-solid fa-trash mr-1"></i>Delete
+              </button>
+            </td>`;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error('[Admin] loadExperience error:', err);
+        setFirebaseStatus('error');
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center text-rose-400 py-8">${esc(err.message)}</td></tr>`;
+      }
+    };
+
+    window.deleteExperienceItem = async function (id) {
+      if (!confirm('Delete this experience entry? This cannot be undone.')) return;
+      if (!db) return;
+      try {
+        setFirebaseStatus('writing');
+        await deleteDoc(doc(db, 'experience', id));
+        setFirebaseStatus('connected');
+        showToast('Experience entry deleted.', 'success');
+        window.loadExperienceItems();
+      } catch (err) {
+        showToast('Delete failed: ' + err.message, 'error');
+        setFirebaseStatus('error');
+      }
+    };
+
+    /* ══════════════════════════════════════════════════
+       APPS  —  Add Tool
+       ══════════════════════════════════════════════════ */
+    window.commitApp = async function () {
+      if (!db) { showToast('Firebase not connected.', 'error'); return; }
+
+      const name     = document.getElementById('ap-name').value.trim();
+      const icon     = document.getElementById('ap-icon').value.trim();
+      const color    = document.getElementById('ap-color').value.trim() || '#60a5fa';
+      const category = document.getElementById('ap-category').value.trim() || 'General';
+
+      if (!name || !icon) {
+        showToast('Tool name and icon class are required.', 'error');
+        return;
+      }
+
+      try {
+        setFirebaseStatus('writing');
+        await addDoc(collection(db, 'apps'), { name, icon, color, category, created_at: serverTimestamp() });
+        setFirebaseStatus('connected');
+        showToast(`✅ "${name}" added to the Application Matrix!`, 'success');
+        ['ap-name','ap-icon','ap-color','ap-category'].forEach(id => {
+          document.getElementById(id).value = id === 'ap-color' ? '#60a5fa' : '';
+        });
+      } catch (err) {
+        console.error('[Admin] commitApp error:', err);
+        setFirebaseStatus('error');
+        showToast('Failed: ' + err.message, 'error');
+      }
+    };
+
+    /* ══════════════════════════════════════════════════
+       MESSAGES  —  Load Inbox
+       ══════════════════════════════════════════════════ */
+    window.loadMessages = async function () {
+      if (!db) { return; }
+      const tbody = document.getElementById('messages-table-body');
+      tbody.innerHTML = '<tr><td colspan="5" class="text-center text-slate-600 py-8"><i class="fa-solid fa-circle-notch fa-spin mr-2"></i>Loading…</td></tr>';
+
+      try {
+        setFirebaseStatus('reading');
+        const q    = query(collection(db, 'messages'), orderBy('submitted_at', 'desc'), limit(50));
+        const snap = await getDocs(q);
+        setFirebaseStatus('connected');
+
+        // Update badge count
+        const badge = document.getElementById('msg-count-badge');
+        if (snap.size > 0) {
+          badge.textContent = snap.size;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+
+        if (snap.empty) {
+          tbody.innerHTML = '<tr><td colspan="5" class="text-center text-slate-600 py-10">No messages received yet.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = '';
+        snap.docs.forEach(docSnap => {
+          const d  = docSnap.data();
+          const id = docSnap.id;
+          const date = d.submitted_at?.toDate
+            ? d.submitted_at.toDate().toLocaleString('en-PH')
+            : 'Unknown';
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="font-mono text-xs text-slate-500 whitespace-nowrap">${esc(date)}</td>
+            <td class="font-semibold text-white">${esc(d.name || '—')}</td>
+            <td>
+              <a href="mailto:${esc(d.email || '')}" class="text-blue-400 hover:text-blue-300 text-xs">
+                ${esc(d.email || '—')}
+              </a>
+            </td>
+            <td class="text-slate-400 text-xs max-w-xs" style="max-width:220px;">
+              <div class="truncate" title="${esc(d.message || '')}">${esc(d.message || '—')}</div>
+            </td>
+            <td>
+              <span class="${d.read ? 'text-slate-600' : 'text-amber-400'} text-xs font-semibold">
+                ${d.read ? 'Read' : 'New'}
+              </span>
+            </td>`;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error('[Admin] loadMessages error:', err);
+        setFirebaseStatus('error');
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center text-rose-400 py-8">${esc(err.message)}</td></tr>`;
+      }
+    };
   </script>
 
+  <!-- ══════════════════════════════════════════════════
+       UI UTILITY SCRIPTS (non-module)
+       ══════════════════════════════════════════════════ -->
   <script>
-    // Responsive sidebar toggle visibility
-    function handleResponsive() {
-      const toggle = document.getElementById('sidebar-toggle');
-      if (window.innerWidth <= 900) {
-        toggle.style.display = 'flex';
-      } else {
-        toggle.style.display = 'none';
-        document.getElementById('sidebar').classList.remove('open');
-      }
+    /* Footer date & clock */
+    const adminDateEl = document.getElementById('current-date-admin');
+    const adminClockEl = document.getElementById('admin-clock');
+
+    function updateClock() {
+      const now = new Date();
+      if (adminDateEl) adminDateEl.textContent = now.toLocaleDateString('en-PH');
+      if (adminClockEl) adminClockEl.textContent = now.toLocaleTimeString('en-PH');
     }
-    window.addEventListener('resize', handleResponsive);
-    handleResponsive();
+    updateClock();
+    setInterval(updateClock, 1000);
 
-    // Keyboard shortcut: ESC closes modals
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') {
-        document.getElementById('msg-modal').classList.remove('open');
-        document.getElementById('confirm-dialog').classList.remove('show');
-        document.getElementById('sidebar').classList.remove('open');
-      }
-    });
+    /* Thumbnail preview on URL input */
+    const ptThumbInput  = document.getElementById('pt-thumbnail');
+    const ptThumbPreview = document.getElementById('pt-thumb-preview');
+    const ptThumbWrap   = document.getElementById('pt-thumb-preview-wrap');
+
+    if (ptThumbInput) {
+      ptThumbInput.addEventListener('input', function () {
+        const url = this.value.trim();
+        if (url) {
+          ptThumbPreview.src = url;
+          ptThumbWrap.classList.remove('hidden');
+        } else {
+          ptThumbWrap.classList.add('hidden');
+        }
+      });
+    }
+
+    /* Sidebar active link highlighting on scroll */
+    const sections = document.querySelectorAll('section[id]');
+    const sideLinks = document.querySelectorAll('.sidebar-link');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(sec => {
+        if (window.scrollY >= sec.offsetTop - 120) current = sec.id;
+      });
+      sideLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+          link.classList.add('active');
+        }
+      });
+    }, { passive: true });
+
+    /* Color picker sync */
+    const colorInput  = document.getElementById('ap-color');
+    const colorPicker = document.getElementById('ap-color-picker');
+    if (colorInput && colorPicker) {
+      colorInput.addEventListener('input', function () {
+        if (/^#[0-9a-fA-F]{6}$/.test(this.value)) {
+          colorPicker.value = this.value;
+        }
+      });
+    }
   </script>
-
 </body>
 </html>
