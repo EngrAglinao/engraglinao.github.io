@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Portfolio CMS — Admin Control Panel</title>
+  <title>Portfolio Admin Dashboard</title>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -11,1156 +11,1556 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
 
   <!-- FontAwesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
 
-  <!-- Tailwind CSS Browser -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
   <style>
     :root {
-      --accent: #6366f1;
-      --accent-light: #818cf8;
-      --accent-dark: #4f46e5;
-      --accent-glow: rgba(99,102,241,0.18);
+      --font-main: 'Plus Jakarta Sans', sans-serif;
+      --accent:    #6366f1;
+      --accent-2:  #8b5cf6;
+      --accent-grd: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      --danger:    #ef4444;
+      --success:   #22c55e;
+      --warning:   #f59e0b;
+      --transition: .2s cubic-bezier(.4,0,.2,1);
     }
-    * { font-family: 'Plus Jakarta Sans', sans-serif; }
 
-    html.dark body { background: #0a0c12; color: #e2e8f0; }
-    html.dark .panel-bg { background: #0f1117; border-color: #2d3448; }
-    html.dark .card-bg { background: #1a1f2e; border-color: #2d3448; }
-    html.dark .input-field { background: #1a1f2e; border-color: #2d3448; color: #e2e8f0; }
-    html.dark .tab-active { background: var(--accent); color: #fff; }
-    html.dark .tab-inactive { background: #1a1f2e; color: #94a3b8; }
-    html.dark .sidebar-bg { background: #0d0f18; border-color: #2d3448; }
-    html.dark .item-row { background: #1a1f2e; border-color: #2d3448; }
-    html.dark .header-bar { background: #0d0f18; border-color: #2d3448; }
-    html.dark .section-label { color: #94a3b8; }
-    html.dark .toast-bg { background: #1a1f2e; border-color: #2d3448; color: #e2e8f0; }
+    html.light {
+      --bg-page:    #f1f5f9;
+      --bg-surface: #ffffff;
+      --bg-alt:     #f8fafc;
+      --bg-card:    #ffffff;
+      --text-primary:   #0f172a;
+      --text-secondary: #475569;
+      --text-muted:     #94a3b8;
+      --border:     #e2e8f0;
+      --shadow:     0 2px 12px rgba(15,23,42,.07);
+    }
+    html.dark, html:not(.light) {
+      --bg-page:    #0b0f1a;
+      --bg-surface: #151d2e;
+      --bg-alt:     #1a2438;
+      --bg-card:    #1a2438;
+      --text-primary:   #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted:     #64748b;
+      --border:     #1e3050;
+      --shadow:     0 2px 12px rgba(0,0,0,.4);
+    }
 
-    html:not(.dark) body { background: #f1f5f9; color: #1e293b; }
-    html:not(.dark) .panel-bg { background: #f8fafc; border-color: #e2e8f0; }
-    html:not(.dark) .card-bg { background: #ffffff; border-color: #e2e8f0; }
-    html:not(.dark) .input-field { background: #ffffff; border-color: #cbd5e1; color: #1e293b; }
-    html:not(.dark) .tab-active { background: var(--accent); color: #fff; }
-    html:not(.dark) .tab-inactive { background: #e2e8f0; color: #64748b; }
-    html:not(.dark) .sidebar-bg { background: #ffffff; border-color: #e2e8f0; }
-    html:not(.dark) .item-row { background: #f8fafc; border-color: #e2e8f0; }
-    html:not(.dark) .header-bar { background: #ffffff; border-color: #e2e8f0; }
-    html:not(.dark) .section-label { color: #64748b; }
-    html:not(.dark) .toast-bg { background: #1e293b; border-color: #2d3448; color: #fff; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: var(--font-main); overflow: hidden; }
+    body { display: flex; flex-direction: column; background: var(--bg-page); color: var(--text-primary); }
 
-    .accent { color: var(--accent); }
-    .btn-accent { background: linear-gradient(135deg,var(--accent),var(--accent-dark)); color:#fff; border-radius:.6rem; font-weight:600; padding:.5rem 1rem; transition:all .2s; border:none; cursor:pointer; }
-    .btn-accent:hover { transform:translateY(-1px); box-shadow: 0 4px 14px var(--accent-glow); }
-    .btn-danger { background:#ef4444; color:#fff; border-radius:.6rem; font-weight:600; padding:.4rem .8rem; border:none; cursor:pointer; transition:all .2s; }
-    .btn-danger:hover { background:#dc2626; }
-    .btn-ghost { background:transparent; border:1.5px solid var(--accent); color:var(--accent); border-radius:.6rem; font-weight:600; padding:.4rem .8rem; cursor:pointer; transition:all .2s; }
-    .btn-ghost:hover { background:var(--accent); color:#fff; }
-    .btn-sm { padding:.3rem .7rem; font-size:.78rem; }
-    .btn-warning { background:#f59e0b; color:#fff; border-radius:.6rem; font-weight:600; padding:.4rem .8rem; border:none; cursor:pointer; transition:all .2s; }
-    .btn-warning:hover { background:#d97706; }
+    /* ─── SCROLLBAR ─────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
 
-    .input-field { border:1px solid; border-radius:.5rem; padding:.55rem .85rem; width:100%; outline:none; transition:border-color .2s; font-size:.88rem; }
-    .input-field:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
-    textarea.input-field { resize:vertical; }
+    /* ─── TOPBAR ────────────────────────────────────────────────── */
+    #admin-topbar {
+      height: 56px; flex-shrink: 0;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 1.25rem; gap: 1rem; z-index: 100;
+    }
+    .topbar-brand {
+      font-size: 1rem; font-weight: 800; letter-spacing: -.02em;
+      background: var(--accent-grd);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .topbar-right { display: flex; align-items: center; gap: .625rem; }
+    .topbar-btn {
+      display: inline-flex; align-items: center; gap: .375rem;
+      padding: .375rem .875rem; border-radius: .4rem;
+      font-size: .75rem; font-weight: 600;
+      border: 1px solid var(--border); background: var(--bg-alt);
+      color: var(--text-secondary); cursor: pointer;
+      transition: all var(--transition);
+    }
+    .topbar-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .topbar-btn.primary { background: var(--accent-grd); color: #fff; border: none; }
+    .topbar-btn.primary:hover { opacity: .88; }
 
-    .panel-bg { border:1px solid; border-radius:1rem; }
-    .card-bg { border:1px solid; border-radius:.75rem; }
-    .item-row { border:1px solid; border-radius:.6rem; padding:.75rem 1rem; }
+    /* ─── MAIN LAYOUT ───────────────────────────────────────────── */
+    #admin-layout {
+      display: flex; flex: 1; overflow: hidden;
+    }
 
-    /* TABS */
-    .tab-btn { padding:.45rem 1rem; border-radius:.5rem; font-size:.82rem; font-weight:600; cursor:pointer; transition:all .15s; border:none; }
+    /* ─── SIDEBAR NAV ───────────────────────────────────────────── */
+    #sidebar-nav {
+      width: 220px; flex-shrink: 0;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      overflow-y: auto; padding: 1rem 0;
+    }
+    .nav-group-label {
+      font-size: .625rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--text-muted);
+      padding: .875rem 1.25rem .375rem;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: .625rem;
+      padding: .5625rem 1.25rem; font-size: .8125rem; font-weight: 500;
+      color: var(--text-secondary); cursor: pointer;
+      transition: all var(--transition); border: none; background: none;
+      text-align: left; width: 100%; border-left: 3px solid transparent;
+    }
+    .nav-item:hover { background: var(--bg-alt); color: var(--text-primary); }
+    .nav-item.active {
+      background: rgba(99,102,241,.1); color: var(--accent);
+      border-left-color: var(--accent); font-weight: 600;
+    }
+    .nav-item .nav-icon { width: 18px; text-align: center; font-size: .8125rem; }
 
-    /* SPLIT LAYOUT */
-    .split-left { width:50%; overflow-y:auto; height:calc(100vh - 56px); border-right:1px solid; }
-    .split-right { width:50%; height:calc(100vh - 56px); }
-    html.dark .split-left { border-color:#2d3448; }
-    html:not(.dark) .split-left { border-color:#e2e8f0; }
+    /* ─── PANEL AREA ────────────────────────────────────────────── */
+    #panel-area {
+      flex: 1; overflow: hidden;
+      display: flex;
+    }
 
-    /* HEADER */
-    .header-bar { border-bottom:1px solid; position:sticky; top:0; z-index:40; }
+    /* ─── CONTROL PANEL ─────────────────────────────────────────── */
+    #control-panel {
+      width: 50%; border-right: 1px solid var(--border);
+      overflow-y: auto; padding: 1.5rem;
+      display: flex; flex-direction: column; gap: 1.25rem;
+    }
 
-    /* TOAST */
-    .toast { position:fixed; bottom:1.5rem; right:1.5rem; z-index:9999; padding:.75rem 1.25rem; border-radius:.75rem; border:1px solid; font-size:.85rem; font-weight:600; display:flex; align-items:center; gap:.6rem; box-shadow:0 8px 32px rgba(0,0,0,.25); transform:translateY(80px); opacity:0; transition:all .3s; }
-    .toast.show { transform:none; opacity:1; }
+    /* ─── PREVIEW PANEL ─────────────────────────────────────────── */
+    #preview-panel {
+      width: 50%; display: flex; flex-direction: column;
+    }
+    #preview-bar {
+      height: 42px; flex-shrink: 0;
+      background: var(--bg-surface); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 1rem; gap: .5rem;
+    }
+    #preview-bar span { font-size: .75rem; font-weight: 600; color: var(--text-muted); }
+    #preview-iframe {
+      flex: 1; border: none;
+      background: var(--bg-alt);
+    }
 
-    /* SECTION NAV */
-    .section-nav-item { padding:.55rem .9rem; border-radius:.5rem; cursor:pointer; font-size:.85rem; font-weight:500; transition:all .15s; }
-    html.dark .section-nav-item:hover, html.dark .section-nav-item.active { background:var(--accent-glow); color:var(--accent); }
-    html:not(.dark) .section-nav-item:hover, html:not(.dark) .section-nav-item.active { background:var(--accent-glow); color:var(--accent); }
+    /* ─── CARD / PANEL ──────────────────────────────────────────── */
+    .admin-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: .75rem;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .admin-card-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+    }
+    .admin-card-title {
+      font-size: .875rem; font-weight: 700; color: var(--text-primary);
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .admin-card-title i { color: var(--accent); }
+    .admin-card-body { padding: 1.25rem; }
 
-    /* DRAG HANDLE */
-    .drag-handle { cursor:grab; color:#94a3b8; }
-    .drag-handle:active { cursor:grabbing; }
+    /* ─── FORM ELEMENTS ─────────────────────────────────────────── */
+    .field-group { display: flex; flex-direction: column; gap: .3rem; margin-bottom: .875rem; }
+    .field-label { font-size: .6875rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); }
+    .field-input, .field-select, .field-textarea {
+      background: var(--bg-alt); border: 1px solid var(--border);
+      color: var(--text-primary); border-radius: .4rem;
+      padding: .5rem .75rem; font-family: var(--font-main);
+      font-size: .8125rem; outline: none; width: 100%;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .field-input:focus, .field-select:focus, .field-textarea:focus {
+      border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,.12);
+    }
+    .field-textarea { resize: vertical; min-height: 80px; }
+    .field-select option { background: var(--bg-surface); }
 
-    /* SCROLLBAR */
-    ::-webkit-scrollbar { width:5px; }
-    ::-webkit-scrollbar-thumb { background:var(--accent); border-radius:99px; }
+    /* ─── BUTTONS ───────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: .375rem;
+      padding: .4375rem .875rem; border-radius: .4rem;
+      font-size: .75rem; font-weight: 600; cursor: pointer;
+      border: 1px solid transparent; transition: all var(--transition);
+      font-family: var(--font-main);
+    }
+    .btn-primary { background: var(--accent-grd); color: #fff; border: none; }
+    .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+    .btn-secondary { background: var(--bg-alt); color: var(--text-secondary); border-color: var(--border); }
+    .btn-secondary:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn-danger { background: rgba(239,68,68,.1); color: var(--danger); border-color: rgba(239,68,68,.25); }
+    .btn-danger:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+    .btn-warning { background: rgba(245,158,11,.1); color: var(--warning); border-color: rgba(245,158,11,.25); }
+    .btn-warning:hover { background: var(--warning); color: #fff; }
+    .btn-success { background: rgba(34,197,94,.1); color: var(--success); border-color: rgba(34,197,94,.25); }
+    .btn-success:hover { background: var(--success); color: #fff; }
+    .btn-sm { padding: .3rem .625rem; font-size: .6875rem; }
+    .btn-full { width: 100%; justify-content: center; }
 
-    /* LOADER */
-    .loader-ring { width:20px; height:20px; border:3px solid transparent; border-top-color:var(--accent); border-radius:50%; animation:spin .7s linear infinite; display:inline-block; }
-    @keyframes spin { to { transform:rotate(360deg); } }
+    /* ─── DATA TABLE ────────────────────────────────────────────── */
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th {
+      font-size: .625rem; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--text-muted);
+      padding: .5rem .75rem; text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .data-table td {
+      font-size: .75rem; color: var(--text-secondary);
+      padding: .625rem .75rem; border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: var(--bg-alt); }
+    .data-table .td-title { font-weight: 600; color: var(--text-primary); max-width: 160px; }
+    .data-table .td-title p { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-    .fade-in { animation:fadeIn .3s ease forwards; }
-    @keyframes fadeIn { from { opacity:0;transform:translateY(8px); } to { opacity:1;transform:none; } }
+    /* ─── TOGGLE SWITCH ─────────────────────────────────────────── */
+    .toggle-switch { display: flex; align-items: center; gap: .625rem; cursor: pointer; }
+    .toggle-switch input[type="checkbox"] { display: none; }
+    .toggle-track {
+      width: 36px; height: 20px; background: var(--border);
+      border-radius: 99px; position: relative; flex-shrink: 0;
+      transition: background var(--transition);
+    }
+    .toggle-switch input:checked + .toggle-track { background: var(--accent); }
+    .toggle-thumb {
+      position: absolute; top: 2px; left: 2px;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: #fff; transition: transform var(--transition);
+      box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    }
+    .toggle-switch input:checked + .toggle-track .toggle-thumb { transform: translateX(16px); }
 
-    label.form-label { display:block; font-size:.8rem; font-weight:700; margin-bottom:.3rem; text-transform:uppercase; letter-spacing:.04em; }
-    html.dark label.form-label { color:#94a3b8; }
-    html:not(.dark) label.form-label { color:#64748b; }
+    /* ─── STATUS BADGE ──────────────────────────────────────────── */
+    .badge {
+      font-size: .625rem; font-weight: 700; letter-spacing: .04em;
+      padding: .15rem .45rem; border-radius: .25rem;
+      text-transform: uppercase;
+    }
+    .badge-accent { background: rgba(99,102,241,.15); color: var(--accent); }
+    .badge-success { background: rgba(34,197,94,.15); color: var(--success); }
+    .badge-danger  { background: rgba(239,68,68,.15);  color: var(--danger); }
+    .badge-muted   { background: var(--bg-alt); color: var(--text-muted); }
 
-    .pill-badge { display:inline-flex; align-items:center; gap:.3rem; padding:.2rem .6rem; border-radius:9999px; font-size:.72rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; background:var(--accent-glow); color:var(--accent); border:1px solid var(--accent); }
-    .collapsible-content { overflow:hidden; transition:max-height .3s ease; max-height:0; }
-    .collapsible-content.open { max-height:2000px; }
+    /* ─── TOAST ─────────────────────────────────────────────────── */
+    #toast-container {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999;
+      display: flex; flex-direction: column; gap: .5rem;
+    }
+    .toast {
+      display: flex; align-items: center; gap: .625rem;
+      padding: .75rem 1rem; border-radius: .5rem;
+      font-size: .8125rem; font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0,0,0,.3);
+      animation: toast-in .25s ease;
+      min-width: 240px;
+    }
+    .toast.success { background: #166534; color: #dcfce7; }
+    .toast.error   { background: #7f1d1d; color: #fee2e2; }
+    .toast.info    { background: #1e1b4b; color: #e0e7ff; }
+    @keyframes toast-in { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-    .section-divider { height:1px; margin:1.5rem 0; }
-    html.dark .section-divider { background:#2d3448; }
-    html:not(.dark) .section-divider { background:#e2e8f0; }
+    /* ─── LOADER ────────────────────────────────────────────────── */
+    .spinner {
+      width: 16px; height: 16px; border-radius: 50%;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      animation: spin .6s linear infinite; display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .reorder-btn { width:26px; height:26px; border-radius:.4rem; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; font-size:.75rem; border:none; transition:all .15s; }
-    html.dark .reorder-btn { background:#2d3448; color:#94a3b8; }
-    html:not(.dark) .reorder-btn { background:#e2e8f0; color:#64748b; }
-    .reorder-btn:hover { background:var(--accent); color:#fff; }
+    /* ─── SECTION TABS ──────────────────────────────────────────── */
+    .panel-hidden { display: none !important; }
 
-    .visibility-toggle { width:38px; height:22px; border-radius:9999px; position:relative; cursor:pointer; transition:background .2s; border:none; }
-    .visibility-toggle.on { background:var(--accent); }
-    .visibility-toggle.off { background:#94a3b8; }
-    .visibility-toggle::after { content:''; position:absolute; top:2px; width:18px; height:18px; border-radius:50%; background:#fff; transition:left .2s; }
-    .visibility-toggle.on::after { left:18px; }
-    .visibility-toggle.off::after { left:2px; }
+    /* ─── ORDER DRAG HANDLE ─────────────────────────────────────── */
+    .order-row {
+      display: flex; align-items: center; gap: .625rem;
+      padding: .5rem .75rem; border-radius: .4rem;
+      background: var(--bg-alt); border: 1px solid var(--border);
+      margin-bottom: .5rem; cursor: grab;
+      transition: box-shadow var(--transition);
+    }
+    .order-row:active { cursor: grabbing; box-shadow: 0 4px 16px rgba(0,0,0,.2); }
+    .order-row .drag-handle { color: var(--text-muted); font-size: .875rem; }
+    .order-row .order-label { flex: 1; font-size: .8125rem; font-weight: 500; color: var(--text-primary); }
+    .order-row .order-num {
+      font-size: .75rem; font-weight: 700; color: var(--accent);
+      background: rgba(99,102,241,.1); border-radius: .3rem; padding: .1rem .4rem;
+    }
+
+    /* ─── COLOR SWATCH ──────────────────────────────────────────── */
+    .bg-swatch-grid { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .bg-swatch {
+      width: 32px; height: 32px; border-radius: .375rem;
+      border: 2px solid transparent; cursor: pointer;
+      transition: all var(--transition);
+    }
+    .bg-swatch.active { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,.25); }
+
+    /* ─── RESPONSIVE ────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      #preview-panel { display: none; }
+      #control-panel { width: 100%; }
+      #sidebar-nav { width: 48px; }
+      .nav-item span { display: none; }
+      .nav-group-label { display: none; }
+    }
   </style>
 </head>
 <body>
 
-<!-- ═══════════════ TOAST NOTIFICATION ═══════════════ -->
-<div id="toast" class="toast toast-bg">
-  <i id="toast-icon" class="fa-solid fa-check-circle accent"></i>
-  <span id="toast-msg">Done!</span>
-</div>
-
-<!-- ═══════════════ HEADER BAR ═══════════════ -->
-<div class="header-bar header-bar px-5 py-3 flex items-center justify-between" style="background:inherit">
-  <div class="flex items-center gap-3">
-    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:var(--accent)">
-      <i class="fa-solid fa-sliders text-white text-sm"></i>
-    </div>
-    <div>
-      <p class="font-bold text-sm leading-none">Portfolio CMS</p>
-      <p class="text-xs section-label leading-none mt-0.5">Admin Control Panel</p>
-    </div>
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  TOP BAR                                                        -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<header id="admin-topbar">
+  <div style="display:flex;align-items:center;gap:.875rem;">
+    <span class="topbar-brand"><i class="fa-solid fa-sliders" style="margin-right:.375rem;"></i>Portfolio Admin</span>
+    <span style="font-size:.6875rem;background:rgba(99,102,241,.12);color:var(--accent);border-radius:99px;padding:.15rem .5rem;font-weight:700;">CMS Dashboard</span>
   </div>
-  <div class="flex items-center gap-3">
-    <div id="db-status" class="pill-badge text-xs">
-      <div class="loader-ring" style="width:10px;height:10px;border-width:2px;"></div> Connecting...
-    </div>
-    <button id="seed-all-btn" onclick="seedAllData()" class="btn-warning btn-sm flex items-center gap-2">
-      <i class="fa-solid fa-seedling"></i> Seed All Sample Data
+  <div class="topbar-right">
+    <span id="save-status" style="font-size:.75rem;color:var(--text-muted);display:none;"></span>
+    <button class="topbar-btn" onclick="refreshPreview()" title="Refresh preview iframe">
+      <i class="fa-solid fa-rotate"></i> Refresh Preview
     </button>
-    <button id="theme-toggle" class="btn-ghost btn-sm">
-      <i class="fa-solid fa-moon" id="theme-icon"></i>
+    <button class="topbar-btn" onclick="toggleAdminTheme()">
+      <i class="fa-solid fa-moon" id="admin-theme-icon"></i>
     </button>
-    <a href="index.html" target="_blank" class="btn-ghost btn-sm flex items-center gap-2">
-      <i class="fa-solid fa-arrow-up-right-from-square"></i> View Site
-    </a>
+    <button class="topbar-btn primary" onclick="window.open('index.html','_blank')">
+      <i class="fa-solid fa-arrow-up-right-from-square"></i> Live Site
+    </button>
   </div>
-</div>
+</header>
 
-<!-- ═══════════════ SPLIT LAYOUT ═══════════════ -->
-<div class="flex" style="height:calc(100vh - 56px)">
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  MAIN LAYOUT                                                    -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="admin-layout">
 
-  <!-- LEFT PANEL: CMS CONTROLS -->
-  <div class="split-left panel-bg">
-    <div class="p-5">
+  <!-- ── SIDEBAR NAV ─────────────────────────────────────────── -->
+  <nav id="sidebar-nav" aria-label="Admin navigation">
+    <p class="nav-group-label">Content</p>
+    <button class="nav-item active" onclick="showPanel('core')" data-panel="core">
+      <span class="nav-icon"><i class="fa-solid fa-id-card"></i></span>
+      <span>Core Text</span>
+    </button>
+    <button class="nav-item" onclick="showPanel('experience')" data-panel="experience">
+      <span class="nav-icon"><i class="fa-solid fa-timeline"></i></span>
+      <span>Experience</span>
+    </button>
+    <button class="nav-item" onclick="showPanel('portfolio')" data-panel="portfolio">
+      <span class="nav-icon"><i class="fa-solid fa-layer-group"></i></span>
+      <span>Portfolio</span>
+    </button>
+    <button class="nav-item" onclick="showPanel('skills')" data-panel="skills">
+      <span class="nav-icon"><i class="fa-solid fa-microchip"></i></span>
+      <span>Skills</span>
+    </button>
+    <button class="nav-item" onclick="showPanel('contact')" data-panel="contact">
+      <span class="nav-icon"><i class="fa-solid fa-address-card"></i></span>
+      <span>Contact Info</span>
+    </button>
 
-      <!-- SECTION NAVIGATOR TABS -->
-      <div class="flex flex-wrap gap-2 mb-6" id="section-tabs">
-        <button class="tab-btn tab-active" onclick="switchTab('hero')">
-          <i class="fa-solid fa-user mr-1"></i> Hero
-        </button>
-        <button class="tab-btn tab-inactive" onclick="switchTab('experience')">
-          <i class="fa-solid fa-briefcase mr-1"></i> Experience
-        </button>
-        <button class="tab-btn tab-inactive" onclick="switchTab('portfolio')">
-          <i class="fa-solid fa-layer-group mr-1"></i> Portfolio
-        </button>
-        <button class="tab-btn tab-inactive" onclick="switchTab('skills')">
-          <i class="fa-solid fa-microchip mr-1"></i> Skills
-        </button>
-        <button class="tab-btn tab-inactive" onclick="switchTab('layout')">
-          <i class="fa-solid fa-table-columns mr-1"></i> Layout
-        </button>
-        <button class="tab-btn tab-inactive" onclick="switchTab('coretext')">
-          <i class="fa-solid fa-text-height mr-1"></i> Text
-        </button>
-        <button class="tab-btn tab-inactive" onclick="switchTab('messages')">
-          <i class="fa-solid fa-inbox mr-1"></i> Messages
-        </button>
+    <p class="nav-group-label">Structure</p>
+    <button class="nav-item" onclick="showPanel('layout')" data-panel="layout">
+      <span class="nav-icon"><i class="fa-solid fa-table-columns"></i></span>
+      <span>Layout Order</span>
+    </button>
+    <button class="nav-item" onclick="showPanel('backgrounds')" data-panel="backgrounds">
+      <span class="nav-icon"><i class="fa-solid fa-palette"></i></span>
+      <span>Backgrounds</span>
+    </button>
+
+    <p class="nav-group-label">Inbox</p>
+    <button class="nav-item" onclick="showPanel('messages')" data-panel="messages">
+      <span class="nav-icon"><i class="fa-solid fa-envelope"></i></span>
+      <span>Messages</span>
+    </button>
+  </nav>
+
+  <!-- ── PANEL AREA ───────────────────────────────────────────── -->
+  <div id="panel-area">
+
+    <!-- ── CONTROL PANEL ───────────────────────────────────────── -->
+    <div id="control-panel">
+
+      <!-- ════════════════════════════════════════════
+           PANEL: CORE TEXT
+           ════════════════════════════════════════════ -->
+      <div id="panel-core">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <span class="admin-card-title"><i class="fa-solid fa-id-card"></i> Core Site Text</span>
+            <button class="btn btn-primary btn-sm" onclick="saveCoreText()">
+              <i class="fa-solid fa-floppy-disk"></i> Save All
+            </button>
+          </div>
+          <div class="admin-card-body">
+            <div class="field-group">
+              <label class="field-label">Site Title / Full Name</label>
+              <input class="field-input" id="core-site-title" type="text" placeholder="Engr. Aglinao" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Nav Logo Text (2–3 chars)</label>
+              <input class="field-input" id="core-nav-logo" type="text" placeholder="EA" maxlength="4" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Hero Badge Text</label>
+              <input class="field-input" id="core-hero-badge" type="text" placeholder="Open to Opportunities" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Hero Title Line 1</label>
+              <input class="field-input" id="core-title1" type="text" placeholder="Building Digital" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Hero Title Line 2</label>
+              <input class="field-input" id="core-title2" type="text" placeholder="Experiences" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Hero Title Accent (gradient text)</label>
+              <input class="field-input" id="core-title-accent" type="text" placeholder="That Matter" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Hero Biography</label>
+              <textarea class="field-textarea" id="core-hero-bio" placeholder="Your professional biography..."></textarea>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Career Objective (for Resume PDF)</label>
+              <textarea class="field-textarea" id="core-career-obj" placeholder="To leverage my expertise..."></textarea>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Master Resume File URL (downloadable)</label>
+              <input class="field-input" id="core-resume-url" type="url" placeholder="https://...resume.pdf" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Profile / Avatar Image URL</label>
+              <input class="field-input" id="core-profile-img" type="url" placeholder="https://...photo.jpg" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Footer Tagline</label>
+              <input class="field-input" id="core-footer-tagline" type="text" placeholder="Crafted with precision." />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Footer Tech Stack String</label>
+              <input class="field-input" id="core-footer-tech" type="text" placeholder="Firebase · Tailwind CSS · JS" />
+            </div>
+            <div style="border-top:1px solid var(--border);padding-top:.875rem;margin-top:.25rem;">
+              <p class="field-label" style="margin-bottom:.75rem;">Social Links</p>
+              <div class="field-group">
+                <label class="field-label">GitHub URL</label>
+                <input class="field-input" id="core-social-github" type="url" placeholder="https://github.com/..." />
+              </div>
+              <div class="field-group">
+                <label class="field-label">LinkedIn URL</label>
+                <input class="field-input" id="core-social-linkedin" type="url" placeholder="https://linkedin.com/in/..." />
+              </div>
+              <div class="field-group">
+                <label class="field-label">Email Address</label>
+                <input class="field-input" id="core-social-email" type="email" placeholder="hello@example.com" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Education (for Resume) -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <span class="admin-card-title"><i class="fa-solid fa-graduation-cap"></i> Education (Resume Sidebar)</span>
+            <button class="btn btn-primary btn-sm" onclick="saveEducation()">
+              <i class="fa-solid fa-floppy-disk"></i> Save
+            </button>
+          </div>
+          <div class="admin-card-body">
+            <div id="edu-entries"></div>
+            <button class="btn btn-secondary btn-sm" onclick="addEduEntry()">
+              <i class="fa-solid fa-plus"></i> Add Education Entry
+            </button>
+          </div>
+        </div>
+
+        <!-- Resume Bullets -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <span class="admin-card-title"><i class="fa-solid fa-list-check"></i> Resume Summary Bullets</span>
+            <button class="btn btn-primary btn-sm" onclick="saveSummaryBullets()">
+              <i class="fa-solid fa-floppy-disk"></i> Save
+            </button>
+          </div>
+          <div class="admin-card-body">
+            <div id="bullet-entries"></div>
+            <button class="btn btn-secondary btn-sm" onclick="addBulletEntry()">
+              <i class="fa-solid fa-plus"></i> Add Bullet
+            </button>
+          </div>
+        </div>
       </div>
 
-      <!-- ═══ TAB: HERO ═══ -->
-      <div id="tab-hero" class="tab-panel fade-in">
-        <div class="space-y-4">
-          <div class="flex items-center gap-2 mb-3">
-            <div class="pill-badge"><i class="fa-solid fa-user"></i> Hero / About Me</div>
+      <!-- ════════════════════════════════════════════
+           PANEL: EXPERIENCE
+           ════════════════════════════════════════════ -->
+      <div id="panel-experience" class="panel-hidden">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <span class="admin-card-title"><i class="fa-solid fa-timeline"></i> Experience Entries</span>
+            <button class="btn btn-primary btn-sm" onclick="showExpForm()">
+              <i class="fa-solid fa-plus"></i> Add Entry
+            </button>
           </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div><label class="form-label">Full Name</label><input id="h-name" class="input-field" placeholder="John Doe" /></div>
-            <div><label class="form-label">Initials / Brand</label><input id="h-initials" class="input-field" placeholder="JD" /></div>
-          </div>
-          <div><label class="form-label">Role / Title</label><input id="h-role" class="input-field" placeholder="Senior Frontend Engineer" /></div>
-          <div><label class="form-label">Headline HTML</label><textarea id="h-headline" class="input-field" rows="2" placeholder='Building <span class="accent">Digital</span> Experiences'></textarea></div>
-          <div><label class="form-label">Biography</label><textarea id="h-bio" class="input-field" rows="4" placeholder="Short biography paragraph..."></textarea></div>
-          <div><label class="form-label">Career Objective (for Resume)</label><textarea id="h-objective" class="input-field" rows="3" placeholder="Driven engineer seeking..."></textarea></div>
-          <div><label class="form-label">Summary Bullets (pipe | separated)</label><textarea id="h-summary" class="input-field" rows="2" placeholder="5+ years experience | Full-stack expertise | Team leadership"></textarea></div>
-          <div><label class="form-label">Availability Pill Text</label><input id="h-pill" class="input-field" placeholder="Available for Work" /></div>
-          <div><label class="form-label">Avatar Image URL</label><input id="h-avatar" class="input-field" placeholder="https://..." /></div>
-          <div><label class="form-label">Tagline (Footer)</label><input id="h-tagline" class="input-field" placeholder="Building the web, one pixel at a time." /></div>
-          <div class="grid grid-cols-2 gap-3">
-            <div><label class="form-label">Email</label><input id="h-email" class="input-field" placeholder="you@email.com" /></div>
-            <div><label class="form-label">Phone</label><input id="h-phone" class="input-field" placeholder="+1 234 567 8900" /></div>
-          </div>
-          <div class="grid grid-cols-2 gap-3">
-            <div><label class="form-label">Location</label><input id="h-location" class="input-field" placeholder="City, Country" /></div>
-            <div><label class="form-label">Website</label><input id="h-website" class="input-field" placeholder="https://..." /></div>
-          </div>
-          <div><label class="form-label">Resume Download URL</label><input id="h-resumeurl" class="input-field" placeholder="https://..." /></div>
-
-          <div class="section-divider"></div>
-          <p class="font-bold text-sm mb-3">Education (for Resume Sidebar)</p>
-          <div id="education-list" class="space-y-2 mb-3"></div>
-          <button onclick="addEducationRow()" class="btn-ghost btn-sm flex items-center gap-2 mb-4">
-            <i class="fa-solid fa-plus"></i> Add Education
-          </button>
-
-          <div class="section-divider"></div>
-          <p class="font-bold text-sm mb-3">Stats / Counters</p>
-          <div id="stats-list" class="space-y-2 mb-3"></div>
-          <button onclick="addStatRow()" class="btn-ghost btn-sm flex items-center gap-2 mb-4">
-            <i class="fa-solid fa-plus"></i> Add Stat
-          </button>
-
-          <div class="section-divider"></div>
-          <p class="font-bold text-sm mb-3">Social Links</p>
-          <div id="socials-list" class="space-y-2 mb-3"></div>
-          <button onclick="addSocialRow()" class="btn-ghost btn-sm flex items-center gap-2 mb-4">
-            <i class="fa-solid fa-plus"></i> Add Social Link
-          </button>
-
-          <button onclick="saveHero()" class="btn-accent w-full flex items-center justify-center gap-2">
-            <i class="fa-solid fa-floppy-disk"></i> Save Hero Config
-          </button>
-        </div>
-      </div>
-
-      <!-- ═══ TAB: EXPERIENCE ═══ -->
-      <div id="tab-experience" class="tab-panel hidden fade-in">
-        <div class="flex items-center justify-between mb-4">
-          <div class="pill-badge"><i class="fa-solid fa-briefcase"></i> Experience Timeline</div>
-          <button onclick="openExpForm(null)" class="btn-accent btn-sm flex items-center gap-2">
-            <i class="fa-solid fa-plus"></i> Add Entry
-          </button>
-        </div>
-        <div id="experience-list" class="space-y-3 mb-4">
-          <div class="flex items-center gap-2 text-sm section-label">
-            <div class="loader-ring"></div> Loading...
-          </div>
-        </div>
-
-        <!-- Experience Form -->
-        <div id="exp-form-wrap" class="card-bg p-5 hidden mt-4">
-          <p class="font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-pen accent"></i> <span id="exp-form-title">Add Experience</span></p>
-          <input type="hidden" id="exp-doc-id" />
-          <div class="space-y-3">
-            <div class="grid grid-cols-2 gap-3">
-              <div><label class="form-label">Role / Position</label><input id="exp-role" class="input-field" placeholder="Senior Developer" /></div>
-              <div><label class="form-label">Organization</label><input id="exp-org" class="input-field" placeholder="Acme Corp" /></div>
+          <div id="exp-form-wrap" style="display:none;padding:1.25rem;border-bottom:1px solid var(--border);">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.875rem;">
+              <div class="field-group">
+                <label class="field-label">Role / Job Title</label>
+                <input class="field-input" id="exp-role" placeholder="Senior Engineer" />
+              </div>
+              <div class="field-group">
+                <label class="field-label">Organization</label>
+                <input class="field-input" id="exp-org" placeholder="Tech Corp" />
+              </div>
+              <div class="field-group">
+                <label class="field-label">Date Range</label>
+                <input class="field-input" id="exp-date" placeholder="2021 – Present" />
+              </div>
+              <div class="field-group">
+                <label class="field-label">FontAwesome Icon Class</label>
+                <input class="field-input" id="exp-icon" placeholder="fa-code" />
+              </div>
             </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div><label class="form-label">Date Range</label><input id="exp-date" class="input-field" placeholder="Jan 2022 – Present" /></div>
-              <div><label class="form-label">FA Icon Class</label><input id="exp-icon" class="input-field" placeholder="fa-solid fa-briefcase" /></div>
+            <div class="field-group">
+              <label class="field-label">Description</label>
+              <textarea class="field-textarea" id="exp-desc" placeholder="Describe your role and impact..."></textarea>
             </div>
-            <div><label class="form-label">Description</label><textarea id="exp-desc" class="input-field" rows="3" placeholder="Responsibilities and achievements..."></textarea></div>
-            <div><label class="form-label">Tags (comma separated)</label><input id="exp-tags" class="input-field" placeholder="React, Node.js, AWS" /></div>
-            <div><label class="form-label">Order (number)</label><input id="exp-order" class="input-field" type="number" placeholder="1" value="1" /></div>
-            <div class="flex gap-3">
-              <button onclick="saveExpEntry()" class="btn-accent flex items-center gap-2"><i class="fa-solid fa-floppy-disk"></i> Save</button>
-              <button onclick="cancelExpForm()" class="btn-ghost">Cancel</button>
+            <input type="hidden" id="exp-edit-id" />
+            <div style="display:flex;gap:.5rem;margin-top:.25rem;">
+              <button class="btn btn-primary btn-sm" onclick="saveExpEntry()">
+                <i class="fa-solid fa-floppy-disk"></i> Save Entry
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="hideExpForm()">Cancel</button>
             </div>
+          </div>
+          <div class="admin-card-body" style="padding:0;">
+            <div id="exp-list-loading" style="padding:1.25rem;text-align:center;color:var(--text-muted);font-size:.8125rem;">
+              <div class="spinner"></div>
+            </div>
+            <table class="data-table" id="exp-table" style="display:none;">
+              <thead>
+                <tr>
+                  <th>Order</th>
+                  <th>Role</th>
+                  <th>Organization</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="exp-tbody"></tbody>
+            </table>
           </div>
         </div>
       </div>
 
-      <!-- ═══ TAB: PORTFOLIO ═══ -->
-      <div id="tab-portfolio" class="tab-panel hidden fade-in">
-        <div class="flex items-center justify-between mb-4">
-          <div class="pill-badge"><i class="fa-solid fa-layer-group"></i> Portfolio Assets</div>
-          <button onclick="openPortForm(null)" class="btn-accent btn-sm flex items-center gap-2">
-            <i class="fa-solid fa-plus"></i> Add Asset
-          </button>
-        </div>
-        <div id="portfolio-list" class="space-y-3 mb-4">
-          <div class="flex items-center gap-2 text-sm section-label">
-            <div class="loader-ring"></div> Loading...
+      <!-- ════════════════════════════════════════════
+           PANEL: PORTFOLIO
+           ════════════════════════════════════════════ -->
+      <div id="panel-portfolio" class="panel-hidden">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <span class="admin-card-title"><i class="fa-solid fa-layer-group"></i> Portfolio Items</span>
+            <button class="btn btn-primary btn-sm" onclick="showPortForm()">
+              <i class="fa-solid fa-plus"></i> Add Item
+            </button>
           </div>
-        </div>
-
-        <!-- Portfolio Form -->
-        <div id="port-form-wrap" class="card-bg p-5 hidden mt-4">
-          <p class="font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-pen accent"></i> <span id="port-form-title">Add Portfolio Item</span></p>
-          <input type="hidden" id="port-doc-id" />
-          <div class="space-y-3">
-            <div><label class="form-label">Title</label><input id="port-title" class="input-field" placeholder="Project Title" /></div>
-            <div><label class="form-label">Description</label><textarea id="port-desc" class="input-field" rows="2" placeholder="Brief description..." /></div>
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="form-label">Type</label>
-                <select id="port-type" class="input-field">
-                  <option>PPT</option><option>Image</option><option>URL</option>
-                  <option>Site</option><option>PDF</option><option>Video</option>
+          <div id="port-form-wrap" style="display:none;padding:1.25rem;border-bottom:1px solid var(--border);">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.875rem;">
+              <div class="field-group">
+                <label class="field-label">Title</label>
+                <input class="field-input" id="port-title" placeholder="Project Name" />
+              </div>
+              <div class="field-group">
+                <label class="field-label">Type</label>
+                <select class="field-select" id="port-type">
+                  <option value="Site">Site</option>
+                  <option value="URL">URL</option>
+                  <option value="PDF">PDF</option>
+                  <option value="PPT">PPT</option>
+                  <option value="Image">Image</option>
+                  <option value="Video">Video</option>
+                  <option value="Doc">Doc</option>
                 </select>
               </div>
-              <div><label class="form-label">Order</label><input id="port-order" class="input-field" type="number" value="1" /></div>
-            </div>
-            <div><label class="form-label">Asset URL (link / embed)</label><input id="port-url" class="input-field" placeholder="https://..." /></div>
-            <div><label class="form-label">Thumbnail Image URL</label><input id="port-thumb" class="input-field" placeholder="https://..." /></div>
-            <div class="flex gap-3">
-              <button onclick="savePortEntry()" class="btn-accent flex items-center gap-2"><i class="fa-solid fa-floppy-disk"></i> Save</button>
-              <button onclick="cancelPortForm()" class="btn-ghost">Cancel</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ═══ TAB: SKILLS ═══ -->
-      <div id="tab-skills" class="tab-panel hidden fade-in">
-        <div class="flex items-center justify-between mb-4">
-          <div class="pill-badge"><i class="fa-solid fa-microchip"></i> Application Matrix</div>
-          <button onclick="openSkillForm(null)" class="btn-accent btn-sm flex items-center gap-2">
-            <i class="fa-solid fa-plus"></i> Add Skill
-          </button>
-        </div>
-        <div id="skills-list" class="space-y-3 mb-4">
-          <div class="flex items-center gap-2 text-sm section-label">
-            <div class="loader-ring"></div> Loading...
-          </div>
-        </div>
-
-        <!-- Skill Form -->
-        <div id="skill-form-wrap" class="card-bg p-5 hidden mt-4">
-          <p class="font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-pen accent"></i> <span id="skill-form-title">Add Skill</span></p>
-          <input type="hidden" id="skill-doc-id" />
-          <div class="space-y-3">
-            <div class="grid grid-cols-2 gap-3">
-              <div><label class="form-label">Skill Name</label><input id="skill-name" class="input-field" placeholder="React.js" /></div>
-              <div><label class="form-label">Category</label><input id="skill-cat" class="input-field" placeholder="Frontend" /></div>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div><label class="form-label">FA Icon Class</label><input id="skill-icon" class="input-field" placeholder="fa-brands fa-react" /></div>
-              <div><label class="form-label">Icon Color (hex)</label><input id="skill-color" class="input-field" type="color" value="#6366f1" /></div>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div><label class="form-label">Proficiency Level</label><input id="skill-level" class="input-field" placeholder="Advanced" /></div>
-              <div><label class="form-label">Order</label><input id="skill-order" class="input-field" type="number" value="1" /></div>
-            </div>
-            <div class="flex gap-3">
-              <button onclick="saveSkillEntry()" class="btn-accent flex items-center gap-2"><i class="fa-solid fa-floppy-disk"></i> Save</button>
-              <button onclick="cancelSkillForm()" class="btn-ghost">Cancel</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ═══ TAB: LAYOUT ═══ -->
-      <div id="tab-layout" class="tab-panel hidden fade-in">
-        <div class="pill-badge mb-4"><i class="fa-solid fa-table-columns"></i> Layout & Section Control</div>
-        <p class="text-sm section-label mb-5">Toggle visibility and change background style for each section. Drag order to rearrange.</p>
-
-        <div id="layout-sections-list" class="space-y-3 mb-6">
-          <div class="flex items-center gap-2 text-sm section-label">
-            <div class="loader-ring"></div> Loading...
-          </div>
-        </div>
-
-        <div class="section-divider"></div>
-        <p class="font-bold text-sm mb-3">Site Metadata</p>
-        <div class="space-y-3">
-          <div><label class="form-label">Last Updated</label><input id="layout-lastupdated" class="input-field" placeholder="2024-01-01" /></div>
-        </div>
-        <button onclick="saveLayout()" class="btn-accent w-full mt-4 flex items-center justify-center gap-2">
-          <i class="fa-solid fa-floppy-disk"></i> Save Layout Config
-        </button>
-      </div>
-
-      <!-- ═══ TAB: CORE TEXT ═══ -->
-      <div id="tab-coretext" class="tab-panel hidden fade-in">
-        <div class="pill-badge mb-4"><i class="fa-solid fa-text-height"></i> Section Headings & Copy</div>
-        <div class="space-y-4">
-          <div class="grid grid-cols-2 gap-3">
-            <div><label class="form-label">Experience Heading</label><input id="ct-exp-h" class="input-field" placeholder="Experience" /></div>
-            <div><label class="form-label">Experience Sub</label><input id="ct-exp-s" class="input-field" placeholder="Professional journey..." /></div>
-          </div>
-          <div class="grid grid-cols-2 gap-3">
-            <div><label class="form-label">Portfolio Heading</label><input id="ct-port-h" class="input-field" placeholder="Portfolio" /></div>
-            <div><label class="form-label">Portfolio Sub</label><input id="ct-port-s" class="input-field" placeholder="Selected projects..." /></div>
-          </div>
-          <div class="grid grid-cols-2 gap-3">
-            <div><label class="form-label">Skills Heading</label><input id="ct-skill-h" class="input-field" placeholder="Application Matrix" /></div>
-            <div><label class="form-label">Skills Sub</label><input id="ct-skill-s" class="input-field" placeholder="Tools & fluencies..." /></div>
-          </div>
-          <div class="grid grid-cols-2 gap-3">
-            <div><label class="form-label">Contact Heading</label><input id="ct-contact-h" class="input-field" placeholder="Get In Touch" /></div>
-            <div><label class="form-label">Contact Sub</label><input id="ct-contact-s" class="input-field" placeholder="I'll respond within..." /></div>
-          </div>
-          <button onclick="saveCoreText()" class="btn-accent w-full flex items-center justify-center gap-2">
-            <i class="fa-solid fa-floppy-disk"></i> Save Core Text
-          </button>
-        </div>
-      </div>
-
-      <!-- ═══ TAB: MESSAGES ═══ -->
-      <div id="tab-messages" class="tab-panel hidden fade-in">
-        <div class="flex items-center justify-between mb-4">
-          <div class="pill-badge"><i class="fa-solid fa-inbox"></i> Contact Messages</div>
-          <button onclick="loadMessages()" class="btn-ghost btn-sm flex items-center gap-2">
-            <i class="fa-solid fa-rotate-right"></i> Refresh
-          </button>
-        </div>
-        <div id="messages-list" class="space-y-3">
-          <div class="flex items-center gap-2 text-sm section-label">
-            <div class="loader-ring"></div> Loading...
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- RIGHT PANEL: LIVE PREVIEW -->
-  <div class="split-right flex flex-col">
-    <div class="px-4 py-2 flex items-center gap-3 border-b" style="border-color:var(--accent-glow)">
-      <div class="w-2 h-2 rounded-full bg-red-400"></div>
-      <div class="w-2 h-2 rounded-full bg-yellow-400"></div>
-      <div class="w-2 h-2 rounded-full bg-green-400"></div>
-      <span class="text-xs section-label ml-2 font-mono">index.html — Live Preview</span>
-      <button onclick="refreshPreview()" class="ml-auto btn-ghost btn-sm flex items-center gap-2">
-        <i class="fa-solid fa-rotate-right text-xs"></i> Reload
-      </button>
-    </div>
-    <iframe id="preview-frame" src="index.html" class="flex-1 w-full border-0" title="Live Site Preview"></iframe>
-  </div>
-</div>
-
-<!-- ═══════════════ FIREBASE ═══════════════ -->
-<script type="module">
-  // ─── FIREBASE CONFIGURATION ─────────────────────────────────────────────────
-  // Replace with your actual Firebase project credentials (same as index.html).
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-  import {
-    getFirestore, doc, getDoc, setDoc, collection, getDocs,
-    addDoc, deleteDoc, updateDoc, serverTimestamp, query, orderBy
-  } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCjDqSdEVrmbV78ObzAMUWnqzgeDVsLX0Q",
-  authDomain: "my-portfolio-54e15.firebaseapp.com",
-  projectId: "my-portfolio-54e15",
-  storageBucket: "my-portfolio-54e15.firebasestorage.app",
-  messagingSenderId: "127704809723",
-  appId: "1:127704809723:web:ea6b69141b1081cfd3705e"
-              
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db  = getFirestore(app);
-
-  // ─── HELPERS ─────────────────────────────────────────────────────────────────
-  const $ = id => document.getElementById(id);
-  let activeTab = 'hero';
-
-  // THEME
-  function applyTheme(dark) {
-    document.documentElement.classList.toggle('dark', dark);
-    $('theme-icon').className = dark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-    localStorage.setItem('theme', dark ? 'dark' : 'light');
-  }
-  (function initTheme() {
-    const saved = localStorage.getItem('theme');
-    applyTheme(saved ? saved === 'dark' : true);
-  })();
-  $('theme-toggle').addEventListener('click', () => applyTheme(!document.documentElement.classList.contains('dark')));
-
-  // TOAST
-  function toast(msg, type='success') {
-    const t = $('toast');
-    const icons = { success:'fa-check-circle', error:'fa-circle-xmark', info:'fa-circle-info', warning:'fa-triangle-exclamation' };
-    const colors = { success:'#10b981', error:'#ef4444', info:'#6366f1', warning:'#f59e0b' };
-    $('toast-icon').className = `fa-solid ${icons[type]||'fa-check-circle'}`;
-    $('toast-icon').style.color = colors[type]||'#10b981';
-    $('toast-msg').textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3500);
-  }
-
-  // PREVIEW REFRESH
-  window.refreshPreview = () => { $('preview-frame').src = $('preview-frame').src; };
-
-  // TAB SWITCHING
-  window.switchTab = function(tab) {
-    activeTab = tab;
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
-    document.querySelectorAll('.tab-btn').forEach(b => { b.className = 'tab-btn tab-inactive'; });
-    const panel = $(`tab-${tab}`);
-    const btn = [...document.querySelectorAll('.tab-btn')].find(b => b.textContent.toLowerCase().includes(tab.slice(0,4)));
-    if (panel) { panel.classList.remove('hidden'); panel.classList.add('fade-in'); }
-    if (btn) btn.className = 'tab-btn tab-active';
-    if (tab === 'experience') loadExperience();
-    if (tab === 'portfolio')  loadPortfolio();
-    if (tab === 'skills')     loadSkills();
-    if (tab === 'layout')     loadLayout();
-    if (tab === 'coretext')   loadCoreText();
-    if (tab === 'messages')   loadMessages();
-  };
-
-  // ─── DB STATUS ────────────────────────────────────────────────────────────────
-  async function checkDbStatus() {
-    try {
-      await getDoc(doc(db, 'config', 'hero'));
-      $('db-status').innerHTML = '<i class="fa-solid fa-circle-check" style="color:#10b981"></i> Firestore Connected';
-      $('db-status').style.borderColor = '#10b981';
-      $('db-status').style.color = '#10b981';
-      loadHero();
-    } catch(e) {
-      $('db-status').innerHTML = '<i class="fa-solid fa-circle-xmark" style="color:#ef4444"></i> Not Configured';
-      $('db-status').style.borderColor = '#ef4444';
-      $('db-status').style.color = '#ef4444';
-    }
-  }
-  checkDbStatus();
-
-  // ─── HERO ─────────────────────────────────────────────────────────────────────
-  let eduRows = [], statRows = [], socialRows = [];
-
-  async function loadHero() {
-    try {
-      const [heroSnap, socialsSnap, statsSnap] = await Promise.all([
-        getDoc(doc(db,'config','hero')),
-        getDoc(doc(db,'config','socials')),
-        getDoc(doc(db,'config','stats')),
-      ]);
-      if (heroSnap.exists()) {
-        const h = heroSnap.data();
-        $('h-name').value    = h.name||'';
-        $('h-initials').value = h.initials||'';
-        $('h-role').value    = h.role||'';
-        $('h-headline').value = h.headline||'';
-        $('h-bio').value     = h.bio||'';
-        $('h-objective').value = h.objective||'';
-        $('h-summary').value = h.summary||'';
-        $('h-pill').value    = h.pill||'';
-        $('h-avatar').value  = h.avatar||'';
-        $('h-tagline').value = h.tagline||'';
-        $('h-email').value   = h.email||'';
-        $('h-phone').value   = h.phone||'';
-        $('h-location').value = h.location||'';
-        $('h-website').value = h.website||'';
-        $('h-resumeurl').value = h.resumeUrl||'';
-        eduRows = h.education || [];
-        renderEduRows();
-      }
-      if (socialsSnap.exists()) { socialRows = socialsSnap.data().items||[]; renderSocialRows(); }
-      if (statsSnap.exists())   { statRows   = statsSnap.data().items||[];   renderStatRows(); }
-    } catch(e) { console.error(e); }
-  }
-
-  window.saveHero = async function() {
-    try {
-      await setDoc(doc(db,'config','hero'), {
-        name:      $('h-name').value,
-        initials:  $('h-initials').value,
-        role:      $('h-role').value,
-        headline:  $('h-headline').value,
-        bio:       $('h-bio').value,
-        objective: $('h-objective').value,
-        summary:   $('h-summary').value,
-        pill:      $('h-pill').value,
-        avatar:    $('h-avatar').value,
-        tagline:   $('h-tagline').value,
-        email:     $('h-email').value,
-        phone:     $('h-phone').value,
-        location:  $('h-location').value,
-        website:   $('h-website').value,
-        resumeUrl: $('h-resumeurl').value,
-        education: eduRows,
-      });
-      await setDoc(doc(db,'config','socials'), { items: socialRows });
-      await setDoc(doc(db,'config','stats'),   { items: statRows });
-      toast('Hero config saved!');
-      refreshPreview();
-    } catch(e) { toast('Error: '+e.message,'error'); }
-  };
-
-  // Education
-  function renderEduRows() {
-    $('education-list').innerHTML = eduRows.map((r,i) => `
-      <div class="item-row flex items-center gap-2 flex-wrap" id="edu-row-${i}">
-        <input class="input-field" style="flex:2;min-width:100px" placeholder="Degree" value="${r.degree||''}" onchange="eduRows[${i}].degree=this.value" />
-        <input class="input-field" style="flex:2;min-width:100px" placeholder="School" value="${r.school||''}" onchange="eduRows[${i}].school=this.value" />
-        <input class="input-field" style="flex:1;min-width:70px" placeholder="Year" value="${r.year||''}" onchange="eduRows[${i}].year=this.value" />
-        <button onclick="eduRows.splice(${i},1);renderEduRows()" class="btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
-      </div>`).join('');
-  }
-  window.addEducationRow = () => { eduRows.push({degree:'',school:'',year:''}); renderEduRows(); };
-  window.renderEduRows = renderEduRows;
-
-  // Stats
-  function renderStatRows() {
-    $('stats-list').innerHTML = statRows.map((r,i) => `
-      <div class="item-row flex items-center gap-2" id="stat-row-${i}">
-        <input class="input-field" style="flex:1" placeholder="Value (e.g. 5+)" value="${r.value||''}" onchange="statRows[${i}].value=this.value" />
-        <input class="input-field" style="flex:2" placeholder="Label (e.g. Years Experience)" value="${r.label||''}" onchange="statRows[${i}].label=this.value" />
-        <button onclick="statRows.splice(${i},1);renderStatRows()" class="btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
-      </div>`).join('');
-  }
-  window.addStatRow   = () => { statRows.push({value:'',label:''}); renderStatRows(); };
-  window.renderStatRows = renderStatRows;
-
-  // Socials
-  function renderSocialRows() {
-    $('socials-list').innerHTML = socialRows.map((r,i) => `
-      <div class="item-row flex items-center gap-2 flex-wrap" id="social-row-${i}">
-        <input class="input-field" style="flex:2;min-width:100px" placeholder="Label" value="${r.label||''}" onchange="socialRows[${i}].label=this.value" />
-        <input class="input-field" style="flex:3;min-width:120px" placeholder="URL" value="${r.url||''}" onchange="socialRows[${i}].url=this.value" />
-        <input class="input-field" style="flex:2;min-width:120px" placeholder="FA Icon (fa-brands fa-github)" value="${r.icon||''}" onchange="socialRows[${i}].icon=this.value" />
-        <button onclick="socialRows.splice(${i},1);renderSocialRows()" class="btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
-      </div>`).join('');
-  }
-  window.addSocialRow  = () => { socialRows.push({label:'',url:'',icon:''}); renderSocialRows(); };
-  window.renderSocialRows = renderSocialRows;
-
-  // ─── EXPERIENCE ───────────────────────────────────────────────────────────────
-  let expDocs = [];
-  async function loadExperience() {
-    $('experience-list').innerHTML = '<div class="flex items-center gap-2 text-sm section-label"><div class="loader-ring"></div> Loading...</div>';
-    try {
-      const snap = await getDocs(query(collection(db,'experience'), orderBy('order','asc')));
-      expDocs = snap.docs.map(d => ({ id:d.id, ...d.data() }));
-      renderExpList();
-    } catch(e) { $('experience-list').innerHTML = `<p class="text-red-400 text-sm">${e.message}</p>`; }
-  }
-
-  function renderExpList() {
-    if (!expDocs.length) { $('experience-list').innerHTML = '<p class="text-sm section-label">No entries yet.</p>'; return; }
-    $('experience-list').innerHTML = expDocs.map((e,i) => `
-      <div class="item-row flex items-center justify-between gap-3 fade-in">
-        <div class="flex items-center gap-3 min-w-0">
-          <i class="${e.icon||'fa-solid fa-briefcase'} text-sm" style="color:var(--accent);width:18px;text-align:center"></i>
-          <div class="min-w-0">
-            <p class="font-semibold text-sm truncate">${e.role}</p>
-            <p class="text-xs section-label truncate">${e.org} · ${e.dateRange||''}</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-2 flex-shrink-0">
-          <span class="text-xs section-label">#${e.order||i}</span>
-          <button onclick="openExpForm('${e.id}')" class="btn-ghost btn-sm"><i class="fa-solid fa-pen"></i></button>
-          <button onclick="deleteExp('${e.id}')" class="btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
-        </div>
-      </div>`).join('');
-  }
-
-  window.openExpForm = function(id) {
-    $('exp-form-wrap').classList.remove('hidden');
-    if (!id) {
-      $('exp-form-title').textContent = 'Add Experience';
-      $('exp-doc-id').value = '';
-      ['exp-role','exp-org','exp-date','exp-icon','exp-desc','exp-tags'].forEach(i => $(i).value='');
-      $('exp-order').value = expDocs.length + 1;
-    } else {
-      const e = expDocs.find(x => x.id===id);
-      if (!e) return;
-      $('exp-form-title').textContent = 'Edit Experience';
-      $('exp-doc-id').value = id;
-      $('exp-role').value  = e.role||'';
-      $('exp-org').value   = e.org||'';
-      $('exp-date').value  = e.dateRange||'';
-      $('exp-icon').value  = e.icon||'';
-      $('exp-desc').value  = e.description||'';
-      $('exp-tags').value  = (e.tags||[]).join(', ');
-      $('exp-order').value = e.order||1;
-    }
-    $('exp-form-wrap').scrollIntoView({behavior:'smooth'});
-  };
-  window.cancelExpForm = () => $('exp-form-wrap').classList.add('hidden');
-
-  window.saveExpEntry = async function() {
-    const id = $('exp-doc-id').value;
-    const data = {
-      role:        $('exp-role').value,
-      org:         $('exp-org').value,
-      dateRange:   $('exp-date').value,
-      icon:        $('exp-icon').value || 'fa-solid fa-briefcase',
-      description: $('exp-desc').value,
-      tags:        $('exp-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
-      order:       parseInt($('exp-order').value)||1,
-    };
-    try {
-      if (id) await updateDoc(doc(db,'experience',id), data);
-      else    await addDoc(collection(db,'experience'), data);
-      toast(id ? 'Experience updated!' : 'Experience added!');
-      $('exp-form-wrap').classList.add('hidden');
-      await loadExperience();
-      refreshPreview();
-    } catch(e) { toast('Error: '+e.message,'error'); }
-  };
-
-  window.deleteExp = async function(id) {
-    if (!confirm('Delete this experience entry?')) return;
-    try {
-      await deleteDoc(doc(db,'experience',id));
-      toast('Entry deleted.','warning');
-      await loadExperience();
-      refreshPreview();
-    } catch(e) { toast('Error: '+e.message,'error'); }
-  };
-
-  // ─── PORTFOLIO ────────────────────────────────────────────────────────────────
-  let portDocs = [];
-  async function loadPortfolio() {
-    $('portfolio-list').innerHTML = '<div class="flex items-center gap-2 text-sm section-label"><div class="loader-ring"></div> Loading...</div>';
-    try {
-      const snap = await getDocs(query(collection(db,'portfolio'), orderBy('order','asc')));
-      portDocs = snap.docs.map(d => ({ id:d.id, ...d.data() }));
-      renderPortList();
-    } catch(e) { $('portfolio-list').innerHTML = `<p class="text-red-400 text-sm">${e.message}</p>`; }
-  }
-
-  function renderPortList() {
-    if (!portDocs.length) { $('portfolio-list').innerHTML = '<p class="text-sm section-label">No items yet.</p>'; return; }
-    const typeColor = t => ({PPT:'#f97316',Image:'#06b6d4',URL:'#10b981',Site:'#6366f1',PDF:'#ef4444',Video:'#a855f7'})[t]||'#6366f1';
-    $('portfolio-list').innerHTML = portDocs.map((p,i) => `
-      <div class="item-row flex items-center justify-between gap-3 fade-in">
-        <div class="flex items-center gap-3 min-w-0">
-          <span style="font-size:.7rem;padding:.2rem .55rem;border-radius:9999px;background:${typeColor(p.type)}22;color:${typeColor(p.type)};font-weight:700;white-space:nowrap">${p.type}</span>
-          <div class="min-w-0">
-            <p class="font-semibold text-sm truncate">${p.title}</p>
-            <p class="text-xs section-label truncate">${p.description||'—'}</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-2 flex-shrink-0">
-          <span class="text-xs section-label">#${p.order||i}</span>
-          <button onclick="openPortForm('${p.id}')" class="btn-ghost btn-sm"><i class="fa-solid fa-pen"></i></button>
-          <button onclick="deletePort('${p.id}')" class="btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
-        </div>
-      </div>`).join('');
-  }
-
-  window.openPortForm = function(id) {
-    $('port-form-wrap').classList.remove('hidden');
-    if (!id) {
-      $('port-form-title').textContent = 'Add Portfolio Item';
-      $('port-doc-id').value = '';
-      ['port-title','port-desc','port-url','port-thumb'].forEach(i => $(i).value='');
-      $('port-order').value = portDocs.length + 1;
-    } else {
-      const p = portDocs.find(x => x.id===id);
-      if (!p) return;
-      $('port-form-title').textContent = 'Edit Portfolio Item';
-      $('port-doc-id').value = id;
-      $('port-title').value  = p.title||'';
-      $('port-desc').value   = p.description||'';
-      $('port-type').value   = p.type||'URL';
-      $('port-url').value    = p.url||'';
-      $('port-thumb').value  = p.thumbnail||'';
-      $('port-order').value  = p.order||1;
-    }
-    $('port-form-wrap').scrollIntoView({behavior:'smooth'});
-  };
-  window.cancelPortForm = () => $('port-form-wrap').classList.add('hidden');
-
-  window.savePortEntry = async function() {
-    const id = $('port-doc-id').value;
-    const data = {
-      title:       $('port-title').value,
-      description: $('port-desc').value,
-      type:        $('port-type').value,
-      url:         $('port-url').value,
-      thumbnail:   $('port-thumb').value,
-      order:       parseInt($('port-order').value)||1,
-    };
-    try {
-      if (id) await updateDoc(doc(db,'portfolio',id), data);
-      else    await addDoc(collection(db,'portfolio'), data);
-      toast(id ? 'Portfolio updated!' : 'Portfolio item added!');
-      $('port-form-wrap').classList.add('hidden');
-      await loadPortfolio();
-      refreshPreview();
-    } catch(e) { toast('Error: '+e.message,'error'); }
-  };
-
-  window.deletePort = async function(id) {
-    if (!confirm('Delete this portfolio item?')) return;
-    try {
-      await deleteDoc(doc(db,'portfolio',id));
-      toast('Item deleted.','warning');
-      await loadPortfolio();
-      refreshPreview();
-    } catch(e) { toast('Error: '+e.message,'error'); }
-  };
-
-  // ─── SKILLS ──────────────────────────────────────────────────────────────────
-  let skillDocs = [];
-  async function loadSkills() {
-    $('skills-list').innerHTML = '<div class="flex items-center gap-2 text-sm section-label"><div class="loader-ring"></div> Loading...</div>';
-    try {
-      const snap = await getDocs(query(collection(db,'skills'), orderBy('order','asc')));
-      skillDocs = snap.docs.map(d => ({ id:d.id, ...d.data() }));
-      renderSkillList();
-    } catch(e) { $('skills-list').innerHTML = `<p class="text-red-400 text-sm">${e.message}</p>`; }
-  }
-
-  function renderSkillList() {
-    if (!skillDocs.length) { $('skills-list').innerHTML = '<p class="text-sm section-label">No skills yet.</p>'; return; }
-    $('skills-list').innerHTML = skillDocs.map((s,i) => `
-      <div class="item-row flex items-center justify-between gap-3 fade-in">
-        <div class="flex items-center gap-3 min-w-0">
-          <div style="width:30px;height:30px;border-radius:.4rem;background:${s.color||'#6366f1'};display:flex;align-items:center;justify-content:center;color:#fff;font-size:.8rem;flex-shrink:0">
-            <i class="${s.icon||'fa-solid fa-star'}"></i>
-          </div>
-          <div class="min-w-0">
-            <p class="font-semibold text-sm truncate">${s.name}</p>
-            <p class="text-xs section-label">${s.category||''} · ${s.level||''}</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-2 flex-shrink-0">
-          <span class="text-xs section-label">#${s.order||i}</span>
-          <button onclick="openSkillForm('${s.id}')" class="btn-ghost btn-sm"><i class="fa-solid fa-pen"></i></button>
-          <button onclick="deleteSkill('${s.id}')" class="btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
-        </div>
-      </div>`).join('');
-  }
-
-  window.openSkillForm = function(id) {
-    $('skill-form-wrap').classList.remove('hidden');
-    if (!id) {
-      $('skill-form-title').textContent = 'Add Skill';
-      $('skill-doc-id').value = '';
-      ['skill-name','skill-cat','skill-icon','skill-level'].forEach(i => $(i).value='');
-      $('skill-color').value = '#6366f1';
-      $('skill-order').value = skillDocs.length + 1;
-    } else {
-      const s = skillDocs.find(x => x.id===id);
-      if (!s) return;
-      $('skill-form-title').textContent = 'Edit Skill';
-      $('skill-doc-id').value  = id;
-      $('skill-name').value    = s.name||'';
-      $('skill-cat').value     = s.category||'';
-      $('skill-icon').value    = s.icon||'';
-      $('skill-color').value   = s.color||'#6366f1';
-      $('skill-level').value   = s.level||'';
-      $('skill-order').value   = s.order||1;
-    }
-    $('skill-form-wrap').scrollIntoView({behavior:'smooth'});
-  };
-  window.cancelSkillForm = () => $('skill-form-wrap').classList.add('hidden');
-
-  window.saveSkillEntry = async function() {
-    const id = $('skill-doc-id').value;
-    const data = {
-      name:     $('skill-name').value,
-      category: $('skill-cat').value,
-      icon:     $('skill-icon').value || 'fa-solid fa-star',
-      color:    $('skill-color').value,
-      level:    $('skill-level').value,
-      order:    parseInt($('skill-order').value)||1,
-    };
-    try {
-      if (id) await updateDoc(doc(db,'skills',id), data);
-      else    await addDoc(collection(db,'skills'), data);
-      toast(id ? 'Skill updated!' : 'Skill added!');
-      $('skill-form-wrap').classList.add('hidden');
-      await loadSkills();
-      refreshPreview();
-    } catch(e) { toast('Error: '+e.message,'error'); }
-  };
-
-  window.deleteSkill = async function(id) {
-    if (!confirm('Delete this skill?')) return;
-    try {
-      await deleteDoc(doc(db,'skills',id));
-      toast('Skill deleted.','warning');
-      await loadSkills();
-      refreshPreview();
-    } catch(e) { toast('Error: '+e.message,'error'); }
-  };
-
-  // ─── LAYOUT CONFIG ────────────────────────────────────────────────────────────
-  let layoutSections = [
-    { id:'hero',       label:'Hero / About',          visible:true, bg:'hero',   icon:'fa-solid fa-user' },
-    { id:'experience', label:'Experience Timeline',   visible:true, bg:'alt',    icon:'fa-solid fa-briefcase' },
-    { id:'portfolio',  label:'Portfolio Carousel',    visible:true, bg:'default',icon:'fa-solid fa-layer-group' },
-    { id:'skills',     label:'Application Matrix',    visible:true, bg:'alt',    icon:'fa-solid fa-microchip' },
-    { id:'contact',    label:'Contact Layer',          visible:true, bg:'accent', icon:'fa-solid fa-envelope' },
-  ];
-
-  async function loadLayout() {
-    try {
-      const snap = await getDoc(doc(db,'config','layout'));
-      if (snap.exists() && snap.data().sections) {
-        layoutSections = snap.data().sections;
-        $('layout-lastupdated').value = snap.data().lastUpdated||'';
-      }
-      renderLayoutList();
-    } catch(e) { console.error(e); renderLayoutList(); }
-  }
-
-  function renderLayoutList() {
-    $('layout-sections-list').innerHTML = layoutSections.map((s,i) => `
-      <div class="item-row flex items-center justify-between gap-3 fade-in" id="ls-${i}">
-        <div class="flex items-center gap-3 min-w-0 flex-1">
-          <span class="drag-handle text-lg"><i class="fa-solid fa-grip-vertical"></i></span>
-          <div class="w-7 h-7 rounded flex items-center justify-center" style="background:var(--accent-glow)">
-            <i class="${s.icon}" style="color:var(--accent);font-size:.75rem"></i>
-          </div>
-          <p class="font-medium text-sm">${s.label}</p>
-        </div>
-        <div class="flex items-center gap-3 flex-shrink-0">
-          <div>
-            <label class="form-label text-xs" style="margin-bottom:2px">BG</label>
-            <select onchange="layoutSections[${i}].bg=this.value" class="input-field text-xs py-1" style="width:90px;padding:.25rem .5rem">
-              <option value="default" ${s.bg==='default'?'selected':''}>Default</option>
-              <option value="alt"     ${s.bg==='alt'    ?'selected':''}>Alt Neutral</option>
-              <option value="accent"  ${s.bg==='accent' ?'selected':''}>Accent Grad</option>
-            </select>
-          </div>
-          <div class="text-center">
-            <label class="form-label text-xs" style="margin-bottom:4px">Visible</label>
-            <button class="visibility-toggle ${s.visible!==false?'on':'off'}" onclick="toggleSection(${i})" title="Toggle visibility"></button>
-          </div>
-          <div class="flex flex-col gap-1">
-            <button class="reorder-btn" onclick="moveSectionUp(${i})" ${i===0?'disabled':''}><i class="fa-solid fa-chevron-up"></i></button>
-            <button class="reorder-btn" onclick="moveSectionDown(${i})" ${i===layoutSections.length-1?'disabled':''}><i class="fa-solid fa-chevron-down"></i></button>
-          </div>
-        </div>
-      </div>`).join('');
-  }
-
-  window.toggleSection = function(i) {
-    layoutSections[i].visible = layoutSections[i].visible === false ? true : false;
-    renderLayoutList();
-  };
-  window.moveSectionUp   = function(i) { if(i>0) { [layoutSections[i-1],layoutSections[i]]=[layoutSections[i],layoutSections[i-1]]; renderLayoutList(); } };
-  window.moveSectionDown = function(i) { if(i<layoutSections.length-1) { [layoutSections[i],layoutSections[i+1]]=[layoutSections[i+1],layoutSections[i]]; renderLayoutList(); } };
-
-  window.saveLayout = async function() {
-    try {
-      await setDoc(doc(db,'config','layout'), {
-        sections:    layoutSections,
-        lastUpdated: $('layout-lastupdated').value || new Date().toISOString().slice(0,10),
-      });
-      toast('Layout config saved!');
-      refreshPreview();
-    } catch(e) { toast('Error: '+e.message,'error'); }
-  };
-
-  // ─── CORE TEXT ────────────────────────────────────────────────────────────────
-  async function loadCoreText() {
-    try {
-      const snap = await getDoc(doc(db,'config','coreText'));
-      if (snap.exists()) {
-        const d = snap.data();
-        $('ct-exp-h').value     = d.expHeading||'';
-        $('ct-exp-s').value     = d.expSubheading||'';
-        $('ct-port-h').value    = d.portfolioHeading||'';
-        $('ct-port-s').value    = d.portfolioSubheading||'';
-        $('ct-skill-h').value   = d.skillsHeading||'';
-        $('ct-skill-s').value   = d.skillsSubheading||'';
-        $('ct-contact-h').value = d.contactHeading||'';
-        $('ct-contact-s').value = d.contactSubheading||'';
-      }
-    } catch(e) { console.error(e); }
-  }
-
-  window.saveCoreText = async function() {
-    try {
-      await setDoc(doc(db,'config','coreText'), {
-        expHeading:         $('ct-exp-h').value,
-        expSubheading:      $('ct-exp-s').value,
-        portfolioHeading:   $('ct-port-h').value,
-        portfolioSubheading: $('ct-port-s').value,
-        skillsHeading:      $('ct-skill-h').value,
-        skillsSubheading:   $('ct-skill-s').value,
-        contactHeading:     $('ct-contact-h').value,
-        contactSubheading:  $('ct-contact-s').value,
-      });
-      toast('Core text saved!');
-      refreshPreview();
-    } catch(e) { toast('Error: '+e.message,'error'); }
-  };
-
-  // ─── MESSAGES ─────────────────────────────────────────────────────────────────
-  window.loadMessages = async function() {
-    $('messages-list').innerHTML = '<div class="flex items-center gap-2 text-sm section-label"><div class="loader-ring"></div> Loading...</div>';
-    try {
-      const snap = await getDocs(query(collection(db,'messages'), orderBy('timestamp','desc')));
-      if (snap.empty) { $('messages-list').innerHTML = '<p class="text-sm section-label">No messages yet.</p>'; return; }
-      $('messages-list').innerHTML = snap.docs.map(d => {
-        const m = d.data();
-        const ts = m.timestamp?.toDate ? m.timestamp.toDate().toLocaleString() : 'Unknown time';
-        return `
-          <div class="card-bg p-4 fade-in">
-            <div class="flex items-start justify-between gap-3 mb-2">
-              <div>
-                <p class="font-bold text-sm">${m.name||'Unknown'}</p>
-                <p class="text-xs section-label">${m.email||''} · ${ts}</p>
+              <div class="field-group" style="grid-column:1/-1;">
+                <label class="field-label">URL / Link</label>
+                <input class="field-input" id="port-url" placeholder="https://..." type="url" />
               </div>
-              <button onclick="deleteMsg('${d.id}')" class="btn-danger btn-sm flex-shrink-0"><i class="fa-solid fa-trash"></i></button>
+              <div class="field-group" style="grid-column:1/-1;">
+                <label class="field-label">Thumbnail Image URL (optional)</label>
+                <input class="field-input" id="port-thumb" placeholder="https://...image.jpg" type="url" />
+              </div>
+              <div class="field-group" style="grid-column:1/-1;">
+                <label class="field-label">Description</label>
+                <textarea class="field-textarea" id="port-desc" placeholder="Brief description..."></textarea>
+              </div>
+              <div class="field-group" style="grid-column:1/-1;">
+                <label class="field-label">Tags (comma-separated)</label>
+                <input class="field-input" id="port-tags" placeholder="React, Firebase, Tailwind" />
+              </div>
             </div>
-            <p class="text-sm leading-relaxed">${m.message||''}</p>
-          </div>`;
-      }).join('');
-    } catch(e) { $('messages-list').innerHTML = `<p class="text-red-400 text-sm">${e.message}</p>`; }
+            <input type="hidden" id="port-edit-id" />
+            <div style="display:flex;gap:.5rem;margin-top:.25rem;">
+              <button class="btn btn-primary btn-sm" onclick="savePortEntry()">
+                <i class="fa-solid fa-floppy-disk"></i> Save Item
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="hidePortForm()">Cancel</button>
+            </div>
+          </div>
+          <div class="admin-card-body" style="padding:0;">
+            <div id="port-list-loading" style="padding:1.25rem;text-align:center;color:var(--text-muted);font-size:.8125rem;">
+              <div class="spinner"></div>
+            </div>
+            <table class="data-table" id="port-table" style="display:none;">
+              <thead>
+                <tr>
+                  <th>Order</th>
+                  <th>Title</th>
+                  <th>Type</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="port-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════
+           PANEL: SKILLS
+           ════════════════════════════════════════════ -->
+      <div id="panel-skills" class="panel-hidden">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <span class="admin-card-title"><i class="fa-solid fa-microchip"></i> Skills / App Matrix</span>
+            <button class="btn btn-primary btn-sm" onclick="showSkillForm()">
+              <i class="fa-solid fa-plus"></i> Add Skill
+            </button>
+          </div>
+          <div id="skill-form-wrap" style="display:none;padding:1.25rem;border-bottom:1px solid var(--border);">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.875rem;">
+              <div class="field-group">
+                <label class="field-label">Skill Name</label>
+                <input class="field-input" id="skill-name" placeholder="React.js" />
+              </div>
+              <div class="field-group">
+                <label class="field-label">Category</label>
+                <input class="field-input" id="skill-cat" placeholder="Frontend" />
+              </div>
+              <div class="field-group" style="grid-column:1/-1;">
+                <label class="field-label">FontAwesome Icon Class (e.g. fa-brands fa-react)</label>
+                <input class="field-input" id="skill-icon" placeholder="fa-brands fa-react" />
+              </div>
+            </div>
+            <input type="hidden" id="skill-edit-id" />
+            <div style="display:flex;gap:.5rem;margin-top:.25rem;">
+              <button class="btn btn-primary btn-sm" onclick="saveSkillEntry()">
+                <i class="fa-solid fa-floppy-disk"></i> Save Skill
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="hideSkillForm()">Cancel</button>
+            </div>
+          </div>
+          <div class="admin-card-body" style="padding:0;">
+            <div id="skill-list-loading" style="padding:1.25rem;text-align:center;color:var(--text-muted);font-size:.8125rem;">
+              <div class="spinner"></div>
+            </div>
+            <table class="data-table" id="skill-table" style="display:none;">
+              <thead>
+                <tr><th>Order</th><th>Name</th><th>Category</th><th>Icon</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="skill-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════
+           PANEL: CONTACT INFO
+           ════════════════════════════════════════════ -->
+      <div id="panel-contact" class="panel-hidden">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <span class="admin-card-title"><i class="fa-solid fa-address-card"></i> Contact Information</span>
+            <button class="btn btn-primary btn-sm" onclick="saveContactInfo()">
+              <i class="fa-solid fa-floppy-disk"></i> Save
+            </button>
+          </div>
+          <div class="admin-card-body">
+            <div class="field-group">
+              <label class="field-label">Email Address</label>
+              <input class="field-input" id="ci-email" type="email" placeholder="hello@example.com" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Phone Number</label>
+              <input class="field-input" id="ci-phone" type="tel" placeholder="+63 912 345 6789" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Location</label>
+              <input class="field-input" id="ci-location" placeholder="Cebu City, Philippines" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Availability Status</label>
+              <input class="field-input" id="ci-availability" placeholder="Available for freelance & full-time roles" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════
+           PANEL: LAYOUT ORDER & VISIBILITY
+           ════════════════════════════════════════════ -->
+      <div id="panel-layout" class="panel-hidden">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <span class="admin-card-title"><i class="fa-solid fa-table-columns"></i> Section Order & Visibility</span>
+            <button class="btn btn-primary btn-sm" onclick="saveLayoutConfig()">
+              <i class="fa-solid fa-floppy-disk"></i> Save Layout
+            </button>
+          </div>
+          <div class="admin-card-body">
+            <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:1rem;">
+              <i class="fa-solid fa-circle-info" style="color:var(--accent);margin-right:.3rem;"></i>
+              Drag rows to reorder. Toggle visibility per section. Changes save to Firestore.
+            </p>
+            <div id="layout-rows"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════
+           PANEL: BACKGROUND CANVAS
+           ════════════════════════════════════════════ -->
+      <div id="panel-backgrounds" class="panel-hidden">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <span class="admin-card-title"><i class="fa-solid fa-palette"></i> Section Background Canvas</span>
+            <button class="btn btn-primary btn-sm" onclick="saveLayoutConfig()">
+              <i class="fa-solid fa-floppy-disk"></i> Save Backgrounds
+            </button>
+          </div>
+          <div class="admin-card-body">
+            <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:1.25rem;">
+              Select a background style for each visible section. Changes are previewed in real-time.
+            </p>
+            <div id="bg-controls"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════
+           PANEL: MESSAGES INBOX
+           ════════════════════════════════════════════ -->
+      <div id="panel-messages" class="panel-hidden">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <span class="admin-card-title"><i class="fa-solid fa-envelope"></i> Contact Messages Inbox</span>
+            <button class="btn btn-secondary btn-sm" onclick="loadMessages()">
+              <i class="fa-solid fa-rotate"></i> Refresh
+            </button>
+          </div>
+          <div class="admin-card-body" style="padding:0;">
+            <div id="msg-list-loading" style="padding:1.25rem;text-align:center;color:var(--text-muted);font-size:.8125rem;">
+              <div class="spinner"></div>
+            </div>
+            <div id="msg-list" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /control-panel -->
+
+    <!-- ── PREVIEW PANEL ───────────────────────────────────────── -->
+    <div id="preview-panel">
+      <div id="preview-bar">
+        <span><i class="fa-solid fa-eye" style="color:var(--accent);margin-right:.3rem;"></i>Live Preview — index.html</span>
+        <div style="display:flex;gap:.5rem;align-items:center;">
+          <button class="topbar-btn" onclick="refreshPreview()" style="padding:.25rem .625rem;font-size:.6875rem;">
+            <i class="fa-solid fa-rotate"></i>
+          </button>
+        </div>
+      </div>
+      <iframe id="preview-iframe" src="index.html" title="Live site preview" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+    </div>
+
+  </div><!-- /panel-area -->
+</div><!-- /admin-layout -->
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  FIREBASE SDK                                                   -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   FIREBASE CONFIGURATION — IDENTICAL to index.html
+   Replace with your project credentials
+   ════════════════════════════════════════════════════════════════ */
+const firebaseConfig = {
+  apiKey:            "YOUR_API_KEY",
+  authDomain:        "YOUR_AUTH_DOMAIN",
+  projectId:         "YOUR_PROJECT_ID",
+  storageBucket:     "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId:             "YOUR_APP_ID"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+/* ════════════════════════════════════════════════════════════════
+   ADMIN THEME
+   ════════════════════════════════════════════════════════════════ */
+function getAdminTheme() { return localStorage.getItem('admin_theme') || 'dark'; }
+function applyAdminTheme(theme) {
+  document.documentElement.classList.remove('light','dark');
+  document.documentElement.classList.add(theme);
+  const icon = document.getElementById('admin-theme-icon');
+  if (icon) icon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+  localStorage.setItem('admin_theme', theme);
+}
+function toggleAdminTheme() {
+  applyAdminTheme(getAdminTheme() === 'dark' ? 'light' : 'dark');
+}
+applyAdminTheme(getAdminTheme());
+
+/* ════════════════════════════════════════════════════════════════
+   TOAST UTILITY
+   ════════════════════════════════════════════════════════════════ */
+function toast(msg, type = 'info', duration = 3200) {
+  const icons = { success: 'fa-check-circle', error: 'fa-circle-xmark', info: 'fa-circle-info' };
+  const container = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<i class="fa-solid ${icons[type] || 'fa-circle-info'}"></i>${msg}`;
+  container.appendChild(el);
+  setTimeout(() => el.remove(), duration);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   PANEL NAVIGATION
+   ════════════════════════════════════════════════════════════════ */
+const PANELS = ['core','experience','portfolio','skills','contact','layout','backgrounds','messages'];
+function showPanel(id) {
+  PANELS.forEach(p => {
+    const el = document.getElementById(`panel-${p}`);
+    if (el) el.classList.toggle('panel-hidden', p !== id);
+  });
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-panel') === id);
+  });
+  if (id === 'experience')  loadExpEntries();
+  if (id === 'portfolio')   loadPortEntries();
+  if (id === 'skills')      loadSkillEntries();
+  if (id === 'contact')     loadContactInfo();
+  if (id === 'core')        loadCoreText();
+  if (id === 'layout')      loadLayoutPanel();
+  if (id === 'backgrounds') loadBgPanel();
+  if (id === 'messages')    loadMessages();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   PREVIEW UTILITIES
+   ════════════════════════════════════════════════════════════════ */
+function refreshPreview() {
+  const iframe = document.getElementById('preview-iframe');
+  iframe.src = 'index.html?' + Date.now();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CORE TEXT
+   ════════════════════════════════════════════════════════════════ */
+let eduEntries   = [];
+let bulletEntries = [];
+
+async function loadCoreText() {
+  try {
+    const snap = await db.collection('site_config').doc('core_text').get();
+    const d = snap.exists ? snap.data() : {};
+    const set = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined) el.value = val; };
+    set('core-site-title',     d.site_title);
+    set('core-nav-logo',       d.nav_logo);
+    set('core-hero-badge',     d.hero_badge);
+    set('core-title1',         d.hero_title_line1);
+    set('core-title2',         d.hero_title_line2);
+    set('core-title-accent',   d.hero_title_accent);
+    set('core-hero-bio',       d.hero_bio);
+    set('core-career-obj',     d.career_objective);
+    set('core-resume-url',     d.hero_resume_url);
+    set('core-profile-img',    d.profile_image_url);
+    set('core-footer-tagline', d.footer_tagline);
+    set('core-footer-tech',    d.footer_tech);
+    set('core-social-github',  d.social_github);
+    set('core-social-linkedin',d.social_linkedin);
+    set('core-social-email',   d.social_email);
+    eduEntries = d.education || [{ degree:'', school:'', year:'' }];
+    bulletEntries = d.resume_summary_bullets || [''];
+    renderEduEntries();
+    renderBulletEntries();
+  } catch(e) { toast('Error loading core text: ' + e.message, 'error'); }
+}
+
+async function saveCoreText() {
+  try {
+    const get = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+    await db.collection('site_config').doc('core_text').set({
+      site_title:       get('core-site-title'),
+      nav_logo:         get('core-nav-logo'),
+      hero_badge:       get('core-hero-badge'),
+      hero_title_line1: get('core-title1'),
+      hero_title_line2: get('core-title2'),
+      hero_title_accent:get('core-title-accent'),
+      hero_bio:         get('core-hero-bio'),
+      career_objective: get('core-career-obj'),
+      hero_resume_url:  get('core-resume-url'),
+      profile_image_url:get('core-profile-img'),
+      footer_tagline:   get('core-footer-tagline'),
+      footer_tech:      get('core-footer-tech'),
+      social_github:    get('core-social-github'),
+      social_linkedin:  get('core-social-linkedin'),
+      social_email:     get('core-social-email'),
+      education:        eduEntries,
+      resume_summary_bullets: bulletEntries
+    }, { merge: true });
+    toast('Core text saved!', 'success');
+    setTimeout(refreshPreview, 800);
+  } catch(e) { toast('Save failed: ' + e.message, 'error'); }
+}
+
+function renderEduEntries() {
+  const container = document.getElementById('edu-entries');
+  if (!container) return;
+  container.innerHTML = eduEntries.map((ed, i) => `
+    <div style="border:1px solid var(--border);border-radius:.4rem;padding:.75rem;margin-bottom:.5rem;background:var(--bg-alt);">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;">
+        <div class="field-group" style="margin:0;">
+          <label class="field-label">Degree</label>
+          <input class="field-input" value="${escHtml(ed.degree||'')}" oninput="eduEntries[${i}].degree=this.value" placeholder="B.S. Computer Engineering" />
+        </div>
+        <div class="field-group" style="margin:0;">
+          <label class="field-label">Year</label>
+          <input class="field-input" value="${escHtml(ed.year||'')}" oninput="eduEntries[${i}].year=this.value" placeholder="2016" />
+        </div>
+      </div>
+      <div class="field-group" style="margin:0;">
+        <label class="field-label">School / University</label>
+        <input class="field-input" value="${escHtml(ed.school||'')}" oninput="eduEntries[${i}].school=this.value" placeholder="University of Technology" />
+      </div>
+      <button class="btn btn-danger btn-sm" style="margin-top:.5rem;" onclick="removeEduEntry(${i})">
+        <i class="fa-solid fa-trash"></i> Remove
+      </button>
+    </div>`).join('');
+}
+function addEduEntry() {
+  eduEntries.push({ degree:'', school:'', year:'' });
+  renderEduEntries();
+}
+function removeEduEntry(i) {
+  eduEntries.splice(i, 1);
+  renderEduEntries();
+}
+function saveEducation() { saveCoreText(); }
+
+function renderBulletEntries() {
+  const container = document.getElementById('bullet-entries');
+  if (!container) return;
+  container.innerHTML = bulletEntries.map((b, i) => `
+    <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.375rem;">
+      <input class="field-input" value="${escHtml(b)}" oninput="bulletEntries[${i}]=this.value" placeholder="Key qualification..." style="flex:1;" />
+      <button class="btn btn-danger btn-sm" onclick="removeBulletEntry(${i})"><i class="fa-solid fa-trash"></i></button>
+    </div>`).join('');
+}
+function addBulletEntry() { bulletEntries.push(''); renderBulletEntries(); }
+function removeBulletEntry(i) { bulletEntries.splice(i,1); renderBulletEntries(); }
+function saveSummaryBullets() { saveCoreText(); }
+
+/* ════════════════════════════════════════════════════════════════
+   EXPERIENCE
+   ════════════════════════════════════════════════════════════════ */
+let expData = [];
+
+async function loadExpEntries() {
+  document.getElementById('exp-list-loading').style.display = 'block';
+  document.getElementById('exp-table').style.display = 'none';
+  try {
+    const snap = await db.collection('experience').orderBy('order','asc').get();
+    expData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderExpTable();
+  } catch(e) {
+    toast('Could not load experience: ' + e.message, 'error');
+    document.getElementById('exp-list-loading').innerHTML = '<span style="color:var(--danger)">Load error — check Firebase config.</span>';
+  }
+}
+
+function renderExpTable() {
+  document.getElementById('exp-list-loading').style.display = 'none';
+  const tbody = document.getElementById('exp-tbody');
+  document.getElementById('exp-table').style.display = '';
+  if (expData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);font-style:italic;padding:1.5rem;">No entries. Click "Add Entry" to create one.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = expData.map((e, i) => `
+    <tr>
+      <td>
+        <div style="display:flex;gap:.25rem;">
+          <button class="btn btn-secondary btn-sm" onclick="moveExp(${i},-1)" ${i===0?'disabled':''} title="Move up"><i class="fa-solid fa-arrow-up"></i></button>
+          <button class="btn btn-secondary btn-sm" onclick="moveExp(${i},1)" ${i===expData.length-1?'disabled':''} title="Move down"><i class="fa-solid fa-arrow-down"></i></button>
+        </div>
+      </td>
+      <td class="td-title"><p title="${escHtml(e.role||'')}">${escHtml(e.role||'—')}</p></td>
+      <td>${escHtml(e.organization||'—')}</td>
+      <td>${escHtml(e.date_range||'—')}</td>
+      <td>
+        <div style="display:flex;gap:.25rem;">
+          <button class="btn btn-warning btn-sm" onclick="editExp('${e.id}')"><i class="fa-solid fa-pen"></i></button>
+          <button class="btn btn-danger btn-sm" onclick="deleteExp('${e.id}')"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function showExpForm() { document.getElementById('exp-form-wrap').style.display = ''; clearExpForm(); }
+function hideExpForm() { document.getElementById('exp-form-wrap').style.display = 'none'; clearExpForm(); }
+function clearExpForm() {
+  ['exp-role','exp-org','exp-date','exp-icon','exp-desc','exp-edit-id'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+}
+
+function editExp(id) {
+  const item = expData.find(e => e.id === id);
+  if (!item) return;
+  document.getElementById('exp-role').value  = item.role || '';
+  document.getElementById('exp-org').value   = item.organization || '';
+  document.getElementById('exp-date').value  = item.date_range || '';
+  document.getElementById('exp-icon').value  = item.icon || '';
+  document.getElementById('exp-desc').value  = item.description || '';
+  document.getElementById('exp-edit-id').value = id;
+  document.getElementById('exp-form-wrap').style.display = '';
+  document.getElementById('exp-form-wrap').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+async function saveExpEntry() {
+  const editId = document.getElementById('exp-edit-id').value;
+  const payload = {
+    role:         document.getElementById('exp-role').value.trim(),
+    organization: document.getElementById('exp-org').value.trim(),
+    date_range:   document.getElementById('exp-date').value.trim(),
+    icon:         document.getElementById('exp-icon').value.trim() || 'fa-briefcase',
+    description:  document.getElementById('exp-desc').value.trim(),
+    order:        editId ? (expData.find(e=>e.id===editId)?.order || expData.length+1) : expData.length + 1
   };
-
-  window.deleteMsg = async function(id) {
-    if (!confirm('Delete this message?')) return;
-    try {
-      await deleteDoc(doc(db,'messages',id));
-      toast('Message deleted.','warning');
-      await loadMessages();
-    } catch(e) { toast('Error: '+e.message,'error'); }
-  };
-
-  // ─── SEED ALL SAMPLE DATA ─────────────────────────────────────────────────────
-  window.seedAllData = async function() {
-    if (!confirm('This will OVERWRITE all existing data with sample content. Are you sure?')) return;
-    $('seed-all-btn').disabled = true;
-    $('seed-all-btn').innerHTML = '<div class="loader-ring" style="width:14px;height:14px;border-width:2px;display:inline-block;margin-right:6px"></div> Seeding...';
-    try {
-      // Hero Config
-      await setDoc(doc(db,'config','hero'), {
-        name:      'Engraham Raglinao',
-        initials:  'ENG',
-        role:      'Full-Stack Frontend Engineer',
-        headline:  'Crafting <span class="accent">Digital</span> Experiences That Matter',
-        bio:       'I am a results-driven Full-Stack Frontend Engineer with over 6 years of experience designing and building high-performance web applications. My craft merges pixel-perfect UI precision with robust backend integration, delivering seamless user experiences from concept to deployment. I specialize in React ecosystems, modern JavaScript toolchains, and Firebase-powered architectures.',
-        objective: 'Seeking a challenging senior engineering role where I can leverage my deep frontend expertise and architectural thinking to build products that scale.',
-        summary:   '6+ years of full-stack development experience | Expert in React, TypeScript, and Firebase ecosystems | Strong UI/UX sensibility with Figma proficiency | Proven track record in leading technical teams',
-        pill:      'Available for Work',
-        avatar:    'https://images.pexels.com/photos/16313659/pexels-photo-16313659.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=400',
-        tagline:   'Engineering excellence, one component at a time.',
-        email:     'engraglinao@email.com',
-        phone:     '+1 (555) 012-3456',
-        location:  'San Francisco, CA',
-        website:   'https://engraglinao.github.io',
-        resumeUrl: '#',
-        education: [
-          { degree: 'B.S. Computer Science', school: 'University of Technology', year: '2018' },
-          { degree: 'Full-Stack Cert.', school: 'Frontend Masters', year: '2019' },
-        ],
-      });
-
-      // Socials
-      await setDoc(doc(db,'config','socials'), {
-        items: [
-          { label:'GitHub',   url:'https://github.com/engraglinao',   icon:'fa-brands fa-github' },
-          { label:'LinkedIn', url:'https://linkedin.com',             icon:'fa-brands fa-linkedin' },
-          { label:'Twitter',  url:'https://twitter.com',              icon:'fa-brands fa-x-twitter' },
-          { label:'Dribbble', url:'https://dribbble.com',             icon:'fa-brands fa-dribbble' },
-        ],
-      });
-
-      // Stats
-      await setDoc(doc(db,'config','stats'), {
-        items: [
-          { value:'6+',  label:'Years of Experience' },
-          { value:'50+', label:'Projects Delivered' },
-          { value:'12',  label:'Technologies Mastered' },
-        ],
-      });
-
-      // Core Text
-      await setDoc(doc(db,'config','coreText'), {
-        expHeading:          'Experience',
-        expSubheading:       'Professional journey & career milestones',
-        portfolioHeading:    'Portfolio',
-        portfolioSubheading: 'Selected projects, case studies & deliverables',
-        skillsHeading:       'Application Matrix',
-        skillsSubheading:    'Tools, platforms & technical fluencies',
-        contactHeading:      'Get In Touch',
-        contactSubheading:   "Have a project in mind? I respond within 24 hours.",
-      });
-
-      // Layout Config
-      await setDoc(doc(db,'config','layout'), {
-        lastUpdated: new Date().toISOString().slice(0,10),
-        sections: [
-          { id:'hero',       label:'Hero / About',        visible:true, bg:'hero',    icon:'fa-solid fa-user' },
-          { id:'experience', label:'Experience Timeline', visible:true, bg:'alt',     icon:'fa-solid fa-briefcase' },
-          { id:'portfolio',  label:'Portfolio Carousel',  visible:true, bg:'default', icon:'fa-solid fa-layer-group' },
-          { id:'skills',     label:'Application Matrix',  visible:true, bg:'alt',     icon:'fa-solid fa-microchip' },
-          { id:'contact',    label:'Contact Layer',        visible:true, bg:'accent',  icon:'fa-solid fa-envelope' },
-        ],
-      });
-
-      // Experience entries — delete existing first
-      const expSnap = await getDocs(collection(db,'experience'));
-      await Promise.all(expSnap.docs.map(d => deleteDoc(d.ref)));
-      const expEntries = [
-        { order:1, role:'Senior Frontend Engineer',  org:'TechNova Inc.',    dateRange:'Jan 2022 – Present',   icon:'fa-solid fa-rocket',   description:'Led the migration of a monolithic legacy system to a micro-frontend React architecture, reducing load time by 60%. Mentored a team of 4 junior developers and established engineering best practices.', tags:['React','TypeScript','Micro-frontends','AWS'] },
-        { order:2, role:'Full-Stack Developer',       org:'BuildCraft Agency', dateRange:'Mar 2020 – Dec 2021', icon:'fa-solid fa-code',     description:'Delivered 15+ client web applications across e-commerce, SaaS, and media verticals. Integrated Firebase Firestore as a real-time backend for three flagship products.', tags:['React','Firebase','Node.js','Tailwind'] },
-        { order:3, role:'Frontend Developer',         org:'Pixel Republic',   dateRange:'Jun 2018 – Feb 2020', icon:'fa-solid fa-palette',  description:'Designed and developed pixel-perfect UI components for a design agency\'s client portfolio. Collaborated directly with UX designers using Figma handoff workflows.', tags:['HTML5','SCSS','Vue.js','Figma'] },
-      ];
-      await Promise.all(expEntries.map(e => addDoc(collection(db,'experience'), e)));
-
-      // Portfolio entries — delete existing first
-      const portSnap = await getDocs(collection(db,'portfolio'));
-      await Promise.all(portSnap.docs.map(d => deleteDoc(d.ref)));
-      const portEntries = [
-        { order:1, title:'E-Commerce Redesign', type:'Site', description:'Full redesign and development of a high-traffic fashion e-commerce platform. Improved conversion rate by 35%.', url:'https://example.com', thumbnail:'https://images.pexels.com/photos/5632399/pexels-photo-5632399.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=300&w=400' },
-        { order:2, title:'Dashboard Analytics UI',type:'Image',description:'Interactive data visualization dashboard built with React and D3.js for a fintech startup.', url:'https://images.pexels.com/photos/6801648/pexels-photo-6801648.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800', thumbnail:'https://images.pexels.com/photos/6801648/pexels-photo-6801648.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=300&w=400' },
-        { order:3, title:'API Architecture Deck', type:'PPT', description:'Technical presentation detailing the micro-services API design for a healthcare platform.', url:'#', thumbnail:'' },
-        { order:4, title:'Brand Identity Guide', type:'PDF', description:'Comprehensive brand style guide including typography, color systems, and component library documentation.', url:'#', thumbnail:'' },
-        { order:5, title:'Firebase CMS Framework',type:'URL', description:'Open-source headless CMS framework built on top of Firebase Firestore with a React admin panel.', url:'https://github.com', thumbnail:'' },
-        { order:6, title:'SaaS Landing Page',     type:'Site',description:'High-converting SaaS marketing site with animated hero, pricing comparison, and integrated Stripe checkout.', url:'https://example.com', thumbnail:'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=300&w=400' },
-      ];
-      await Promise.all(portEntries.map(p => addDoc(collection(db,'portfolio'), p)));
-
-      // Skills — delete existing first
-      const skillSnap = await getDocs(collection(db,'skills'));
-      await Promise.all(skillSnap.docs.map(d => deleteDoc(d.ref)));
-      const skillEntries = [
-        // Frontend
-        { order:1, name:'React.js',    category:'Frontend', icon:'fa-brands fa-react',     color:'#61dafb', level:'Expert' },
-        { order:2, name:'TypeScript',  category:'Frontend', icon:'fa-solid fa-code',        color:'#3178c6', level:'Advanced' },
-        { order:3, name:'Tailwind CSS',category:'Frontend', icon:'fa-solid fa-wind',        color:'#06b6d4', level:'Expert' },
-        { order:4, name:'Next.js',     category:'Frontend', icon:'fa-brands fa-node-js',    color:'#000000', level:'Advanced' },
-        { order:5, name:'Vue.js',      category:'Frontend', icon:'fa-brands fa-vuejs',      color:'#42b883', level:'Proficient' },
-        // Backend
-        { order:6, name:'Node.js',     category:'Backend',  icon:'fa-brands fa-node-js',    color:'#68a063', level:'Advanced' },
-        { order:7, name:'Firebase',    category:'Backend',  icon:'fa-solid fa-fire',        color:'#ff9900', level:'Expert' },
-        { order:8, name:'REST APIs',   category:'Backend',  icon:'fa-solid fa-plug',        color:'#10b981', level:'Expert' },
-        { order:9, name:'GraphQL',     category:'Backend',  icon:'fa-solid fa-diagram-project',color:'#e535ab',level:'Proficient'},
-        // DevOps & Tools
-        { order:10,name:'Git & GitHub',category:'DevOps',   icon:'fa-brands fa-github',     color:'#333333', level:'Expert' },
-        { order:11,name:'Docker',      category:'DevOps',   icon:'fa-brands fa-docker',     color:'#2496ed', level:'Proficient' },
-        { order:12,name:'AWS',         category:'DevOps',   icon:'fa-brands fa-aws',        color:'#ff9900', level:'Intermediate' },
-        // Design
-        { order:13,name:'Figma',       category:'Design',   icon:'fa-brands fa-figma',      color:'#f24e1e', level:'Advanced' },
-        { order:14,name:'UI/UX Design',category:'Design',   icon:'fa-solid fa-pen-nib',     color:'#6366f1', level:'Advanced' },
-      ];
-      await Promise.all(skillEntries.map(s => addDoc(collection(db,'skills'), s)));
-
-      toast('✓ All sample data seeded successfully!','success');
-      await loadHero();
-      switchTab('hero');
-      refreshPreview();
-    } catch(e) {
-      toast('Seed error: '+e.message,'error');
-      console.error(e);
+  if (!payload.role || !payload.organization) { toast('Role and Organization are required.','error'); return; }
+  try {
+    if (editId) {
+      await db.collection('experience').doc(editId).set(payload, { merge: true });
+      toast('Experience updated!', 'success');
+    } else {
+      await db.collection('experience').add(payload);
+      toast('Experience entry added!', 'success');
     }
-    $('seed-all-btn').disabled = false;
-    $('seed-all-btn').innerHTML = '<i class="fa-solid fa-seedling"></i> Seed All Sample Data';
-  };
+    hideExpForm();
+    await loadExpEntries();
+    setTimeout(refreshPreview, 600);
+  } catch(e) { toast('Save error: ' + e.message, 'error'); }
+}
 
+async function deleteExp(id) {
+  if (!confirm('Delete this experience entry? This cannot be undone.')) return;
+  try {
+    await db.collection('experience').doc(id).delete();
+    toast('Entry deleted.', 'info');
+    await loadExpEntries();
+    setTimeout(refreshPreview, 600);
+  } catch(e) { toast('Delete error: ' + e.message, 'error'); }
+}
+
+async function moveExp(index, dir) {
+  const newIndex = index + dir;
+  if (newIndex < 0 || newIndex >= expData.length) return;
+  const batch = db.batch();
+  batch.update(db.collection('experience').doc(expData[index].id),    { order: newIndex + 1 });
+  batch.update(db.collection('experience').doc(expData[newIndex].id), { order: index + 1 });
+  try {
+    await batch.commit();
+    toast('Order updated!', 'success');
+    await loadExpEntries();
+    setTimeout(refreshPreview, 600);
+  } catch(e) { toast('Reorder error: ' + e.message, 'error'); }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   PORTFOLIO
+   ════════════════════════════════════════════════════════════════ */
+let portData = [];
+
+async function loadPortEntries() {
+  document.getElementById('port-list-loading').style.display = 'block';
+  document.getElementById('port-table').style.display = 'none';
+  try {
+    const snap = await db.collection('portfolio').orderBy('order','asc').get();
+    portData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderPortTable();
+  } catch(e) {
+    toast('Could not load portfolio: ' + e.message, 'error');
+    document.getElementById('port-list-loading').innerHTML = '<span style="color:var(--danger)">Load error.</span>';
+  }
+}
+
+function renderPortTable() {
+  document.getElementById('port-list-loading').style.display = 'none';
+  const tbody = document.getElementById('port-tbody');
+  document.getElementById('port-table').style.display = '';
+  if (portData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);font-style:italic;padding:1.5rem;">No portfolio items. Click "Add Item" to create one.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = portData.map((p, i) => `
+    <tr>
+      <td>
+        <div style="display:flex;gap:.25rem;">
+          <button class="btn btn-secondary btn-sm" onclick="movePort(${i},-1)" ${i===0?'disabled':''} title="Move up"><i class="fa-solid fa-arrow-up"></i></button>
+          <button class="btn btn-secondary btn-sm" onclick="movePort(${i},1)" ${i===portData.length-1?'disabled':''} title="Move down"><i class="fa-solid fa-arrow-down"></i></button>
+        </div>
+      </td>
+      <td class="td-title"><p title="${escHtml(p.title||'')}">${escHtml(p.title||'—')}</p></td>
+      <td><span class="badge badge-accent">${escHtml(p.type||'URL')}</span></td>
+      <td>
+        <div style="display:flex;gap:.25rem;">
+          <button class="btn btn-warning btn-sm" onclick="editPort('${p.id}')"><i class="fa-solid fa-pen"></i></button>
+          <button class="btn btn-danger btn-sm" onclick="deletePort('${p.id}')"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function showPortForm() { document.getElementById('port-form-wrap').style.display = ''; clearPortForm(); }
+function hidePortForm() { document.getElementById('port-form-wrap').style.display = 'none'; clearPortForm(); }
+function clearPortForm() {
+  ['port-title','port-url','port-thumb','port-desc','port-tags','port-edit-id'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  document.getElementById('port-type').value = 'Site';
+}
+
+function editPort(id) {
+  const item = portData.find(p => p.id === id);
+  if (!item) return;
+  document.getElementById('port-title').value   = item.title || '';
+  document.getElementById('port-type').value    = item.type || 'Site';
+  document.getElementById('port-url').value     = item.url || '';
+  document.getElementById('port-thumb').value   = item.thumbnail || '';
+  document.getElementById('port-desc').value    = item.description || '';
+  document.getElementById('port-tags').value    = (item.tags || []).join(', ');
+  document.getElementById('port-edit-id').value = id;
+  document.getElementById('port-form-wrap').style.display = '';
+  document.getElementById('port-form-wrap').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+async function savePortEntry() {
+  const editId = document.getElementById('port-edit-id').value;
+  const tagsStr = document.getElementById('port-tags').value;
+  const payload = {
+    title:       document.getElementById('port-title').value.trim(),
+    type:        document.getElementById('port-type').value,
+    url:         document.getElementById('port-url').value.trim(),
+    thumbnail:   document.getElementById('port-thumb').value.trim(),
+    description: document.getElementById('port-desc').value.trim(),
+    tags:        tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(Boolean) : [],
+    order:       editId ? (portData.find(p=>p.id===editId)?.order || portData.length+1) : portData.length + 1
+  };
+  if (!payload.title) { toast('Title is required.','error'); return; }
+  try {
+    if (editId) {
+      await db.collection('portfolio').doc(editId).set(payload, { merge: true });
+      toast('Portfolio item updated!', 'success');
+    } else {
+      await db.collection('portfolio').add(payload);
+      toast('Portfolio item added!', 'success');
+    }
+    hidePortForm();
+    await loadPortEntries();
+    setTimeout(refreshPreview, 600);
+  } catch(e) { toast('Save error: ' + e.message, 'error'); }
+}
+
+async function deletePort(id) {
+  if (!confirm('Delete this portfolio item? This cannot be undone.')) return;
+  try {
+    await db.collection('portfolio').doc(id).delete();
+    toast('Item deleted.', 'info');
+    await loadPortEntries();
+    setTimeout(refreshPreview, 600);
+  } catch(e) { toast('Delete error: ' + e.message, 'error'); }
+}
+
+async function movePort(index, dir) {
+  const newIndex = index + dir;
+  if (newIndex < 0 || newIndex >= portData.length) return;
+  const batch = db.batch();
+  batch.update(db.collection('portfolio').doc(portData[index].id),    { order: newIndex + 1 });
+  batch.update(db.collection('portfolio').doc(portData[newIndex].id), { order: index + 1 });
+  try {
+    await batch.commit();
+    toast('Order updated!', 'success');
+    await loadPortEntries();
+    setTimeout(refreshPreview, 600);
+  } catch(e) { toast('Reorder error: ' + e.message, 'error'); }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SKILLS
+   ════════════════════════════════════════════════════════════════ */
+let skillData = [];
+
+async function loadSkillEntries() {
+  document.getElementById('skill-list-loading').style.display = 'block';
+  document.getElementById('skill-table').style.display = 'none';
+  try {
+    const snap = await db.collection('skills').orderBy('order','asc').get();
+    skillData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderSkillTable();
+  } catch(e) {
+    toast('Could not load skills: ' + e.message, 'error');
+    document.getElementById('skill-list-loading').innerHTML = '<span style="color:var(--danger)">Load error.</span>';
+  }
+}
+
+function renderSkillTable() {
+  document.getElementById('skill-list-loading').style.display = 'none';
+  const tbody = document.getElementById('skill-tbody');
+  document.getElementById('skill-table').style.display = '';
+  if (skillData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);font-style:italic;padding:1.5rem;">No skills. Click "Add Skill" to create one.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = skillData.map((s, i) => `
+    <tr>
+      <td>
+        <div style="display:flex;gap:.25rem;">
+          <button class="btn btn-secondary btn-sm" onclick="moveSkill(${i},-1)" ${i===0?'disabled':''} title="Move up"><i class="fa-solid fa-arrow-up"></i></button>
+          <button class="btn btn-secondary btn-sm" onclick="moveSkill(${i},1)" ${i===skillData.length-1?'disabled':''} title="Move down"><i class="fa-solid fa-arrow-down"></i></button>
+        </div>
+      </td>
+      <td class="td-title"><p>${escHtml(s.name||'—')}</p></td>
+      <td><span class="badge badge-muted">${escHtml(s.category||'—')}</span></td>
+      <td><i class="${escHtml(s.icon||'fa-solid fa-code')}" style="color:var(--accent);"></i></td>
+      <td>
+        <div style="display:flex;gap:.25rem;">
+          <button class="btn btn-warning btn-sm" onclick="editSkill('${s.id}')"><i class="fa-solid fa-pen"></i></button>
+          <button class="btn btn-danger btn-sm" onclick="deleteSkill('${s.id}')"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function showSkillForm() { document.getElementById('skill-form-wrap').style.display = ''; clearSkillForm(); }
+function hideSkillForm() { document.getElementById('skill-form-wrap').style.display = 'none'; clearSkillForm(); }
+function clearSkillForm() {
+  ['skill-name','skill-cat','skill-icon','skill-edit-id'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+}
+
+function editSkill(id) {
+  const item = skillData.find(s => s.id === id);
+  if (!item) return;
+  document.getElementById('skill-name').value    = item.name || '';
+  document.getElementById('skill-cat').value     = item.category || '';
+  document.getElementById('skill-icon').value    = item.icon || '';
+  document.getElementById('skill-edit-id').value = id;
+  document.getElementById('skill-form-wrap').style.display = '';
+  document.getElementById('skill-form-wrap').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+async function saveSkillEntry() {
+  const editId = document.getElementById('skill-edit-id').value;
+  const payload = {
+    name:     document.getElementById('skill-name').value.trim(),
+    category: document.getElementById('skill-cat').value.trim(),
+    icon:     document.getElementById('skill-icon').value.trim() || 'fa-solid fa-code',
+    order:    editId ? (skillData.find(s=>s.id===editId)?.order || skillData.length+1) : skillData.length + 1
+  };
+  if (!payload.name) { toast('Skill name is required.','error'); return; }
+  try {
+    if (editId) {
+      await db.collection('skills').doc(editId).set(payload, { merge: true });
+      toast('Skill updated!', 'success');
+    } else {
+      await db.collection('skills').add(payload);
+      toast('Skill added!', 'success');
+    }
+    hideSkillForm();
+    await loadSkillEntries();
+    setTimeout(refreshPreview, 600);
+  } catch(e) { toast('Save error: ' + e.message, 'error'); }
+}
+
+async function deleteSkill(id) {
+  if (!confirm('Delete this skill entry? This cannot be undone.')) return;
+  try {
+    await db.collection('skills').doc(id).delete();
+    toast('Skill deleted.', 'info');
+    await loadSkillEntries();
+    setTimeout(refreshPreview, 600);
+  } catch(e) { toast('Delete error: ' + e.message, 'error'); }
+}
+
+async function moveSkill(index, dir) {
+  const newIndex = index + dir;
+  if (newIndex < 0 || newIndex >= skillData.length) return;
+  const batch = db.batch();
+  batch.update(db.collection('skills').doc(skillData[index].id),    { order: newIndex + 1 });
+  batch.update(db.collection('skills').doc(skillData[newIndex].id), { order: index + 1 });
+  try {
+    await batch.commit();
+    toast('Order updated!', 'success');
+    await loadSkillEntries();
+    setTimeout(refreshPreview, 600);
+  } catch(e) { toast('Reorder error: ' + e.message, 'error'); }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CONTACT INFO
+   ════════════════════════════════════════════════════════════════ */
+async function loadContactInfo() {
+  try {
+    const snap = await db.collection('site_config').doc('contact_info').get();
+    const d = snap.exists ? snap.data() : {};
+    const set = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+    set('ci-email',        d.email);
+    set('ci-phone',        d.phone);
+    set('ci-location',     d.location);
+    set('ci-availability', d.availability);
+  } catch(e) { toast('Error loading contact info: ' + e.message, 'error'); }
+}
+
+async function saveContactInfo() {
+  const get = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+  try {
+    await db.collection('site_config').doc('contact_info').set({
+      email:        get('ci-email'),
+      phone:        get('ci-phone'),
+      location:     get('ci-location'),
+      availability: get('ci-availability')
+    }, { merge: true });
+    toast('Contact info saved!', 'success');
+    setTimeout(refreshPreview, 600);
+  } catch(e) { toast('Save error: ' + e.message, 'error'); }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   LAYOUT & VISIBILITY
+   ════════════════════════════════════════════════════════════════ */
+let layoutSections = [];
+
+const DEFAULT_SECTIONS = [
+  { id:'hero',       label:'Hero / About Me',       visible:true,  order:1, bg:'solid-neutral' },
+  { id:'experience', label:'Experience Timeline',    visible:true,  order:2, bg:'solid-surface' },
+  { id:'portfolio',  label:'Portfolio Carousel',     visible:true,  order:3, bg:'accent-subtle' },
+  { id:'skills',     label:'Application Matrix',     visible:true,  order:4, bg:'solid-surface' },
+  { id:'contact',    label:'Contact Layer',           visible:true,  order:5, bg:'solid-alt'     }
+];
+
+async function loadLayoutPanel() {
+  try {
+    const snap = await db.collection('site_config').doc('layout_configuration').get();
+    layoutSections = snap.exists ? (snap.data().sections || DEFAULT_SECTIONS) : [...DEFAULT_SECTIONS];
+    layoutSections.sort((a,b) => (a.order||0) - (b.order||0));
+    renderLayoutRows();
+  } catch(e) {
+    layoutSections = [...DEFAULT_SECTIONS];
+    renderLayoutRows();
+    toast('Using default layout (Firestore error).', 'info');
+  }
+}
+
+function renderLayoutRows() {
+  const container = document.getElementById('layout-rows');
+  if (!container) return;
+  container.innerHTML = layoutSections.map((s, i) => `
+    <div class="order-row" draggable="true"
+         ondragstart="dragStart(${i})" ondragover="dragOver(event,${i})" ondrop="dragDrop(${i})" ondragend="dragEnd()">
+      <span class="drag-handle"><i class="fa-solid fa-grip-vertical"></i></span>
+      <span class="order-num">${i+1}</span>
+      <span class="order-label">${s.label || s.id}</span>
+      <label class="toggle-switch" title="${s.visible ? 'Visible — click to hide' : 'Hidden — click to show'}">
+        <input type="checkbox" ${s.visible ? 'checked' : ''} onchange="toggleSectionVisibility(${i},this.checked)" />
+        <div class="toggle-track"><div class="toggle-thumb"></div></div>
+        <span style="font-size:.6875rem;color:var(--text-muted);">${s.visible ? 'Visible' : 'Hidden'}</span>
+      </label>
+    </div>`).join('');
+}
+
+function toggleSectionVisibility(index, val) {
+  layoutSections[index].visible = val;
+  renderLayoutRows();
+}
+
+let dragSrcIndex = null;
+function dragStart(i) { dragSrcIndex = i; }
+function dragOver(e, i) { e.preventDefault(); }
+function dragDrop(i) {
+  if (dragSrcIndex === null || dragSrcIndex === i) return;
+  const moved = layoutSections.splice(dragSrcIndex, 1)[0];
+  layoutSections.splice(i, 0, moved);
+  layoutSections.forEach((s, idx) => s.order = idx + 1);
+  renderLayoutRows();
+  dragSrcIndex = null;
+}
+function dragEnd() { dragSrcIndex = null; }
+
+async function saveLayoutConfig() {
+  layoutSections.forEach((s, i) => s.order = i + 1);
+  try {
+    await db.collection('site_config').doc('layout_configuration').set({ sections: layoutSections });
+    toast('Layout saved!', 'success');
+    setTimeout(refreshPreview, 600);
+  } catch(e) { toast('Layout save error: ' + e.message, 'error'); }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   BACKGROUND CANVAS
+   ════════════════════════════════════════════════════════════════ */
+const BG_OPTIONS = [
+  { key:'solid-neutral', label:'Page Default',    color:'#1e293b' },
+  { key:'solid-surface', label:'Surface White',   color:'#ffffff' },
+  { key:'solid-alt',     label:'Alt Gray',        color:'#f1f5f9' },
+  { key:'accent-subtle', label:'Accent Subtle',   color:'rgba(99,102,241,.15)' },
+  { key:'accent-medium', label:'Accent Medium',   color:'rgba(99,102,241,.3)'  },
+  { key:'dark-deep',     label:'Deep Dark',       color:'#0f172a' }
+];
+
+async function loadBgPanel() {
+  if (layoutSections.length === 0) {
+    const snap = await db.collection('site_config').doc('layout_configuration').get();
+    layoutSections = snap.exists ? (snap.data().sections || DEFAULT_SECTIONS) : [...DEFAULT_SECTIONS];
+    layoutSections.sort((a,b) => (a.order||0) - (b.order||0));
+  }
+  renderBgControls();
+}
+
+function renderBgControls() {
+  const container = document.getElementById('bg-controls');
+  if (!container) return;
+  container.innerHTML = layoutSections.map((s, si) => `
+    <div style="margin-bottom:1.5rem;padding:1rem;background:var(--bg-alt);border:1px solid var(--border);border-radius:.5rem;">
+      <p style="font-size:.75rem;font-weight:700;color:var(--text-primary);margin-bottom:.75rem;">
+        <i class="fa-solid fa-section" style="color:var(--accent);margin-right:.3rem;"></i>${s.label || s.id}
+        <span style="font-size:.625rem;color:var(--text-muted);font-weight:500;margin-left:.5rem;">Current: ${s.bg || 'solid-neutral'}</span>
+      </p>
+      <div class="bg-swatch-grid">
+        ${BG_OPTIONS.map(opt => `
+          <div class="bg-swatch ${(s.bg||'solid-neutral')===opt.key?'active':''}"
+               style="background:${opt.color};border:1px solid var(--border);"
+               onclick="setBgForSection(${si},'${opt.key}')"
+               title="${opt.label}"></div>`).join('')}
+      </div>
+      <div style="margin-top:.5rem;display:flex;gap:.375rem;flex-wrap:wrap;">
+        ${BG_OPTIONS.map(opt => `
+          <span style="font-size:.6rem;color:var(--text-muted);">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${opt.color};border:1px solid var(--border);vertical-align:middle;"></span>
+            ${opt.label}
+          </span>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function setBgForSection(sectionIndex, bgKey) {
+  layoutSections[sectionIndex].bg = bgKey;
+  renderBgControls();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   MESSAGES INBOX
+   ════════════════════════════════════════════════════════════════ */
+async function loadMessages() {
+  document.getElementById('msg-list-loading').style.display = 'block';
+  document.getElementById('msg-list').style.display = 'none';
+  try {
+    const snap = await db.collection('messages').orderBy('timestamp','desc').limit(50).get();
+    const msgs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderMessages(msgs);
+  } catch(e) {
+    toast('Could not load messages: ' + e.message, 'error');
+    document.getElementById('msg-list-loading').innerHTML = '<span style="color:var(--danger)">Load error.</span>';
+  }
+}
+
+function renderMessages(msgs) {
+  document.getElementById('msg-list-loading').style.display = 'none';
+  const container = document.getElementById('msg-list');
+  container.style.display = '';
+  if (msgs.length === 0) {
+    container.innerHTML = `<div style="padding:2rem;text-align:center;color:var(--text-muted);font-style:italic;font-size:.875rem;">No messages yet. Contact form submissions will appear here.</div>`;
+    return;
+  }
+  container.innerHTML = msgs.map(m => {
+    const ts = m.timestamp?.toDate?.() ? m.timestamp.toDate().toLocaleString() : 'Unknown date';
+    return `
+    <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);${!m.read?'border-left:3px solid var(--accent);':''}" id="msg-${m.id}">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;margin-bottom:.375rem;">
+        <div>
+          <p style="font-size:.875rem;font-weight:700;color:var(--text-primary);">${escHtml(m.name||'Unknown')}</p>
+          <p style="font-size:.75rem;color:var(--accent);">${escHtml(m.email||'')}</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:.375rem;flex-shrink:0;">
+          ${!m.read ? `<span class="badge badge-accent">New</span>` : ''}
+          <span style="font-size:.6875rem;color:var(--text-muted);">${ts}</span>
+          <button class="btn btn-danger btn-sm" onclick="deleteMessage('${m.id}')"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </div>
+      <p style="font-size:.8125rem;color:var(--text-secondary);line-height:1.6;">${escHtml(m.message||'')}</p>
+      ${!m.read ? `<button class="btn btn-success btn-sm" style="margin-top:.5rem;" onclick="markRead('${m.id}')"><i class="fa-solid fa-check"></i> Mark as Read</button>` : ''}
+    </div>`;
+  }).join('');
+}
+
+async function markRead(id) {
+  try {
+    await db.collection('messages').doc(id).update({ read: true });
+    toast('Marked as read.', 'success');
+    loadMessages();
+  } catch(e) { toast('Error: ' + e.message, 'error'); }
+}
+
+async function deleteMessage(id) {
+  if (!confirm('Delete this message permanently?')) return;
+  try {
+    await db.collection('messages').doc(id).delete();
+    toast('Message deleted.', 'info');
+    loadMessages();
+  } catch(e) { toast('Delete error: ' + e.message, 'error'); }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   UTILITY
+   ════════════════════════════════════════════════════════════════ */
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ════════════════════════════════════════════════════════════════
+   INIT
+   ════════════════════════════════════════════════════════════════ */
+loadCoreText();
 </script>
 </body>
 </html>

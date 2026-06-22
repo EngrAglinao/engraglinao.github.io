@@ -12,936 +12,1456 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
 
   <!-- FontAwesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
 
-  <!-- Tailwind CSS Browser -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
   <style>
+    /* ─── CSS CUSTOM PROPERTIES ─────────────────────────────────────── */
     :root {
-      --accent: #6366f1;
-      --accent-light: #818cf8;
-      --accent-dark: #4f46e5;
-      --accent-glow: rgba(99,102,241,0.18);
-      --sidebar-bg: #1e2433;
-      --sidebar-text: #e2e8f0;
+      --font-main: 'Plus Jakarta Sans', sans-serif;
+      --accent:    #6366f1;
+      --accent-2:  #8b5cf6;
+      --accent-grd: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      --card-radius: 1rem;
+      --transition: 0.25s cubic-bezier(.4,0,.2,1);
     }
 
-    * { font-family: 'Plus Jakarta Sans', sans-serif; }
-
-    /* ─── DARK MODE ─── */
-    html.dark body { background: #0f1117; color: #e2e8f0; }
-    html.dark .card-bg { background: #1a1f2e; border-color: #2d3448; }
-    html.dark .nav-bg { background: rgba(15,17,23,0.92); border-color: #2d3448; }
-    html.dark .section-alt { background: #13161f; }
-    html.dark .hero-bg { background: linear-gradient(135deg,#0f1117 0%,#1a1f2e 60%,#1e1a3a 100%); }
-    html.dark .timeline-line { background: #2d3448; }
-    html.dark .skill-card { background: #1a1f2e; border-color: #2d3448; }
-    html.dark .text-muted { color: #94a3b8; }
-    html.dark .input-field { background: #1a1f2e; border-color: #2d3448; color: #e2e8f0; }
-    html.dark .footer-bg { background: #0a0c12; }
-    html.dark .modal-bg { background: #1a1f2e; }
-    html.dark .section-bg-accent { background: linear-gradient(135deg,#1a1f2e 0%,#1e1a3a 100%); }
-
-    /* ─── LIGHT MODE ─── */
-    html:not(.dark) body { background: #f8fafc; color: #1e293b; }
-    html:not(.dark) .card-bg { background: #ffffff; border-color: #e2e8f0; }
-    html:not(.dark) .nav-bg { background: rgba(248,250,252,0.92); border-color: #e2e8f0; }
-    html:not(.dark) .section-alt { background: #f1f5f9; }
-    html:not(.dark) .hero-bg { background: linear-gradient(135deg,#f8fafc 0%,#ede9fe 60%,#e0e7ff 100%); }
-    html:not(.dark) .timeline-line { background: #cbd5e1; }
-    html:not(.dark) .skill-card { background: #ffffff; border-color: #e2e8f0; }
-    html:not(.dark) .text-muted { color: #64748b; }
-    html:not(.dark) .input-field { background: #ffffff; border-color: #cbd5e1; color: #1e293b; }
-    html:not(.dark) .footer-bg { background: #1e2433; color: #e2e8f0; }
-    html:not(.dark) .modal-bg { background: #ffffff; }
-    html:not(.dark) .section-bg-accent { background: linear-gradient(135deg,#ede9fe 0%,#e0e7ff 100%); }
-
-    /* ─── SHARED ─── */
-    .accent { color: var(--accent); }
-    .accent-bg { background: var(--accent); }
-    .accent-border { border-color: var(--accent); }
-    .nav-bg { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid; }
-    .card-bg { border: 1px solid; border-radius: 1rem; }
-    .btn-accent {
-      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
-      color: #fff; border-radius: 0.625rem; font-weight: 600;
-      transition: all .2s; box-shadow: 0 4px 18px var(--accent-glow);
-    }
-    .btn-accent:hover { transform: translateY(-2px); box-shadow: 0 8px 28px var(--accent-glow); }
-    .btn-outline {
-      border: 2px solid var(--accent); color: var(--accent); border-radius: 0.625rem;
-      font-weight: 600; transition: all .2s; background: transparent;
-    }
-    .btn-outline:hover { background: var(--accent); color: #fff; transform: translateY(-2px); }
-
-    /* ─── HERO ─── */
-    .hero-bg { min-height: 100vh; }
-    .hero-pill {
-      display: inline-flex; align-items: center; gap: .5rem;
-      background: var(--accent-glow); border: 1px solid var(--accent);
-      color: var(--accent); border-radius: 9999px; padding: .35rem .9rem;
-      font-size: .8rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
-    }
-    .avatar-ring { border: 4px solid var(--accent); box-shadow: 0 0 0 4px var(--accent-glow); }
-
-    /* ─── TIMELINE ─── */
-    .timeline-wrapper { position: relative; }
-    .timeline-wrapper::before {
-      content: ''; position: absolute; left: 19px; top: 0; bottom: 0; width: 2px;
-    }
-    .timeline-dot {
-      width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
-      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-size: .8rem; z-index: 1; position: relative;
-      box-shadow: 0 0 0 4px var(--accent-glow);
+    /* Light theme */
+    html.light {
+      --bg-page:    #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-alt:     #f1f5f9;
+      --bg-card:    #ffffff;
+      --text-primary:   #0f172a;
+      --text-secondary: #475569;
+      --text-muted:     #94a3b8;
+      --border:     #e2e8f0;
+      --shadow:     0 4px 24px rgba(15,23,42,.08);
+      --shadow-lg:  0 12px 40px rgba(15,23,42,.14);
+      --sidebar-bg: #1e293b;
+      --sidebar-text: #f1f5f9;
     }
 
-    /* ─── CAROUSEL ─── */
-    .carousel-track { display: flex; gap: 1.5rem; transition: transform .4s cubic-bezier(.4,0,.2,1); }
-    .carousel-card {
-      min-width: 280px; max-width: 280px; border-radius: 1rem; overflow: hidden;
-      border: 1px solid; transition: transform .2s, box-shadow .2s; cursor: pointer;
-    }
-    html.dark .carousel-card { background:#1a1f2e; border-color:#2d3448; }
-    html:not(.dark) .carousel-card { background:#fff; border-color:#e2e8f0; }
-    .carousel-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px var(--accent-glow); }
-    .carousel-viewport { overflow: hidden; }
-    .carousel-btn {
-      width: 44px; height: 44px; border-radius: 50%;
-      background: var(--accent); color: #fff;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: all .2s; border: none;
-      box-shadow: 0 4px 14px var(--accent-glow);
-    }
-    .carousel-btn:hover { background: var(--accent-dark); transform: scale(1.1); }
-    .carousel-btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
-
-    /* ─── SKILL CARDS ─── */
-    .skill-card { border-radius: .75rem; transition: transform .2s, box-shadow .2s; cursor: default; border: 1px solid; }
-    .skill-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px var(--accent-glow); }
-    .icon-box {
-      width: 40px; height: 40px; border-radius: .5rem; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: .9rem; color: #fff;
+    /* Dark theme */
+    html.dark, html:not(.light) {
+      --bg-page:    #0f172a;
+      --bg-surface: #1e293b;
+      --bg-alt:     #162032;
+      --bg-card:    #1e293b;
+      --text-primary:   #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted:     #64748b;
+      --border:     #334155;
+      --shadow:     0 4px 24px rgba(0,0,0,.35);
+      --shadow-lg:  0 12px 40px rgba(0,0,0,.5);
+      --sidebar-bg: #0f172a;
+      --sidebar-text: #f1f5f9;
     }
 
-    /* ─── MODAL ─── */
-    .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,.7);
-      backdrop-filter: blur(6px); z-index: 9999;
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none; transition: opacity .2s;
+    /* ─── BASE ──────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-family: var(--font-main); }
+    body {
+      background: var(--bg-page);
+      color: var(--text-primary);
+      transition: background var(--transition), color var(--transition);
+      min-height: 100vh;
     }
-    .modal-overlay.active { opacity: 1; pointer-events: all; }
-    .modal-bg { border-radius: 1.25rem; max-width: 90vw; max-height: 90vh; overflow: auto; }
 
-    /* ─── INPUT ─── */
-    .input-field { border: 1px solid; border-radius: .6rem; padding: .7rem 1rem; width: 100%; outline: none; transition: border-color .2s; font-size: .95rem; }
-    .input-field:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
-
-    /* ─── LOADER ─── */
-    .loader-ring { width: 56px; height: 56px; border: 4px solid transparent; border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .fade-in { animation: fadeIn .5s ease forwards; }
-    @keyframes fadeIn { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
-    .section-hidden { display: none !important; }
-
-    /* ─── SCROLLBAR ─── */
+    /* ─── SCROLLBAR ─────────────────────────────────────────────────── */
     ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 9999px; }
+    ::-webkit-scrollbar-track { background: var(--bg-alt); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
 
-    /* ─── NAV ACTIVE ─── */
-    .nav-link { position: relative; font-weight: 500; transition: color .2s; }
-    .nav-link::after { content:''; position:absolute; bottom:-2px; left:0; right:0; height:2px; background:var(--accent); transform:scaleX(0); transition:transform .2s; border-radius:9999px; }
-    .nav-link:hover::after, .nav-link.active::after { transform:scaleX(1); }
-    .nav-link:hover, .nav-link.active { color: var(--accent); }
+    /* ─── NAVBAR ────────────────────────────────────────────────────── */
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      padding: .875rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem;
+    }
+    .nav-logo {
+      font-size: 1.25rem; font-weight: 800;
+      background: var(--accent-grd);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; letter-spacing: -.5px;
+      white-space: nowrap;
+    }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links a {
+      font-size: .875rem; font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-actions { display: flex; align-items: center; gap: .625rem; }
 
-    /* ─── PRINT STYLES ─── */
-    @media print {
-      body > *:not(#resume-workspace) { display: none !important; }
-      #resume-workspace { display: block !important; position: static !important; width: 100% !important; }
-      #resume-workspace * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-      @page { margin: 0; size: A4; }
+    .btn-icon {
+      width: 38px; height: 38px; border-radius: .5rem;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg-alt); border: 1px solid var(--border);
+      color: var(--text-secondary); cursor: pointer;
+      transition: all var(--transition);
+      font-size: .875rem;
+    }
+    .btn-icon:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: var(--accent-grd); color: #fff;
+      padding: .5rem 1.1rem; border-radius: .5rem;
+      font-size: .8125rem; font-weight: 600;
+      border: none; cursor: pointer;
+      transition: opacity var(--transition), transform var(--transition);
+      white-space: nowrap;
+    }
+    .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+
+    /* ─── HERO ──────────────────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 6rem 1.5rem 4rem;
+      background: var(--bg-page);
+      position: relative; overflow: hidden;
+    }
+    #hero::before {
+      content: '';
+      position: absolute; top: -30%; right: -10%; width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(99,102,241,.15) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+    #hero::after {
+      content: '';
+      position: absolute; bottom: -20%; left: -10%; width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(139,92,246,.1) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .hero-inner {
+      max-width: 1200px; margin: 0 auto; width: 100%;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
+      align-items: center; position: relative; z-index: 1;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(99,102,241,.12); border: 1px solid rgba(99,102,241,.25);
+      color: var(--accent); border-radius: 99px;
+      padding: .375rem .875rem; font-size: .75rem; font-weight: 600;
+      letter-spacing: .05em; text-transform: uppercase; margin-bottom: 1.25rem;
+    }
+    .hero-title {
+      font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 800;
+      line-height: 1.1; letter-spacing: -.03em;
+      color: var(--text-primary); margin-bottom: 1.25rem;
+    }
+    .hero-title span {
+      background: var(--accent-grd);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-bio {
+      font-size: 1rem; line-height: 1.8; color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: .5rem;
+      border: 2px solid var(--accent); color: var(--accent);
+      padding: .625rem 1.25rem; border-radius: .5rem;
+      font-size: .875rem; font-weight: 600;
+      text-decoration: none; cursor: pointer;
+      transition: all var(--transition); background: transparent;
+    }
+    .btn-outline:hover { background: var(--accent); color: #fff; }
+
+    .hero-visual {
+      display: flex; justify-content: center; align-items: center;
+    }
+    .hero-avatar-wrap {
+      position: relative; width: 320px; height: 320px;
+    }
+    .hero-avatar-ring {
+      position: absolute; inset: -8px; border-radius: 50%;
+      background: var(--accent-grd); opacity: .2;
+      animation: pulse-ring 3s ease-in-out infinite;
+    }
+    @keyframes pulse-ring {
+      0%, 100% { transform: scale(1); opacity: .2; }
+      50% { transform: scale(1.05); opacity: .35; }
+    }
+    .hero-avatar {
+      width: 100%; height: 100%; border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--border);
+      background: var(--bg-alt);
+    }
+    .hero-avatar-placeholder {
+      width: 100%; height: 100%; border-radius: 50%;
+      background: linear-gradient(135deg, var(--bg-alt), var(--bg-surface));
+      border: 4px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 5rem; color: var(--text-muted);
     }
 
-    /* ─── SECTION BG VARIANTS ─── */
-    .bg-neutral { /* uses .section-alt */ }
-    .bg-accent-gradient { /* uses .section-bg-accent */ }
+    /* ─── SECTION SHELL ─────────────────────────────────────────────── */
+    .section-wrap {
+      padding: 5rem 1.5rem;
+      transition: background var(--transition);
+    }
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+    .section-label {
+      display: inline-flex; align-items: center; gap: .5rem;
+      color: var(--accent); font-size: .75rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase; margin-bottom: .75rem;
+    }
+    .section-title {
+      font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 800;
+      letter-spacing: -.03em; color: var(--text-primary); margin-bottom: .75rem;
+    }
+    .section-subtitle {
+      font-size: 1rem; color: var(--text-secondary); line-height: 1.7;
+      max-width: 600px;
+    }
+    .section-divider { margin-bottom: 3rem; }
 
-    /* ─── TYPE BADGE ─── */
-    .type-badge { display: inline-block; padding: .2rem .6rem; border-radius: 9999px; font-size: .72rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+    /* ─── EXPERIENCE TIMELINE ───────────────────────────────────────── */
+    .timeline { position: relative; padding-left: 2rem; }
+    .timeline::before {
+      content: ''; position: absolute; left: .6875rem; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--accent), var(--accent-2), transparent);
+    }
+    .timeline-item {
+      position: relative; padding: 0 0 2.5rem 2rem;
+    }
+    .timeline-node {
+      position: absolute; left: -2rem; top: .25rem;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--accent-grd);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .55rem; color: #fff;
+      box-shadow: 0 0 0 4px var(--bg-page);
+    }
+    .timeline-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--card-radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      transition: box-shadow var(--transition), transform var(--transition);
+    }
+    .timeline-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+    .timeline-meta { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin-bottom: .5rem; }
+    .timeline-date {
+      font-size: .75rem; font-weight: 600; color: var(--accent);
+      background: rgba(99,102,241,.1); border-radius: 99px;
+      padding: .2rem .65rem;
+    }
+    .timeline-org { font-size: .8125rem; color: var(--text-muted); font-weight: 500; }
+    .timeline-role {
+      font-size: 1.0625rem; font-weight: 700; color: var(--text-primary);
+      margin-bottom: .5rem;
+    }
+    .timeline-desc { font-size: .875rem; color: var(--text-secondary); line-height: 1.7; }
+
+    /* ─── PORTFOLIO CAROUSEL ────────────────────────────────────────── */
+    .carousel-wrap { position: relative; overflow: hidden; }
+    .carousel-track-outer { overflow: hidden; border-radius: var(--card-radius); }
+    .carousel-track {
+      display: flex; gap: 1.5rem;
+      transition: transform .4s cubic-bezier(.4,0,.2,1);
+      will-change: transform;
+    }
+    .portfolio-card {
+      flex: 0 0 calc(33.333% - 1rem);
+      min-width: 280px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--card-radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: box-shadow var(--transition), transform var(--transition);
+    }
+    .portfolio-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+    .portfolio-card-thumb {
+      width: 100%; height: 180px;
+      background: var(--bg-alt);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem; color: var(--text-muted);
+      overflow: hidden; position: relative;
+    }
+    .portfolio-card-thumb img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .portfolio-type-badge {
+      position: absolute; top: .75rem; right: .75rem;
+      font-size: .6875rem; font-weight: 700; letter-spacing: .05em;
+      padding: .2rem .5rem; border-radius: .3rem;
+      background: rgba(99,102,241,.85); color: #fff;
+    }
+    .portfolio-card-body { padding: 1.25rem; }
+    .portfolio-card-title { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: .375rem; }
+    .portfolio-card-desc { font-size: .8125rem; color: var(--text-secondary); line-height: 1.6; }
+
+    .carousel-btn {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      color: var(--text-primary); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; z-index: 10;
+      box-shadow: var(--shadow-lg);
+      transition: all var(--transition);
+    }
+    .carousel-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .carousel-btn.prev { left: -22px; }
+    .carousel-btn.next { right: -22px; }
+
+    /* ─── CAROUSEL DOTS ─────────────────────────────────────────────── */
+    .carousel-dots { display: flex; justify-content: center; gap: .5rem; margin-top: 1.5rem; }
+    .carousel-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--border); cursor: pointer;
+      transition: all var(--transition);
+    }
+    .carousel-dot.active { background: var(--accent); width: 20px; border-radius: 4px; }
+
+    /* ─── APP MATRIX (SKILLS) ───────────────────────────────────────── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 1rem;
+    }
+    .skill-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--card-radius);
+      padding: 1.25rem 1rem;
+      display: flex; flex-direction: column; align-items: center;
+      gap: .6rem; text-align: center;
+      box-shadow: var(--shadow);
+      transition: box-shadow var(--transition), transform var(--transition);
+      cursor: default;
+    }
+    .skill-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+    .skill-icon-box {
+      width: 44px; height: 44px; border-radius: .5rem;
+      background: rgba(99,102,241,.12);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; color: var(--accent);
+    }
+    .skill-name { font-size: .8125rem; font-weight: 600; color: var(--text-primary); }
+    .skill-cat {
+      font-size: .6875rem; font-weight: 500; color: var(--text-muted);
+      background: var(--bg-alt); border-radius: 99px; padding: .15rem .5rem;
+    }
+
+    /* ─── CATEGORY TABS ─────────────────────────────────────────────── */
+    .cat-tabs { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .cat-tab {
+      padding: .375rem .875rem; border-radius: 99px;
+      font-size: .8125rem; font-weight: 500;
+      border: 1px solid var(--border);
+      background: var(--bg-alt); color: var(--text-secondary);
+      cursor: pointer; transition: all var(--transition);
+    }
+    .cat-tab.active, .cat-tab:hover {
+      background: var(--accent); color: #fff; border-color: var(--accent);
+    }
+
+    /* ─── CONTACT ───────────────────────────────────────────────────── */
+    .contact-grid {
+      display: grid; grid-template-columns: 1fr 1.5fr;
+      gap: 3rem; align-items: start;
+    }
+    .contact-info-item {
+      display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem;
+    }
+    .contact-icon-box {
+      width: 44px; height: 44px; border-radius: .5rem; flex-shrink: 0;
+      background: rgba(99,102,241,.12);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; color: var(--accent);
+    }
+    .contact-info-label { font-size: .75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; }
+    .contact-info-val { font-size: .9375rem; color: var(--text-primary); font-weight: 500; }
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+    .form-field { display: flex; flex-direction: column; gap: .375rem; }
+    .form-label { font-size: .8125rem; font-weight: 600; color: var(--text-secondary); }
+    .form-input, .form-textarea {
+      background: var(--bg-alt); border: 1px solid var(--border);
+      color: var(--text-primary); border-radius: .5rem;
+      padding: .75rem 1rem; font-family: var(--font-main);
+      font-size: .9375rem; outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99,102,241,.15);
+    }
+    .form-textarea { resize: vertical; min-height: 130px; }
+    .form-status {
+      font-size: .875rem; font-weight: 500; padding: .75rem 1rem;
+      border-radius: .5rem; display: none;
+    }
+    .form-status.success { background: rgba(34,197,94,.12); color: #16a34a; border: 1px solid rgba(34,197,94,.25); }
+    .form-status.error { background: rgba(239,68,68,.12); color: #dc2626; border: 1px solid rgba(239,68,68,.25); }
+
+    /* ─── FOOTER ────────────────────────────────────────────────────── */
+    #footer {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 1.5rem;
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-left { font-size: .8125rem; color: var(--text-muted); line-height: 1.6; }
+    .footer-meta { font-size: .6875rem; color: var(--text-muted); margin-top: .25rem; }
+    .footer-socials { display: flex; gap: .625rem; }
+    .social-btn {
+      width: 36px; height: 36px; border-radius: .4rem;
+      background: var(--bg-alt); border: 1px solid var(--border);
+      color: var(--text-secondary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .875rem; text-decoration: none;
+      transition: all var(--transition);
+    }
+    .social-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* ─── MODAL ─────────────────────────────────────────────────────── */
+    #modal-overlay {
+      position: fixed; inset: 0; z-index: 9000;
+      background: rgba(0,0,0,.7); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity .25s ease;
+      padding: 1.5rem;
+    }
+    #modal-overlay.open { opacity: 1; pointer-events: all; }
+    #modal-box {
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: 1.25rem; padding: 2rem;
+      max-width: 800px; width: 100%; max-height: 88vh;
+      overflow-y: auto;
+      box-shadow: 0 32px 80px rgba(0,0,0,.4);
+      transform: scale(.96);
+      transition: transform .25s ease;
+    }
+    #modal-overlay.open #modal-box { transform: scale(1); }
+    .modal-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 1.5rem; gap: 1rem;
+    }
+    .modal-title { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); }
+    .modal-close {
+      width: 34px; height: 34px; border-radius: .4rem; flex-shrink: 0;
+      background: var(--bg-alt); border: 1px solid var(--border);
+      color: var(--text-secondary); cursor: pointer; font-size: .9rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition);
+    }
+    .modal-close:hover { background: #ef4444; color: #fff; border-color: #ef4444; }
+    .modal-body img { width: 100%; border-radius: .5rem; }
+    .modal-body iframe {
+      width: 100%; height: 500px; border: none; border-radius: .5rem;
+      background: var(--bg-alt);
+    }
+
+    /* ─── LOADING SKELETON ──────────────────────────────────────────── */
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-alt) 25%, var(--border) 50%, var(--bg-alt) 75%);
+      background-size: 400% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: .5rem;
+    }
+    @keyframes shimmer {
+      0% { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+
+    /* ─── LOADING SPINNER ───────────────────────────────────────────── */
+    #page-loader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg-page);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 1rem; transition: opacity .4s ease;
+    }
+    .loader-ring {
+      width: 48px; height: 48px; border-radius: 50%;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── PRINT WORKSPACE ───────────────────────────────────────────── */
+    #print-workspace { display: none; }
+
+    /* ─── PRINT STYLES ──────────────────────────────────────────────── */
+    @media print {
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      body > *:not(#print-workspace) { display: none !important; }
+      #print-workspace {
+        display: block !important;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        width: 100%; margin: 0; padding: 0;
+        background: #fff; color: #0f172a;
+      }
+      #print-workspace * { box-sizing: border-box; }
+      .resume-shell {
+        display: flex; width: 100%; min-height: 100vh;
+      }
+      .resume-sidebar {
+        width: 33%; background: #1e293b !important;
+        color: #f1f5f9 !important;
+        padding: 2rem 1.5rem;
+        flex-shrink: 0;
+      }
+      .resume-main {
+        width: 67%; padding: 2rem;
+        background: #fff !important; color: #0f172a !important;
+      }
+    }
+
+    /* ─── RESPONSIVE ────────────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .hero-inner { grid-template-columns: 1fr; text-align: center; }
+      .hero-visual { display: none; }
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .portfolio-card { flex: 0 0 calc(100% - 0px); min-width: unset; }
+      .skills-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+    }
+    @media (max-width: 480px) {
+      .nav-logo { font-size: 1rem; }
+    }
+
+    /* ─── SECTION BG VARIANTS ───────────────────────────────────────── */
+    .bg-solid-neutral { background: var(--bg-page); }
+    .bg-solid-surface { background: var(--bg-surface); }
+    .bg-solid-alt     { background: var(--bg-alt); }
+    .bg-accent-subtle {
+      background: linear-gradient(135deg,
+        rgba(99,102,241,.06) 0%, rgba(139,92,246,.06) 100%);
+    }
+    .bg-accent-medium {
+      background: linear-gradient(135deg,
+        rgba(99,102,241,.12) 0%, rgba(139,92,246,.10) 100%);
+    }
+    .bg-dark-deep { background: #0f172a; }
   </style>
 </head>
 <body>
 
-<!-- ═══════════════════════ LOADING SCREEN ═══════════════════════ -->
-<div id="loading-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center" style="background:#0f1117;">
-  <div class="loader-ring mb-6"></div>
-  <p style="color:#6366f1;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;letter-spacing:.08em;font-size:.9rem;">LOADING PORTFOLIO</p>
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  PAGE LOADER                                                    -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="page-loader">
+  <div class="loader-ring"></div>
+  <span style="font-size:.875rem;color:var(--text-muted);font-weight:500;">Loading portfolio…</span>
 </div>
 
-<!-- ═══════════════════════ NAVIGATION ═══════════════════════ -->
-<nav id="main-nav" class="nav-bg fixed top-0 left-0 right-0 z-40 px-6 py-3">
-  <div class="max-w-6xl mx-auto flex items-center justify-between">
-    <a href="#hero" id="nav-brand" class="font-bold text-xl accent">ENG</a>
-    <div class="hidden md:flex items-center gap-6 text-sm">
-      <a href="#about" class="nav-link">About</a>
-      <a href="#experience" class="nav-link">Experience</a>
-      <a href="#portfolio" class="nav-link">Portfolio</a>
-      <a href="#skills" class="nav-link">Skills</a>
-      <a href="#contact" class="nav-link">Contact</a>
-    </div>
-    <div class="flex items-center gap-3">
-      <button id="theme-toggle" class="btn-outline px-3 py-2 text-sm" title="Toggle theme">
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  NAVBAR                                                         -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<header id="navbar" role="banner">
+  <div class="nav-inner">
+    <a class="nav-logo" id="nav-logo" href="#hero">EG</a>
+    <nav class="nav-links" aria-label="Primary navigation" id="nav-links-container">
+      <!-- Injected by JS -->
+    </nav>
+    <div class="nav-actions">
+      <button class="btn-icon" id="theme-toggle" aria-label="Toggle dark/light mode" title="Toggle theme">
         <i class="fa-solid fa-moon" id="theme-icon"></i>
       </button>
-      <button onclick="generateLiveResume()" class="btn-accent px-4 py-2 text-sm flex items-center gap-2">
+      <button class="btn-primary" id="resume-btn" onclick="generateLiveResume()">
         <i class="fa-solid fa-file-pdf"></i>
-        <span class="hidden sm:inline">Live Resume</span>
+        <span>Generate Resume</span>
       </button>
     </div>
   </div>
-</nav>
+</header>
 
-<!-- ═══════════════════════ HERO / ABOUT ═══════════════════════ -->
-<section id="hero" class="hero-bg flex items-center pt-20">
-  <div class="max-w-6xl mx-auto px-6 py-24 w-full">
-    <div class="grid lg:grid-cols-2 gap-16 items-center">
-      <div class="fade-in" style="animation-delay:.1s">
-        <div class="hero-pill mb-6" id="hero-pill">
-          <i class="fa-solid fa-circle-dot fa-beat" style="color:var(--accent)"></i>
-          <span>Available for Work</span>
-        </div>
-        <h1 class="text-5xl lg:text-6xl font-extrabold leading-tight mb-6" id="hero-name">
-          Loading...
-        </h1>
-        <p class="text-lg leading-relaxed text-muted mb-8" id="hero-bio">
-          Fetching biography from database...
-        </p>
-        <div class="flex flex-wrap gap-4">
-          <a id="resume-download-btn" href="#" download class="btn-accent px-6 py-3 flex items-center gap-2">
-            <i class="fa-solid fa-download"></i> Download Resume
-          </a>
-          <a href="#contact" class="btn-outline px-6 py-3 flex items-center gap-2">
-            <i class="fa-solid fa-envelope"></i> Get In Touch
-          </a>
-        </div>
-        <div class="flex gap-6 mt-8" id="hero-socials"></div>
-      </div>
-      <div class="flex justify-center fade-in" style="animation-delay:.25s">
-        <div class="relative">
-          <div class="w-72 h-72 lg:w-80 lg:h-80 rounded-full overflow-hidden avatar-ring">
-            <img id="hero-avatar" src="https://images.pexels.com/photos/16313659/pexels-photo-16313659.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=400" alt="Profile" class="w-full h-full object-cover" />
-          </div>
-          <div class="absolute -bottom-4 -right-4 card-bg px-4 py-3 rounded-xl shadow-xl" id="hero-badge">
-            <p class="text-xs text-muted font-medium">Role</p>
-            <p class="font-bold text-sm accent" id="hero-badge-role">—</p>
-          </div>
-        </div>
-      </div>
-    </div>
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  MAIN CONTENT — all sections injected by JS                     -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<main id="site-main" role="main">
+  <!-- Sections rendered dynamically -->
+</main>
 
-    <!-- About subsection -->
-    <div id="about" class="mt-24 grid md:grid-cols-3 gap-8">
-      <div id="hero-stats-container" class="md:col-span-3 grid md:grid-cols-3 gap-6"></div>
-    </div>
-  </div>
-</section>
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  FOOTER — rendered by JS                                        -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<footer id="footer" role="contentinfo" style="display:none;"></footer>
 
-<!-- ═══════════════════════ EXPERIENCE ═══════════════════════ -->
-<section id="experience" class="section-alt py-24">
-  <div class="max-w-5xl mx-auto px-6">
-    <div class="mb-14 text-center">
-      <div class="hero-pill inline-flex mb-4"><i class="fa-solid fa-briefcase"></i><span>Career Path</span></div>
-      <h2 class="text-4xl font-extrabold" id="exp-heading">Experience</h2>
-      <p class="text-muted mt-2" id="exp-subheading">Professional journey & milestones</p>
-    </div>
-    <div id="experience-container" class="timeline-wrapper pl-14 space-y-10">
-      <div class="flex items-center gap-4">
-        <div class="loader-ring" style="width:28px;height:28px;border-width:3px;"></div>
-        <p class="text-muted text-sm">Loading experience...</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════ PORTFOLIO CAROUSEL ═══════════════════════ -->
-<section id="portfolio" class="py-24">
-  <div class="max-w-6xl mx-auto px-6">
-    <div class="mb-14 text-center">
-      <div class="hero-pill inline-flex mb-4"><i class="fa-solid fa-layer-group"></i><span>Work Samples</span></div>
-      <h2 class="text-4xl font-extrabold" id="portfolio-heading">Portfolio</h2>
-      <p class="text-muted mt-2" id="portfolio-subheading">Selected projects & deliverables</p>
-    </div>
-    <div class="flex items-center justify-between mb-6">
-      <div class="flex gap-3">
-        <button id="carousel-prev" class="carousel-btn" onclick="carouselMove(-1)">
-          <i class="fa-solid fa-chevron-left text-sm"></i>
-        </button>
-        <button id="carousel-next" class="carousel-btn" onclick="carouselMove(1)">
-          <i class="fa-solid fa-chevron-right text-sm"></i>
-        </button>
-      </div>
-      <div id="carousel-dots" class="flex gap-2"></div>
-    </div>
-    <div class="carousel-viewport">
-      <div id="carousel-track" class="carousel-track">
-        <div class="flex items-center gap-3 text-muted text-sm" style="min-width:200px">
-          <div class="loader-ring" style="width:24px;height:24px;border-width:3px;"></div>Loading...
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════ SKILLS / APPLICATION MATRIX ═══════════════════════ -->
-<section id="skills" class="section-alt py-24">
-  <div class="max-w-6xl mx-auto px-6">
-    <div class="mb-14 text-center">
-      <div class="hero-pill inline-flex mb-4"><i class="fa-solid fa-microchip"></i><span>Tech Stack</span></div>
-      <h2 class="text-4xl font-extrabold" id="skills-heading">Application Matrix</h2>
-      <p class="text-muted mt-2" id="skills-subheading">Tools, platforms & technical fluencies</p>
-    </div>
-    <div id="skills-container" class="space-y-10"></div>
-  </div>
-</section>
-
-<!-- ═══════════════════════ CONTACT ═══════════════════════ -->
-<section id="contact" class="section-bg-accent py-24">
-  <div class="max-w-3xl mx-auto px-6">
-    <div class="mb-14 text-center">
-      <div class="hero-pill inline-flex mb-4"><i class="fa-solid fa-satellite-dish"></i><span>Contact Layer</span></div>
-      <h2 class="text-4xl font-extrabold" id="contact-heading">Get In Touch</h2>
-      <p class="text-muted mt-2" id="contact-subheading">I'll respond within 24 hours</p>
-    </div>
-    <div class="card-bg p-8 rounded-2xl">
-      <form id="contact-form" class="space-y-5" onsubmit="submitContact(event)">
-        <div class="grid sm:grid-cols-2 gap-5">
-          <div>
-            <label class="block text-sm font-semibold mb-2">Full Name</label>
-            <input type="text" id="c-name" class="input-field" placeholder="Your Name" required />
-          </div>
-          <div>
-            <label class="block text-sm font-semibold mb-2">Email Address</label>
-            <input type="email" id="c-email" class="input-field" placeholder="you@email.com" required />
-          </div>
-        </div>
-        <div>
-          <label class="block text-sm font-semibold mb-2">Message</label>
-          <textarea id="c-message" class="input-field" rows="5" placeholder="Tell me about your project..." required></textarea>
-        </div>
-        <button type="submit" id="contact-btn" class="btn-accent w-full py-3 flex items-center justify-center gap-2">
-          <i class="fa-solid fa-paper-plane"></i> Send Message
-        </button>
-        <div id="contact-status" class="text-center text-sm font-semibold hidden"></div>
-      </form>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
-<footer class="footer-bg py-12">
-  <div class="max-w-6xl mx-auto px-6">
-    <div class="grid md:grid-cols-3 gap-10 mb-10">
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  MEDIA PREVIEW MODAL                                            -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title-text">
+  <div id="modal-box">
+    <div class="modal-header">
       <div>
-        <h3 class="font-bold text-lg accent mb-3" id="footer-brand">Portfolio</h3>
-        <p class="text-sm opacity-70 leading-relaxed" id="footer-tagline">Built with passion and precision.</p>
+        <p style="font-size:.75rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem;" id="modal-type-label"></p>
+        <h2 class="modal-title" id="modal-title-text"></h2>
       </div>
-      <div>
-        <h4 class="font-semibold text-sm uppercase tracking-wider mb-4 opacity-60">Assembly</h4>
-        <ul class="space-y-2 text-sm opacity-70" id="footer-stack-list">
-          <li><i class="fa-brands fa-html5 mr-2 accent"></i>HTML5 Semantic Markup</li>
-          <li><i class="fa-brands fa-js mr-2 accent"></i>Vanilla ES6+ JavaScript</li>
-          <li><i class="fa-solid fa-database mr-2 accent"></i>Firebase Firestore CMS</li>
-          <li><i class="fa-solid fa-palette mr-2 accent"></i>Tailwind CSS v4</li>
-        </ul>
-      </div>
-      <div>
-        <h4 class="font-semibold text-sm uppercase tracking-wider mb-4 opacity-60">System Metadata</h4>
-        <ul class="space-y-2 text-sm opacity-70" id="footer-meta-list">
-          <li><i class="fa-solid fa-code-branch mr-2 accent"></i>Version: 2.0.0</li>
-          <li><i class="fa-solid fa-server mr-2 accent"></i>Hosted: GitHub Pages</li>
-          <li><i class="fa-solid fa-shield-halved mr-2 accent"></i>CMS: Firestore</li>
-          <li><i class="fa-solid fa-calendar mr-2 accent"></i>Last Updated: <span id="last-updated">—</span></li>
-        </ul>
-      </div>
+      <button class="modal-close" onclick="closeModal()" aria-label="Close modal"><i class="fa-solid fa-xmark"></i></button>
     </div>
-    <div class="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-      <p class="text-sm opacity-50">
-        &copy; <span id="current-year"></span> <span id="footer-owner">Portfolio</span>. All rights reserved.
-      </p>
-      <div class="flex gap-4" id="footer-socials"></div>
+    <div class="modal-body" id="modal-body"></div>
+    <div style="margin-top:1rem;" id="modal-desc-wrap">
+      <p style="font-size:.875rem;color:var(--text-secondary);line-height:1.7;" id="modal-desc"></p>
     </div>
-  </div>
-</footer>
-
-<!-- ═══════════════════════ MEDIA MODAL ═══════════════════════ -->
-<div id="media-modal" class="modal-overlay" onclick="closeModal(event)">
-  <div class="modal-bg p-0 shadow-2xl" style="width:min(700px,92vw)">
-    <div class="flex items-center justify-between px-6 py-4 border-b" id="modal-header" style="border-color:var(--accent)">
-      <div>
-        <p class="font-bold text-lg" id="modal-title">Preview</p>
-        <p class="text-xs text-muted" id="modal-subtitle">—</p>
-      </div>
-      <button onclick="closeModal()" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors text-muted"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <div id="modal-body" class="p-6"></div>
+    <div style="margin-top:1.25rem;display:flex;gap:.75rem;flex-wrap:wrap;" id="modal-actions"></div>
   </div>
 </div>
 
-<!-- ═══════════════════════ RESUME WORKSPACE ═══════════════════════ -->
-<div id="resume-workspace" style="display:none;position:absolute;left:-9999px;top:0;width:794px;"></div>
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  PRINT WORKSPACE (hidden, used only on print)                   -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="print-workspace" aria-hidden="true"></div>
 
-<!-- ═══════════════════════ FIREBASE ═══════════════════════ -->
-<script type="module">
-  // ─── FIREBASE CONFIGURATION ─────────────────────────────────────────────────
-  // Replace these placeholder values with your actual Firebase project credentials.
-  // Find them at: Firebase Console → Project Settings → Your Apps → SDK Setup.
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-  import {
-    getFirestore, doc, getDoc, collection, getDocs,
-    addDoc, serverTimestamp, query, orderBy
-  } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  FIREBASE SDK (v9 compat)                                       -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCjDqSdEVrmbV78ObzAMUWnqzgeDVsLX0Q",
-  authDomain: "my-portfolio-54e15.firebaseapp.com",
-  projectId: "my-portfolio-54e15",
-  storageBucket: "my-portfolio-54e15.firebasestorage.app",
-  messagingSenderId: "127704809723",
-  appId: "1:127704809723:web:ea6b69141b1081cfd3705e"
-  };
+<script>
+/* ════════════════════════════════════════════════════════════════
+   FIREBASE CONFIGURATION — Replace with your project credentials
+   ════════════════════════════════════════════════════════════════ */
+const firebaseConfig = {
+  apiKey:            "YOUR_API_KEY",
+  authDomain:        "YOUR_AUTH_DOMAIN",
+  projectId:         "YOUR_PROJECT_ID",
+  storageBucket:     "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId:             "YOUR_APP_ID"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const db  = getFirestore(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-  // ─── GLOBAL STATE ────────────────────────────────────────────────────────────
-  window.__state = {
-    hero: {}, experience: [], portfolio: [], skills: [],
-    layout: {}, socials: [], stats: []
-  };
+/* ════════════════════════════════════════════════════════════════
+   GLOBAL STATE
+   ════════════════════════════════════════════════════════════════ */
+let siteData = {
+  core:       {},
+  layout:     [],
+  experience: [],
+  portfolio:  [],
+  skills:     [],
+  contact:    {}
+};
 
-  // ─── HELPERS ─────────────────────────────────────────────────────────────────
-  const $ = id => document.getElementById(id);
-  const typeBadgeColor = t => ({
-    PPT:'#f97316', Image:'#06b6d4', URL:'#10b981', Site:'#6366f1', PDF:'#ef4444', Video:'#a855f7'
-  })[t] || '#6366f1';
-
-  const typeIcon = t => ({
-    PPT:'fa-file-powerpoint', Image:'fa-image', URL:'fa-link',
-    Site:'fa-globe', PDF:'fa-file-pdf', Video:'fa-film'
-  })[t] || 'fa-file';
-
-  // ─── THEME ───────────────────────────────────────────────────────────────────
-  function applyTheme(dark) {
-    document.documentElement.classList.toggle('dark', dark);
-    $('theme-icon').className = dark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-    localStorage.setItem('theme', dark ? 'dark' : 'light');
+/* ════════════════════════════════════════════════════════════════
+   THEME SYSTEM
+   ════════════════════════════════════════════════════════════════ */
+function getTheme() {
+  return localStorage.getItem('portfolio_theme') || 'dark';
+}
+function applyTheme(theme) {
+  document.documentElement.classList.remove('light', 'dark');
+  document.documentElement.classList.add(theme);
+  const icon = document.getElementById('theme-icon');
+  if (icon) {
+    icon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
   }
-  (function initTheme() {
-    const saved = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    applyTheme(saved ? saved === 'dark' : prefersDark);
-  })();
-  $('theme-toggle').addEventListener('click', () => {
-    applyTheme(!document.documentElement.classList.contains('dark'));
+  localStorage.setItem('portfolio_theme', theme);
+}
+function toggleTheme() {
+  applyTheme(getTheme() === 'dark' ? 'light' : 'dark');
+}
+document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+applyTheme(getTheme());
+
+/* ════════════════════════════════════════════════════════════════
+   UTILITIES
+   ════════════════════════════════════════════════════════════════ */
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function sectionBgClass(bg) {
+  const map = {
+    'solid-neutral': 'bg-solid-neutral',
+    'solid-surface': 'bg-solid-surface',
+    'solid-alt':     'bg-solid-alt',
+    'accent-subtle': 'bg-accent-subtle',
+    'accent-medium': 'bg-accent-medium',
+    'dark-deep':     'bg-dark-deep'
+  };
+  return map[bg] || 'bg-solid-neutral';
+}
+function typeIcon(type) {
+  const map = {
+    'PPT': 'fa-file-powerpoint', 'PDF': 'fa-file-pdf',
+    'Image': 'fa-image', 'URL': 'fa-link', 'Site': 'fa-globe',
+    'Video': 'fa-play-circle', 'Doc': 'fa-file-word'
+  };
+  return map[type] || 'fa-file';
+}
+function typeIconColor(type) {
+  const map = {
+    'PPT': '#f97316', 'PDF': '#ef4444',
+    'Image': '#8b5cf6', 'URL': '#6366f1', 'Site': '#06b6d4',
+    'Video': '#ec4899', 'Doc': '#3b82f6'
+  };
+  return map[type] || '#6366f1';
+}
+
+/* ════════════════════════════════════════════════════════════════
+   FIREBASE DATA FETCH
+   ════════════════════════════════════════════════════════════════ */
+async function fetchAllData() {
+  try {
+    const [coreSnap, layoutSnap, expSnap, portSnap, skillsSnap, contactSnap] = await Promise.all([
+      db.collection('site_config').doc('core_text').get(),
+      db.collection('site_config').doc('layout_configuration').get(),
+      db.collection('experience').orderBy('order','asc').get(),
+      db.collection('portfolio').orderBy('order','asc').get(),
+      db.collection('skills').orderBy('order','asc').get(),
+      db.collection('site_config').doc('contact_info').get()
+    ]);
+
+    siteData.core       = coreSnap.exists    ? coreSnap.data()    : {};
+    siteData.layout     = layoutSnap.exists  ? (layoutSnap.data().sections || []) : [];
+    siteData.experience = expSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    siteData.portfolio  = portSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    siteData.skills     = skillsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    siteData.contact    = contactSnap.exists ? contactSnap.data() : {};
+  } catch (err) {
+    console.error('Firebase fetch error:', err);
+    siteData.core    = getFallbackCore();
+    siteData.layout  = getFallbackLayout();
+    siteData.experience = getFallbackExperience();
+    siteData.portfolio  = getFallbackPortfolio();
+    siteData.skills     = getFallbackSkills();
+    siteData.contact    = getFallbackContact();
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   FALLBACK DATA (shown when Firebase not yet configured)
+   ════════════════════════════════════════════════════════════════ */
+function getFallbackCore() {
+  return {
+    site_title:     "Engr. Aglinao",
+    nav_logo:       "EA",
+    hero_badge:     "Open to Opportunities",
+    hero_title_line1: "Building Digital",
+    hero_title_line2: "Experiences",
+    hero_title_accent: "That Matter",
+    hero_bio:       "A passionate Full-Stack Engineer and creative problem-solver with over 8 years of experience designing and developing scalable web applications, interactive tools, and data-driven platforms. I bridge the gap between technical excellence and elegant design.",
+    hero_resume_url: "#",
+    profile_image_url: "",
+    footer_tagline:  "Crafted with precision and passion.",
+    footer_tech:     "Built with Firebase, Tailwind CSS & Vanilla JS",
+    social_github:   "https://github.com/engraglinao",
+    social_linkedin: "#",
+    social_email:    "hello@engraglinao.dev",
+    career_objective: "To leverage my full-stack engineering expertise and creative design sensibility to build impactful digital solutions that solve real-world problems at scale."
+  };
+}
+function getFallbackLayout() {
+  return [
+    { id: 'hero',       label: 'Hero / About Me',       visible: true,  order: 1, bg: 'solid-neutral' },
+    { id: 'experience', label: 'Experience Timeline',    visible: true,  order: 2, bg: 'solid-surface' },
+    { id: 'portfolio',  label: 'Portfolio Carousel',     visible: true,  order: 3, bg: 'accent-subtle' },
+    { id: 'skills',     label: 'Application Matrix',     visible: true,  order: 4, bg: 'solid-surface' },
+    { id: 'contact',    label: 'Contact Layer',           visible: true,  order: 5, bg: 'solid-alt' }
+  ];
+}
+function getFallbackExperience() {
+  return [
+    { id:'e1', order:1, role:'Senior Full-Stack Engineer', organization:'TechVision Corp', date_range:'2021 – Present', description:'Led architecture and development of a flagship SaaS platform serving 50,000+ users. Spearheaded migration from monolithic to microservices, reducing load times by 60%.', icon:'fa-code' },
+    { id:'e2', order:2, role:'Frontend Engineering Lead', organization:'Creative Digital Agency', date_range:'2018 – 2021', description:'Directed a 6-person frontend team to deliver 30+ client projects. Established design systems, component libraries, and performance benchmarking protocols.', icon:'fa-laptop-code' },
+    { id:'e3', order:3, role:'Web Developer', organization:'StartupHub Philippines', date_range:'2016 – 2018', description:'Built responsive web applications for early-stage startups using React and Node.js. Contributed to product ideation, rapid prototyping, and user testing cycles.', icon:'fa-rocket' }
+  ];
+}
+function getFallbackPortfolio() {
+  return [
+    { id:'p1', order:1, title:'Analytics Dashboard', description:'A real-time data visualization platform with interactive charts, custom filters, and export capabilities.', type:'Site', thumbnail:'', url:'#', tags:['React','D3.js','Firebase'] },
+    { id:'p2', order:2, title:'Brand Identity Deck', description:'Comprehensive brand identity presentation covering logo, color system, typography, and usage guidelines.', type:'PPT', thumbnail:'', url:'#', tags:['Branding','Design','Figma'] },
+    { id:'p3', order:3, title:'E-Commerce Platform', description:'Full-featured online store with cart, checkout, admin panel, and payment gateway integration.', type:'Site', thumbnail:'', url:'#', tags:['Vue.js','Node.js','Stripe'] },
+    { id:'p4', order:4, title:'UX Research Report', description:'In-depth UX audit and research report with wireframes, user journey maps, and improvement recommendations.', type:'PDF', thumbnail:'', url:'#', tags:['UX','Research','Figma'] },
+    { id:'p5', order:5, title:'Mobile App Mockup', description:'High-fidelity mobile application mockups for a fintech startup, covering 40+ screens and interaction flows.', type:'Image', thumbnail:'', url:'#', tags:['Mobile','Figma','UI Design'] }
+  ];
+}
+function getFallbackSkills() {
+  return [
+    { id:'s1', order:1, name:'React.js', category:'Frontend', icon:'fa-brands fa-react' },
+    { id:'s2', order:2, name:'Vue.js', category:'Frontend', icon:'fa-brands fa-vuejs' },
+    { id:'s3', order:3, name:'JavaScript', category:'Frontend', icon:'fa-brands fa-js' },
+    { id:'s4', order:4, name:'Node.js', category:'Backend', icon:'fa-brands fa-node-js' },
+    { id:'s5', order:5, name:'Python', category:'Backend', icon:'fa-brands fa-python' },
+    { id:'s6', order:6, name:'Firebase', category:'Backend', icon:'fa-fire' },
+    { id:'s7', order:7, name:'PostgreSQL', category:'Database', icon:'fa-database' },
+    { id:'s8', order:8, name:'MongoDB', category:'Database', icon:'fa-leaf' },
+    { id:'s9', order:9, name:'Figma', category:'Design', icon:'fa-pen-ruler' },
+    { id:'s10',order:10,name:'Adobe XD', category:'Design', icon:'fa-vector-square' },
+    { id:'s11',order:11,name:'Docker', category:'DevOps', icon:'fa-brands fa-docker' },
+    { id:'s12',order:12,name:'Git', category:'DevOps', icon:'fa-brands fa-git-alt' }
+  ];
+}
+function getFallbackContact() {
+  return {
+    email:    'hello@engraglinao.dev',
+    phone:    '+63 912 345 6789',
+    location: 'Cebu City, Philippines',
+    availability: 'Available for freelance & full-time roles'
+  };
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SECTION RENDERERS
+   ════════════════════════════════════════════════════════════════ */
+
+/* --- HERO SECTION --- */
+function renderHero(bgClass) {
+  const c = siteData.core;
+  const imgUrl = c.profile_image_url || '';
+  const avatarHtml = imgUrl
+    ? `<img class="hero-avatar" src="${escHtml(imgUrl)}" alt="${escHtml(c.site_title)} profile photo" />`
+    : `<div class="hero-avatar-placeholder"><i class="fa-solid fa-user"></i></div>`;
+
+  return `
+<section id="hero" class="section-wrap ${bgClass}" style="padding-top:6rem;">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-badge">
+        <i class="fa-solid fa-circle-dot" style="font-size:.5rem;"></i>
+        ${escHtml(c.hero_badge || 'Available for Work')}
+      </div>
+      <h1 class="hero-title">
+        ${escHtml(c.hero_title_line1 || 'Building')}
+        ${escHtml(c.hero_title_line2 || 'Digital')}
+        <span>${escHtml(c.hero_title_accent || 'Experiences')}</span>
+      </h1>
+      <p class="hero-bio">${escHtml(c.hero_bio || '')}</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="${escHtml(c.hero_resume_url || '#')}" download style="text-decoration:none;">
+          <i class="fa-solid fa-download"></i> Download Resume
+        </a>
+        <a class="btn-outline" href="#contact">
+          <i class="fa-solid fa-envelope"></i> Get in Touch
+        </a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-avatar-wrap">
+        <div class="hero-avatar-ring"></div>
+        ${avatarHtml}
+      </div>
+    </div>
+  </div>
+</section>`;
+}
+
+/* --- EXPERIENCE SECTION --- */
+function renderExperience(bgClass) {
+  const items = siteData.experience;
+  const timelineHtml = items.length === 0
+    ? `<p style="color:var(--text-muted);font-style:italic;">No experience entries found. Add them via the management dashboard.</p>`
+    : items.map(exp => `
+      <div class="timeline-item">
+        <div class="timeline-node">
+          <i class="fa-solid ${escHtml(exp.icon || 'fa-briefcase')}"></i>
+        </div>
+        <div class="timeline-card">
+          <div class="timeline-meta">
+            <span class="timeline-date">${escHtml(exp.date_range || '')}</span>
+            <span class="timeline-org"><i class="fa-solid fa-building" style="margin-right:.25rem;font-size:.7rem;"></i>${escHtml(exp.organization || '')}</span>
+          </div>
+          <h3 class="timeline-role">${escHtml(exp.role || '')}</h3>
+          <p class="timeline-desc">${escHtml(exp.description || '')}</p>
+        </div>
+      </div>`).join('');
+
+  return `
+<section id="experience" class="section-wrap ${bgClass}">
+  <div class="section-inner">
+    <div class="section-divider">
+      <p class="section-label"><i class="fa-solid fa-timeline"></i> Career Path</p>
+      <h2 class="section-title">Work Experience</h2>
+      <p class="section-subtitle">A timeline of professional engagements, roles, and impactful contributions.</p>
+    </div>
+    <div class="timeline">${timelineHtml}</div>
+  </div>
+</section>`;
+}
+
+/* --- PORTFOLIO SECTION --- */
+let carouselIndex = 0;
+let carouselTotal = 0;
+let carouselVisible = 3;
+
+function renderPortfolio(bgClass) {
+  const items = siteData.portfolio;
+  carouselTotal = items.length;
+
+  const cardsHtml = items.length === 0
+    ? `<p style="color:var(--text-muted);font-style:italic;padding:2rem;">No portfolio items found. Add them via the management dashboard.</p>`
+    : items.map((p, i) => {
+        const thumbHtml = p.thumbnail
+          ? `<img src="${escHtml(p.thumbnail)}" alt="${escHtml(p.title)}" loading="lazy" />`
+          : `<i class="fa-solid ${typeIcon(p.type)}" style="color:${typeIconColor(p.type)};"></i>`;
+        const tagsHtml = (p.tags || []).map(t =>
+          `<span style="font-size:.6875rem;background:var(--bg-alt);border:1px solid var(--border);border-radius:99px;padding:.15rem .5rem;color:var(--text-secondary);">${escHtml(t)}</span>`
+        ).join('');
+        return `
+        <article class="portfolio-card" onclick='openModal(${i})' aria-label="View ${escHtml(p.title)}">
+          <div class="portfolio-card-thumb">
+            ${thumbHtml}
+            <span class="portfolio-type-badge">${escHtml(p.type || 'URL')}</span>
+          </div>
+          <div class="portfolio-card-body">
+            <h3 class="portfolio-card-title">${escHtml(p.title || '')}</h3>
+            <p class="portfolio-card-desc">${escHtml(p.description || '')}</p>
+            <div style="display:flex;gap:.375rem;flex-wrap:wrap;margin-top:.75rem;">${tagsHtml}</div>
+          </div>
+        </article>`;
+      }).join('');
+
+  const dotsHtml = items.map((_, i) =>
+    `<div class="carousel-dot${i===0?' active':''}" onclick="goToSlide(${i})" aria-label="Go to slide ${i+1}"></div>`
+  ).join('');
+
+  return `
+<section id="portfolio" class="section-wrap ${bgClass}">
+  <div class="section-inner">
+    <div class="section-divider">
+      <p class="section-label"><i class="fa-solid fa-layer-group"></i> Work Showcase</p>
+      <h2 class="section-title">Portfolio</h2>
+      <p class="section-subtitle">A curated selection of projects spanning web development, design, and strategic digital solutions.</p>
+    </div>
+    <div class="carousel-wrap">
+      <button class="carousel-btn prev" onclick="shiftCarousel(-1)" aria-label="Previous slide"><i class="fa-solid fa-chevron-left"></i></button>
+      <div class="carousel-track-outer">
+        <div class="carousel-track" id="carousel-track">${cardsHtml}</div>
+      </div>
+      <button class="carousel-btn next" onclick="shiftCarousel(1)" aria-label="Next slide"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+    <div class="carousel-dots" id="carousel-dots">${dotsHtml}</div>
+  </div>
+</section>`;
+}
+
+/* --- SKILLS SECTION --- */
+let activeSkillCat = 'All';
+function renderSkills(bgClass) {
+  const items = siteData.skills;
+  const categories = ['All', ...new Set(items.map(s => s.category).filter(Boolean))];
+
+  const tabsHtml = categories.map(cat =>
+    `<button class="cat-tab${cat==='All'?' active':''}" onclick="filterSkills('${escHtml(cat)}')" data-cat="${escHtml(cat)}">${escHtml(cat)}</button>`
+  ).join('');
+
+  const cardsHtml = items.length === 0
+    ? `<p style="color:var(--text-muted);font-style:italic;grid-column:1/-1;">No skills found. Add them via the management dashboard.</p>`
+    : items.map(s => `
+      <div class="skill-card" data-cat="${escHtml(s.category || 'General')}">
+        <div class="skill-icon-box">
+          <i class="${escHtml(s.icon || 'fa-solid fa-code')}"></i>
+        </div>
+        <span class="skill-name">${escHtml(s.name || '')}</span>
+        <span class="skill-cat">${escHtml(s.category || '')}</span>
+      </div>`).join('');
+
+  return `
+<section id="skills" class="section-wrap ${bgClass}">
+  <div class="section-inner">
+    <div class="section-divider">
+      <p class="section-label"><i class="fa-solid fa-microchip"></i> Technical Stack</p>
+      <h2 class="section-title">Application Matrix</h2>
+      <p class="section-subtitle">Software tools, frameworks, and technical fluencies organized by domain.</p>
+    </div>
+    <div class="cat-tabs" id="skill-tabs">${tabsHtml}</div>
+    <div class="skills-grid" id="skills-grid">${cardsHtml}</div>
+  </div>
+</section>`;
+}
+
+/* --- CONTACT SECTION --- */
+function renderContact(bgClass) {
+  const ct = siteData.contact;
+  const c  = siteData.core;
+
+  const infoItems = [
+    { icon: 'fa-envelope', label: 'Email Address', val: ct.email || c.social_email || '' },
+    { icon: 'fa-phone',    label: 'Phone Number',  val: ct.phone || '' },
+    { icon: 'fa-location-dot', label: 'Location',  val: ct.location || '' },
+    { icon: 'fa-circle-check', label: 'Availability', val: ct.availability || '' }
+  ].filter(i => i.val);
+
+  const infoHtml = infoItems.map(i => `
+    <div class="contact-info-item">
+      <div class="contact-icon-box"><i class="fa-solid ${escHtml(i.icon)}"></i></div>
+      <div>
+        <p class="contact-info-label">${escHtml(i.label)}</p>
+        <p class="contact-info-val">${escHtml(i.val)}</p>
+      </div>
+    </div>`).join('');
+
+  return `
+<section id="contact" class="section-wrap ${bgClass}">
+  <div class="section-inner">
+    <div class="section-divider">
+      <p class="section-label"><i class="fa-solid fa-paper-plane"></i> Let's Connect</p>
+      <h2 class="section-title">Get in Touch</h2>
+      <p class="section-subtitle">Have a project in mind or want to discuss opportunities? Send me a message.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-info">${infoHtml}</div>
+      <div>
+        <form class="contact-form" id="contact-form" onsubmit="submitContactForm(event)" novalidate>
+          <div class="form-field">
+            <label class="form-label" for="cf-name">Full Name</label>
+            <input class="form-input" type="text" id="cf-name" name="name" placeholder="John Dela Cruz" required />
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="cf-email">Email Address</label>
+            <input class="form-input" type="email" id="cf-email" name="email" placeholder="john@example.com" required />
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="cf-msg">Message</label>
+            <textarea class="form-textarea" id="cf-msg" name="message" placeholder="Tell me about your project or inquiry…" required></textarea>
+          </div>
+          <div class="form-status" id="form-status"></div>
+          <button type="submit" class="btn-primary" id="form-submit" style="width:fit-content;">
+            <i class="fa-solid fa-paper-plane"></i> Send Message
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>`;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   MAIN RENDER ENGINE
+   ════════════════════════════════════════════════════════════════ */
+function renderSite() {
+  const main = document.getElementById('site-main');
+  const c    = siteData.core;
+
+  // Update document title & nav logo
+  document.title = c.site_title ? `${c.site_title} — Portfolio` : 'Portfolio';
+  const navLogo = document.getElementById('nav-logo');
+  if (navLogo) navLogo.textContent = c.nav_logo || 'EA';
+
+  // Build nav links from layout
+  const visibleSections = siteData.layout
+    .filter(s => s.visible !== false)
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
+
+  const navLinksContainer = document.getElementById('nav-links-container');
+  if (navLinksContainer) {
+    navLinksContainer.innerHTML = visibleSections.map(s => {
+      const labels = {
+        hero: 'About', experience: 'Experience', portfolio: 'Portfolio',
+        skills: 'Skills', contact: 'Contact'
+      };
+      return `<a href="#${escHtml(s.id)}">${escHtml(labels[s.id] || s.label || s.id)}</a>`;
+    }).join('');
+  }
+
+  // Render sections in order
+  let sectionsHtml = '';
+  visibleSections.forEach(s => {
+    const bgClass = sectionBgClass(s.bg || 'solid-neutral');
+    switch (s.id) {
+      case 'hero':       sectionsHtml += renderHero(bgClass);       break;
+      case 'experience': sectionsHtml += renderExperience(bgClass); break;
+      case 'portfolio':  sectionsHtml += renderPortfolio(bgClass);  break;
+      case 'skills':     sectionsHtml += renderSkills(bgClass);     break;
+      case 'contact':    sectionsHtml += renderContact(bgClass);    break;
+    }
   });
+  main.innerHTML = sectionsHtml;
 
-  // ─── LAYOUT SECTION VISIBILITY ───────────────────────────────────────────────
-  function applySectionConfig(layoutCfg) {
-    const sections = layoutCfg.sections || [];
-    sections.forEach(s => {
-      const el = document.getElementById(s.id);
-      if (!el) return;
-      if (s.visible === false) el.classList.add('section-hidden');
-      else el.classList.remove('section-hidden');
+  // Render footer
+  renderFooter();
 
-      // Background variant
-      el.classList.remove('section-alt','section-bg-accent');
-      if (s.bg === 'alt') el.classList.add('section-alt');
-      else if (s.bg === 'accent') el.classList.add('section-bg-accent');
+  // Init interactive components
+  carouselIndex = 0;
+  updateCarousel();
+  activeSkillCat = 'All';
+}
+
+function renderFooter() {
+  const c    = siteData.core;
+  const year = new Date().getFullYear();
+  const footer = document.getElementById('footer');
+  footer.style.display = '';
+
+  const socials = [
+    { icon: 'fa-brands fa-github',   url: c.social_github   || '#', label: 'GitHub' },
+    { icon: 'fa-brands fa-linkedin', url: c.social_linkedin || '#', label: 'LinkedIn' },
+    { icon: 'fa-solid fa-envelope',  url: `mailto:${c.social_email || ''}`, label: 'Email' }
+  ];
+
+  footer.innerHTML = `
+    <div class="footer-inner">
+      <div class="footer-left">
+        <div style="font-weight:700;font-size:.9375rem;color:var(--text-primary);margin-bottom:.25rem;">${escHtml(c.site_title || 'Portfolio')}</div>
+        <div>${escHtml(c.footer_tagline || 'Crafted with precision and passion.')}</div>
+        <div class="footer-meta">
+          <i class="fa-solid fa-microchip" style="margin-right:.3rem;"></i>${escHtml(c.footer_tech || 'Firebase · Tailwind CSS · Vanilla JS')}
+          &nbsp;·&nbsp; <i class="fa-regular fa-copyright" style="margin-right:.2rem;"></i>${year} All rights reserved.
+        </div>
+      </div>
+      <div class="footer-socials">
+        ${socials.filter(s => s.url && s.url !== '#' && s.url !== 'mailto:').map(s =>
+          `<a class="social-btn" href="${escHtml(s.url)}" target="_blank" rel="noopener noreferrer" aria-label="${escHtml(s.label)}">
+             <i class="${escHtml(s.icon)}"></i>
+           </a>`
+        ).join('')}
+      </div>
+    </div>`;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CAROUSEL LOGIC
+   ════════════════════════════════════════════════════════════════ */
+function getCarouselVisible() {
+  if (window.innerWidth <= 768) return 1;
+  if (window.innerWidth <= 1024) return 2;
+  return 3;
+}
+function updateCarousel() {
+  const track = document.getElementById('carousel-track');
+  const dots  = document.getElementById('carousel-dots');
+  if (!track) return;
+  carouselVisible = getCarouselVisible();
+  const maxIndex = Math.max(0, carouselTotal - carouselVisible);
+  carouselIndex = Math.min(carouselIndex, maxIndex);
+  const cardWidth = track.children[0] ? track.children[0].offsetWidth + 24 : 0;
+  track.style.transform = `translateX(-${carouselIndex * cardWidth}px)`;
+  if (dots) {
+    dots.querySelectorAll('.carousel-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === carouselIndex);
     });
   }
+}
+function shiftCarousel(dir) {
+  carouselVisible = getCarouselVisible();
+  const maxIndex = Math.max(0, carouselTotal - carouselVisible);
+  carouselIndex = Math.max(0, Math.min(carouselIndex + dir, maxIndex));
+  updateCarousel();
+}
+function goToSlide(i) {
+  carouselIndex = i;
+  updateCarousel();
+}
+window.addEventListener('resize', updateCarousel);
 
-  // ─── RENDER: HERO ─────────────────────────────────────────────────────────────
-  function renderHero(hero, socials, stats) {
-    document.title = `${hero.name || 'Portfolio'} — ${hero.role || 'Developer'}`;
-    $('nav-brand').textContent = hero.initials || 'ENG';
-    $('hero-name').innerHTML = hero.headline || hero.name || 'Your Name';
-    $('hero-bio').textContent = hero.bio || '';
-    $('hero-badge-role').textContent = hero.role || '';
-    if (hero.avatar) $('hero-avatar').src = hero.avatar;
-    if (hero.pill) document.querySelector('.hero-pill span').textContent = hero.pill;
-    $('footer-owner').textContent = hero.name || 'Portfolio';
-    $('footer-brand').textContent = hero.initials || 'Portfolio';
-    $('footer-tagline').textContent = hero.tagline || '';
+/* ════════════════════════════════════════════════════════════════
+   SKILL FILTER
+   ════════════════════════════════════════════════════════════════ */
+function filterSkills(cat) {
+  activeSkillCat = cat;
+  const grid = document.getElementById('skills-grid');
+  if (!grid) return;
+  grid.querySelectorAll('.skill-card').forEach(card => {
+    const cardCat = card.getAttribute('data-cat');
+    card.style.display = (cat === 'All' || cardCat === cat) ? '' : 'none';
+  });
+  document.querySelectorAll('.cat-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.getAttribute('data-cat') === cat);
+  });
+}
 
-    const dl = $('resume-download-btn');
-    dl.href = hero.resumeUrl || '#';
-    if (!hero.resumeUrl) dl.style.opacity = '0.5';
+/* ════════════════════════════════════════════════════════════════
+   MODAL SYSTEM
+   ════════════════════════════════════════════════════════════════ */
+function openModal(index) {
+  const item = siteData.portfolio[index];
+  if (!item) return;
+  const overlay = document.getElementById('modal-overlay');
+  document.getElementById('modal-type-label').textContent = item.type || 'Preview';
+  document.getElementById('modal-title-text').textContent = item.title || '';
+  document.getElementById('modal-desc').textContent = item.description || '';
 
-    // Stats
-    const sc = $('hero-stats-container');
-    sc.innerHTML = '';
-    (stats || []).forEach(s => {
-      sc.innerHTML += `
-        <div class="card-bg p-6 rounded-xl text-center fade-in">
-          <div class="text-3xl font-extrabold accent mb-1">${s.value}</div>
-          <div class="text-sm text-muted font-medium">${s.label}</div>
-        </div>`;
+  const body = document.getElementById('modal-body');
+  const actions = document.getElementById('modal-actions');
+
+  body.innerHTML = '';
+  actions.innerHTML = '';
+
+  const type = (item.type || '').toUpperCase();
+
+  if (type === 'IMAGE' && item.url) {
+    body.innerHTML = `<img src="${escHtml(item.url)}" alt="${escHtml(item.title)}" style="width:100%;border-radius:.5rem;" />`;
+  } else if ((type === 'SITE' || type === 'URL') && item.url && item.url !== '#') {
+    body.innerHTML = `<iframe src="${escHtml(item.url)}" title="${escHtml(item.title)}" loading="lazy"></iframe>`;
+  } else if (type === 'PDF' && item.url && item.url !== '#') {
+    body.innerHTML = `<iframe src="${escHtml(item.url)}" title="${escHtml(item.title)}" loading="lazy"></iframe>`;
+  } else {
+    const color = typeIconColor(item.type);
+    body.innerHTML = `
+      <div style="background:var(--bg-alt);border-radius:.75rem;padding:3rem;text-align:center;">
+        <i class="fa-solid ${typeIcon(item.type)}" style="font-size:4rem;color:${color};margin-bottom:1rem;"></i>
+        <p style="color:var(--text-secondary);font-size:.9375rem;">${escHtml(item.type)} preview not available inline.</p>
+      </div>`;
+  }
+
+  if (item.url && item.url !== '#') {
+    actions.innerHTML = `<a href="${escHtml(item.url)}" target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-decoration:none;">
+      <i class="fa-solid fa-arrow-up-right-from-square"></i> Open ${escHtml(item.type || 'Link')}
+    </a>`;
+  }
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+/* ════════════════════════════════════════════════════════════════
+   CONTACT FORM SUBMISSION
+   ════════════════════════════════════════════════════════════════ */
+async function submitContactForm(e) {
+  e.preventDefault();
+  const btn    = document.getElementById('form-submit');
+  const status = document.getElementById('form-status');
+  const name   = document.getElementById('cf-name').value.trim();
+  const email  = document.getElementById('cf-email').value.trim();
+  const message= document.getElementById('cf-msg').value.trim();
+
+  if (!name || !email || !message) {
+    showFormStatus('error', 'Please fill in all fields.');
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showFormStatus('error', 'Please enter a valid email address.');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Sending…';
+
+  try {
+    await db.collection('messages').add({
+      name, email, message,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      read: false
     });
-
-    // Socials
-    renderSocials(socials, 'hero-socials', false);
-    renderSocials(socials, 'footer-socials', true);
-  }
-
-  function renderSocials(socials, containerId, footer) {
-    const el = $(containerId);
-    if (!el) return;
-    el.innerHTML = '';
-    (socials || []).forEach(s => {
-      const cls = footer
-        ? `text-lg opacity-60 hover:opacity-100 transition-opacity hover:text-indigo-400`
-        : `w-10 h-10 rounded-lg card-bg flex items-center justify-center text-muted hover:accent hover:border-indigo-400 transition-all`;
-      el.innerHTML += `<a href="${s.url}" target="_blank" title="${s.label}" class="${cls}"><i class="${s.icon}"></i></a>`;
-    });
-  }
-
-  // ─── RENDER: EXPERIENCE ──────────────────────────────────────────────────────
-  function renderExperience(items) {
-    const container = $('experience-container');
-    if (!items.length) { container.innerHTML = '<p class="text-muted">No experience records found.</p>'; return; }
-    container.innerHTML = '';
-    items.forEach((item, i) => {
-      const tags = (item.tags || []).map(t => `<span class="type-badge" style="background:var(--accent-glow);color:var(--accent);border:1px solid var(--accent)">${t}</span>`).join('');
-      container.innerHTML += `
-        <div class="relative flex gap-6 fade-in" style="animation-delay:${i*0.08}s">
-          <div class="timeline-line" style="position:absolute;left:0;top:20px;bottom:-40px;width:2px;${i===items.length-1?'display:none':''}"></div>
-          <div class="timeline-dot flex-shrink-0" style="position:relative;z-index:1;">
-            <i class="${item.icon || 'fa-solid fa-briefcase'}"></i>
-          </div>
-          <div class="card-bg p-6 flex-1 rounded-xl">
-            <div class="flex flex-wrap items-start justify-between gap-2 mb-2">
-              <div>
-                <h3 class="font-bold text-lg">${item.role}</h3>
-                <p class="accent font-semibold text-sm">${item.org}</p>
-              </div>
-              <span class="text-xs font-mono text-muted bg-opacity-30 px-3 py-1 rounded-full" style="background:var(--accent-glow);color:var(--accent)">
-                <i class="fa-regular fa-calendar mr-1"></i>${item.dateRange}
-              </span>
-            </div>
-            <p class="text-muted text-sm leading-relaxed mb-3">${item.description || ''}</p>
-            <div class="flex flex-wrap gap-2">${tags}</div>
-          </div>
-        </div>`;
-    });
-  }
-
-  // ─── RENDER: PORTFOLIO CAROUSEL ─────────────────────────────────────────────
-  let carouselIndex = 0;
-  let carouselItems = [];
-  const CARD_W = 296; // 280 + 16 gap
-
-  function renderPortfolio(items) {
-    carouselItems = items;
-    carouselIndex = 0;
-    const track = $('carousel-track');
-    track.innerHTML = '';
-    if (!items.length) { track.innerHTML = '<p class="text-muted text-sm">No portfolio items found.</p>'; return; }
-    items.forEach((item, i) => {
-      const color = typeBadgeColor(item.type);
-      const icon  = typeIcon(item.type);
-      track.innerHTML += `
-        <div class="carousel-card" onclick="openModal(${i})" style="min-width:280px;max-width:280px;">
-          <div class="relative h-44 overflow-hidden" style="background:linear-gradient(135deg,${color}22,${color}44)">
-            ${item.thumbnail
-              ? `<img src="${item.thumbnail}" alt="${item.title}" class="w-full h-full object-cover" />`
-              : `<div class="flex items-center justify-center h-full"><i class="fa-solid ${icon} text-5xl" style="color:${color};opacity:.6"></i></div>`
-            }
-            <span class="type-badge absolute top-3 right-3" style="background:${color};color:#fff">${item.type}</span>
-          </div>
-          <div class="p-5">
-            <h3 class="font-bold mb-1 text-sm truncate">${item.title}</h3>
-            <p class="text-muted text-xs leading-relaxed line-clamp-2 mb-3">${item.description || ''}</p>
-            <button class="btn-accent text-xs px-4 py-2 w-full flex items-center justify-center gap-2">
-              <i class="fa-solid ${icon}"></i> View ${item.type}
-            </button>
-          </div>
-        </div>`;
-    });
-    updateCarouselDots();
-    updateCarouselBtns();
-  }
-
-  window.carouselMove = function(dir) {
-    const track = $('carousel-track');
-    const visible = Math.floor(track.parentElement.offsetWidth / CARD_W) || 1;
-    const max = Math.max(0, carouselItems.length - visible);
-    carouselIndex = Math.max(0, Math.min(carouselIndex + dir, max));
-    track.style.transform = `translateX(-${carouselIndex * CARD_W}px)`;
-    updateCarouselDots();
-    updateCarouselBtns();
-  };
-
-  function updateCarouselBtns() {
-    const track = $('carousel-track');
-    const visible = Math.floor((track.parentElement?.offsetWidth || 900) / CARD_W) || 1;
-    const max = Math.max(0, carouselItems.length - visible);
-    $('carousel-prev').disabled = carouselIndex === 0;
-    $('carousel-next').disabled = carouselIndex >= max;
-  }
-
-  function updateCarouselDots() {
-    const track = $('carousel-track');
-    const visible = Math.floor((track.parentElement?.offsetWidth || 900) / CARD_W) || 1;
-    const pages = Math.ceil(carouselItems.length / visible);
-    const dotsEl = $('carousel-dots');
-    dotsEl.innerHTML = '';
-    for (let i = 0; i < pages; i++) {
-      const active = i === Math.floor(carouselIndex / visible);
-      dotsEl.innerHTML += `<div style="width:${active?'24':'8'}px;height:8px;border-radius:9999px;background:${active?'var(--accent)':'var(--accent-glow)'};transition:width .2s"></div>`;
-    }
-  }
-
-  window.openModal = function(idx) {
-    const item = carouselItems[idx];
-    if (!item) return;
-    $('modal-title').textContent = item.title;
-    $('modal-subtitle').textContent = item.description || '';
-    const color = typeBadgeColor(item.type);
-    $('modal-header').style.borderColor = color;
-    const body = $('modal-body');
-
-    if (item.type === 'Image') {
-      body.innerHTML = `<img src="${item.url || item.thumbnail}" alt="${item.title}" class="w-full rounded-lg" />`;
-    } else if (item.type === 'URL' || item.type === 'Site') {
-      body.innerHTML = `
-        <div class="text-center py-6">
-          <i class="fa-solid fa-globe text-5xl mb-4" style="color:${color}"></i>
-          <p class="text-muted mb-4 text-sm">${item.description || ''}</p>
-          <a href="${item.url}" target="_blank" class="btn-accent px-6 py-3 inline-flex items-center gap-2">
-            <i class="fa-solid fa-arrow-up-right-from-square"></i> Open ${item.type}
-          </a>
-        </div>`;
-    } else if (item.type === 'PDF') {
-      body.innerHTML = `
-        <div class="text-center py-6">
-          <i class="fa-solid fa-file-pdf text-5xl mb-4" style="color:${color}"></i>
-          <p class="text-muted mb-4 text-sm">${item.description || ''}</p>
-          <a href="${item.url}" target="_blank" class="btn-accent px-6 py-3 inline-flex items-center gap-2">
-            <i class="fa-solid fa-download"></i> Open PDF
-          </a>
-        </div>`;
-    } else if (item.type === 'PPT') {
-      body.innerHTML = `
-        <div class="text-center py-6">
-          <i class="fa-solid fa-file-powerpoint text-5xl mb-4" style="color:${color}"></i>
-          <p class="text-muted mb-4 text-sm">${item.description || ''}</p>
-          ${item.url ? `<a href="${item.url}" target="_blank" class="btn-accent px-6 py-3 inline-flex items-center gap-2"><i class="fa-solid fa-download"></i> Download PPT</a>` : ''}
-        </div>`;
-    } else if (item.type === 'Video') {
-      body.innerHTML = `<div class="aspect-video rounded-lg overflow-hidden bg-black"><iframe src="${item.url}" class="w-full h-full" allowfullscreen frameborder="0"></iframe></div>`;
-    }
-    $('media-modal').classList.add('active');
-  };
-
-  window.closeModal = function(e) {
-    // Close when called directly (X button) or when clicking the backdrop overlay
-    if (!e || e.target === $('media-modal')) {
-      $('media-modal').classList.remove('active');
-      $('modal-body').innerHTML = '';
-    }
-  };
-
-  // ─── RENDER: SKILLS ──────────────────────────────────────────────────────────
-  function renderSkills(items) {
-    const container = $('skills-container');
-    if (!items.length) { container.innerHTML = '<p class="text-muted">No skills found.</p>'; return; }
-    const grouped = {};
-    items.forEach(s => {
-      const cat = s.category || 'Other';
-      if (!grouped[cat]) grouped[cat] = [];
-      grouped[cat].push(s);
-    });
-    container.innerHTML = '';
-    Object.entries(grouped).forEach(([cat, skills]) => {
-      const skillCards = skills.map(s => `
-        <div class="skill-card p-4 flex items-center gap-3">
-          <div class="icon-box" style="background:${s.color || 'var(--accent)'}">
-            <i class="${s.icon || 'fa-solid fa-star'}"></i>
-          </div>
-          <div>
-            <p class="font-semibold text-sm">${s.name}</p>
-            <p class="text-xs text-muted">${s.level || ''}</p>
-          </div>
-        </div>`).join('');
-      container.innerHTML += `
-        <div>
-          <h3 class="font-bold text-sm uppercase tracking-wider text-muted mb-4 flex items-center gap-2">
-            <span class="w-6 h-px" style="background:var(--accent);display:inline-block"></span>${cat}
-          </h3>
-          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">${skillCards}</div>
-        </div>`;
-    });
-  }
-
-  // ─── CONTACT FORM SUBMIT ─────────────────────────────────────────────────────
-  window.submitContact = async function(e) {
-    e.preventDefault();
-    const btn = $('contact-btn');
-    const status = $('contact-status');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
-    try {
-      await addDoc(collection(db, 'messages'), {
-        name:      $('c-name').value,
-        email:     $('c-email').value,
-        message:   $('c-message').value,
-        timestamp: serverTimestamp()
-      });
-      status.textContent = '✓ Message sent! I will get back to you soon.';
-      status.style.color = '#10b981';
-      status.classList.remove('hidden');
-      $('contact-form').reset();
-    } catch (err) {
-      status.textContent = '✗ Failed to send. Please try again or email directly.';
-      status.style.color = '#ef4444';
-      status.classList.remove('hidden');
-    }
+    showFormStatus('success', '✓ Message sent successfully! I\'ll get back to you soon.');
+    document.getElementById('contact-form').reset();
+  } catch (err) {
+    console.error('Contact form error:', err);
+    showFormStatus('error', 'Failed to send. Please try again or email directly.');
+  } finally {
     btn.disabled = false;
     btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send Message';
-    setTimeout(() => status.classList.add('hidden'), 6000);
-  };
+  }
+}
+function showFormStatus(type, msg) {
+  const el = document.getElementById('form-status');
+  if (!el) return;
+  el.className = `form-status ${type}`;
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 6000);
+}
 
-  // ─── GENERATE LIVE RESUME ────────────────────────────────────────────────────
-  window.generateLiveResume = function() {
-    const s = window.__state;
-    const hero = s.hero || {};
-    const exp  = s.experience || [];
-    const skills = s.skills || [];
-    const isDark = document.documentElement.classList.contains('dark');
-    const accent = '#6366f1';
+/* ════════════════════════════════════════════════════════════════
+   LIVE RESUME GENERATOR ENGINE
+   ════════════════════════════════════════════════════════════════ */
+function generateLiveResume() {
+  const c    = siteData.core;
+  const exp  = siteData.experience;
+  const skills = siteData.skills;
+  const ct   = siteData.contact;
 
-    // Group skills
-    const skillGrouped = {};
-    skills.forEach(sk => {
-      const cat = sk.category || 'Skills';
-      if (!skillGrouped[cat]) skillGrouped[cat] = [];
-      skillGrouped[cat].push(sk);
-    });
+  const isDark = document.documentElement.classList.contains('dark');
+  const accentColor  = '#6366f1';
+  const sidebarBg    = '#1e293b';
+  const sidebarText  = '#f1f5f9';
+  const sidebarMuted = '#94a3b8';
+  const mainBg       = '#ffffff';
+  const mainText     = '#0f172a';
+  const mainSub      = '#475569';
+  const ruleColor    = '#e2e8f0';
 
-    const skillsHTML = Object.entries(skillGrouped).map(([cat, items]) => `
-      <div style="margin-bottom:10px">
-        <p style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:4px">${cat}</p>
-        ${items.map(sk => `
-          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
-            <i class="${sk.icon||'fa-solid fa-circle-dot'}" style="font-size:10px;color:${sk.color||accent};width:14px;text-align:center"></i>
-            <span style="font-size:9px;font-weight:600">${sk.name}</span>
-          </div>`).join('')}
-      </div>`).join('');
+  // Group skills by category
+  const skillCats = {};
+  skills.forEach(s => {
+    const cat = s.category || 'General';
+    if (!skillCats[cat]) skillCats[cat] = [];
+    skillCats[cat].push(s);
+  });
 
-    const expHTML = exp.map((e, i) => `
-      <div style="margin-bottom:16px;${i>0?'padding-top:14px;border-top:1px solid #e2e8f0':''}">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px">
-          <div>
-            <p style="font-size:11px;font-weight:800;color:#1e293b;margin:0">${e.role}</p>
-            <p style="font-size:9px;font-weight:700;color:${accent};margin:0">${e.org}</p>
-          </div>
-          <span style="font-size:7px;color:#64748b;background:#f1f5f9;padding:2px 7px;border-radius:99px;white-space:nowrap;margin-left:6px">${e.dateRange||''}</span>
+  const skillCatsHtml = Object.entries(skillCats).map(([cat, items]) => `
+    <div style="margin-bottom:1rem;">
+      <p style="font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${sidebarMuted};margin-bottom:.5rem;">${cat}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:.3rem;">
+        ${items.map(s => `
+          <span style="display:inline-flex;align-items:center;gap:.3rem;font-size:.6875rem;background:rgba(99,102,241,.2);color:${accentColor};border-radius:99px;padding:.2rem .5rem;font-weight:600;">
+            <i class="${s.icon || 'fa-solid fa-code'}" style="font-size:.6rem;"></i>${s.name}
+          </span>`).join('')}
+      </div>
+    </div>`).join('');
+
+  const expHtml = exp.map((e, i) => `
+    <div style="margin-bottom:1.25rem;${i > 0 ? `border-top:1px solid ${ruleColor};padding-top:1.25rem;` : ''}">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.375rem;">
+        <div>
+          <h3 style="font-size:.9375rem;font-weight:700;color:${mainText};margin:0;">${e.role || ''}</h3>
+          <p style="font-size:.8125rem;color:${accentColor};font-weight:600;margin:.125rem 0 0;">${e.organization || ''}</p>
         </div>
-        <p style="font-size:8.5px;color:#475569;line-height:1.55;margin:0">${e.description||''}</p>
-        ${(e.tags||[]).length ? `<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px">${(e.tags||[]).map(t=>`<span style="font-size:7px;padding:1px 6px;background:${accent}18;color:${accent};border-radius:99px;font-weight:600">${t}</span>`).join('')}</div>` : ''}
-      </div>`).join('');
+        <span style="font-size:.6875rem;font-weight:700;background:rgba(99,102,241,.1);color:${accentColor};border-radius:99px;padding:.2rem .65rem;white-space:nowrap;flex-shrink:0;">${e.date_range || ''}</span>
+      </div>
+      <p style="font-size:.8125rem;color:${mainSub};line-height:1.7;margin:0;">${e.description || ''}</p>
+    </div>`).join('');
 
-    const ws = $('resume-workspace');
-    ws.style.display = 'block';
-    ws.innerHTML = `
-      <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
-        #resume-root * { font-family: 'Plus Jakarta Sans', sans-serif !important; box-sizing: border-box; }
-        @media print {
-          body > *:not(#resume-workspace) { display: none !important; }
-          #resume-workspace { display: block !important; position: static !important; left: 0 !important; width: 100% !important; }
-          @page { margin: 0; size: A4; }
-          #resume-root { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-        }
-      </style>
-      <div id="resume-root" style="display:flex;width:794px;min-height:1123px;background:#fff;font-family:'Plus Jakarta Sans',sans-serif;">
-        <!-- LEFT SIDEBAR -->
-        <div style="width:258px;background:#1e2433;color:#e2e8f0;padding:32px 20px;display:flex;flex-direction:column;gap:0;flex-shrink:0;">
-          <!-- Avatar -->
-          <div style="text-align:center;margin-bottom:20px">
-            <div style="width:90px;height:90px;border-radius:50%;overflow:hidden;border:3px solid ${accent};margin:0 auto 10px;box-shadow:0 0 0 4px ${accent}30">
-              <img src="${hero.avatar||''}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'" />
-            </div>
-            <p style="font-size:14px;font-weight:800;color:#fff;margin:0 0 2px">${hero.name||'Your Name'}</p>
-            <p style="font-size:9px;font-weight:600;color:${accent};text-transform:uppercase;letter-spacing:.08em;margin:0">${hero.role||''}</p>
-          </div>
+  const profileImg = c.profile_image_url
+    ? `<img src="${c.profile_image_url}" alt="${c.site_title || ''}" style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid ${accentColor};margin-bottom:1rem;" />`
+    : `<div style="width:100px;height:100px;border-radius:50%;background:rgba(99,102,241,.2);border:3px solid ${accentColor};display:flex;align-items:center;justify-content:center;margin-bottom:1rem;font-size:2.5rem;color:${accentColor};">
+         <i class="fa-solid fa-user"></i>
+       </div>`;
 
-          <!-- Contact -->
-          <div style="margin-bottom:18px">
-            <p style="font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;border-bottom:1px solid #2d3448;padding-bottom:5px;margin-bottom:8px">Contact</p>
-            ${hero.email ? `<div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><i class="fa-solid fa-envelope" style="color:${accent};font-size:9px;width:12px"></i><span style="font-size:8.5px">${hero.email}</span></div>` : ''}
-            ${hero.phone ? `<div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><i class="fa-solid fa-phone" style="color:${accent};font-size:9px;width:12px"></i><span style="font-size:8.5px">${hero.phone}</span></div>` : ''}
-            ${hero.location ? `<div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><i class="fa-solid fa-location-dot" style="color:${accent};font-size:9px;width:12px"></i><span style="font-size:8.5px">${hero.location}</span></div>` : ''}
-            ${hero.website ? `<div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><i class="fa-solid fa-globe" style="color:${accent};font-size:9px;width:12px"></i><span style="font-size:8.5px">${hero.website}</span></div>` : ''}
-          </div>
+  const contactItemsHtml = [
+    { icon: 'fa-envelope', val: ct.email || c.social_email || '' },
+    { icon: 'fa-phone',    val: ct.phone || '' },
+    { icon: 'fa-location-dot', val: ct.location || '' }
+  ].filter(i => i.val).map(i => `
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;font-size:.75rem;color:${sidebarText};">
+      <span style="width:22px;height:22px;background:rgba(99,102,241,.25);border-radius:.25rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="fa-solid ${i.icon}" style="font-size:.6rem;color:${accentColor};"></i>
+      </span>
+      ${i.val}
+    </div>`).join('');
 
-          <!-- Summary -->
-          ${hero.summary ? `
-          <div style="margin-bottom:18px">
-            <p style="font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;border-bottom:1px solid #2d3448;padding-bottom:5px;margin-bottom:8px">Summary</p>
-            <ul style="list-style:none;padding:0;margin:0">
-              ${(hero.summary||'').split('|').map(s=>`<li style="display:flex;gap:6px;margin-bottom:4px;font-size:8px;line-height:1.5"><span style="color:${accent};margin-top:1px">▸</span><span>${s.trim()}</span></li>`).join('')}
-            </ul>
-          </div>` : ''}
+  const resumeHtml = `
+<div class="resume-shell" style="display:flex;width:100%;min-height:100vh;font-family:'Plus Jakarta Sans',sans-serif;">
+  <!-- SIDEBAR -->
+  <aside style="width:33%;background:${sidebarBg};color:${sidebarText};padding:2.5rem 1.75rem;flex-shrink:0;min-height:100vh;">
+    <div style="text-align:center;margin-bottom:2rem;">
+      ${profileImg}
+      <h1 style="font-size:1.1875rem;font-weight:800;color:${sidebarText};margin:0 0 .25rem;letter-spacing:-.02em;">${c.site_title || 'Full Name'}</h1>
+      <p style="font-size:.75rem;color:${accentColor};font-weight:600;letter-spacing:.05em;text-transform:uppercase;">${c.hero_badge || 'Professional'}</p>
+    </div>
 
-          <!-- Education -->
-          ${hero.education ? `
-          <div style="margin-bottom:18px">
-            <p style="font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;border-bottom:1px solid #2d3448;padding-bottom:5px;margin-bottom:8px">Education</p>
-            ${(hero.education||[]).map(ed=>`
-            <div style="margin-bottom:8px">
-              <p style="font-size:9px;font-weight:700;color:#fff;margin:0">${ed.degree||''}</p>
-              <p style="font-size:8px;color:${accent};margin:0">${ed.school||''}</p>
-              <p style="font-size:7.5px;color:#94a3b8;margin:0">${ed.year||''}</p>
-            </div>`).join('')}
-          </div>` : ''}
+    <div style="margin-bottom:1.75rem;">
+      <p style="font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${accentColor};margin-bottom:.875rem;display:flex;align-items:center;gap:.4rem;">
+        <i class="fa-solid fa-address-card"></i> Contact
+      </p>
+      ${contactItemsHtml}
+    </div>
 
-          <!-- Skills Sidebar -->
-          <div>
-            <p style="font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;border-bottom:1px solid #2d3448;padding-bottom:5px;margin-bottom:8px">Skills</p>
-            ${skillsHTML}
-          </div>
-        </div>
+    <div style="margin-bottom:1.75rem;">
+      <p style="font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${accentColor};margin-bottom:.875rem;display:flex;align-items:center;gap:.4rem;">
+        <i class="fa-solid fa-list-check"></i> Summary
+      </p>
+      <ul style="list-style:none;padding:0;margin:0;">
+        ${(c.resume_summary_bullets || [
+          'Full-Stack Web Development',
+          'UI/UX Design & Prototyping',
+          'Cloud Architecture & DevOps',
+          'Agile Project Management',
+          'Technical Leadership'
+        ]).map(b => `
+          <li style="display:flex;align-items:center;gap:.5rem;font-size:.75rem;color:${sidebarMuted};margin-bottom:.375rem;">
+            <i class="fa-solid fa-caret-right" style="color:${accentColor};font-size:.6rem;"></i>${b}
+          </li>`).join('')}
+      </ul>
+    </div>
 
-        <!-- RIGHT PANEL -->
-        <div style="flex:1;padding:0;display:flex;flex-direction:column;">
-          <!-- Name Header Accent Block -->
-          <div style="background:linear-gradient(135deg,${accent},#4f46e5);padding:24px 28px 20px;color:#fff">
-            <p style="font-size:22px;font-weight:800;margin:0 0 2px;letter-spacing:-.02em">${hero.name||'Your Name'}</p>
-            <p style="font-size:10px;font-weight:600;opacity:.8;text-transform:uppercase;letter-spacing:.1em;margin:0">${hero.role||''}</p>
-          </div>
+    <div>
+      <p style="font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${accentColor};margin-bottom:.875rem;display:flex;align-items:center;gap:.4rem;">
+        <i class="fa-solid fa-graduation-cap"></i> Education
+      </p>
+      ${(c.education || [{
+        degree: 'B.S. Computer Engineering',
+        school: 'University of Technology',
+        year:   '2016'
+      }]).map(ed => `
+        <div style="margin-bottom:1rem;">
+          <p style="font-size:.8125rem;font-weight:700;color:${sidebarText};margin:0 0 .125rem;">${ed.degree || ''}</p>
+          <p style="font-size:.75rem;color:${sidebarMuted};margin:0;">${ed.school || ''}</p>
+          <p style="font-size:.6875rem;color:${accentColor};font-weight:600;margin:.125rem 0 0;">${ed.year || ''}</p>
+        </div>`).join('')}
+    </div>
+  </aside>
 
-          <div style="padding:22px 28px;flex:1">
-            <!-- Objective -->
-            ${hero.objective ? `
-            <div style="margin-bottom:18px">
-              <p style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:${accent};margin-bottom:6px;display:flex;align-items:center;gap:6px"><i class="fa-solid fa-bullseye" style="font-size:9px"></i> Career Objective</p>
-              <p style="font-size:9px;color:#475569;line-height:1.6;margin:0;border-left:3px solid ${accent};padding-left:10px">${hero.objective}</p>
-            </div>` : ''}
+  <!-- MAIN PANEL -->
+  <main style="width:67%;background:${mainBg};padding:2.5rem 2rem;">
+    <!-- NAME HEADER ACCENT -->
+    <div style="border-left:4px solid ${accentColor};padding:.5rem 1rem;margin-bottom:1.75rem;background:rgba(99,102,241,.05);border-radius:0 .5rem .5rem 0;">
+      <h2 style="font-size:1.625rem;font-weight:800;color:${mainText};margin:0;letter-spacing:-.03em;">${c.site_title || 'Full Name'}</h2>
+      <p style="font-size:.8125rem;color:${accentColor};font-weight:600;margin:.125rem 0 0;">${c.hero_badge || ''}</p>
+    </div>
 
-            <!-- Work History -->
-            <div style="margin-bottom:18px">
-              <p style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:${accent};margin-bottom:12px;display:flex;align-items:center;gap:6px"><i class="fa-solid fa-briefcase" style="font-size:9px"></i> Work History</p>
-              ${expHTML || '<p style="font-size:9px;color:#94a3b8">No experience records.</p>'}
-            </div>
-          </div>
-        </div>
-      </div>`;
+    <!-- CAREER OBJECTIVE -->
+    <section style="margin-bottom:1.75rem;">
+      <p style="font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${accentColor};margin-bottom:.625rem;display:flex;align-items:center;gap:.4rem;">
+        <i class="fa-solid fa-bullseye"></i> Career Objective
+      </p>
+      <p style="font-size:.875rem;color:${mainSub};line-height:1.75;margin:0;">${c.career_objective || c.hero_bio || ''}</p>
+    </section>
+    <div style="border-top:1px solid ${ruleColor};margin-bottom:1.75rem;"></div>
 
-    setTimeout(() => {
-      window.print();
-      setTimeout(() => { ws.style.display = 'none'; ws.innerHTML = ''; }, 2000);
-    }, 400);
-  };
+    <!-- PROFESSIONAL SKILLS -->
+    <section style="margin-bottom:1.75rem;">
+      <p style="font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${accentColor};margin-bottom:.875rem;display:flex;align-items:center;gap:.4rem;">
+        <i class="fa-solid fa-microchip"></i> Professional Skills
+      </p>
+      ${skillCatsHtml || '<p style="font-size:.8125rem;color:'+mainSub+';">See portfolio for full skill set.</p>'}
+    </section>
+    <div style="border-top:1px solid ${ruleColor};margin-bottom:1.75rem;"></div>
 
-  // ─── SECTION HEADING UPDATES ──────────────────────────────────────────────────
-  function applyCoreText(cfg) {
-    if (!cfg) return;
-    const map = {
-      'exp-heading':        cfg.expHeading,
-      'exp-subheading':     cfg.expSubheading,
-      'portfolio-heading':  cfg.portfolioHeading,
-      'portfolio-subheading': cfg.portfolioSubheading,
-      'skills-heading':     cfg.skillsHeading,
-      'skills-subheading':  cfg.skillsSubheading,
-      'contact-heading':    cfg.contactHeading,
-      'contact-subheading': cfg.contactSubheading,
-    };
-    Object.entries(map).forEach(([id, val]) => { if (val && $(id)) $(id).textContent = val; });
-  }
+    <!-- WORK HISTORY -->
+    <section>
+      <p style="font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${accentColor};margin-bottom:.875rem;display:flex;align-items:center;gap:.4rem;">
+        <i class="fa-solid fa-timeline"></i> Work History
+      </p>
+      ${expHtml || '<p style="font-size:.8125rem;color:'+mainSub+';">No work experience data available.</p>'}
+    </section>
+  </main>
+</div>`;
 
-  // ─── FOOTER ───────────────────────────────────────────────────────────────────
-  function renderFooter(cfg) {
-    $('current-year').textContent = new Date().getFullYear();
-    $('last-updated').textContent = cfg?.lastUpdated || new Date().toLocaleDateString();
-  }
+  document.getElementById('print-workspace').innerHTML = resumeHtml;
+  window.print();
+}
 
-  // ─── ACTIVE NAV ON SCROLL ─────────────────────────────────────────────────────
-  function initScrollSpy() {
-    const links = document.querySelectorAll('.nav-link');
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(en => {
-        if (en.isIntersecting) {
-          links.forEach(l => l.classList.remove('active'));
-          const link = document.querySelector(`.nav-link[href="#${en.target.id}"]`);
-          if (link) link.classList.add('active');
-        }
-      });
-    }, { rootMargin: '-40% 0px -40% 0px' });
-    ['about','experience','portfolio','skills','contact'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-  }
+/* ════════════════════════════════════════════════════════════════
+   INITIALIZER
+   ════════════════════════════════════════════════════════════════ */
+async function init() {
+  await fetchAllData();
+  renderSite();
+  const loader = document.getElementById('page-loader');
+  loader.style.opacity = '0';
+  setTimeout(() => loader.style.display = 'none', 400);
+}
 
-  // ─── MAIN BOOT ───────────────────────────────────────────────────────────────
-  async function boot() {
-    try {
-      const [layoutSnap, heroSnap, socialsSnap, statsSnap, expSnap, portSnap, skillsSnap, coreTextSnap] =
-        await Promise.all([
-          getDoc(doc(db, 'config', 'layout')),
-          getDoc(doc(db, 'config', 'hero')),
-          getDoc(doc(db, 'config', 'socials')),
-          getDoc(doc(db, 'config', 'stats')),
-          getDocs(query(collection(db, 'experience'), orderBy('order', 'asc'))),
-          getDocs(query(collection(db, 'portfolio'), orderBy('order', 'asc'))),
-          getDocs(query(collection(db, 'skills'), orderBy('order', 'asc'))),
-          getDoc(doc(db, 'config', 'coreText')),
-        ]);
-
-      const layout    = layoutSnap.exists()   ? layoutSnap.data()   : {};
-      const hero      = heroSnap.exists()     ? heroSnap.data()     : {};
-      const socials   = socialsSnap.exists()  ? (socialsSnap.data().items || []) : [];
-      const stats     = statsSnap.exists()    ? (statsSnap.data().items || [])   : [];
-      const experience = expSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-      const portfolio  = portSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-      const skills     = skillsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-      const coreText   = coreTextSnap.exists() ? coreTextSnap.data() : {};
-
-      // Store global state
-      window.__state = { hero, experience, portfolio, skills, layout, socials, stats };
-
-      applySectionConfig(layout);
-      renderHero(hero, socials, stats);
-      renderExperience(experience);
-      renderPortfolio(portfolio);
-      renderSkills(skills);
-      applyCoreText(coreText);
-      renderFooter(layout);
-      initScrollSpy();
-
-    } catch (err) {
-      console.error('Firebase load error:', err);
-      // Show graceful fallback
-      document.querySelectorAll('.loader-ring').forEach(el => { el.style.display = 'none'; });
-      $('hero-name').innerHTML = 'Firebase Not Configured';
-      $('hero-bio').textContent = 'Please configure your Firebase credentials in index.html and manage.html, then seed your data via manage.html.';
-    } finally {
-      const ls = $('loading-screen');
-      ls.style.opacity = '0';
-      ls.style.transition = 'opacity .5s';
-      setTimeout(() => ls.style.display = 'none', 500);
-    }
-  }
-
-  boot();
+init();
 </script>
 </body>
 </html>
