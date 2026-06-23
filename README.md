@@ -1,681 +1,758 @@
-# engraglinao.github.io — Dynamic Portfolio & Resume System
+# EA Portfolio — Dynamic Firebase-Powered Portfolio & Resume System
 
-[![GitHub Pages](https://img.shields.io/badge/Deployed%20on-GitHub%20Pages-blue?logo=github)](https://engraglinao.github.io)
-[![Firebase](https://img.shields.io/badge/Backend-Firebase%20Firestore-orange?logo=firebase)](https://firebase.google.com)
-[![License](https://img.shields.io/badge/License-MIT-green)](./LICENSE)
+[![Firebase](https://img.shields.io/badge/Firebase-Firestore-FF6D00?logo=firebase&logoColor=white)](https://firebase.google.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![FontAwesome](https://img.shields.io/badge/FontAwesome-6.5-528DD7?logo=fontawesome&logoColor=white)](https://fontawesome.com/)
+[![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-A **fully CMS-driven, zero-hardcoded-content** portfolio and resume web application built with Semantic HTML5, Tailwind CSS, and Vanilla ES6+ JavaScript. All displayed content — including section structure, experience timeline, portfolio items, skills, and layout configuration — is served live from **Firebase Firestore**. A companion Admin Dashboard (`manage.html`) provides a complete split-pane management interface with real-time preview.
+> A fully zero-hardcoded, Firebase Firestore-driven single-page portfolio and resume web application with a split-pane admin dashboard, JSON portability hub, and a dynamic print-optimized resume generator engine.
 
 ---
 
 ## Table of Contents
 
 1. [Project Overview](#1-project-overview)
-2. [File Architecture](#2-file-architecture)
-3. [Firebase Installation & Database Connection](#3-firebase-installation--database-connection)
-4. [Firestore Schema Reference](#4-firestore-schema-reference)
-5. [System Bootstrap & Automatic Seeding Guide](#5-system-bootstrap--automatic-seeding-guide)
+2. [Three-File Architecture](#2-three-file-architecture)
+3. [Firebase Installation & Configuration](#3-firebase-installation--configuration)
+4. [Firestore Database Schema](#4-firestore-database-schema)
+5. [System Bootstrap & Automatic Seeding](#5-system-bootstrap--automatic-seeding)
 6. [Data Portability Manual (Import / Export)](#6-data-portability-manual-import--export)
-7. [Content Operations Guide](#7-content-operations-guide)
-8. [Section Order & Visibility Management](#8-section-order--visibility-management)
-9. [Background Canvas Matrix](#9-background-canvas-matrix)
-10. [Dynamic Resume Generator — Print Engine](#10-dynamic-resume-generator--print-engine)
-11. [Deployment to GitHub Pages](#11-deployment-to-github-pages)
-12. [Technology Stack](#12-technology-stack)
+7. [Admin Dashboard Operations Guide](#7-admin-dashboard-operations-guide)
+8. [Dynamic Resume Generator Engine](#8-dynamic-resume-generator-engine)
+9. [Theme System & Iconography](#9-theme-system--iconography)
+10. [GitHub Pages Deployment](#10-github-pages-deployment)
+11. [Troubleshooting](#11-troubleshooting)
+12. [License](#12-license)
 
 ---
 
 ## 1. Project Overview
 
-### Data Workflow
+This is a **fully content-managed, database-driven portfolio system** built to replace static portfolio pages with a live, dynamic experience. Every piece of textual content, every project card, every skill chip, every timeline row, and every layout configuration is stored in and retrieved from **Firebase Firestore** at runtime.
+
+### Core Design Philosophy
+
+| Principle | Implementation |
+|---|---|
+| **Zero Hardcoded Content** | `index.html` contains zero static text content. Every string is fetched from Firestore. |
+| **Total CMS Control** | `manage.html` provides a complete split-pane admin dashboard for live content management. |
+| **Auto-Seeding** | On first launch against an empty database, a complete polished seed dataset is automatically written to Firestore. |
+| **JSON Portability** | Full database export/import via structured JSON for portable backups and migrations. |
+| **Print Resume Sync** | The `generateLiveResume()` engine mirrors the live site's exact typography, icons, and colors into a print-optimized asymmetric document. |
+
+### Dynamic Data Workflow
 
 ```
-Firebase Firestore (Cloud Database)
-         │
-         ▼
-  index.html boots → checkAndSeed()
-         │
-         ├── Collections empty? → runSeedRoutine() → writes all SEED_DATA to Firestore
-         │
-         └── Collections populated? → loadAllData() → populates window.__DB_STATE{}
-                    │
-                    ▼
-            renderPortfolio() reads layout_configuration.sections[]
-                    │
-                    ├── Sorts sections by `order` field
-                    ├── Filters sections where `visible === false`
-                    └── Dynamically builds and injects each section into <main id="portfolio-root">
+Firebase Firestore
+       │
+       ├── profile/main         → Hero section, contact info, education, qualifications
+       ├── layout_configuration → Section order, visibility, background variants
+       ├── experience           → Timeline entries (role, org, dates, description, icon)
+       ├── portfolio            → Carousel cards (title, type, URL, thumbnail, tags)
+       ├── applications         → Skills matrix (name, category, icon, proficiency)
+       └── messages             → Contact form submissions (name, email, message)
+              │
+              ▼
+         index.html
+    (Fetches → Renders → Displays)
+              │
+              ▼
+         manage.html
+    (Reads → Edits → Writes back to Firestore → Refreshes iframe preview)
 ```
-
-### Zero-Hardcoded Content Policy
-
-The public `index.html` file contains **no static text content** in its HTML markup. Every visible string — headlines, bios, job titles, organization names, portfolio descriptions, skill names, section labels, profile images, and footer text — is rendered exclusively from live Firestore document data at runtime via JavaScript.
 
 ---
 
-## 2. File Architecture
+## 2. Three-File Architecture
 
-```
-engraglinao.github.io/
-├── index.html          # Public portfolio (Firebase-driven, zero hardcoded content)
-├── manage.html         # Admin CMS dashboard (split-pane, Firestore CRUD operations)
-└── README.md           # This documentation file
-```
+### `index.html` — The Public Portfolio
 
-### File Roles
+The sole public-facing file. Contains:
+- **Firebase SDK initialization** (modular v10 via CDN)
+- **Auto-seeding engine** — checks if Firestore is empty on every page load
+- **Data fetch layer** — parallel `Promise.all()` calls for all collections
+- **Dynamic section renderer** — creates DOM sections in the order defined by `layout_configuration`
+- **Portfolio carousel** — responsive horizontal slider with media type detection
+- **Contact form** — pushes submissions to Firestore `messages` collection
+- **`generateLiveResume()` engine** — builds and prints a styled asymmetric resume document
+- **Theme system** — Light/Dark mode persisted via `localStorage`
 
-| File | Role | Firebase Access | Public |
-|------|------|-----------------|--------|
-| `index.html` | Public portfolio display | Read (all collections) + Write (messages) | ✅ Yes |
-| `manage.html` | Admin management dashboard | Full CRUD on all collections | ❌ No (admin only) |
-| `README.md` | Documentation | None | ✅ Yes (GitHub) |
+> ⚠️ `manage.html` is **never linked** from `index.html`. It is completely disconnected from the public page.
 
-> **Security Note:** `manage.html` is not linked anywhere on `index.html`. It is intentionally unindexed (`<meta name="robots" content="noindex, nofollow">`). For production deployments, it is strongly recommended to implement Firebase Authentication to protect this file, or to remove it from the public repository entirely and access it locally.
+### `manage.html` — The Admin Dashboard
+
+A private, standalone admin control panel featuring:
+- **50/50 split-screen layout** — forms panel (left) + live iframe preview (right)
+- **Sidebar navigation** — switches between Profile, Experience, Portfolio, Applications, Layout, Messages, and Data Utility panels
+- **Real-time preview** — iframe embedding `index.html` with auto-refresh on every save
+- **CRUD operations** — Add, edit, and delete individual Firestore documents with immediate effect
+- **Layout editor** — Drag-and-drop section reordering + visibility toggles + background variant selectors
+- **Messages inbox** — View and manage contact form submissions
+- **JSON Portability Hub** — Full export/import with schema validation and batch writes
+
+### `README.md` — This File
+
+System documentation for GitHub repository setup, Firebase configuration, seeding behavior, JSON migration workflows, and resume engine details.
 
 ---
 
-## 3. Firebase Installation & Database Connection
+## 3. Firebase Installation & Configuration
 
 ### Step 1: Create a Firebase Project
 
-1. Navigate to the [Firebase Console](https://console.firebase.google.com/).
-2. Click **Add project** and follow the setup wizard.
-3. Give your project a name (e.g., `engraglinao-portfolio`).
-4. Enable **Google Analytics** (optional).
-5. Click **Create project**.
+1. Navigate to [console.firebase.google.com](https://console.firebase.google.com)
+2. Click **"Add project"**
+3. Enter a project name (e.g., `ea-portfolio`)
+4. Disable Google Analytics if not needed → Click **"Create project"**
 
-### Step 2: Register Your Web App
+### Step 2: Enable Firestore Database
 
-1. Inside your Firebase project, click the **Web** icon (`</>`) to add a web app.
-2. Register the app with a nickname (e.g., `portfolio-app`).
-3. Firebase will display your **configuration object**. Copy it — you need it for both files.
+1. In the Firebase Console sidebar, click **"Firestore Database"**
+2. Click **"Create database"**
+3. Choose **"Start in production mode"** (recommended) or "test mode" for initial setup
+4. Select your preferred server region → Click **"Enable"**
 
-### Step 3: Create a Firestore Database
+### Step 3: Configure Firestore Security Rules
 
-1. In the Firebase Console sidebar, navigate to **Firestore Database**.
-2. Click **Create database**.
-3. Choose **Start in production mode** (recommended) or **test mode** for initial development.
-4. Select a Firestore location closest to your target audience (e.g., `asia-southeast1` for the Philippines).
-5. Click **Done**.
-
-### Step 4: Configure Firestore Security Rules
-
-For a portfolio site with a public contact form, use these rules:
+Navigate to **Firestore → Rules** and set the following:
 
 ```javascript
-// Firestore Security Rules
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     // Public read for portfolio data
-    match /layout_configuration/{docId} { allow read: if true; allow write: if false; }
-    match /about/{docId}               { allow read: if true; allow write: if false; }
-    match /experience/{docId}          { allow read: if true; allow write: if false; }
-    match /portfolio/{docId}           { allow read: if true; allow write: if false; }
-    match /apps/{docId}                { allow read: if true; allow write: if false; }
+    match /profile/{doc} {
+      allow read: if true;
+      allow write: if false; // Only allow via admin (add auth in production)
+    }
 
-    // Public write only for messages (contact form)
-    match /messages/{docId} { allow read: if false; allow create: if true; }
+    match /layout_configuration/{doc} {
+      allow read: if true;
+      allow write: if false;
+    }
 
-    // Admin access — restrict in production with Auth
-    // match /{path=**} { allow read, write: if request.auth != null; }
+    match /experience/{doc} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /portfolio/{doc} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /applications/{doc} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Allow public write for contact form submissions
+    match /messages/{doc} {
+      allow create: if true;
+      allow read, update, delete: if false;
+    }
   }
 }
 ```
 
-> **Production Upgrade:** Replace the public write rules with `request.auth != null` checks once Firebase Authentication is configured for the admin workflow.
+> **Note for Development:** You may temporarily use `allow read, write: if true` during initial setup to avoid permission errors. Tighten rules before going public.
 
-### Step 5: Paste Your Firebase Config Into Both Files
+### Step 4: Register a Web App & Get Config
 
-Locate the following block in **both** `index.html` and `manage.html` and replace the placeholder values:
+1. In Firebase Console, click the **gear icon** → **"Project settings"**
+2. Scroll to **"Your apps"** → Click the web icon (`</>`)
+3. Enter an app nickname → Click **"Register app"**
+4. Copy the `firebaseConfig` object
+
+### Step 5: Paste Config into Both Files
+
+Open **both** `index.html` and `manage.html` and locate this block (appears in both files):
 
 ```javascript
-// ============================================================
-// FIREBASE CONFIGURATION — REPLACE WITH YOUR OWN PROJECT KEYS
-// ============================================================
+// =============================================
+// FIREBASE CONFIGURATION — REPLACE WITH YOUR OWN
+// =============================================
 const firebaseConfig = {
-  apiKey:            "YOUR_API_KEY",           // ← Replace
-  authDomain:        "YOUR_AUTH_DOMAIN",        // ← Replace
-  projectId:         "YOUR_PROJECT_ID",         // ← Replace
-  storageBucket:     "YOUR_STORAGE_BUCKET",     // ← Replace
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",// ← Replace
-  appId:             "YOUR_APP_ID"              // ← Replace
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
 };
 ```
 
-Your actual config will look like this:
+Replace **all six placeholder values** with your actual Firebase project credentials in **both files identically**.
 
 ```javascript
+// Example (use your actual values):
 const firebaseConfig = {
-  apiKey:            "AIzaSyD_ExAmPlEkEy_aBcDeFgHiJ",
-  authDomain:        "my-portfolio-abc12.firebaseapp.com",
-  projectId:         "my-portfolio-abc12",
-  storageBucket:     "my-portfolio-abc12.appspot.com",
+  apiKey: "AIzaSyD_example_key_here",
+  authDomain: "ea-portfolio.firebaseapp.com",
+  projectId: "ea-portfolio",
+  storageBucket: "ea-portfolio.appspot.com",
   messagingSenderId: "123456789012",
-  appId:             "1:123456789012:web:abc123def456"
+  appId: "1:123456789012:web:abcdef1234567890"
 };
 ```
 
-> **Critical:** Both `index.html` and `manage.html` must use the **identical** config block pointing to the **same** Firebase project. They share a single Firestore database as the unified source of truth.
+> 🔒 **Security Note:** For a public GitHub repository, consider using environment injection or Firebase App Check rather than exposing API keys directly. The Firestore security rules above are your primary guard.
 
 ---
 
-## 4. Firestore Schema Reference
+## 4. Firestore Database Schema
 
-The application uses the following Firestore collections and document structures:
-
-### Collection: `layout_configuration` (Single Document: `main`)
+### Collection: `profile` → Document ID: `main`
 
 ```json
 {
-  "site_name":     "Engr. Aglinao",
-  "tagline":       "Full-Stack Engineer & Systems Architect",
-  "profile_image": "https://url-to-profile-photo.jpg",
-  "resume_file":   "/master-resume.pdf",
-  "footer_bio":    "Short bio text for the footer section.",
-  "seeded_at":     "2025-01-01T00:00:00.000Z",
-  "sections": [
-    {
-      "id":      "hero",
-      "label":   "Hero / About",
-      "order":   1,
-      "visible": true,
-      "bg":      "hero-gradient"
-    },
-    {
-      "id":      "experience",
-      "label":   "Experience Timeline",
-      "order":   2,
-      "visible": true,
-      "bg":      "neutral"
-    },
-    {
-      "id":      "portfolio",
-      "label":   "Portfolio Caravan",
-      "order":   3,
-      "visible": true,
-      "bg":      "accent-subtle"
-    },
-    {
-      "id":      "apps",
-      "label":   "Application Matrix",
-      "order":   4,
-      "visible": true,
-      "bg":      "neutral"
-    },
-    {
-      "id":      "contact",
-      "label":   "Contact Layer",
-      "order":   5,
-      "visible": true,
-      "bg":      "accent-subtle"
-    }
-  ]
-}
-```
-
-**Section `bg` Values:**
-| Value | Effect |
-|-------|--------|
-| `neutral` | White (light mode) / Slate-900 (dark mode) |
-| `accent-subtle` | Slate-50 tint (light) / Slate-800/50 (dark) |
-| `hero-gradient` | Dark indigo linear gradient (hero use) |
-| `slate-dark` | Deep Slate-900 in both modes |
-| `indigo-subtle` | Soft indigo wash overlay |
-
----
-
-### Collection: `about` (Single Document: `main`)
-
-```json
-{
-  "headline":   "Engineering Elegant Solutions at Scale",
-  "bio":        "Detailed biography paragraph displayed in the hero section.",
-  "objective":  "Career objective statement used in the generated resume.",
-  "cta_label":  "Download Master Resume",
-  "cta_icon":   "fa-solid fa-file-arrow-down",
-  "highlights": [
-    { "icon": "fa-solid fa-code-branch", "label": "8+ Years Experience" },
-    { "icon": "fa-solid fa-server",      "label": "Cloud-Native Systems" }
-  ],
+  "name": "Engr. Alex Aglinao",
+  "title": "Full-Stack Engineer & UI/UX Architect",
+  "tagline": "Open to Work · Available for Remote & On-Site Roles",
+  "bio": "A highly driven Full-Stack Engineer...",
+  "email": "alex.aglinao@email.com",
+  "phone": "+63 917 123 4567",
+  "location": "Manila, Philippines",
+  "profileImageUrl": "https://example.com/photo.jpg",
+  "resumeUrl": "https://example.com/resume.pdf",
+  "github": "https://github.com/engraglinao",
+  "linkedin": "https://linkedin.com/in/aglinao",
+  "twitter": "https://twitter.com/aglinao",
+  "yearsExperience": "7+",
+  "projectsDelivered": "80+",
+  "clientsSatisfied": "40+",
   "education": [
     {
       "degree": "B.S. Computer Engineering",
-      "school": "University of the Philippines",
-      "year":   "2015",
-      "icon":   "fa-solid fa-graduation-cap"
+      "school": "Polytechnic University of the Philippines",
+      "year": "2017"
     }
+  ],
+  "qualifications": [
+    "Full-Stack web & mobile application architecture",
+    "Figma to production UI/UX systems design"
   ]
 }
 ```
 
----
-
-### Collection: `experience` (Multiple Documents)
-
-Each document represents one timeline entry:
+### Collection: `layout_configuration` → Auto Document IDs
 
 ```json
 {
-  "order":        1,
-  "role":         "Principal Systems Architect",
-  "organization": "NovaTech Digital Corp.",
-  "period":       "Jan 2022 — Present",
-  "location":     "Manila, PH (Remote)",
-  "icon":         "fa-solid fa-building-columns",
-  "icon_color":   "#6366f1",
-  "description":  "Lead end-to-end architecture for enterprise SaaS platforms…",
-  "tags":         ["GCP", "Microservices", "Node.js", "React", "Firebase"]
+  "id": "hero",
+  "sectionId": "hero",
+  "label": "Hero / About Me",
+  "order": 1,
+  "visible": true,
+  "bgVariant": "default"
+}
+```
+
+**`bgVariant` values:** `"default"` | `"alt"` | `"gradient"` | `"dark"`
+
+### Collection: `experience` → Auto Document IDs
+
+```json
+{
+  "role": "Lead Full-Stack Engineer",
+  "organization": "TechNova Solutions Inc.",
+  "dateRange": "Jan 2022 — Present",
+  "description": "Full description of responsibilities...",
+  "icon": "fa-solid fa-code",
+  "iconColor": "#6366f1",
+  "order": 1,
+  "tags": ["React", "Node.js", "AWS", "PostgreSQL"]
+}
+```
+
+**`icon`**: Any valid [FontAwesome 6 class string](https://fontawesome.com/icons).
+
+### Collection: `portfolio` → Auto Document IDs
+
+```json
+{
+  "title": "FinFlow — FinTech Dashboard",
+  "description": "Project description...",
+  "type": "Site",
+  "url": "https://project-url.com",
+  "thumbnailUrl": "https://image-url.com/thumb.jpg",
+  "tags": ["React", "Firebase"],
+  "order": 1
+}
+```
+
+**`type` values:** `"Site"` | `"URL"` | `"PDF"` | `"PPT"` | `"Image"`
+
+### Collection: `applications` → Auto Document IDs
+
+```json
+{
+  "name": "React / Next.js",
+  "category": "Frontend",
+  "icon": "fa-brands fa-react",
+  "iconBg": "#0ea5e9",
+  "proficiency": 95,
+  "order": 1
+}
+```
+
+### Collection: `messages` → Auto Document IDs (write-only from public)
+
+```json
+{
+  "name": "John Smith",
+  "email": "john@example.com",
+  "subject": "Project Inquiry",
+  "message": "Hello, I'd like to discuss...",
+  "timestamp": "<Firestore ServerTimestamp>",
+  "read": false
 }
 ```
 
 ---
 
-### Collection: `portfolio` (Multiple Documents)
+## 5. System Bootstrap & Automatic Seeding
 
-Each document represents one portfolio card:
+### How the Auto-Seeding Engine Works
 
-```json
-{
-  "order":       1,
-  "title":       "PhilHealth Digital Portal",
-  "subtitle":    "Government Health System",
-  "type":        "Site",
-  "category":    "Enterprise",
-  "thumbnail":   "https://url-to-thumbnail-image.jpg",
-  "url":         "https://live-site-url.com",
-  "description": "End-to-end digital transformation…",
-  "tags":        ["React", "Node.js", "PostgreSQL"],
-  "icon":        "fa-solid fa-hospital",
-  "color":       "#6366f1"
-}
-```
-
-**Portfolio Item `type` Values:**
-| Type | Behavior on Click |
-|------|-------------------|
-| `Site` | Opens modal with thumbnail + "Visit Live Site" link |
-| `URL`  | Opens modal with thumbnail + external link button |
-| `Image`| Opens modal showing full-size thumbnail image |
-| `PPT`  | Opens modal with PowerPoint download prompt |
-| `PDF`  | Opens modal with PDF download prompt |
-
----
-
-### Collection: `apps` (Multiple Documents)
-
-Each document represents one skill/tool card:
-
-```json
-{
-  "order":       1,
-  "name":        "React / Next.js",
-  "category":    "Frontend",
-  "icon":        "fa-brands fa-react",
-  "color":       "#06b6d4",
-  "proficiency": "Expert"
-}
-```
-
-**`proficiency` Values:** `Expert`, `Advanced`, `Proficient`, `Familiar`
-
----
-
-### Collection: `messages` (Multiple Documents — Auto-created)
-
-Written by the contact form on `index.html`:
-
-```json
-{
-  "name":       "Visitor Name",
-  "email":      "visitor@email.com",
-  "message":    "Message content here.",
-  "created_at": "<Firestore Timestamp>"
-}
-```
-
----
-
-## 5. System Bootstrap & Automatic Seeding Guide
-
-### How Auto-Seeding Works
-
-When `index.html` first loads in a browser, it executes the following boot sequence:
+When `index.html` loads for the first time, the following sequence executes:
 
 ```
-1. initializeApp(firebaseConfig)  — Connect to Firebase
-2. checkAndSeed()                 — Triggered immediately
-   │
-   ├── getDoc("layout_configuration/main")
-   │
-   ├── Document EXISTS?
-   │   └── loadAllData() → fetch all collections → renderPortfolio()
-   │
-   └── Document DOES NOT EXIST?
-       └── runSeedRoutine()
-           ├── writeBatch() with complete SEED_DATA object
-           │   ├── layout_configuration/main ← setDoc
-           │   ├── about/main               ← setDoc
-           │   ├── experience/*             ← multiple addDoc calls
-           │   ├── portfolio/*              ← multiple addDoc calls
-           │   └── apps/*                  ← multiple addDoc calls
-           └── loadAllData() → renderPortfolio()
+bootstrap()
+    │
+    ├── 1. initTheme()          → Reads localStorage, sets CSS class
+    │
+    ├── 2. checkAndSeedDatabase()
+    │       │
+    │       ├── getDocs(layout_configuration)
+    │       │
+    │       ├── IF EMPTY → runSeedRoutine()
+    │       │       │
+    │       │       └── writeBatch():
+    │       │             ├── profile/main → SEED_DATA.profile
+    │       │             ├── layout_configuration → 5 section documents
+    │       │             ├── experience → 4 career entries
+    │       │             ├── portfolio → 6 project cards
+    │       │             └── applications → 12 skill chips
+    │       │
+    │       └── IF POPULATED → Skip seed, log message
+    │
+    ├── 3. fetchAllData()       → Parallel reads of all collections
+    │
+    ├── 4. renderPortfolio()    → Builds DOM from fetched state
+    │
+    └── 5. Dismiss loader overlay
 ```
 
-### Seed Data Properties
+### Seed Data Contents
 
-The seed data written to Firestore on first boot includes:
+The automatic seed routine writes the following polished sample data:
 
-| Collection | Documents Seeded | Description |
-|------------|------------------|-------------|
-| `layout_configuration` | 1 (main) | Full site identity, 5 sections with order and bg settings |
-| `about` | 1 (main) | Complete hero content including highlights array and education array |
-| `experience` | 4 | Career timeline from Junior Developer to Principal Architect |
-| `portfolio` | 5 | Mixed-type projects covering Site, Image, PPT, URL, PDF |
-| `apps` | 16 | Skills across 7 categories with colors, icons, and proficiency |
+| Collection | Documents | Sample Content |
+|---|---|---|
+| `profile` | 1 | Complete engineer profile with bio, contact, social links, education, qualifications, and stats |
+| `layout_configuration` | 5 | Hero, Experience, Portfolio, Applications, Contact — ordered, visible, with bg variants |
+| `experience` | 4 | Lead Engineer, Senior UX Engineer, Software Developer, Junior Developer — with icons and tags |
+| `portfolio` | 6 | FinTech dashboard, Telehealth platform, GovTech portal, Design system, IoT app, EdTech LMS |
+| `applications` | 12 | React, Vue, TypeScript, Node.js, Python, Firebase, AWS, Docker, Figma, PostgreSQL, Tailwind, Git |
 
-### Offline / Config-Missing Fallback
+### Seeding Trigger Condition
 
-If Firestore is unreachable (e.g., Firebase config not yet populated), the system catches the error and renders the seed data directly from the in-memory `SEED_DATA` object without writing to Firebase. The site remains fully functional in this demo mode.
+The seed check examines the **`layout_configuration`** collection only. If it contains zero documents, all collections are seeded. This prevents duplicate seeding on subsequent page loads.
 
-### Re-Triggering the Seed Routine
+### Manual Re-Seeding via Admin Dashboard
 
-To reset the database to seed defaults:
-1. Open `manage.html`.
-2. Navigate to **Data Utilities** in the sidebar.
-3. In the **Danger Zone** section, click **Re-Run Seeding Routine**.
-4. This deletes all current collection documents and deletes `layout_configuration/main` and `about/main`.
-5. The next page load of `index.html` will detect the empty database and re-seed automatically.
+1. Open `manage.html`
+2. Navigate to **Data Utility** in the sidebar
+3. Click **"Re-seed Empty Collections"** — writes seed data only to empty collections
+4. Click **"Nuke & Reseed All"** — deletes everything and writes a clean seed (requires `CONFIRM` text prompt)
 
 ---
 
 ## 6. Data Portability Manual (Import / Export)
 
-### Exporting Your Database
+### Exporting the Database
 
-**From `manage.html` → Data Utilities → Export Entire Database:**
+1. Open `manage.html`
+2. Click **"Data Utility"** in the sidebar navigation
+3. Click the **"Export JSON"** button
+4. A file download named `portfolio-export-YYYY-MM-DD.json` is triggered
+5. The JSON preview pane displays the export structure inline
 
-1. Click the **Export JSON Backup** button.
-2. The browser downloads a file named `portfolio-backup-YYYY-MM-DD.json`.
-3. The file contains a structured JSON object with this top-level schema:
+**Exported JSON structure:**
 
 ```json
 {
-  "_exported_at": "2025-01-15T10:30:00.000Z",
-  "_version": "1.0",
-  "layout_configuration": { ... },
-  "about": { ... },
-  "experience": [ { ... }, { ... } ],
-  "portfolio":  [ { ... }, { ... } ],
-  "apps":       [ { ... }, { ... } ]
+  "_exportMeta": {
+    "exportedAt": "2025-01-15T10:30:00.000Z",
+    "version": "1.0",
+    "source": "EA Portfolio CMS"
+  },
+  "profile": { ... },
+  "layout": [ ... ],
+  "experience": [ ... ],
+  "portfolio": [ ... ],
+  "applications": [ ... ]
 }
 ```
 
-4. Store this file securely as your backup. It can be re-imported at any time.
+> **Note:** The `messages` collection is excluded from exports for privacy. Only content data is exported.
 
 ### Importing a JSON File
 
-**From `manage.html` → Data Utilities → Import JSON File:**
+1. Open `manage.html` → **Data Utility** panel
+2. Click **"Import JSON"**
+3. Select a valid `.json` export file from your file system
+4. The system performs **schema validation** — checks for required top-level keys:
+   - `profile`, `layout`, `experience`, `portfolio`, `applications`
+5. If validation passes, a **confirmation dialog** warns that existing data will be replaced
+6. Upon confirmation, the system:
+   - Deletes all existing documents in targeted collections
+   - Runs a `writeBatch()` to write all imported records
+   - Reloads the admin panel state
+   - Triggers an iframe preview refresh
 
-#### Step-by-Step Import Process
+### Import Error Handling
 
-1. Click the **drop zone area** or drag-and-drop your `.json` backup file onto it.
-2. The system immediately **validates the schema**:
-   - ✅ **Valid:** A green confirmation message shows detected record counts.
-   - ❌ **Invalid:** A red error message lists the missing required top-level keys.
-3. If valid, the **Run Import & Replace Database** button becomes active.
-4. Click the button — a confirmation dialog appears warning you of data replacement.
-5. Confirm the action. The import engine executes:
-   ```
-   a. writeBatch() opened
-   b. layout_configuration/main ← overwritten with imported data
-   c. about/main                ← overwritten with imported data
-   d. All existing experience/* documents ← deleted
-   e. All existing portfolio/*  documents ← deleted
-   f. All existing apps/*       documents ← deleted
-   g. New experience documents  ← batch written from import array
-   h. New portfolio documents   ← batch written from import array
-   i. New apps documents        ← batch written from import array
-   j. batch.commit() executed
-   ```
-6. `loadAllData()` re-fetches the entire new dataset.
-7. The preview iframe and all admin panels refresh automatically.
+| Error | Cause | Resolution |
+|---|---|---|
+| `Invalid JSON format` | Malformed JSON file | Use a proper JSON validator before import |
+| `Invalid schema. Missing keys: X` | File missing required top-level keys | Ensure file was exported from this system |
+| `Import failed: permission-denied` | Firestore rules too restrictive | Temporarily loosen Firestore security rules |
+| File upload with no `.json` extension | Wrong file type | Only `.json` files are accepted |
 
-#### JSON Schema Validation Rules
+### Migration Workflow (Server A → Server B)
 
-The import validator checks for these **required top-level keys**:
-- `layout_configuration` (object)
-- `about` (object)
-- `experience` (array)
-- `portfolio` (array)
-- `apps` (array)
+```
+Server A (source):
+  manage.html → Export JSON → portfolio-export-2025-01-15.json
 
-The `_exported_at` and `_version` fields are optional metadata and are ignored during import.
-
-#### Safe Migration Between Firebase Projects
-
-To migrate your data to a new Firebase project:
-1. Export from the old project via the Export button.
-2. Update `firebaseConfig` in both `index.html` and `manage.html` with the new project credentials.
-3. Open `manage.html` with the new config.
-4. Import the backup JSON file via the Import section.
-5. The new Firestore database is fully populated.
+Server B (destination):
+  1. Configure Firebase credentials in both files
+  2. Open manage.html
+  3. Data Utility → Import JSON → Select file
+  4. Confirm → Wait for batch write completion
+  5. Refresh preview to verify
+```
 
 ---
 
-## 7. Content Operations Guide
+## 7. Admin Dashboard Operations Guide
 
-### Editing Core Text Content (Layout & About)
+### Accessing the Dashboard
 
-1. Open `manage.html`.
-2. Select **Layout & Theme** or **About / Hero** from the sidebar.
-3. Modify any field in the forms.
-4. Click the **Save** button at the bottom.
-5. The right-panel preview iframe automatically reloads to show changes.
+Navigate directly to `manage.html` in your browser. This file is intentionally **not linked** from `index.html` and will not appear in search results or navigation.
+
+**For GitHub Pages:**
+```
+https://yourusername.github.io/your-repo/manage.html
+```
+
+### Navigation Panels
+
+| Panel | Description |
+|---|---|
+| **Profile** | Edit name, title, bio, contact details, social links, hero stats, education, and qualifications |
+| **Experience** | Add, edit, delete, and reorder career timeline entries |
+| **Portfolio** | Manage portfolio cards (title, type, URL, thumbnail, tags, order) |
+| **Applications** | Manage skill chips (name, category, icon, color, proficiency, order) |
+| **Section Order** | Drag-and-drop section reordering + visibility toggles + background variant selectors |
+| **Messages** | View contact form submissions, mark read, delete individual messages, or clear all |
+| **Data Utility** | Export/import JSON, manual re-seeding, database nuke |
 
 ### Adding a New Experience Entry
 
-1. Navigate to **Experience** in the sidebar.
-2. Click **+ Add Entry** — a blank template document is created in Firestore instantly.
-3. The new entry appears at the top of the list.
-4. Click the **pencil icon** to expand the inline editor.
-5. Fill in all fields: Role, Organization, Period, Location, Icon, Color, Description, Tags, Order.
-6. Click **Save** — the document is updated via `updateDoc()`.
-
-### Modifying an Existing Entry
-
-1. Hover over any card in the Experience, Portfolio, or Skills tabs.
-2. The **Edit** (pencil) and **Delete** (trash) buttons appear.
-3. Click the pencil to expand the inline editor within the card.
-4. Edit any field and click **Save**.
-5. Changes are written to Firestore immediately via `updateDoc()`.
-6. The preview reloads to reflect the live state.
-
-### Deleting an Entry
-
-1. Hover over any card and click the **trash icon**.
-2. A confirmation dialog appears.
-3. Confirm — the document is deleted via `deleteDoc()`.
-4. The card animates out (fade + scale) and is removed from the DOM.
-5. The preview refreshes to reflect the removed item.
-
-### Managing Portfolio Items
-
-Portfolio items support 5 display types set via the **Type** dropdown:
-
-| Type | When to Use |
-|------|-------------|
-| `Site` | Project with a live URL to visit |
-| `URL`  | Any external link |
-| `Image`| Full-size image viewer (screenshot, design) |
-| `PPT`  | PowerPoint / presentation file link |
-| `PDF`  | Document / case study PDF link |
-
-For `URL`, `Site`, `PPT`, and `PDF` types, always populate the **Link URL** field with the resource destination.
-
----
-
-## 8. Section Order & Visibility Management
+1. Navigate to **Experience** panel
+2. Click **"Add Entry"**
+3. Fill in the modal form:
+   - **Job Title / Role** (required)
+   - **Organization** (required)
+   - **Date Range** — format: `"Jan 2022 — Present"`
+   - **Description** — full role description
+   - **FontAwesome Icon Class** — e.g., `fa-solid fa-code` (any FA 6 class)
+   - **Icon Color** — color picker for the timeline node background
+   - **Tags** — comma-separated tech stack tags
+   - **Display Order** — integer sort position
+4. Click **"Save Changes"**
+5. The experience list updates and the preview iframe refreshes
 
 ### Reordering Sections
 
-1. Navigate to **Section Order** in the sidebar.
-2. Each section appears as a draggable pill showing its label, ID, and current order number.
-3. **Drag** a pill above or below another to change the sequence.
-4. Click **Save Section Order** to write the updated `order` integers to `layout_configuration/main.sections[]` in Firestore.
-5. `index.html` re-reads the sorted sections array on next load and renders them in the new sequence.
+1. Navigate to **Section Order** panel
+2. Drag layout items by the grip handle (⠿) to rearrange
+3. Toggle the **Visible** switch to hide/show sections
+4. Select a **Background Variant** from the dropdown for each section:
+   - **Default** — matches base page background
+   - **Alt** — subtle card surface background
+   - **Gradient** — soft accent color gradient overlay
+   - **Dark** — deeper surface tone
+5. Click **"Save Layout"** to persist to Firestore
 
-### Toggling Section Visibility
+### Deleting a Document
 
-1. In the **Section Order** tab, each pill has a **toggle switch** on its right side.
-2. Click the toggle:
-   - **ON (purple):** Section is visible on the public portfolio.
-   - **OFF (gray):** Section is hidden — not rendered at all in `index.html`.
-3. Click **Save Section Order** to persist the `visible` boolean flag to Firestore.
+- In any list panel (Experience, Portfolio, Applications), click the **trash icon** on any item
+- A browser confirmation dialog appears
+- Confirming permanently deletes the Firestore document
+- The list and preview refresh immediately
 
-> Visibility is checked by the `renderPortfolio()` function which filters `sections.filter(s => s.visible !== false)` before rendering.
+### Editing an Existing Document
 
----
-
-## 9. Background Canvas Matrix
-
-### Changing Section Backgrounds
-
-1. Navigate to **Background Canvas** in the sidebar.
-2. Each section is listed with a dropdown selector.
-3. Select your desired background style from the options:
-
-| Option | Visual Result |
-|--------|--------------|
-| Neutral White/Dark | Clean white (light) or slate-900 (dark) |
-| Subtle Accent Tint | Very light slate-50 or slate-800 overlay |
-| Dark Gradient (Hero) | Full dark indigo gradient — best for Hero |
-| Deep Slate Dark | Always-dark slate-900 |
-| Indigo Wash | Soft indigo-50 or indigo-950/30 tint |
-
-4. Click **Apply Background Settings**.
-5. The `bg` property of each section in `layout_configuration/main.sections[]` is updated.
-6. The preview reloads showing the new backgrounds.
+- Click the **pencil icon** on any list item
+- The edit modal opens pre-populated with current values
+- Make changes and click **"Save Changes"**
+- The document is overwritten via `setDoc()` in Firestore
 
 ---
 
-## 10. Dynamic Resume Generator — Print Engine
+## 8. Dynamic Resume Generator Engine
 
-### Activating the Generator
+### Triggering the Resume
 
-Click the **Generate Resume** button in the top navigation bar of `index.html`. The `generateLiveResume()` function is invoked immediately.
+- On the public portfolio (`index.html`), click **"Generate Resume"** in the navigation bar
+- The `generateLiveResume()` function fires immediately
 
-### How the Generator Works
+### Engine Behavior
 
-```
+```javascript
 generateLiveResume()
-│
-├── Reads window.__DB_STATE (populated by Firestore fetch)
-│   ├── layout  → site_name, tagline, profile_image
-│   ├── about   → bio, objective, education, highlights
-│   ├── experience[] → all role entries with icons and colors
-│   └── apps[]  → all skill items with icons and colors
-│
-├── Builds HTML string for two-column resume layout:
-│   ├── LEFT SIDEBAR (33%): Dark slate-charcoal
-│   │   ├── Circular/rounded profile image (from layout.profile_image)
-│   │   ├── Contact details with FontAwesome icons
-│   │   ├── Qualifications bullet list
-│   │   ├── Education entries (from about.education[])
-│   │   └── Core Tools skill pills (from apps[], first 10)
-│   │
-│   └── RIGHT MAIN PANEL (67%): White background
-│       ├── Header accent block (indigo gradient, name + tagline)
-│       ├── Career Objective paragraph
-│       ├── Technical Skills grid (grouped by category, with icons)
-│       └── Work History timeline (with role icons matching live site colors)
-│
-├── Injects HTML into hidden #resume-workspace div
-├── Sets #resume-workspace to display:block
-└── window.print() triggered after 300ms delay
+    │
+    ├── Reads window.__portfolioState (live Firestore data already in memory)
+    │
+    ├── Builds asymmetric resume HTML into #resume-print-workspace div:
+    │       ├── LEFT SIDEBAR (33%):
+    │       │     ├── Circular profile photo (or icon placeholder)
+    │       │     ├── Full name + professional title
+    │       │     ├── Contact details with FontAwesome icons
+    │       │     ├── Key Qualifications bullet list
+    │       │     └── Education entries
+    │       │
+    │       └── RIGHT MAIN PANEL (67%):
+    │             ├── Gradient header accent block (name + title)
+    │             ├── Career Objective section (bio text)
+    │             ├── Technical Skills grid (2-column chip layout)
+    │             └── Professional Experience timeline
+    │
+    └── Calls window.print() after 100ms delay
 ```
 
-### Visual Design Sync
+### Print CSS Architecture
 
-The resume generator enforces exact visual identity matching with the live portfolio:
+The `@media print` block in `index.html` applies the following rules on print:
 
-- **FontAwesome Icons:** Every skill and experience entry uses the **identical icon class** stored in Firestore — the same `fa-solid fa-building-columns` that appears on the timeline node renders as the same icon beside the job title in the resume.
-- **Accent Colors:** The `icon_color` hex value from each experience entry is applied to the circular timeline node icon in the resume.
-- **Typography:** Plus Jakarta Sans (loaded via Google Fonts) is applied to all resume elements, matching the portfolio site font.
-- **Indigo Palette:** The `#6366f1` primary accent is used for the main header block, section titles, and skill category labels — identical to the site's CSS variable `--accent`.
+1. **Hides all web content:** `body > *:not(#resume-print-workspace) { display: none !important; }`
+2. **Forces color printing:** `-webkit-print-color-adjust: exact !important` on all elements
+3. **Sidebar styling:** Dark slate `#1e2130` background with light text — matches the site's sidebar theme
+4. **Accent colors:** `#6366f1` (indigo) and `#8b5cf6` (violet) match the site's primary gradient
+5. **Typography:** `Plus Jakarta Sans` — same as the web portfolio
+6. **Icons:** FontAwesome icons render identically in print as on screen
+7. **Layout:** Flexbox two-column layout fills the full page width
 
-### Print CSS Implementation
+### Font & Color Identity Matching
 
-The `@media print` rules in `index.html` accomplish:
+| Web Site Element | Resume Equivalent |
+|---|---|
+| Indigo gradient (`#6366f1 → #8b5cf6`) | Header accent block gradient |
+| Timeline node background | `resume-exp-role i` icon color |
+| App icon box colors | `resume-skill-chip i` icon colors |
+| `Plus Jakarta Sans` font | Resume body font |
+| Dark sidebar (`#1e2130`) | Resume sidebar background |
+| Border color `#2d3554` | Sidebar section dividers |
+
+### Saving as PDF
+
+When `window.print()` fires, use your browser's print dialog:
+- **Chrome/Edge:** Select "Save as PDF" from the destination dropdown
+- **Firefox:** Select "Microsoft Print to PDF" or "Save to PDF"
+- Ensure **"Background graphics"** is checked in print options for color accuracy
+- Set paper size to **A4** or **Letter**
+- Set margins to **None** or **Minimum** for best results
+
+---
+
+## 9. Theme System & Iconography
+
+### Light / Dark Mode
+
+Both `index.html` and `manage.html` implement the same CSS variable-based theme system:
 
 ```css
-@media print {
-  /* Hide everything except the resume workspace */
-  body > *:not(#resume-workspace) { display: none !important; }
-
-  /* Show the workspace as the only content */
-  #resume-workspace { display: block !important; position: static !important; }
-
-  /* Zero margins, A4 page size */
-  @page { margin: 0; size: A4; }
-  html, body { margin: 0; padding: 0; background: white; }
-}
+html.light { --bg-base: #f8f9fc; --text-primary: #0f1117; ... }
+html.dark  { --bg-base: #0d0f18; --text-primary: #f1f5f9; ... }
 ```
 
-This ensures the browser's print dialog (or "Save as PDF") renders **only** the resume layout with all icons, colors, and typography perfectly preserved.
+- **Toggle:** Click the moon/sun button in the navigation bar
+- **Persistence:** Theme preference stored in `localStorage` under key:
+  - `portfolio-theme` (index.html)
+  - `admin-theme` (manage.html)
+- **Default:** Dark mode on first visit
+
+### FontAwesome Integration
+
+Icons are loaded via CDN:
+```html
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+```
+
+Icons are used consistently across:
+- Timeline node indicators
+- Application skill chip icons
+- Navigation elements
+- Section labels
+- Resume document (same class strings, prints correctly)
+- Contact info rows
+- Toast notifications
+- Admin dashboard UI elements
+
+**Icon class format:** `fa-{style} fa-{icon-name}`
+- Solid: `fa-solid fa-code`
+- Brands: `fa-brands fa-react`
+- Regular: `fa-regular fa-calendar`
 
 ---
 
-## 11. Deployment to GitHub Pages
+## 10. GitHub Pages Deployment
 
-### Initial Deployment
+### Repository Setup
 
-1. Push all three files to your GitHub repository:
-   ```bash
-   git add index.html manage.html README.md
-   git commit -m "Initial portfolio deployment"
-   git push origin main
-   ```
+```bash
+# Clone or create repository
+git init ea-portfolio
+cd ea-portfolio
 
-2. In your GitHub repository, navigate to **Settings → Pages**.
-3. Under **Source**, select **Deploy from a branch**.
-4. Choose branch: `main`, folder: `/ (root)`.
-5. Click **Save**.
-6. Your site will be available at `https://engraglinao.github.io` within 1–2 minutes.
+# Copy your three files
+cp index.html manage.html README.md ./
 
-### Firebase CORS Configuration
+# Commit and push
+git add .
+git commit -m "Initial portfolio deployment"
+git branch -M main
+git remote add origin https://github.com/yourusername/ea-portfolio.git
+git push -u origin main
+```
 
-If you encounter CORS issues with Firebase on GitHub Pages, add your domain to the Firebase authorized domains:
+### Enable GitHub Pages
 
-1. Firebase Console → **Authentication** → **Settings** → **Authorized domains**.
-2. Add `engraglinao.github.io`.
+1. Go to your repository on GitHub
+2. Click **Settings** → **Pages** (left sidebar)
+3. Under **Source**, select **"Deploy from a branch"**
+4. Choose branch: `main`, folder: `/ (root)`
+5. Click **Save**
+6. Your site will be available at: `https://yourusername.github.io/ea-portfolio/`
 
-### Environment Management
+### Deployment Checklist
 
-For managing multiple environments (development vs production), maintain separate Firebase projects and swap the `firebaseConfig` block accordingly. Never commit production API keys to public repositories without proper security rules in place.
+- [ ] Firebase project created
+- [ ] Firestore database enabled
+- [ ] Security rules configured
+- [ ] `firebaseConfig` updated in **both** `index.html` and `manage.html`
+- [ ] Firestore rules allow public `read` for portfolio collections
+- [ ] Firestore rules allow public `create` for `messages` collection
+- [ ] `manage.html` access restricted (consider IP allowlisting or Firebase Auth)
+- [ ] Files committed and pushed to GitHub
+- [ ] GitHub Pages enabled on `main` branch, root folder
 
----
+### Custom Domain (Optional)
 
-## 12. Technology Stack
-
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| Markup | Semantic HTML5 | Structure and accessibility |
-| Styling | Tailwind CSS v4 (CDN) | Utility-first responsive design |
-| Scripting | Vanilla ES6+ JavaScript | DOM rendering, Firebase interaction, resume generator |
-| Database | Firebase Firestore | Cloud CMS backend, real-time data |
-| Icons | FontAwesome 6.5 | Iconography across all components |
-| Typography | Plus Jakarta Sans (Google Fonts) | High-end sans-serif font system |
-| Hosting | GitHub Pages | Zero-cost static site deployment |
-| Admin | Custom CMS (manage.html) | Full CRUD dashboard with live preview |
-
----
-
-## License
-
-MIT License. See [LICENSE](./LICENSE) for details.
+1. In GitHub Pages settings, enter your custom domain
+2. Create a CNAME record pointing to `yourusername.github.io`
+3. Create a `CNAME` file in the repo root containing your domain
 
 ---
 
-*Built with precision — Every pixel, every data point, every interaction is intentional.*
+## 11. Troubleshooting
+
+### "Permission denied" errors in console
+
+**Cause:** Firestore security rules are too restrictive.
+**Fix:** Temporarily set all collections to `allow read, write: if true;` for testing. Tighten after confirming the setup works.
+
+### Portfolio loads but shows no content
+
+**Cause:** Firebase config credentials are incorrect or mismatched between files.
+**Fix:** Double-check both `index.html` and `manage.html` contain **identical** `firebaseConfig` objects with your actual credentials.
+
+### Seed data not appearing
+
+**Cause:** The seed check found data already present (even partial).
+**Fix:** Go to `manage.html` → **Data Utility** → **"Nuke & Reseed All"**. Type `CONFIRM` to proceed.
+
+### Resume print shows only icons, no background colors
+
+**Cause:** Browser print settings have "Background graphics" disabled.
+**Fix:** In the print dialog, enable **"Background graphics"** / **"Print backgrounds"** option.
+
+### iframe preview in manage.html is blank
+
+**Cause:** Browser security policies blocking same-origin iframes, or `index.html` has errors.
+**Fix:** Serve files via a local HTTP server (e.g., `npx serve .` or VS Code Live Server). File protocol (`file://`) blocks module scripts.
+
+### Firebase module script errors
+
+**Cause:** Attempting to open HTML files directly via `file://` protocol.
+**Fix:** ES Modules require HTTP. Use a local development server:
+```bash
+npx serve .
+# or
+python3 -m http.server 8080
+```
+
+### JSON Import fails with "Invalid schema"
+
+**Cause:** Importing a JSON file not generated by this system.
+**Fix:** Ensure the JSON file contains all required top-level keys: `profile`, `layout`, `experience`, `portfolio`, `applications`. The `_exportMeta` key is optional.
+
+---
+
+## 12. License
+
+This project is open source under the [MIT License](LICENSE).
+
+```
+MIT License
+
+Copyright (c) 2025 Engr. Alex Aglinao
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+---
+
+## System Metadata
+
+| Attribute | Detail |
+|---|---|
+| **Author** | Engr. Alex Aglinao |
+| **Repository** | `engraglinao/engraglinao.github.io` |
+| **Architecture** | 3-file SPA (index.html, manage.html, README.md) |
+| **Database** | Firebase Firestore (NoSQL, real-time) |
+| **Styling** | Tailwind CSS v4 (CDN) + Custom CSS Variables |
+| **Icons** | FontAwesome 6.5 (CDN) |
+| **Typography** | Plus Jakarta Sans (Google Fonts) |
+| **JavaScript** | Vanilla ES6+ with Firebase Modular SDK v10 |
+| **Deployment** | GitHub Pages (static hosting) |
+| **Print Engine** | `window.print()` + `@media print` CSS |
+| **Theme System** | CSS custom properties + `localStorage` persistence |
+| **Data Portability** | JSON export/import with schema validation |
+| **Seeding** | Automatic on empty database + manual re-seed controls |
+
+---
+
+*Built with Firebase · Tailwind CSS · Vanilla JavaScript · FontAwesome · Plus Jakarta Sans*

@@ -1,1396 +1,2337 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portfolio CMS — Admin Dashboard</title>
-  <meta name="robots" content="noindex, nofollow" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
 
   <!-- FontAwesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
   <style>
-    * { font-family: 'Plus Jakarta Sans', sans-serif; }
-
     :root {
+      --font: 'Plus Jakarta Sans', sans-serif;
       --accent: #6366f1;
-      --sidebar-w: 260px;
+      --accent-2: #8b5cf6;
+      --accent-3: #06b6d4;
+      --grad: linear-gradient(135deg, #6366f1, #8b5cf6 50%, #06b6d4);
+      --radius: 12px;
+      --transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
     }
 
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 99px; }
+    html.light {
+      --bg: #f0f2f8;
+      --surface: #ffffff;
+      --surface-2: #f4f6fc;
+      --surface-3: #eaecf4;
+      --text: #0f1117;
+      --text-2: #4b5563;
+      --text-3: #9ca3af;
+      --border: #e5e7eb;
+      --sidebar: #1a1f35;
+      --sidebar-text: #f1f5f9;
+    }
 
-    /* Admin layout */
-    .admin-root {
-      display: grid;
-      grid-template-columns: var(--sidebar-w) 1fr;
-      grid-template-rows: 56px 1fr;
+    html.dark {
+      --bg: #0c0e1a;
+      --surface: #131726;
+      --surface-2: #181d30;
+      --surface-3: #1d2238;
+      --text: #f1f5f9;
+      --text-2: #94a3b8;
+      --text-3: #64748b;
+      --border: #252d4a;
+      --sidebar: #0a0c16;
+      --sidebar-text: #f1f5f9;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    /* =============================================
+       LAYOUT
+    ============================================= */
+    .app-shell {
+      display: flex;
       height: 100vh;
       overflow: hidden;
     }
-    .admin-topbar {
-      grid-column: 1 / -1;
-      grid-row: 1;
-    }
+
+    /* LEFT SIDEBAR NAV */
     .admin-sidebar {
-      grid-column: 1;
-      grid-row: 2;
+      width: 220px;
+      flex-shrink: 0;
+      background: var(--sidebar);
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid rgba(255,255,255,0.05);
       overflow-y: auto;
     }
-    .admin-content {
-      grid-column: 2;
-      grid-row: 2;
-      overflow: hidden;
+
+    .sidebar-brand {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
     }
 
-    /* Split pane */
-    .split-pane {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      height: 100%;
-      overflow: hidden;
-    }
-    .split-left { overflow-y: auto; }
-    .split-right { overflow: hidden; position: relative; }
-    .split-right iframe { width: 100%; height: 100%; border: none; }
-
-    /* Tabs */
-    .tab-btn.active {
-      background: #6366f1;
-      color: white;
+    .sidebar-brand-logo {
+      font-size: 1.25rem;
+      font-weight: 800;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: block;
     }
 
-    /* Drag indicator */
-    .drag-handle {
-      cursor: grab;
-      color: #94a3b8;
+    .sidebar-brand-sub {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.35);
+      font-weight: 500;
+      margin-top: 2px;
     }
-    .drag-handle:active { cursor: grabbing; }
 
-    /* Toggle switch */
-    .toggle-track {
-      width: 44px; height: 24px;
-      border-radius: 99px;
-      position: relative;
-      transition: background 0.2s;
+    .sidebar-nav { padding: 12px 10px; flex: 1; }
+
+    .sidebar-nav-section {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      padding: 12px 10px 6px;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 8px;
       cursor: pointer;
+      color: rgba(255,255,255,0.55);
+      font-size: 0.82rem;
+      font-weight: 500;
+      transition: var(--transition);
+      margin-bottom: 2px;
+      user-select: none;
     }
-    .toggle-thumb {
-      position: absolute;
-      top: 3px; left: 3px;
-      width: 18px; height: 18px;
-      background: white;
+
+    .sidebar-nav-item:hover {
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.9);
+    }
+
+    .sidebar-nav-item.active {
+      background: rgba(99,102,241,0.2);
+      color: #a5b4fc;
+    }
+
+    .sidebar-nav-item i { width: 16px; text-align: center; font-size: 0.85rem; }
+
+    .sidebar-footer {
+      padding: 14px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar-status-dot {
+      width: 8px; height: 8px;
       border-radius: 50%;
-      transition: transform 0.2s;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+      flex-shrink: 0;
     }
-    .toggle-track.on { background: #6366f1; }
-    .toggle-track.off { background: #94a3b8; }
-    .toggle-track.on .toggle-thumb { transform: translateX(20px); }
 
-    /* Status badge */
-    .status-dot {
-      width: 7px; height: 7px;
+    .sidebar-status-text {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.35);
+    }
+
+    /* MAIN SPLIT CONTENT */
+    .admin-main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* LEFT PANEL - FORMS */
+    .admin-left {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .admin-topbar {
+      height: 56px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      flex-shrink: 0;
+    }
+
+    .admin-topbar-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .admin-topbar-actions { display: flex; gap: 8px; align-items: center; }
+
+    .admin-panel-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    /* RIGHT PANEL - PREVIEW */
+    .admin-right {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      background: var(--surface-2);
+      overflow: hidden;
+    }
+
+    .preview-topbar {
+      height: 56px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      flex-shrink: 0;
+    }
+
+    .preview-topbar-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .preview-topbar-title .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(34,197,94,0.12);
+      color: #22c55e;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    .preview-topbar-title .live-badge::before {
+      content: '';
+      width: 6px; height: 6px;
       border-radius: 50%;
-      background: #10b981;
-      display: inline-block;
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-
-    /* Toast */
-    #admin-toast {
-      transition: all 0.4s;
+      background: #22c55e;
+      animation: pulse 1.5s ease-in-out infinite;
     }
 
-    /* Preview overlay */
-    .preview-overlay {
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .preview-iframe-wrap {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #preview-iframe {
+      width: 100%; height: 100%;
+      border: none;
+    }
+
+    .preview-overlay-loading {
       position: absolute;
-      bottom: 12px; right: 12px;
-      display: flex; gap: 8px;
+      inset: 0;
+      background: var(--surface-2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
       z-index: 10;
     }
 
-    /* Input/Textarea styles */
-    .admin-input {
+    .preview-overlay-loading.hidden { display: none; }
+
+    /* =============================================
+       FORM COMPONENTS
+    ============================================= */
+    .panel-section {
+      display: none;
+    }
+
+    .panel-section.active { display: block; }
+
+    .form-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .form-card-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-card-title i {
+      color: var(--accent);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .form-group-admin { margin-bottom: 12px; }
+
+    .form-label-admin {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-2);
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
+    }
+
+    .form-input {
       width: 100%;
-      padding: 8px 12px;
-      background: #1e293b;
-      border: 1px solid #334155;
+      background: var(--surface-2);
+      border: 1.5px solid var(--border);
       border-radius: 8px;
-      color: #f1f5f9;
-      font-size: 13px;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      padding: 9px 13px;
+      font-family: var(--font);
+      font-size: 0.825rem;
+      color: var(--text);
+      transition: var(--transition);
       outline: none;
     }
-    .admin-input:focus {
-      border-color: #6366f1;
-      box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
-    }
-    .admin-input::placeholder { color: #475569; }
-    .admin-select {
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2394a3b8'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 8px center;
-      background-size: 16px;
-      padding-right: 32px;
+
+    .form-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
     }
 
-    /* Card */
-    .cms-card {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 12px;
-      transition: border-color 0.2s;
-    }
-    .cms-card:hover { border-color: #475569; }
+    .form-input::placeholder { color: var(--text-3); }
 
-    /* Section pills for order editor */
-    .order-pill {
-      display: flex; align-items: center; gap: 8px;
-      background: #1e293b;
-      border: 1px solid #334155;
+    textarea.form-input { resize: vertical; min-height: 80px; }
+
+    .btn-admin {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: var(--transition);
+      border: none;
+    }
+
+    .btn-primary-admin {
+      background: var(--grad);
+      color: #fff;
+    }
+
+    .btn-primary-admin:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(99,102,241,0.35);
+    }
+
+    .btn-secondary-admin {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary-admin:hover {
+      background: var(--surface-3);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-danger-admin {
+      background: rgba(239,68,68,0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239,68,68,0.2);
+    }
+
+    .btn-danger-admin:hover {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    .btn-success-admin {
+      background: rgba(34,197,94,0.1);
+      color: #22c55e;
+      border: 1px solid rgba(34,197,94,0.2);
+    }
+
+    .btn-success-admin:hover {
+      background: #22c55e;
+      color: #fff;
+    }
+
+    /* =============================================
+       DATA TABLE / LIST
+    ============================================= */
+    .data-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .data-list-item {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 10px 12px;
-      cursor: grab;
-      transition: border-color 0.2s, background 0.2s;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: var(--transition);
     }
-    .order-pill:hover { border-color: #6366f1; }
-    .order-pill.dragging { opacity: 0.5; background: #0f172a; }
 
-    /* JSON import/export */
-    .file-drop-zone {
-      border: 2px dashed #334155;
-      border-radius: 12px;
-      padding: 24px;
-      text-align: center;
-      transition: border-color 0.2s, background 0.2s;
+    .data-list-item:hover {
+      border-color: var(--accent);
+    }
+
+    .data-item-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: rgba(99,102,241,0.12);
+      color: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .data-item-info { flex: 1; min-width: 0; }
+
+    .data-item-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .data-item-sub {
+      font-size: 0.72rem;
+      color: var(--text-3);
+      margin-top: 2px;
+    }
+
+    .data-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+    .icon-btn {
+      width: 30px; height: 30px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-2);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: var(--transition);
+    }
+
+    .icon-btn:hover { background: var(--surface-3); color: var(--text); }
+    .icon-btn.del:hover { background: #ef4444; color: #fff; border-color: #ef4444; }
+    .icon-btn.edit:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* =============================================
+       LAYOUT ORDER & VISIBILITY CONTROLS
+    ============================================= */
+    .layout-item {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+      cursor: grab;
+      transition: var(--transition);
+    }
+
+    .layout-item:hover { border-color: var(--accent); }
+    .layout-item.dragging { opacity: 0.5; border-color: var(--accent); }
+
+    .drag-handle {
+      color: var(--text-3);
+      cursor: grab;
+      font-size: 0.85rem;
+      padding: 2px 4px;
+    }
+
+    .layout-item-label {
+      flex: 1;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* Toggle Switch */
+    .toggle-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 38px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0; height: 0;
+      position: absolute;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: var(--border);
+      border-radius: 999px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 14px; height: 14px;
+      left: 3px; bottom: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+
+    .toggle-switch input:checked + .toggle-slider { background: var(--accent); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+    .bg-select {
+      font-size: 0.72rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-2);
+      font-family: var(--font);
+      outline: none;
       cursor: pointer;
     }
-    .file-drop-zone:hover, .file-drop-zone.dragover {
-      border-color: #6366f1;
-      background: rgba(99,102,241,0.05);
+
+    /* =============================================
+       MODAL (EDIT FORM)
+    ============================================= */
+    .admin-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
     }
 
-    /* Responsive: collapse split pane on small screens */
-    @media (max-width: 1024px) {
-      .admin-root { grid-template-columns: 1fr; }
-      .admin-sidebar { display: none; }
-      .admin-content { grid-column: 1; }
-      .split-pane { grid-template-columns: 1fr; }
-      .split-right { display: none; }
+    .admin-modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .admin-modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 640px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      transform: scale(0.95) translateY(20px);
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    .admin-modal-overlay.active .admin-modal-box {
+      transform: scale(1) translateY(0);
+    }
+
+    .admin-modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .admin-modal-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .admin-modal-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .admin-modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    /* =============================================
+       JSON UTILITY SECTION
+    ============================================= */
+    .utility-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .utility-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .utility-card-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      margin-bottom: 12px;
+    }
+
+    .utility-card-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .utility-card-desc {
+      font-size: 0.75rem;
+      color: var(--text-2);
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    /* =============================================
+       MESSAGES SECTION
+    ============================================= */
+    .message-card {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 10px;
+      transition: var(--transition);
+    }
+
+    .message-card:hover { border-color: var(--accent); }
+
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .message-sender {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .message-date {
+      font-size: 0.7rem;
+      color: var(--text-3);
+    }
+
+    .message-email {
+      font-size: 0.75rem;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .message-subject {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-2);
+      margin-bottom: 6px;
+    }
+
+    .message-body-text {
+      font-size: 0.8rem;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+
+    .message-unread-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-left: 6px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    /* =============================================
+       TOAST
+    ============================================= */
+    #admin-toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 5000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .admin-toast {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      max-width: 320px;
+      animation: slide-in 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    }
+
+    @keyframes slide-in {
+      from { opacity: 0; transform: translateX(40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .admin-toast.success i { color: #22c55e; }
+    .admin-toast.error i { color: #ef4444; }
+    .admin-toast.info i { color: var(--accent); }
+
+    /* =============================================
+       LOADER
+    ============================================= */
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* Number badge */
+    .count-badge {
+      background: rgba(99,102,241,0.15);
+      color: var(--accent);
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 999px;
+      margin-left: 4px;
+    }
+
+    /* Section header row */
+    .section-action-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .section-action-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-2);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .drag-instructions {
+      font-size: 0.72rem;
+      color: var(--text-3);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
   </style>
 </head>
+<body>
 
-<body class="bg-slate-950 text-slate-100 overflow-hidden">
+  <!-- TOAST -->
+  <div id="admin-toast-container"></div>
 
-<!-- ===================== ADMIN LAYOUT ===================== -->
-<div class="admin-root">
-
-  <!-- TOP BAR -->
-  <header class="admin-topbar bg-slate-900 border-b border-slate-800 flex items-center justify-between px-6 z-50">
-    <div class="flex items-center gap-3">
-      <div class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center">
-        <i class="fa-solid fa-sliders text-white text-xs"></i>
+  <!-- EDIT MODAL -->
+  <div class="admin-modal-overlay" id="admin-modal">
+    <div class="admin-modal-box">
+      <div class="admin-modal-header">
+        <div class="admin-modal-title" id="admin-modal-title">Edit Entry</div>
+        <button class="icon-btn" onclick="closeAdminModal()"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <span class="font-bold text-white text-sm">Portfolio <span class="text-indigo-400">CMS</span></span>
-      <span class="text-slate-600 text-xs">|</span>
-      <span class="text-slate-400 text-xs">Admin Dashboard</span>
-    </div>
-    <div class="flex items-center gap-3">
-      <div class="flex items-center gap-2 text-xs text-slate-400">
-        <span class="status-dot"></span>
-        <span id="db-status-text">Connecting…</span>
-      </div>
-      <button id="theme-toggle-admin"
-        class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition-colors">
-        <i id="admin-theme-icon" class="fa-solid fa-moon text-slate-400 text-xs"></i>
-      </button>
-      <button onclick="reloadPreview()"
-        class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium transition-colors">
-        <i class="fa-solid fa-rotate-right text-xs"></i> Refresh Preview
-      </button>
-      <a href="index.html" target="_blank"
-        class="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition-colors">
-        <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i> View Live
-      </a>
-    </div>
-  </header>
-
-  <!-- SIDEBAR NAV -->
-  <aside class="admin-sidebar bg-slate-900 border-r border-slate-800 py-4">
-    <nav class="px-3 space-y-0.5">
-      <p class="text-xs font-bold uppercase tracking-widest text-slate-600 px-3 py-2 mt-2">Content</p>
-      <button class="sidebar-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors text-left" data-tab="layout">
-        <i class="fa-solid fa-table-columns text-indigo-400 w-4 text-center"></i> Layout & Theme
-      </button>
-      <button class="sidebar-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors text-left" data-tab="about">
-        <i class="fa-solid fa-user text-emerald-400 w-4 text-center"></i> About / Hero
-      </button>
-      <button class="sidebar-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors text-left" data-tab="experience">
-        <i class="fa-solid fa-timeline text-amber-400 w-4 text-center"></i> Experience
-      </button>
-      <button class="sidebar-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors text-left" data-tab="portfolio">
-        <i class="fa-solid fa-briefcase text-blue-400 w-4 text-center"></i> Portfolio
-      </button>
-      <button class="sidebar-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors text-left" data-tab="apps">
-        <i class="fa-solid fa-microchip text-pink-400 w-4 text-center"></i> Skills / Apps
-      </button>
-      <p class="text-xs font-bold uppercase tracking-widest text-slate-600 px-3 py-2 mt-4">Data</p>
-      <button class="sidebar-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors text-left" data-tab="messages">
-        <i class="fa-solid fa-envelope text-cyan-400 w-4 text-center"></i> Messages
-      </button>
-      <button class="sidebar-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors text-left" data-tab="data-utils">
-        <i class="fa-solid fa-database text-violet-400 w-4 text-center"></i> Data Utilities
-      </button>
-      <p class="text-xs font-bold uppercase tracking-widest text-slate-600 px-3 py-2 mt-4">Settings</p>
-      <button class="sidebar-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors text-left" data-tab="order-editor">
-        <i class="fa-solid fa-sort text-orange-400 w-4 text-center"></i> Section Order
-      </button>
-      <button class="sidebar-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors text-left" data-tab="bg-canvas">
-        <i class="fa-solid fa-palette text-rose-400 w-4 text-center"></i> Background Canvas
-      </button>
-    </nav>
-  </aside>
-
-  <!-- MAIN CONTENT — SPLIT PANE -->
-  <div class="admin-content">
-    <div class="split-pane">
-
-      <!-- LEFT: Forms Panel -->
-      <div class="split-left bg-slate-950 border-r border-slate-800">
-        <!-- Tab panels rendered here by JS -->
-        <div id="cms-panels" class="p-5 space-y-4"></div>
-      </div>
-
-      <!-- RIGHT: Live Preview -->
-      <div class="split-right bg-slate-900">
-        <iframe id="preview-frame" src="index.html" title="Live Site Preview" loading="lazy"></iframe>
-        <div class="preview-overlay">
-          <button onclick="reloadPreview()"
-            class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800/90 backdrop-blur text-slate-300 rounded-lg text-xs border border-slate-700 hover:bg-slate-700 transition-colors">
-            <i class="fa-solid fa-rotate-right text-xs"></i> Reload
-          </button>
-          <button onclick="togglePreviewDevice()"
-            class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800/90 backdrop-blur text-slate-300 rounded-lg text-xs border border-slate-700 hover:bg-slate-700 transition-colors">
-            <i id="preview-device-icon" class="fa-solid fa-mobile-screen text-xs"></i>
-          </button>
-        </div>
-        <div class="absolute top-2 left-0 right-0 flex justify-center pointer-events-none">
-          <span class="bg-slate-800/80 backdrop-blur text-slate-400 text-xs px-3 py-1 rounded-full border border-slate-700">
-            Live Preview — index.html
-          </span>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- ===================== ADMIN TOAST ===================== -->
-<div id="admin-toast" class="fixed bottom-6 right-6 z-[500] translate-y-24 opacity-0 pointer-events-none">
-  <div class="bg-indigo-600 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-medium">
-    <i id="admin-toast-icon" class="fa-solid fa-circle-check text-indigo-200"></i>
-    <span id="admin-toast-msg">Action complete.</span>
-  </div>
-</div>
-
-<!-- ===================== CONFIRM MODAL ===================== -->
-<div id="confirm-modal" class="fixed inset-0 z-[600] bg-black/70 flex items-center justify-center opacity-0 pointer-events-none transition-opacity">
-  <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
-    <div class="flex items-center gap-3 mb-4">
-      <div class="w-10 h-10 bg-red-600/20 rounded-xl flex items-center justify-center">
-        <i class="fa-solid fa-triangle-exclamation text-red-400"></i>
-      </div>
-      <div>
-        <h3 class="text-white font-bold text-sm">Confirm Action</h3>
-        <p id="confirm-modal-msg" class="text-slate-400 text-xs mt-0.5">This action cannot be undone.</p>
-      </div>
-    </div>
-    <div class="flex gap-3 justify-end">
-      <button onclick="hideConfirm()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm transition-colors">Cancel</button>
-      <button id="confirm-ok-btn" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm font-semibold transition-colors">Confirm Delete</button>
-    </div>
-  </div>
-</div>
-
-<!-- ===================== FIREBASE SDK ===================== -->
-<script type="module">
-  // ============================================================
-  // FIREBASE CONFIGURATION — REPLACE WITH YOUR OWN PROJECT KEYS
-  // ============================================================
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import {
-    getFirestore, collection, getDocs, addDoc, doc, getDoc, setDoc,
-    updateDoc, deleteDoc, writeBatch, serverTimestamp, query, orderBy
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCjDqSdEVrmbV78ObzAMUWnqzgeDVsLX0Q",
-    authDomain: "my-portfolio-54e15.firebaseapp.com",
-    projectId: "my-portfolio-54e15",
-    storageBucket: "my-portfolio-54e15.firebasestorage.app",
-    messagingSenderId: "127704809723",
-    appId: "1:127704809723:web:ea6b69141b1081cfd3705e"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db  = getFirestore(app);
-
-  // ============================================================
-  // GLOBAL ADMIN STATE
-  // ============================================================
-  window.__ADMIN = {
-    db,
-    layout: null,
-    about:  null,
-    experience: [],
-    portfolio:  [],
-    apps:       [],
-    messages:   [],
-    currentTab: 'layout'
-  };
-
-  // ============================================================
-  // BOOTSTRAP
-  // ============================================================
-  async function init() {
-    try {
-      await loadAllData();
-      document.getElementById('db-status-text').textContent = 'Firestore Connected';
-    } catch(e) {
-      document.getElementById('db-status-text').textContent = 'Offline / Config needed';
-      document.querySelector('.status-dot').style.background = '#f59e0b';
-      console.warn('Firebase error:', e.message);
-    }
-    renderActiveTab();
-  }
-
-  async function loadAllData() {
-    const [layoutSnap, aboutSnap, expSnap, portSnap, appsSnap, msgSnap] = await Promise.all([
-      getDoc(doc(db, "layout_configuration", "main")),
-      getDoc(doc(db, "about", "main")),
-      getDocs(query(collection(db, "experience"), orderBy("order"))),
-      getDocs(query(collection(db, "portfolio"),  orderBy("order"))),
-      getDocs(query(collection(db, "apps"),        orderBy("order"))),
-      getDocs(collection(db, "messages"))
-    ]);
-    window.__ADMIN.layout     = layoutSnap.exists()  ? layoutSnap.data()  : {};
-    window.__ADMIN.about      = aboutSnap.exists()   ? aboutSnap.data()   : {};
-    window.__ADMIN.experience = expSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    window.__ADMIN.portfolio  = portSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    window.__ADMIN.apps       = appsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    window.__ADMIN.messages   = msgSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-  }
-  window.__loadAllData = loadAllData;
-
-  // ============================================================
-  // LAYOUT TAB
-  // ============================================================
-  function renderLayoutTab() {
-    const l = window.__ADMIN.layout || {};
-    return `
-      <div class="space-y-4">
-        <div class="flex items-center gap-2 mb-2">
-          <i class="fa-solid fa-table-columns text-indigo-400"></i>
-          <h2 class="text-white font-bold">Layout & Site Identity</h2>
-        </div>
-
-        <div class="cms-card">
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Site Name</label>
-          <input class="admin-input" id="l-site_name" value="${l.site_name||''}" placeholder="Engr. Aglinao" />
-        </div>
-        <div class="cms-card">
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Tagline / Title</label>
-          <input class="admin-input" id="l-tagline" value="${l.tagline||''}" placeholder="Full-Stack Engineer…" />
-        </div>
-        <div class="cms-card">
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Profile Image URL</label>
-          <input class="admin-input" id="l-profile_image" value="${l.profile_image||''}" placeholder="https://…" />
-          ${l.profile_image ? `<img src="${l.profile_image}" class="w-16 h-16 rounded-xl mt-2 object-cover object-top border border-slate-700" />` : ''}
-        </div>
-        <div class="cms-card">
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Resume File URL / Path</label>
-          <input class="admin-input" id="l-resume_file" value="${l.resume_file||''}" placeholder="/resume.pdf or https://…" />
-        </div>
-        <div class="cms-card">
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Footer Bio (short)</label>
-          <textarea class="admin-input" id="l-footer_bio" rows="2" placeholder="Short bio for footer…">${l.footer_bio||''}</textarea>
-        </div>
-
-        <button onclick="saveLayout()"
-          class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
-          <i class="fa-solid fa-floppy-disk"></i> Save Layout Settings
+      <div class="admin-modal-body" id="admin-modal-body"></div>
+      <div class="admin-modal-footer">
+        <button class="btn-admin btn-secondary-admin" onclick="closeAdminModal()">Cancel</button>
+        <button class="btn-admin btn-primary-admin" id="admin-modal-save-btn" onclick="saveAdminModal()">
+          <i class="fa-solid fa-floppy-disk"></i> Save Changes
         </button>
       </div>
-    `;
-  }
+    </div>
+  </div>
 
-  window.saveLayout = async function() {
-    const l = window.__ADMIN.layout || {};
-    const updated = {
-      ...l,
-      site_name:     document.getElementById('l-site_name').value,
-      tagline:       document.getElementById('l-tagline').value,
-      profile_image: document.getElementById('l-profile_image').value,
-      resume_file:   document.getElementById('l-resume_file').value,
-      footer_bio:    document.getElementById('l-footer_bio').value
-    };
-    try {
-      await setDoc(doc(db, "layout_configuration", "main"), updated, { merge: true });
-      window.__ADMIN.layout = updated;
-      showAdminToast('Layout settings saved!', 'fa-solid fa-check');
-      reloadPreview();
-    } catch(e) { showAdminToast('Error: ' + e.message, 'fa-solid fa-xmark', true); }
-  };
+  <!-- APP SHELL -->
+  <div class="app-shell">
 
-  // ============================================================
-  // ABOUT TAB
-  // ============================================================
-  function renderAboutTab() {
-    const a = window.__ADMIN.about || {};
-    const highlightsJson = JSON.stringify(a.highlights || [], null, 2);
-    const educationJson  = JSON.stringify(a.education  || [], null, 2);
-    return `
-      <div class="space-y-4">
-        <div class="flex items-center gap-2 mb-2">
-          <i class="fa-solid fa-user text-emerald-400"></i>
-          <h2 class="text-white font-bold">About / Hero Section</h2>
-        </div>
-        <div class="cms-card">
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Hero Headline</label>
-          <input class="admin-input" id="a-headline" value="${a.headline||''}" placeholder="Engineering Elegant…" />
-        </div>
-        <div class="cms-card">
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Biography Paragraph</label>
-          <textarea class="admin-input" id="a-bio" rows="5" placeholder="Detailed bio…">${a.bio||''}</textarea>
-        </div>
-        <div class="cms-card">
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Career Objective (Resume)</label>
-          <textarea class="admin-input" id="a-objective" rows="3" placeholder="Objective statement…">${a.objective||''}</textarea>
-        </div>
-        <div class="cms-card">
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">CTA Button Label</label>
-          <input class="admin-input" id="a-cta_label" value="${a.cta_label||'Download Resume'}" />
-        </div>
-        <div class="cms-card">
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">CTA Icon Class (FontAwesome)</label>
-          <input class="admin-input" id="a-cta_icon" value="${a.cta_icon||'fa-solid fa-file-arrow-down'}" placeholder="fa-solid fa-…" />
-        </div>
-        <div class="cms-card">
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">
-            Highlights (JSON Array)
-            <span class="text-slate-600 normal-case font-normal ml-1">— [{icon, label}, …]</span>
-          </label>
-          <textarea class="admin-input font-mono text-xs" id="a-highlights" rows="8">${highlightsJson}</textarea>
-        </div>
-        <div class="cms-card">
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">
-            Education (JSON Array)
-            <span class="text-slate-600 normal-case font-normal ml-1">— [{degree, school, year, icon}, …]</span>
-          </label>
-          <textarea class="admin-input font-mono text-xs" id="a-education" rows="10">${educationJson}</textarea>
-        </div>
-        <button onclick="saveAbout()"
-          class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
-          <i class="fa-solid fa-floppy-disk"></i> Save About Content
-        </button>
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-brand">
+        <span class="sidebar-brand-logo">EA. CMS</span>
+        <div class="sidebar-brand-sub">Portfolio Admin Dashboard</div>
       </div>
-    `;
-  }
+      <nav class="sidebar-nav">
+        <div class="sidebar-nav-section">Content</div>
+        <div class="sidebar-nav-item active" data-panel="profile" onclick="switchPanel('profile', this)">
+          <i class="fa-solid fa-user"></i><span>Profile</span>
+        </div>
+        <div class="sidebar-nav-item" data-panel="experience" onclick="switchPanel('experience', this)">
+          <i class="fa-solid fa-briefcase"></i><span>Experience</span>
+        </div>
+        <div class="sidebar-nav-item" data-panel="portfolio" onclick="switchPanel('portfolio', this)">
+          <i class="fa-solid fa-layer-group"></i><span>Portfolio</span>
+        </div>
+        <div class="sidebar-nav-item" data-panel="applications" onclick="switchPanel('applications', this)">
+          <i class="fa-solid fa-microchip"></i><span>Applications</span>
+        </div>
 
-  window.saveAbout = async function() {
-    let highlights, education;
-    try {
-      highlights = JSON.parse(document.getElementById('a-highlights').value);
-      education  = JSON.parse(document.getElementById('a-education').value);
-    } catch(e) {
-      showAdminToast('Invalid JSON in Highlights or Education fields.', 'fa-solid fa-xmark', true);
-      return;
-    }
-    const updated = {
-      headline:   document.getElementById('a-headline').value,
-      bio:        document.getElementById('a-bio').value,
-      objective:  document.getElementById('a-objective').value,
-      cta_label:  document.getElementById('a-cta_label').value,
-      cta_icon:   document.getElementById('a-cta_icon').value,
-      highlights,
-      education
-    };
-    try {
-      await setDoc(doc(db, "about", "main"), updated, { merge: true });
-      window.__ADMIN.about = updated;
-      showAdminToast('About section saved!', 'fa-solid fa-check');
-      reloadPreview();
-    } catch(e) { showAdminToast('Error: ' + e.message, 'fa-solid fa-xmark', true); }
-  };
+        <div class="sidebar-nav-section">Layout</div>
+        <div class="sidebar-nav-item" data-panel="layout" onclick="switchPanel('layout', this)">
+          <i class="fa-solid fa-table-columns"></i><span>Section Order</span>
+        </div>
 
-  // ============================================================
-  // EXPERIENCE TAB
-  // ============================================================
-  function renderExperienceTab() {
-    const exps = window.__ADMIN.experience;
-    const items = exps.map((e, i) => `
-      <div class="cms-card group" id="exp-card-${e.id||i}">
-        <div class="flex items-start justify-between gap-3 mb-3">
-          <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:${e.icon_color||'#6366f1'}20">
-              <i class="${e.icon||'fa-solid fa-briefcase'}" style="color:${e.icon_color||'#6366f1'};font-size:13px;"></i>
-            </div>
-            <div>
-              <p class="text-white font-semibold text-sm">${e.role}</p>
-              <p class="text-indigo-400 text-xs">${e.organization}</p>
-            </div>
-          </div>
-          <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button onclick="openExpEditor('${e.id||i}')"
-              class="w-7 h-7 bg-slate-700 hover:bg-indigo-600 rounded-lg flex items-center justify-center transition-colors">
-              <i class="fa-solid fa-pen text-xs text-slate-300"></i>
+        <div class="sidebar-nav-section">Inbox</div>
+        <div class="sidebar-nav-item" data-panel="messages" onclick="switchPanel('messages', this)">
+          <i class="fa-solid fa-envelope"></i><span>Messages <span class="count-badge" id="msg-count">0</span></span>
+        </div>
+
+        <div class="sidebar-nav-section">Utilities</div>
+        <div class="sidebar-nav-item" data-panel="data-utility" onclick="switchPanel('data-utility', this)">
+          <i class="fa-solid fa-database"></i><span>Data Utility</span>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-status-dot" id="db-status-dot"></div>
+        <div class="sidebar-status-text" id="db-status-text">Connecting…</div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="admin-main">
+
+      <!-- LEFT PANEL -->
+      <div class="admin-left">
+        <div class="admin-topbar">
+          <div class="admin-topbar-title" id="panel-title">Profile Settings</div>
+          <div class="admin-topbar-actions">
+            <button class="btn-admin btn-secondary-admin" onclick="refreshPreview()" title="Refresh Preview">
+              <i class="fa-solid fa-rotate-right"></i>
             </button>
-            <button onclick="deleteEntry('experience','${e.id||i}','exp-card-${e.id||i}')"
-              class="w-7 h-7 bg-slate-700 hover:bg-red-600 rounded-lg flex items-center justify-center transition-colors">
-              <i class="fa-solid fa-trash text-xs text-slate-300"></i>
+            <button class="btn-admin btn-secondary-admin" id="theme-toggle-btn" onclick="toggleAdminTheme()">
+              <i class="fa-solid fa-moon" id="admin-theme-icon"></i>
             </button>
           </div>
         </div>
-        <div class="text-slate-400 text-xs">${e.period} · ${e.location||''}</div>
-        <div id="exp-editor-${e.id||i}" class="hidden mt-4 space-y-3 border-t border-slate-700 pt-4">
-          <div><label class="text-xs text-slate-400 mb-1 block">Role Title</label><input class="admin-input" data-field="role" value="${e.role||''}" /></div>
-          <div><label class="text-xs text-slate-400 mb-1 block">Organization</label><input class="admin-input" data-field="organization" value="${e.organization||''}" /></div>
-          <div><label class="text-xs text-slate-400 mb-1 block">Period</label><input class="admin-input" data-field="period" value="${e.period||''}" /></div>
-          <div><label class="text-xs text-slate-400 mb-1 block">Location</label><input class="admin-input" data-field="location" value="${e.location||''}" /></div>
-          <div><label class="text-xs text-slate-400 mb-1 block">Icon Class</label><input class="admin-input" data-field="icon" value="${e.icon||'fa-solid fa-briefcase'}" /></div>
-          <div><label class="text-xs text-slate-400 mb-1 block">Icon Color (hex)</label><input class="admin-input" data-field="icon_color" value="${e.icon_color||'#6366f1'}" /></div>
-          <div><label class="text-xs text-slate-400 mb-1 block">Description</label><textarea class="admin-input" data-field="description" rows="3">${e.description||''}</textarea></div>
-          <div><label class="text-xs text-slate-400 mb-1 block">Tags (comma separated)</label><input class="admin-input" data-field="tags_csv" value="${(e.tags||[]).join(', ')}" /></div>
-          <div><label class="text-xs text-slate-400 mb-1 block">Order</label><input class="admin-input" type="number" data-field="order" value="${e.order||1}" /></div>
-          <div class="flex gap-2">
-            <button onclick="saveExpEntry('${e.id||i}',${i})"
-              class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition-colors">
-              <i class="fa-solid fa-floppy-disk mr-1"></i> Save
-            </button>
-            <button onclick="document.getElementById('exp-editor-${e.id||i}').classList.add('hidden')"
-              class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg text-xs transition-colors">Cancel</button>
-          </div>
-        </div>
-      </div>
-    `).join('');
 
-    return `
-      <div class="space-y-4">
-        <div class="flex items-center justify-between mb-2">
-          <div class="flex items-center gap-2">
-            <i class="fa-solid fa-timeline text-amber-400"></i>
-            <h2 class="text-white font-bold">Experience Timeline</h2>
-          </div>
-          <button onclick="openAddEntry('experience')"
-            class="flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-semibold transition-colors">
-            <i class="fa-solid fa-plus text-xs"></i> Add Entry
-          </button>
-        </div>
-        ${items || '<p class="text-slate-500 text-sm text-center py-8">No experience entries found.</p>'}
-      </div>
-    `;
-  }
+        <div class="admin-panel-content" id="panel-content">
 
-  window.openExpEditor = function(id) {
-    const editor = document.getElementById(`exp-editor-${id}`);
-    if (editor) editor.classList.toggle('hidden');
-  };
-
-  window.saveExpEntry = async function(id, index) {
-    const editor = document.getElementById(`exp-editor-${id}`);
-    const fields  = editor.querySelectorAll('[data-field]');
-    const updates = {};
-    fields.forEach(f => {
-      const key = f.dataset.field;
-      if (key === 'tags_csv') {
-        updates['tags'] = f.value.split(',').map(t => t.trim()).filter(Boolean);
-      } else if (key === 'order') {
-        updates[key] = parseInt(f.value) || index + 1;
-      } else {
-        updates[key] = f.value;
-      }
-    });
-    try {
-      await updateDoc(doc(db, "experience", id), updates);
-      const i = window.__ADMIN.experience.findIndex(e => e.id === id);
-      if (i >= 0) window.__ADMIN.experience[i] = { ...window.__ADMIN.experience[i], ...updates };
-      showAdminToast('Experience entry updated!', 'fa-solid fa-check');
-      reloadPreview();
-      editor.classList.add('hidden');
-    } catch(e) { showAdminToast('Error: ' + e.message, 'fa-solid fa-xmark', true); }
-  };
-
-  // ============================================================
-  // PORTFOLIO TAB
-  // ============================================================
-  function renderPortfolioTab() {
-    const items = window.__ADMIN.portfolio;
-    const typeIconMap = { Site:'fa-solid fa-globe', URL:'fa-solid fa-link', Image:'fa-solid fa-image', PPT:'fa-solid fa-file-powerpoint', PDF:'fa-solid fa-file-pdf' };
-
-    const cards = items.map((item, i) => `
-      <div class="cms-card group" id="port-card-${item.id||i}">
-        <div class="flex items-start justify-between gap-3 mb-2">
-          <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:${item.color||'#6366f1'}20">
-              <i class="${item.icon||'fa-solid fa-folder'}" style="color:${item.color||'#6366f1'};font-size:13px;"></i>
+          <!-- ============================================
+               PROFILE PANEL
+          ============================================= -->
+          <div class="panel-section active" id="panel-profile">
+            <div class="form-card">
+              <div class="form-card-title"><i class="fa-solid fa-user"></i> Personal Information</div>
+              <div class="form-row">
+                <div class="form-group-admin">
+                  <label class="form-label-admin">Full Name</label>
+                  <input class="form-input" type="text" id="p-name" placeholder="Engr. Alex Aglinao" />
+                </div>
+                <div class="form-group-admin">
+                  <label class="form-label-admin">Professional Title</label>
+                  <input class="form-input" type="text" id="p-title" placeholder="Full-Stack Engineer" />
+                </div>
+              </div>
+              <div class="form-group-admin">
+                <label class="form-label-admin">Tagline / Status</label>
+                <input class="form-input" type="text" id="p-tagline" placeholder="Open to Work · Remote & On-Site" />
+              </div>
+              <div class="form-group-admin">
+                <label class="form-label-admin">Biography</label>
+                <textarea class="form-input" id="p-bio" rows="4" placeholder="Your professional biography…"></textarea>
+              </div>
             </div>
-            <div>
-              <p class="text-white font-semibold text-sm">${item.title}</p>
-              <div class="flex items-center gap-1.5">
-                <i class="${typeIconMap[item.type]||'fa-solid fa-file'} text-xs text-slate-400"></i>
-                <span class="text-slate-400 text-xs">${item.type} · ${item.category||''}</span>
+
+            <div class="form-card">
+              <div class="form-card-title"><i class="fa-solid fa-address-book"></i> Contact Details</div>
+              <div class="form-row">
+                <div class="form-group-admin">
+                  <label class="form-label-admin">Email</label>
+                  <input class="form-input" type="email" id="p-email" placeholder="you@email.com" />
+                </div>
+                <div class="form-group-admin">
+                  <label class="form-label-admin">Phone</label>
+                  <input class="form-input" type="text" id="p-phone" placeholder="+63 917 000 0000" />
+                </div>
+              </div>
+              <div class="form-group-admin">
+                <label class="form-label-admin">Location</label>
+                <input class="form-input" type="text" id="p-location" placeholder="Manila, Philippines" />
+              </div>
+              <div class="form-group-admin">
+                <label class="form-label-admin">Profile Image URL</label>
+                <input class="form-input" type="url" id="p-image" placeholder="https://…" />
+              </div>
+              <div class="form-group-admin">
+                <label class="form-label-admin">Resume Download URL</label>
+                <input class="form-input" type="url" id="p-resume" placeholder="https://… (PDF link)" />
+              </div>
+            </div>
+
+            <div class="form-card">
+              <div class="form-card-title"><i class="fa-solid fa-share-nodes"></i> Social Links</div>
+              <div class="form-group-admin">
+                <label class="form-label-admin">GitHub URL</label>
+                <input class="form-input" type="url" id="p-github" placeholder="https://github.com/username" />
+              </div>
+              <div class="form-group-admin">
+                <label class="form-label-admin">LinkedIn URL</label>
+                <input class="form-input" type="url" id="p-linkedin" placeholder="https://linkedin.com/in/username" />
+              </div>
+              <div class="form-group-admin">
+                <label class="form-label-admin">Twitter/X URL</label>
+                <input class="form-input" type="url" id="p-twitter" placeholder="https://twitter.com/username" />
+              </div>
+            </div>
+
+            <div class="form-card">
+              <div class="form-card-title"><i class="fa-solid fa-chart-bar"></i> Hero Statistics</div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+                <div class="form-group-admin">
+                  <label class="form-label-admin">Years Exp.</label>
+                  <input class="form-input" type="text" id="p-years" placeholder="7+" />
+                </div>
+                <div class="form-group-admin">
+                  <label class="form-label-admin">Projects</label>
+                  <input class="form-input" type="text" id="p-projects" placeholder="80+" />
+                </div>
+                <div class="form-group-admin">
+                  <label class="form-label-admin">Clients</label>
+                  <input class="form-input" type="text" id="p-clients" placeholder="40+" />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-card">
+              <div class="form-card-title"><i class="fa-solid fa-graduation-cap"></i> Education</div>
+              <div id="education-list"></div>
+              <button class="btn-admin btn-secondary-admin" style="margin-top:8px" onclick="addEducationField()">
+                <i class="fa-solid fa-plus"></i> Add Education
+              </button>
+            </div>
+
+            <div class="form-card">
+              <div class="form-card-title"><i class="fa-solid fa-list-check"></i> Key Qualifications</div>
+              <div id="quals-list"></div>
+              <button class="btn-admin btn-secondary-admin" style="margin-top:8px" onclick="addQualField()">
+                <i class="fa-solid fa-plus"></i> Add Qualification
+              </button>
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;gap:10px;padding-bottom:20px">
+              <button class="btn-admin btn-secondary-admin" onclick="loadProfileData()">
+                <i class="fa-solid fa-rotate-left"></i> Reset
+              </button>
+              <button class="btn-admin btn-primary-admin" onclick="saveProfileData()">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Save Profile
+              </button>
+            </div>
+          </div>
+
+          <!-- ============================================
+               EXPERIENCE PANEL
+          ============================================= -->
+          <div class="panel-section" id="panel-experience">
+            <div class="section-action-row">
+              <div class="section-action-title">Work Experiences</div>
+              <button class="btn-admin btn-primary-admin" onclick="openNewExperienceModal()">
+                <i class="fa-solid fa-plus"></i> Add Entry
+              </button>
+            </div>
+            <div class="data-list" id="experience-list-admin">
+              <div style="text-align:center;padding:40px;color:var(--text-3)">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem;margin-bottom:8px;display:block"></i>
+                Loading…
               </div>
             </div>
           </div>
-          <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button onclick="openPortEditor('${item.id||i}')"
-              class="w-7 h-7 bg-slate-700 hover:bg-indigo-600 rounded-lg flex items-center justify-center transition-colors">
-              <i class="fa-solid fa-pen text-xs text-slate-300"></i>
+
+          <!-- ============================================
+               PORTFOLIO PANEL
+          ============================================= -->
+          <div class="panel-section" id="panel-portfolio">
+            <div class="section-action-row">
+              <div class="section-action-title">Portfolio Items</div>
+              <button class="btn-admin btn-primary-admin" onclick="openNewPortfolioModal()">
+                <i class="fa-solid fa-plus"></i> Add Item
+              </button>
+            </div>
+            <div class="data-list" id="portfolio-list-admin">
+              <div style="text-align:center;padding:40px;color:var(--text-3)">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem;margin-bottom:8px;display:block"></i>
+                Loading…
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================
+               APPLICATIONS PANEL
+          ============================================= -->
+          <div class="panel-section" id="panel-applications">
+            <div class="section-action-row">
+              <div class="section-action-title">Skills & Applications</div>
+              <button class="btn-admin btn-primary-admin" onclick="openNewApplicationModal()">
+                <i class="fa-solid fa-plus"></i> Add Skill
+              </button>
+            </div>
+            <div class="data-list" id="applications-list-admin">
+              <div style="text-align:center;padding:40px;color:var(--text-3)">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem;margin-bottom:8px;display:block"></i>
+                Loading…
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================
+               LAYOUT PANEL
+          ============================================= -->
+          <div class="panel-section" id="panel-layout">
+            <div class="form-card">
+              <div class="form-card-title"><i class="fa-solid fa-arrows-up-down"></i> Section Order & Visibility</div>
+              <div class="drag-instructions">
+                <i class="fa-solid fa-grip-vertical"></i>
+                Drag to reorder sections. Toggle visibility with the switch.
+              </div>
+              <div id="layout-order-list"></div>
+              <div style="margin-top:16px">
+                <button class="btn-admin btn-primary-admin" onclick="saveLayoutConfig()">
+                  <i class="fa-solid fa-cloud-arrow-up"></i> Save Layout
+                </button>
+              </div>
+            </div>
+
+            <div class="form-card">
+              <div class="form-card-title"><i class="fa-solid fa-fill-drip"></i> Section Background Canvas</div>
+              <p style="font-size:0.75rem;color:var(--text-2);margin-bottom:14px">Independently control the background visual weight of each section.</p>
+              <div id="bg-controls-list"></div>
+              <div style="margin-top:16px">
+                <button class="btn-admin btn-primary-admin" onclick="saveLayoutConfig()">
+                  <i class="fa-solid fa-cloud-arrow-up"></i> Apply Backgrounds
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================
+               MESSAGES PANEL
+          ============================================= -->
+          <div class="panel-section" id="panel-messages">
+            <div class="section-action-row">
+              <div class="section-action-title">Contact Messages</div>
+              <button class="btn-admin btn-danger-admin" onclick="clearAllMessages()">
+                <i class="fa-solid fa-trash"></i> Clear All
+              </button>
+            </div>
+            <div id="messages-list-admin">
+              <div style="text-align:center;padding:40px;color:var(--text-3)">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem;margin-bottom:8px;display:block"></i>
+                Loading messages…
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================
+               DATA UTILITY PANEL
+          ============================================= -->
+          <div class="panel-section" id="panel-data-utility">
+            <div class="form-card">
+              <div class="form-card-title"><i class="fa-solid fa-boxes-packing"></i> JSON Portability Hub</div>
+              <p style="font-size:0.75rem;color:var(--text-2);margin-bottom:16px;line-height:1.6">
+                Export your complete Firestore configuration to a portable JSON file, or import a previously exported JSON to completely replace the active database state.
+              </p>
+              <div class="utility-grid">
+                <div class="utility-card">
+                  <div class="utility-card-icon" style="background:rgba(34,197,94,0.1);color:#22c55e">
+                    <i class="fa-solid fa-cloud-arrow-down"></i>
+                  </div>
+                  <div class="utility-card-title">Export Database</div>
+                  <div class="utility-card-desc">
+                    Packages all Firestore collections (Profile, Layout, Experience, Portfolio, Applications) into a single structured JSON file download.
+                  </div>
+                  <button class="btn-admin btn-success-admin" onclick="exportDatabase()" style="width:100%;justify-content:center">
+                    <i class="fa-solid fa-cloud-arrow-down"></i> Export JSON
+                  </button>
+                </div>
+                <div class="utility-card">
+                  <div class="utility-card-icon" style="background:rgba(99,102,241,0.1);color:var(--accent)">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                  </div>
+                  <div class="utility-card-title">Import JSON File</div>
+                  <div class="utility-card-desc">
+                    Upload a valid portfolio JSON export file. The system will validate the schema, clear the targeted collections, and run a complete batch-write replacement.
+                  </div>
+                  <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="handleImportFile(this)" />
+                  <button class="btn-admin btn-primary-admin" onclick="document.getElementById('import-file-input').click()" style="width:100%;justify-content:center">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Import JSON
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-card">
+              <div class="form-card-title"><i class="fa-solid fa-seedling"></i> Database Seeding</div>
+              <p style="font-size:0.75rem;color:var(--text-2);margin-bottom:14px;line-height:1.6">
+                Manually re-run the automatic seeding routine. This will only write seed data for collections that are currently empty.
+              </p>
+              <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <button class="btn-admin btn-secondary-admin" onclick="manualReseed()">
+                  <i class="fa-solid fa-rotate"></i> Re-seed Empty Collections
+                </button>
+                <button class="btn-admin btn-danger-admin" onclick="confirmNukeDatabase()">
+                  <i class="fa-solid fa-bomb"></i> Nuke & Reseed All
+                </button>
+              </div>
+            </div>
+
+            <div class="form-card">
+              <div class="form-card-title"><i class="fa-solid fa-code"></i> JSON Preview</div>
+              <p style="font-size:0.75rem;color:var(--text-2);margin-bottom:12px">Snapshot of the currently exported JSON structure.</p>
+              <pre id="json-preview" style="background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:0.72rem;color:var(--text-2);overflow:auto;max-height:280px;white-space:pre-wrap;font-family:monospace">Click "Export JSON" to generate preview…</pre>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL - PREVIEW -->
+      <div class="admin-right">
+        <div class="preview-topbar">
+          <div class="preview-topbar-title">
+            Live Preview
+            <span class="live-badge">LIVE</span>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn-admin btn-secondary-admin" onclick="refreshPreview()" title="Refresh Preview">
+              <i class="fa-solid fa-rotate-right"></i> Refresh
             </button>
-            <button onclick="deleteEntry('portfolio','${item.id||i}','port-card-${item.id||i}')"
-              class="w-7 h-7 bg-slate-700 hover:bg-red-600 rounded-lg flex items-center justify-center transition-colors">
-              <i class="fa-solid fa-trash text-xs text-slate-300"></i>
-            </button>
+            <a href="index.html" target="_blank" class="btn-admin btn-secondary-admin">
+              <i class="fa-solid fa-external-link"></i> Open
+            </a>
           </div>
         </div>
-        <div id="port-editor-${item.id||i}" class="hidden mt-4 space-y-3 border-t border-slate-700 pt-4">
-          <div><label class="text-xs text-slate-400 mb-1 block">Title</label><input class="admin-input" data-pfield="title" value="${item.title||''}" /></div>
-          <div><label class="text-xs text-slate-400 mb-1 block">Subtitle</label><input class="admin-input" data-pfield="subtitle" value="${item.subtitle||''}" /></div>
-          <div><label class="text-xs text-slate-400 mb-1 block">Type</label>
-            <select class="admin-input admin-select" data-pfield="type">
-              ${['Site','URL','Image','PPT','PDF'].map(t=>`<option value="${t}" ${item.type===t?'selected':''}>${t}</option>`).join('')}
+        <div class="preview-iframe-wrap">
+          <div class="preview-overlay-loading" id="preview-loading">
+            <div class="spinner"></div>
+            <div style="font-size:0.8rem;color:var(--text-3)">Loading preview…</div>
+          </div>
+          <iframe id="preview-iframe" src="index.html" title="Portfolio Live Preview" onload="onPreviewLoaded()"></iframe>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================
+       FIREBASE SDK
+  ============================================= -->
+  <script type="module">
+    // =============================================
+    // FIREBASE CONFIGURATION — REPLACE WITH YOUR OWN
+    // =============================================
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore,
+      collection, doc,
+      getDocs, getDoc, setDoc, addDoc, deleteDoc, updateDoc,
+      query, orderBy, onSnapshot, writeBatch, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // =============================================
+    // SEED DATA (mirror of index.html seed data)
+    // =============================================
+    const SEED_DATA = {
+      profile: {
+        name: "Engr. Alex Aglinao",
+        title: "Full-Stack Engineer & UI/UX Architect",
+        tagline: "Open to Work · Available for Remote & On-Site Roles",
+        bio: "A highly driven Full-Stack Engineer and UI/UX Architect with over 7 years of hands-on experience designing and shipping scalable, user-centric digital products. Specialized in bridging the gap between exceptional engineering precision and thoughtful product design — from deep-dive React and Node.js system architecture to polished Figma-to-code implementations that convert. Passionate about building things that matter, solving complex problems with elegant solutions, and leaving every codebase better than I found it.",
+        email: "alex.aglinao@email.com",
+        phone: "+63 917 123 4567",
+        location: "Manila, Philippines",
+        profileImageUrl: "",
+        resumeUrl: "#",
+        github: "https://github.com/engraglinao",
+        linkedin: "https://linkedin.com/in/aglinao",
+        twitter: "https://twitter.com/aglinao",
+        yearsExperience: "7+",
+        projectsDelivered: "80+",
+        clientsSatisfied: "40+",
+        education: [
+          { degree: "B.S. Computer Engineering", school: "Polytechnic University of the Philippines", year: "2017" },
+          { degree: "Certified UX Professional", school: "Nielsen Norman Group", year: "2021" }
+        ],
+        qualifications: [
+          "Full-Stack web & mobile application architecture",
+          "Figma to production UI/UX systems design",
+          "Firebase, Supabase & AWS cloud infrastructure",
+          "Agile project delivery with cross-functional teams",
+          "API design, REST & GraphQL integration",
+          "Performance optimization & Core Web Vitals"
+        ]
+      },
+      layout: [
+        { id: "hero", sectionId: "hero", label: "Hero / About Me", order: 1, visible: true, bgVariant: "default" },
+        { id: "experience", sectionId: "experience", label: "Experience Timeline", order: 2, visible: true, bgVariant: "alt" },
+        { id: "portfolio", sectionId: "portfolio", label: "Portfolio Carousel", order: 3, visible: true, bgVariant: "gradient" },
+        { id: "applications", sectionId: "applications", label: "Application Matrix", order: 4, visible: true, bgVariant: "alt" },
+        { id: "contact", sectionId: "contact", label: "Contact Layer", order: 5, visible: true, bgVariant: "default" }
+      ],
+      experience: [
+        { role: "Lead Full-Stack Engineer", organization: "TechNova Solutions Inc.", dateRange: "Jan 2022 — Present", description: "Architect and lead a cross-functional engineering team of 8 in delivering enterprise SaaS platforms for FinTech clients across APAC. Spearheaded a complete React 18 + Node.js microservices migration reducing API latency by 62%. Own the technical roadmap, sprint planning, and code review culture.", icon: "fa-solid fa-code", iconColor: "#6366f1", order: 1, tags: ["React", "Node.js", "AWS", "PostgreSQL", "Docker"] },
+        { role: "Senior UI/UX Engineer", organization: "Creativo Digital Studio", dateRange: "Mar 2020 — Dec 2021", description: "Led end-to-end product design for 12 client-facing digital products using Figma, converting high-fidelity prototypes into pixel-perfect React codebases. Introduced a component-driven design system adopted across 5 product lines, reducing design-to-dev handoff time by 45%.", icon: "fa-solid fa-palette", iconColor: "#8b5cf6", order: 2, tags: ["Figma", "React", "Tailwind CSS", "Storybook", "Design Systems"] },
+        { role: "Software Developer", organization: "GovTech Philippines", dateRange: "Jun 2018 — Feb 2020", description: "Developed and maintained government digital service portals serving 2M+ monthly citizens. Worked closely with policy teams to translate compliance requirements into accessible, mobile-first web applications.", icon: "fa-solid fa-landmark", iconColor: "#06b6d4", order: 3, tags: ["Angular", "Laravel", "MySQL", "REST APIs", "Accessibility"] },
+        { role: "Junior Web Developer", organization: "Startup Launchpad PH", dateRange: "Aug 2017 — May 2018", description: "Built responsive web applications and landing pages for 15+ early-stage startups as part of an accelerator program. Gained rapid exposure to full product lifecycle from ideation to MVP launch.", icon: "fa-solid fa-rocket", iconColor: "#f59e0b", order: 4, tags: ["HTML/CSS", "JavaScript", "WordPress", "PHP", "Bootstrap"] }
+      ],
+      portfolio: [
+        { title: "FinFlow — FinTech Dashboard", description: "A comprehensive financial analytics dashboard featuring real-time stock tracking, portfolio management, and AI-powered spending insights.", type: "Site", url: "https://example.com", thumbnailUrl: "https://images.pexels.com/photos/34212896/pexels-photo-34212896.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=600", tags: ["React", "D3.js", "Firebase", "Node.js"], order: 1 },
+        { title: "MediConnect — Telehealth Platform", description: "An end-to-end telehealth platform enabling 50,000+ patients to book, consult, and manage prescriptions digitally.", type: "Site", url: "https://example.com", thumbnailUrl: "https://images.pexels.com/photos/5473892/pexels-photo-5473892.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=600", tags: ["Next.js", "WebRTC", "PostgreSQL", "Tailwind"], order: 2 },
+        { title: "GovServe 2.0 — Citizen Portal", description: "A complete UX overhaul of a legacy government citizen services portal. Improved task completion rate by 78%.", type: "PPT", url: "https://example.com", thumbnailUrl: "https://images.pexels.com/photos/943096/pexels-photo-943096.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=600", tags: ["Figma", "UX Research", "Accessibility", "Angular"], order: 3 },
+        { title: "NovaBrand Design System", description: "A scalable, token-based design system library spanning 200+ components built in Figma and React Storybook.", type: "PDF", url: "https://example.com", thumbnailUrl: "", tags: ["Figma", "Storybook", "React", "Design Tokens"], order: 4 },
+        { title: "UrbanTrack — Smart City IoT", description: "A real-time urban mobility dashboard integrating IoT sensor data to visualize traffic patterns across Metro Manila.", type: "Site", url: "https://example.com", thumbnailUrl: "", tags: ["Vue.js", "MQTT", "WebSockets", "MapboxGL"], order: 5 },
+        { title: "LearnLab — EdTech LMS", description: "A full-featured learning management system with live video classrooms, quiz engines, and certificate generation.", type: "Site", url: "https://example.com", thumbnailUrl: "", tags: ["React", "Firebase", "Stripe", "FFmpeg"], order: 6 }
+      ],
+      applications: [
+        { name: "React / Next.js", category: "Frontend", icon: "fa-brands fa-react", iconBg: "#0ea5e9", proficiency: 95, order: 1 },
+        { name: "Vue.js / Nuxt", category: "Frontend", icon: "fa-brands fa-vuejs", iconBg: "#22c55e", proficiency: 85, order: 2 },
+        { name: "TypeScript", category: "Language", icon: "fa-brands fa-js", iconBg: "#3b82f6", proficiency: 90, order: 3 },
+        { name: "Node.js", category: "Backend", icon: "fa-brands fa-node-js", iconBg: "#16a34a", proficiency: 88, order: 4 },
+        { name: "Python / Django", category: "Backend", icon: "fa-brands fa-python", iconBg: "#f59e0b", proficiency: 75, order: 5 },
+        { name: "Firebase / Firestore", category: "Cloud", icon: "fa-solid fa-fire", iconBg: "#f97316", proficiency: 92, order: 6 },
+        { name: "AWS Services", category: "Cloud", icon: "fa-brands fa-aws", iconBg: "#f59e0b", proficiency: 78, order: 7 },
+        { name: "Docker / K8s", category: "DevOps", icon: "fa-brands fa-docker", iconBg: "#0ea5e9", proficiency: 72, order: 8 },
+        { name: "Figma", category: "Design", icon: "fa-brands fa-figma", iconBg: "#a855f7", proficiency: 94, order: 9 },
+        { name: "PostgreSQL", category: "Database", icon: "fa-solid fa-database", iconBg: "#6366f1", proficiency: 83, order: 10 },
+        { name: "Tailwind CSS", category: "Styling", icon: "fa-solid fa-wand-magic-sparkles", iconBg: "#06b6d4", proficiency: 97, order: 11 },
+        { name: "Git / GitHub", category: "Tools", icon: "fa-brands fa-github", iconBg: "#374151", proficiency: 96, order: 12 }
+      ]
+    };
+
+    // =============================================
+    // GLOBAL STATE
+    // =============================================
+    let state = {
+      profile: {},
+      layout: [],
+      experience: [],
+      portfolio: [],
+      applications: [],
+      messages: []
+    };
+
+    let currentModalType = null;
+    let currentModalDocId = null;
+
+    // =============================================
+    // FIREBASE STATUS
+    // =============================================
+    async function checkFirebaseConnection() {
+      try {
+        await getDocs(collection(db, 'profile'));
+        document.getElementById('db-status-dot').style.background = '#22c55e';
+        document.getElementById('db-status-dot').style.boxShadow = '0 0 8px #22c55e';
+        document.getElementById('db-status-text').textContent = 'Firestore Connected';
+      } catch (e) {
+        document.getElementById('db-status-dot').style.background = '#ef4444';
+        document.getElementById('db-status-dot').style.boxShadow = '0 0 8px #ef4444';
+        document.getElementById('db-status-text').textContent = 'Connection Error';
+      }
+    }
+
+    // =============================================
+    // DATA LOADING
+    // =============================================
+    async function loadAllData() {
+      try {
+        const [profileSnap, layoutSnap, expSnap, portSnap, appsSnap, msgsSnap] = await Promise.all([
+          getDoc(doc(db, 'profile', 'main')),
+          getDocs(collection(db, 'layout_configuration')),
+          getDocs(query(collection(db, 'experience'), orderBy('order', 'asc'))),
+          getDocs(query(collection(db, 'portfolio'), orderBy('order', 'asc'))),
+          getDocs(query(collection(db, 'applications'), orderBy('order', 'asc'))),
+          getDocs(collection(db, 'messages'))
+        ]);
+
+        state.profile = profileSnap.exists() ? profileSnap.data() : {};
+
+        state.layout = [];
+        layoutSnap.forEach(d => state.layout.push({ id: d.id, ...d.data() }));
+        state.layout.sort((a, b) => a.order - b.order);
+
+        state.experience = [];
+        expSnap.forEach(d => state.experience.push({ id: d.id, ...d.data() }));
+
+        state.portfolio = [];
+        portSnap.forEach(d => state.portfolio.push({ id: d.id, ...d.data() }));
+
+        state.applications = [];
+        appsSnap.forEach(d => state.applications.push({ id: d.id, ...d.data() }));
+
+        state.messages = [];
+        msgsSnap.forEach(d => state.messages.push({ id: d.id, ...d.data() }));
+        state.messages.sort((a, b) => {
+          const ta = a.timestamp?.seconds || 0;
+          const tb = b.timestamp?.seconds || 0;
+          return tb - ta;
+        });
+
+        renderAllPanels();
+      } catch (err) {
+        adminToast('Failed to load data: ' + err.message, 'error');
+        console.error(err);
+      }
+    }
+
+    // =============================================
+    // RENDER PANELS
+    // =============================================
+    function renderAllPanels() {
+      renderProfilePanel();
+      renderExperienceList();
+      renderPortfolioList();
+      renderApplicationsList();
+      renderLayoutPanel();
+      renderMessagesPanel();
+    }
+
+    // --- PROFILE PANEL ---
+    function renderProfilePanel() {
+      const p = state.profile;
+      if (!p) return;
+      setValue('p-name', p.name);
+      setValue('p-title', p.title);
+      setValue('p-tagline', p.tagline);
+      setValue('p-bio', p.bio);
+      setValue('p-email', p.email);
+      setValue('p-phone', p.phone);
+      setValue('p-location', p.location);
+      setValue('p-image', p.profileImageUrl);
+      setValue('p-resume', p.resumeUrl);
+      setValue('p-github', p.github);
+      setValue('p-linkedin', p.linkedin);
+      setValue('p-twitter', p.twitter);
+      setValue('p-years', p.yearsExperience);
+      setValue('p-projects', p.projectsDelivered);
+      setValue('p-clients', p.clientsSatisfied);
+      renderEducationFields(p.education || []);
+      renderQualFields(p.qualifications || []);
+    }
+
+    function renderEducationFields(edus) {
+      const container = document.getElementById('education-list');
+      container.innerHTML = '';
+      edus.forEach((edu, i) => {
+        container.appendChild(createEducationRow(edu, i));
+      });
+    }
+
+    function createEducationRow(edu, i) {
+      const wrapper = document.createElement('div');
+      wrapper.style.cssText = 'display:flex;gap:8px;margin-bottom:10px;align-items:flex-start';
+      wrapper.dataset.index = i;
+      wrapper.innerHTML = `
+        <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <input class="form-input" placeholder="Degree / Certificate" value="${edu.degree || ''}" data-edu-field="degree" data-edu-index="${i}" onchange="updateEduField(this)" />
+          <input class="form-input" placeholder="Year" value="${edu.year || ''}" style="max-width:90px" data-edu-field="year" data-edu-index="${i}" onchange="updateEduField(this)" />
+          <input class="form-input" placeholder="School / Institution" value="${edu.school || ''}" style="grid-column:1/-1" data-edu-field="school" data-edu-index="${i}" onchange="updateEduField(this)" />
+        </div>
+        <button class="icon-btn del" onclick="removeEducation(${i})" style="margin-top:2px"><i class="fa-solid fa-trash"></i></button>
+      `;
+      return wrapper;
+    }
+
+    function renderQualFields(quals) {
+      const container = document.getElementById('quals-list');
+      container.innerHTML = '';
+      quals.forEach((q, i) => {
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;gap:8px;margin-bottom:8px';
+        row.innerHTML = `
+          <input class="form-input" placeholder="Qualification statement" value="${q}" data-qual-index="${i}" onchange="updateQualField(this)" style="flex:1" />
+          <button class="icon-btn del" onclick="removeQual(${i})"><i class="fa-solid fa-trash"></i></button>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    window.addEducationField = function() {
+      if (!state.profile.education) state.profile.education = [];
+      state.profile.education.push({ degree: '', school: '', year: '' });
+      renderEducationFields(state.profile.education);
+    };
+
+    window.removeEducation = function(i) {
+      state.profile.education.splice(i, 1);
+      renderEducationFields(state.profile.education);
+    };
+
+    window.updateEduField = function(el) {
+      const index = parseInt(el.dataset.eduIndex);
+      const field = el.dataset.eduField;
+      if (!state.profile.education) state.profile.education = [];
+      if (!state.profile.education[index]) state.profile.education[index] = {};
+      state.profile.education[index][field] = el.value;
+    };
+
+    window.addQualField = function() {
+      if (!state.profile.qualifications) state.profile.qualifications = [];
+      state.profile.qualifications.push('');
+      renderQualFields(state.profile.qualifications);
+    };
+
+    window.removeQual = function(i) {
+      state.profile.qualifications.splice(i, 1);
+      renderQualFields(state.profile.qualifications);
+    };
+
+    window.updateQualField = function(el) {
+      const index = parseInt(el.dataset.qualIndex);
+      if (!state.profile.qualifications) state.profile.qualifications = [];
+      state.profile.qualifications[index] = el.value;
+    };
+
+    window.saveProfileData = async function() {
+      const eduFields = document.querySelectorAll('[data-edu-field="degree"]');
+      const educations = Array.from(eduFields).map(el => {
+        const i = el.dataset.eduIndex;
+        return {
+          degree: document.querySelector(`[data-edu-field="degree"][data-edu-index="${i}"]`)?.value || '',
+          school: document.querySelector(`[data-edu-field="school"][data-edu-index="${i}"]`)?.value || '',
+          year: document.querySelector(`[data-edu-field="year"][data-edu-index="${i}"]`)?.value || ''
+        };
+      });
+
+      const qualFields = document.querySelectorAll('[data-qual-index]');
+      const qualifications = Array.from(qualFields).map(el => el.value).filter(Boolean);
+
+      const profileData = {
+        name: getValue('p-name'),
+        title: getValue('p-title'),
+        tagline: getValue('p-tagline'),
+        bio: getValue('p-bio'),
+        email: getValue('p-email'),
+        phone: getValue('p-phone'),
+        location: getValue('p-location'),
+        profileImageUrl: getValue('p-image'),
+        resumeUrl: getValue('p-resume'),
+        github: getValue('p-github'),
+        linkedin: getValue('p-linkedin'),
+        twitter: getValue('p-twitter'),
+        yearsExperience: getValue('p-years'),
+        projectsDelivered: getValue('p-projects'),
+        clientsSatisfied: getValue('p-clients'),
+        education: educations,
+        qualifications
+      };
+
+      try {
+        await setDoc(doc(db, 'profile', 'main'), profileData);
+        state.profile = profileData;
+        adminToast('Profile saved successfully!', 'success');
+        refreshPreview();
+      } catch (err) {
+        adminToast('Error saving profile: ' + err.message, 'error');
+      }
+    };
+
+    window.loadProfileData = function() {
+      renderProfilePanel();
+      adminToast('Profile data reset from database.', 'info');
+    };
+
+    // --- EXPERIENCE LIST ---
+    function renderExperienceList() {
+      const container = document.getElementById('experience-list-admin');
+      container.innerHTML = '';
+      if (!state.experience.length) {
+        container.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-3);font-size:0.8rem">No experience entries. Click "Add Entry" to begin.</div>';
+        return;
+      }
+      state.experience.forEach(exp => {
+        const item = document.createElement('div');
+        item.className = 'data-list-item';
+        item.innerHTML = `
+          <div class="data-item-icon"><i class="${exp.icon || 'fa-solid fa-briefcase'}" style="color:${exp.iconColor || 'var(--accent)'}"></i></div>
+          <div class="data-item-info">
+            <div class="data-item-title">${exp.role || 'Untitled Role'}</div>
+            <div class="data-item-sub">${exp.organization || ''} · ${exp.dateRange || ''}</div>
+          </div>
+          <div class="data-item-actions">
+            <button class="icon-btn edit" onclick="openEditExperienceModal('${exp.id}')" title="Edit"><i class="fa-solid fa-pen"></i></button>
+            <button class="icon-btn del" onclick="deleteDocument('experience', '${exp.id}', 'experience')" title="Delete"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    // --- PORTFOLIO LIST ---
+    function renderPortfolioList() {
+      const container = document.getElementById('portfolio-list-admin');
+      container.innerHTML = '';
+      if (!state.portfolio.length) {
+        container.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-3);font-size:0.8rem">No portfolio items. Click "Add Item" to begin.</div>';
+        return;
+      }
+      const typeColors = { PPT: '#ef4444', PDF: '#f59e0b', Site: '#06b6d4', URL: '#3b82f6', Image: '#22c55e' };
+      state.portfolio.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'data-list-item';
+        el.innerHTML = `
+          <div class="data-item-icon" style="background:${(typeColors[item.type] || '#6366f1')}18;color:${typeColors[item.type] || '#6366f1'}">
+            <i class="fa-solid fa-folder-open"></i>
+          </div>
+          <div class="data-item-info">
+            <div class="data-item-title">${item.title || 'Untitled Project'}</div>
+            <div class="data-item-sub">Type: ${item.type || 'N/A'} · Order: ${item.order || 0}</div>
+          </div>
+          <div class="data-item-actions">
+            <button class="icon-btn edit" onclick="openEditPortfolioModal('${item.id}')" title="Edit"><i class="fa-solid fa-pen"></i></button>
+            <button class="icon-btn del" onclick="deleteDocument('portfolio', '${item.id}', 'portfolio')" title="Delete"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        `;
+        container.appendChild(el);
+      });
+    }
+
+    // --- APPLICATIONS LIST ---
+    function renderApplicationsList() {
+      const container = document.getElementById('applications-list-admin');
+      container.innerHTML = '';
+      if (!state.applications.length) {
+        container.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-3);font-size:0.8rem">No applications. Click "Add Skill" to begin.</div>';
+        return;
+      }
+      state.applications.forEach(app => {
+        const el = document.createElement('div');
+        el.className = 'data-list-item';
+        el.innerHTML = `
+          <div class="data-item-icon" style="background:${app.iconBg || '#6366f1'}22;color:${app.iconBg || '#6366f1'}">
+            <i class="${app.icon || 'fa-solid fa-code'}"></i>
+          </div>
+          <div class="data-item-info">
+            <div class="data-item-title">${app.name || 'Unnamed Skill'}</div>
+            <div class="data-item-sub">${app.category || ''} · ${app.proficiency || 0}% proficiency</div>
+          </div>
+          <div class="data-item-actions">
+            <button class="icon-btn edit" onclick="openEditApplicationModal('${app.id}')" title="Edit"><i class="fa-solid fa-pen"></i></button>
+            <button class="icon-btn del" onclick="deleteDocument('applications', '${app.id}', 'applications')" title="Delete"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        `;
+        container.appendChild(el);
+      });
+    }
+
+    // --- LAYOUT PANEL ---
+    function renderLayoutPanel() {
+      const layoutList = document.getElementById('layout-order-list');
+      const bgList = document.getElementById('bg-controls-list');
+      layoutList.innerHTML = '';
+      bgList.innerHTML = '';
+
+      state.layout.forEach((section, i) => {
+        // Order item
+        const item = document.createElement('div');
+        item.className = 'layout-item';
+        item.dataset.id = section.id;
+        item.draggable = true;
+        item.innerHTML = `
+          <div class="drag-handle"><i class="fa-solid fa-grip-vertical"></i></div>
+          <div class="layout-item-label">${section.label || section.sectionId}</div>
+          <div class="toggle-wrap">
+            <span style="font-size:0.72rem;color:var(--text-3)">Visible</span>
+            <label class="toggle-switch">
+              <input type="checkbox" ${section.visible !== false ? 'checked' : ''} data-section-id="${section.id}" onchange="onLayoutVisibilityChange(this)" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        `;
+        initDragDrop(item, layoutList);
+        layoutList.appendChild(item);
+
+        // BG control
+        const bgOptions = ['default', 'alt', 'gradient', 'dark'];
+        const bgRow = document.createElement('div');
+        bgRow.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)';
+        bgRow.innerHTML = `
+          <div style="font-size:0.8rem;font-weight:600;color:var(--text)">${section.label || section.sectionId}</div>
+          <select class="bg-select" data-section-id="${section.id}" onchange="onBgChange(this)">
+            ${bgOptions.map(opt => `<option value="${opt}" ${section.bgVariant === opt ? 'selected' : ''}>${opt.charAt(0).toUpperCase() + opt.slice(1)}</option>`).join('')}
+          </select>
+        `;
+        bgList.appendChild(bgRow);
+      });
+    }
+
+    window.onLayoutVisibilityChange = function(el) {
+      const sectionId = el.dataset.sectionId;
+      const idx = state.layout.findIndex(s => s.id === sectionId);
+      if (idx > -1) state.layout[idx].visible = el.checked;
+    };
+
+    window.onBgChange = function(el) {
+      const sectionId = el.dataset.sectionId;
+      const idx = state.layout.findIndex(s => s.id === sectionId);
+      if (idx > -1) state.layout[idx].bgVariant = el.value;
+    };
+
+    window.saveLayoutConfig = async function() {
+      try {
+        // Collect order from DOM
+        const items = document.querySelectorAll('#layout-order-list .layout-item');
+        items.forEach((item, i) => {
+          const id = item.dataset.id;
+          const idx = state.layout.findIndex(s => s.id === id);
+          if (idx > -1) state.layout[idx].order = i + 1;
+        });
+
+        const batch = writeBatch(db);
+        state.layout.forEach(section => {
+          batch.set(doc(db, 'layout_configuration', section.id), section);
+        });
+        await batch.commit();
+        adminToast('Layout configuration saved!', 'success');
+        refreshPreview();
+      } catch (err) {
+        adminToast('Error saving layout: ' + err.message, 'error');
+      }
+    };
+
+    // Drag and drop for layout
+    function initDragDrop(item, container) {
+      item.addEventListener('dragstart', () => item.classList.add('dragging'));
+      item.addEventListener('dragend', () => item.classList.remove('dragging'));
+      item.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        const dragging = container.querySelector('.dragging');
+        if (!dragging || dragging === item) return;
+        const rect = item.getBoundingClientRect();
+        const midY = rect.top + rect.height / 2;
+        if (e.clientY < midY) container.insertBefore(dragging, item);
+        else container.insertBefore(dragging, item.nextSibling);
+      });
+    }
+
+    // --- MESSAGES PANEL ---
+    function renderMessagesPanel() {
+      const container = document.getElementById('messages-list-admin');
+      const countBadge = document.getElementById('msg-count');
+      countBadge.textContent = state.messages.length;
+      container.innerHTML = '';
+
+      if (!state.messages.length) {
+        container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-3);font-size:0.8rem"><i class="fa-solid fa-inbox" style="font-size:2rem;margin-bottom:8px;display:block"></i>No messages yet.</div>';
+        return;
+      }
+
+      state.messages.forEach(msg => {
+        const ts = msg.timestamp?.seconds
+          ? new Date(msg.timestamp.seconds * 1000).toLocaleString()
+          : 'Unknown date';
+        const card = document.createElement('div');
+        card.className = 'message-card';
+        card.innerHTML = `
+          <div class="message-header">
+            <div class="message-sender">${msg.name || 'Anonymous'}${!msg.read ? '<span class="message-unread-dot"></span>' : ''}</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="message-date">${ts}</div>
+              <button class="icon-btn del" onclick="deleteMessage('${msg.id}')" title="Delete"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+          <div class="message-email">${msg.email || ''}</div>
+          ${msg.subject ? `<div class="message-subject">Re: ${msg.subject}</div>` : ''}
+          <div class="message-body-text">${msg.message || ''}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    window.deleteMessage = async function(id) {
+      try {
+        await deleteDoc(doc(db, 'messages', id));
+        state.messages = state.messages.filter(m => m.id !== id);
+        renderMessagesPanel();
+        adminToast('Message deleted.', 'info');
+      } catch (err) {
+        adminToast('Error deleting message: ' + err.message, 'error');
+      }
+    };
+
+    window.clearAllMessages = async function() {
+      if (!confirm('Delete ALL messages? This cannot be undone.')) return;
+      try {
+        const batch = writeBatch(db);
+        state.messages.forEach(m => batch.delete(doc(db, 'messages', m.id)));
+        await batch.commit();
+        state.messages = [];
+        renderMessagesPanel();
+        adminToast('All messages cleared.', 'success');
+      } catch (err) {
+        adminToast('Error: ' + err.message, 'error');
+      }
+    };
+
+    // =============================================
+    // DELETE DOCUMENT (generic)
+    // =============================================
+    window.deleteDocument = async function(collectionName, docId, stateKey) {
+      if (!confirm(`Delete this ${collectionName.slice(0, -1)} entry permanently?`)) return;
+      try {
+        await deleteDoc(doc(db, collectionName, docId));
+        state[stateKey] = state[stateKey].filter(d => d.id !== docId);
+        if (stateKey === 'experience') renderExperienceList();
+        if (stateKey === 'portfolio') renderPortfolioList();
+        if (stateKey === 'applications') renderApplicationsList();
+        adminToast('Entry deleted successfully.', 'success');
+        refreshPreview();
+      } catch (err) {
+        adminToast('Error deleting: ' + err.message, 'error');
+      }
+    };
+
+    // =============================================
+    // EDIT MODALS
+    // =============================================
+    function buildExperienceForm(data = {}) {
+      return `
+        <div class="form-row">
+          <div class="form-group-admin">
+            <label class="form-label-admin">Job Title / Role *</label>
+            <input class="form-input" id="ef-role" value="${data.role || ''}" placeholder="Lead Engineer" />
+          </div>
+          <div class="form-group-admin">
+            <label class="form-label-admin">Organization *</label>
+            <input class="form-input" id="ef-org" value="${data.organization || ''}" placeholder="Company Name" />
+          </div>
+        </div>
+        <div class="form-group-admin">
+          <label class="form-label-admin">Date Range</label>
+          <input class="form-input" id="ef-date" value="${data.dateRange || ''}" placeholder="Jan 2022 — Present" />
+        </div>
+        <div class="form-group-admin">
+          <label class="form-label-admin">Description</label>
+          <textarea class="form-input" id="ef-desc" rows="4" placeholder="Role description…">${data.description || ''}</textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group-admin">
+            <label class="form-label-admin">FontAwesome Icon Class</label>
+            <input class="form-input" id="ef-icon" value="${data.icon || 'fa-solid fa-briefcase'}" placeholder="fa-solid fa-code" />
+          </div>
+          <div class="form-group-admin">
+            <label class="form-label-admin">Icon Color (hex)</label>
+            <input class="form-input" type="color" id="ef-color" value="${data.iconColor || '#6366f1'}" style="height:41px;padding:4px" />
+          </div>
+        </div>
+        <div class="form-group-admin">
+          <label class="form-label-admin">Tags (comma separated)</label>
+          <input class="form-input" id="ef-tags" value="${(data.tags || []).join(', ')}" placeholder="React, Node.js, AWS" />
+        </div>
+        <div class="form-group-admin">
+          <label class="form-label-admin">Display Order</label>
+          <input class="form-input" type="number" id="ef-order" value="${data.order || 1}" placeholder="1" />
+        </div>
+      `;
+    }
+
+    function buildPortfolioForm(data = {}) {
+      return `
+        <div class="form-group-admin">
+          <label class="form-label-admin">Project Title *</label>
+          <input class="form-input" id="pf-title" value="${data.title || ''}" placeholder="Project Name" />
+        </div>
+        <div class="form-group-admin">
+          <label class="form-label-admin">Description</label>
+          <textarea class="form-input" id="pf-desc" rows="3" placeholder="Project description…">${data.description || ''}</textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group-admin">
+            <label class="form-label-admin">Type</label>
+            <select class="form-input" id="pf-type">
+              ${['Site','URL','PDF','PPT','Image'].map(t => `<option value="${t}" ${data.type === t ? 'selected' : ''}>${t}</option>`).join('')}
             </select>
           </div>
-          <div><label class="text-xs text-slate-400 mb-1 block">Category</label><input class="admin-input" data-pfield="category" value="${item.category||''}" /></div>
-          <div><label class="text-xs text-slate-400 mb-1 block">Thumbnail URL</label><input class="admin-input" data-pfield="thumbnail" value="${item.thumbnail||''}" /></div>
-          <div><label class="text-xs text-slate-400 mb-1 block">Link URL (optional)</label><input class="admin-input" data-pfield="url" value="${item.url||''}" /></div>
-          <div><label class="text-xs text-slate-400 mb-1 block">Description</label><textarea class="admin-input" data-pfield="description" rows="3">${item.description||''}</textarea></div>
-          <div><label class="text-xs text-slate-400 mb-1 block">Tags (comma separated)</label><input class="admin-input" data-pfield="tags_csv" value="${(item.tags||[]).join(', ')}" /></div>
-          <div><label class="text-xs text-slate-400 mb-1 block">Icon Class</label><input class="admin-input" data-pfield="icon" value="${item.icon||'fa-solid fa-folder'}" /></div>
-          <div><label class="text-xs text-slate-400 mb-1 block">Color (hex)</label><input class="admin-input" data-pfield="color" value="${item.color||'#6366f1'}" /></div>
-          <div><label class="text-xs text-slate-400 mb-1 block">Order</label><input class="admin-input" type="number" data-pfield="order" value="${item.order||1}" /></div>
-          <div class="flex gap-2">
-            <button onclick="savePortEntry('${item.id||i}')"
-              class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition-colors">
-              <i class="fa-solid fa-floppy-disk mr-1"></i> Save
-            </button>
-            <button onclick="document.getElementById('port-editor-${item.id||i}').classList.add('hidden')"
-              class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg text-xs transition-colors">Cancel</button>
+          <div class="form-group-admin">
+            <label class="form-label-admin">Display Order</label>
+            <input class="form-input" type="number" id="pf-order" value="${data.order || 1}" />
           </div>
         </div>
-      </div>
-    `).join('');
-
-    return `
-      <div class="space-y-4">
-        <div class="flex items-center justify-between mb-2">
-          <div class="flex items-center gap-2">
-            <i class="fa-solid fa-briefcase text-blue-400"></i>
-            <h2 class="text-white font-bold">Portfolio Items</h2>
-          </div>
-          <button onclick="openAddEntry('portfolio')"
-            class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold transition-colors">
-            <i class="fa-solid fa-plus text-xs"></i> Add Item
-          </button>
+        <div class="form-group-admin">
+          <label class="form-label-admin">URL / Link *</label>
+          <input class="form-input" type="url" id="pf-url" value="${data.url || ''}" placeholder="https://…" />
         </div>
-        ${cards || '<p class="text-slate-500 text-sm text-center py-8">No portfolio items found.</p>'}
-      </div>
-    `;
-  }
-
-  window.openPortEditor = function(id) {
-    document.getElementById(`port-editor-${id}`)?.classList.toggle('hidden');
-  };
-
-  window.savePortEntry = async function(id) {
-    const editor = document.getElementById(`port-editor-${id}`);
-    const fields  = editor.querySelectorAll('[data-pfield]');
-    const updates = {};
-    fields.forEach(f => {
-      const key = f.dataset.pfield;
-      if (key === 'tags_csv') {
-        updates['tags'] = f.value.split(',').map(t => t.trim()).filter(Boolean);
-      } else if (key === 'order') {
-        updates[key] = parseInt(f.value) || 1;
-      } else {
-        updates[key] = f.value;
-      }
-    });
-    try {
-      await updateDoc(doc(db, "portfolio", id), updates);
-      const i = window.__ADMIN.portfolio.findIndex(p => p.id === id);
-      if (i >= 0) window.__ADMIN.portfolio[i] = { ...window.__ADMIN.portfolio[i], ...updates };
-      showAdminToast('Portfolio item updated!', 'fa-solid fa-check');
-      reloadPreview();
-      editor.classList.add('hidden');
-    } catch(e) { showAdminToast('Error: ' + e.message, 'fa-solid fa-xmark', true); }
-  };
-
-  // ============================================================
-  // APPS TAB
-  // ============================================================
-  function renderAppsTab() {
-    const apps = window.__ADMIN.apps;
-    const cards = apps.map((app, i) => `
-      <div class="cms-card group flex items-center gap-3" id="app-card-${app.id||i}">
-        <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:${app.color||'#6366f1'}20">
-          <i class="${app.icon||'fa-solid fa-code'}" style="color:${app.color||'#6366f1'};font-size:14px;"></i>
+        <div class="form-group-admin">
+          <label class="form-label-admin">Thumbnail Image URL</label>
+          <input class="form-input" type="url" id="pf-thumb" value="${data.thumbnailUrl || ''}" placeholder="https://… (optional)" />
         </div>
-        <div class="flex-1 min-w-0">
-          <p class="text-white font-semibold text-sm truncate">${app.name}</p>
-          <p class="text-slate-400 text-xs">${app.category} · ${app.proficiency}</p>
+        <div class="form-group-admin">
+          <label class="form-label-admin">Tags (comma separated)</label>
+          <input class="form-input" id="pf-tags" value="${(data.tags || []).join(', ')}" placeholder="React, Firebase" />
         </div>
-        <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-          <button onclick="openAppEditor('${app.id||i}','${i}')"
-            class="w-7 h-7 bg-slate-700 hover:bg-indigo-600 rounded-lg flex items-center justify-center transition-colors">
-            <i class="fa-solid fa-pen text-xs text-slate-300"></i>
-          </button>
-          <button onclick="deleteEntry('apps','${app.id||i}','app-card-${app.id||i}')"
-            class="w-7 h-7 bg-slate-700 hover:bg-red-600 rounded-lg flex items-center justify-center transition-colors">
-            <i class="fa-solid fa-trash text-xs text-slate-300"></i>
-          </button>
-        </div>
-      </div>
-      <div id="app-editor-${app.id||i}" class="hidden mb-3 border border-slate-700 rounded-xl p-4 space-y-3 bg-slate-900">
-        <div><label class="text-xs text-slate-400 mb-1 block">App Name</label><input class="admin-input" data-afield="name" value="${app.name||''}" /></div>
-        <div><label class="text-xs text-slate-400 mb-1 block">Category</label><input class="admin-input" data-afield="category" value="${app.category||''}" /></div>
-        <div><label class="text-xs text-slate-400 mb-1 block">Icon Class</label><input class="admin-input" data-afield="icon" value="${app.icon||'fa-solid fa-code'}" /></div>
-        <div><label class="text-xs text-slate-400 mb-1 block">Color (hex)</label><input class="admin-input" data-afield="color" value="${app.color||'#6366f1'}" /></div>
-        <div><label class="text-xs text-slate-400 mb-1 block">Proficiency</label>
-          <select class="admin-input admin-select" data-afield="proficiency">
-            ${['Expert','Advanced','Proficient','Familiar'].map(p => `<option value="${p}" ${app.proficiency===p?'selected':''}>${p}</option>`).join('')}
-          </select>
-        </div>
-        <div><label class="text-xs text-slate-400 mb-1 block">Order</label><input class="admin-input" type="number" data-afield="order" value="${app.order||1}" /></div>
-        <div class="flex gap-2">
-          <button onclick="saveAppEntry('${app.id||i}')"
-            class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition-colors">
-            <i class="fa-solid fa-floppy-disk mr-1"></i> Save
-          </button>
-          <button onclick="document.getElementById('app-editor-${app.id||i}').classList.add('hidden')"
-            class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg text-xs transition-colors">Cancel</button>
-        </div>
-      </div>
-    `).join('');
-
-    return `
-      <div class="space-y-1">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-2">
-            <i class="fa-solid fa-microchip text-pink-400"></i>
-            <h2 class="text-white font-bold">Skills & Applications</h2>
-          </div>
-          <button onclick="openAddEntry('apps')"
-            class="flex items-center gap-1.5 px-3 py-1.5 bg-pink-600 hover:bg-pink-500 text-white rounded-lg text-xs font-semibold transition-colors">
-            <i class="fa-solid fa-plus text-xs"></i> Add Skill
-          </button>
-        </div>
-        ${cards || '<p class="text-slate-500 text-sm text-center py-8">No skills found.</p>'}
-      </div>
-    `;
-  }
-
-  window.openAppEditor = function(id) {
-    document.getElementById(`app-editor-${id}`)?.classList.toggle('hidden');
-  };
-
-  window.saveAppEntry = async function(id) {
-    const editor = document.getElementById(`app-editor-${id}`);
-    const fields  = editor.querySelectorAll('[data-afield]');
-    const updates = {};
-    fields.forEach(f => {
-      const key = f.dataset.afield;
-      updates[key] = key === 'order' ? (parseInt(f.value) || 1) : f.value;
-    });
-    try {
-      await updateDoc(doc(db, "apps", id), updates);
-      const i = window.__ADMIN.apps.findIndex(a => a.id === id);
-      if (i >= 0) window.__ADMIN.apps[i] = { ...window.__ADMIN.apps[i], ...updates };
-      showAdminToast('Skill updated!', 'fa-solid fa-check');
-      reloadPreview();
-      editor.classList.add('hidden');
-    } catch(e) { showAdminToast('Error: ' + e.message, 'fa-solid fa-xmark', true); }
-  };
-
-  // ============================================================
-  // ADD NEW ENTRY MODAL (generic)
-  // ============================================================
-  const addTemplates = {
-    experience: { role:'New Role', organization:'Organization', period:'Jan 2025 — Present', location:'Manila, PH', icon:'fa-solid fa-briefcase', icon_color:'#6366f1', description:'Description here.', tags:[], order:99 },
-    portfolio:  { title:'New Project', subtitle:'Category', type:'Site', category:'Enterprise', thumbnail:'', url:'', description:'Description.', tags:[], icon:'fa-solid fa-folder', color:'#6366f1', order:99 },
-    apps:       { name:'New Tool', category:'Development', icon:'fa-solid fa-code', color:'#6366f1', proficiency:'Proficient', order:99 }
-  };
-
-  window.openAddEntry = function(collectionName) {
-    const template = addTemplates[collectionName];
-    if (!template) return;
-    const colRef = collection(db, collectionName);
-    addDoc(colRef, template).then(async () => {
-      showAdminToast('New entry added! Expand to edit.', 'fa-solid fa-plus');
-      await loadAllData();
-      renderActiveTab();
-      reloadPreview();
-    }).catch(e => showAdminToast('Error: ' + e.message, 'fa-solid fa-xmark', true));
-  };
-
-  // ============================================================
-  // DELETE ENTRY
-  // ============================================================
-  window.deleteEntry = function(collectionName, id, cardId) {
-    showConfirm(`Delete this entry from ${collectionName}? This cannot be undone.`, async () => {
-      try {
-        await deleteDoc(doc(db, collectionName, id));
-        const el = document.getElementById(cardId);
-        if (el) { el.style.opacity = '0'; el.style.transform = 'scale(0.9)'; setTimeout(() => el.remove(), 300); }
-        if (collectionName === 'experience') window.__ADMIN.experience = window.__ADMIN.experience.filter(e => e.id !== id);
-        if (collectionName === 'portfolio')  window.__ADMIN.portfolio  = window.__ADMIN.portfolio.filter(p => p.id !== id);
-        if (collectionName === 'apps')       window.__ADMIN.apps       = window.__ADMIN.apps.filter(a => a.id !== id);
-        showAdminToast('Entry deleted.', 'fa-solid fa-trash');
-        reloadPreview();
-      } catch(e) { showAdminToast('Error: ' + e.message, 'fa-solid fa-xmark', true); }
-    });
-  };
-
-  // ============================================================
-  // MESSAGES TAB
-  // ============================================================
-  function renderMessagesTab() {
-    const msgs = window.__ADMIN.messages;
-    const items = msgs.map((m, i) => `
-      <div class="cms-card group" id="msg-card-${m.id||i}">
-        <div class="flex items-start justify-between gap-3">
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="text-white font-semibold text-sm">${m.name||'—'}</span>
-              <span class="text-xs bg-indigo-900/50 text-indigo-300 rounded px-2 py-0.5">${m.email||''}</span>
-            </div>
-            <p class="text-slate-300 text-sm leading-relaxed">${m.message||''}</p>
-            <p class="text-slate-600 text-xs mt-2">
-              ${m.created_at ? new Date(m.created_at.seconds*1000).toLocaleString() : 'Unknown date'}
-            </p>
-          </div>
-          <button onclick="deleteEntry('messages','${m.id||i}','msg-card-${m.id||i}')"
-            class="w-7 h-7 bg-slate-700 hover:bg-red-600 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all flex-shrink-0">
-            <i class="fa-solid fa-trash text-xs text-slate-300"></i>
-          </button>
-        </div>
-      </div>
-    `).join('');
-
-    return `
-      <div class="space-y-4">
-        <div class="flex items-center justify-between mb-2">
-          <div class="flex items-center gap-2">
-            <i class="fa-solid fa-envelope text-cyan-400"></i>
-            <h2 class="text-white font-bold">Contact Messages</h2>
-            <span class="bg-cyan-900/40 text-cyan-400 text-xs rounded-full px-2 py-0.5">${msgs.length}</span>
-          </div>
-          <button onclick="refreshMessages()" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition-colors">
-            <i class="fa-solid fa-rotate-right text-xs"></i> Refresh
-          </button>
-        </div>
-        ${items || '<div class="text-center py-12"><i class="fa-solid fa-inbox text-slate-600 text-4xl mb-3"></i><p class="text-slate-500 text-sm">No messages yet.</p></div>'}
-      </div>
-    `;
-  }
-
-  window.refreshMessages = async function() {
-    const snap = await getDocs(collection(db, "messages"));
-    window.__ADMIN.messages = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    renderActiveTab();
-  };
-
-  // ============================================================
-  // SECTION ORDER EDITOR
-  // ============================================================
-  function renderOrderEditorTab() {
-    const sections = (window.__ADMIN.layout?.sections || []).slice().sort((a,b) => a.order - b.order);
-    const bgOptions = ['neutral','accent-subtle','hero-gradient','slate-dark','indigo-subtle'];
-
-    const pills = sections.map((s, i) => `
-      <div class="order-pill" draggable="true" data-sec-id="${s.id}" id="sec-pill-${s.id}"
-        ondragstart="onSecDragStart(event,'${s.id}')"
-        ondragover="onSecDragOver(event)"
-        ondrop="onSecDrop(event,'${s.id}')">
-        <div class="drag-handle">
-          <i class="fa-solid fa-grip-vertical text-xs"></i>
-        </div>
-        <div class="flex-1 min-w-0">
-          <p class="text-white text-sm font-semibold">${s.label}</p>
-          <p class="text-slate-500 text-xs">#${s.id}</p>
-        </div>
-        <div class="toggle-track ${s.visible !== false ? 'on' : 'off'}" onclick="toggleSectionVisibility('${s.id}')" title="Toggle Visibility">
-          <div class="toggle-thumb"></div>
-        </div>
-        <span class="text-xs text-slate-500 w-5 text-center">${i+1}</span>
-      </div>
-    `).join('');
-
-    return `
-      <div class="space-y-4">
-        <div class="flex items-center gap-2 mb-2">
-          <i class="fa-solid fa-sort text-orange-400"></i>
-          <h2 class="text-white font-bold">Section Order & Visibility</h2>
-        </div>
-        <p class="text-slate-400 text-xs">Drag pills to reorder. Toggle switch to show/hide sections. Changes auto-save to Firestore.</p>
-        <div id="section-order-list" class="space-y-2">${pills}</div>
-        <button onclick="saveOrderConfig()"
-          class="w-full py-2.5 bg-orange-600 hover:bg-orange-500 text-white font-semibold rounded-xl text-sm transition-colors flex items-center justify-center gap-2 mt-2">
-          <i class="fa-solid fa-floppy-disk"></i> Save Section Order
-        </button>
-      </div>
-    `;
-  }
-
-  let draggedSecId = null;
-  window.onSecDragStart = function(e, id) {
-    draggedSecId = id;
-    document.getElementById(`sec-pill-${id}`)?.classList.add('dragging');
-  };
-  window.onSecDragOver = function(e) { e.preventDefault(); };
-  window.onSecDrop = function(e, targetId) {
-    e.preventDefault();
-    if (!draggedSecId || draggedSecId === targetId) return;
-    const list = document.getElementById('section-order-list');
-    const draggedEl = document.getElementById(`sec-pill-${draggedSecId}`);
-    const targetEl  = document.getElementById(`sec-pill-${targetId}`);
-    draggedEl?.classList.remove('dragging');
-    if (draggedEl && targetEl) {
-      list.insertBefore(draggedEl, targetEl);
+      `;
     }
-    draggedSecId = null;
-  };
 
-  window.toggleSectionVisibility = function(id) {
-    const layout = window.__ADMIN.layout;
-    const sec = layout.sections?.find(s => s.id === id);
-    if (!sec) return;
-    sec.visible = !sec.visible;
-    const pill = document.getElementById(`sec-pill-${id}`);
-    const track = pill?.querySelector('.toggle-track');
-    if (track) {
-      track.classList.toggle('on', sec.visible);
-      track.classList.toggle('off', !sec.visible);
+    function buildApplicationForm(data = {}) {
+      return `
+        <div class="form-row">
+          <div class="form-group-admin">
+            <label class="form-label-admin">Skill / App Name *</label>
+            <input class="form-input" id="af-name" value="${data.name || ''}" placeholder="React / Next.js" />
+          </div>
+          <div class="form-group-admin">
+            <label class="form-label-admin">Category</label>
+            <input class="form-input" id="af-cat" value="${data.category || ''}" placeholder="Frontend, Backend, Design…" />
+          </div>
+        </div>
+        <div class="form-group-admin">
+          <label class="form-label-admin">FontAwesome Icon Class</label>
+          <input class="form-input" id="af-icon" value="${data.icon || 'fa-solid fa-code'}" placeholder="fa-brands fa-react" />
+        </div>
+        <div class="form-row">
+          <div class="form-group-admin">
+            <label class="form-label-admin">Icon Background Color</label>
+            <input class="form-input" type="color" id="af-color" value="${data.iconBg || '#6366f1'}" style="height:41px;padding:4px" />
+          </div>
+          <div class="form-group-admin">
+            <label class="form-label-admin">Proficiency % (0-100)</label>
+            <input class="form-input" type="number" id="af-prof" value="${data.proficiency || 80}" min="0" max="100" />
+          </div>
+        </div>
+        <div class="form-group-admin">
+          <label class="form-label-admin">Display Order</label>
+          <input class="form-input" type="number" id="af-order" value="${data.order || 1}" />
+        </div>
+      `;
     }
-  };
 
-  window.saveOrderConfig = async function() {
-    const layout = window.__ADMIN.layout;
-    const pills  = document.querySelectorAll('#section-order-list .order-pill');
-    const secIds = Array.from(pills).map(p => p.dataset.secId);
-    layout.sections = layout.sections?.map(s => ({
-      ...s,
-      order: secIds.indexOf(s.id) + 1
-    })) || [];
-    try {
-      await setDoc(doc(db, "layout_configuration", "main"), layout, { merge: true });
-      showAdminToast('Section order saved!', 'fa-solid fa-check');
-      reloadPreview();
-      renderActiveTab();
-    } catch(e) { showAdminToast('Error: ' + e.message, 'fa-solid fa-xmark', true); }
-  };
-
-  // ============================================================
-  // BACKGROUND CANVAS TAB
-  // ============================================================
-  function renderBgCanvasTab() {
-    const sections = window.__ADMIN.layout?.sections || [];
-    const bgOptions = [
-      { value: 'neutral',       label: 'Neutral White/Dark' },
-      { value: 'accent-subtle', label: 'Subtle Accent Tint' },
-      { value: 'hero-gradient', label: 'Dark Gradient (Hero)' },
-      { value: 'slate-dark',    label: 'Deep Slate Dark' },
-      { value: 'indigo-subtle', label: 'Indigo Wash' }
-    ];
-
-    const rows = sections.map(s => `
-      <div class="cms-card flex items-center gap-4">
-        <div class="flex-1">
-          <p class="text-white font-semibold text-sm">${s.label}</p>
-          <p class="text-slate-500 text-xs">#${s.id}</p>
-        </div>
-        <select class="admin-input admin-select w-48" id="bg-${s.id}" data-sec="${s.id}">
-          ${bgOptions.map(opt => `<option value="${opt.value}" ${s.bg===opt.value?'selected':''}>${opt.label}</option>`).join('')}
-        </select>
-      </div>
-    `).join('');
-
-    return `
-      <div class="space-y-4">
-        <div class="flex items-center gap-2 mb-2">
-          <i class="fa-solid fa-palette text-rose-400"></i>
-          <h2 class="text-white font-bold">Background Canvas Matrix</h2>
-        </div>
-        <p class="text-slate-400 text-xs">Set independent background styles for each section. Changes save to Firestore and refresh the preview.</p>
-        <div class="space-y-2">${rows}</div>
-        <button onclick="saveBgCanvas()"
-          class="w-full py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-semibold rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
-          <i class="fa-solid fa-paintbrush"></i> Apply Background Settings
-        </button>
-      </div>
-    `;
-  }
-
-  window.saveBgCanvas = async function() {
-    const layout = window.__ADMIN.layout;
-    document.querySelectorAll('[data-sec]').forEach(sel => {
-      const sec = layout.sections?.find(s => s.id === sel.dataset.sec);
-      if (sec) sec.bg = sel.value;
-    });
-    try {
-      await setDoc(doc(db, "layout_configuration", "main"), layout, { merge: true });
-      showAdminToast('Background settings saved!', 'fa-solid fa-paintbrush');
-      reloadPreview();
-    } catch(e) { showAdminToast('Error: ' + e.message, 'fa-solid fa-xmark', true); }
-  };
-
-  // ============================================================
-  // DATA UTILITIES TAB
-  // ============================================================
-  function renderDataUtilsTab() {
-    return `
-      <div class="space-y-6">
-        <div class="flex items-center gap-2 mb-2">
-          <i class="fa-solid fa-database text-violet-400"></i>
-          <h2 class="text-white font-bold">Data Portability Hub</h2>
-        </div>
-
-        <!-- Export -->
-        <div class="cms-card space-y-3">
-          <div class="flex items-center gap-2 mb-1">
-            <i class="fa-solid fa-file-export text-emerald-400"></i>
-            <h3 class="text-white font-semibold text-sm">Export Entire Database</h3>
-          </div>
-          <p class="text-slate-400 text-xs">Downloads a complete JSON snapshot of your Firestore data (layout, about, experience, portfolio, apps).</p>
-          <button onclick="exportDatabase()"
-            class="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-semibold transition-colors">
-            <i class="fa-solid fa-download"></i> Export JSON Backup
-          </button>
-        </div>
-
-        <!-- Import -->
-        <div class="cms-card space-y-3">
-          <div class="flex items-center gap-2 mb-1">
-            <i class="fa-solid fa-file-import text-amber-400"></i>
-            <h3 class="text-white font-semibold text-sm">Import JSON File</h3>
-          </div>
-          <p class="text-slate-400 text-xs">Upload a previously exported JSON file to completely replace your Firestore collections. This action will clear existing data first.</p>
-          <div class="file-drop-zone" onclick="document.getElementById('json-import-file').click()"
-            ondragover="event.preventDefault();this.classList.add('dragover')"
-            ondragleave="this.classList.remove('dragover')"
-            ondrop="handleFileDrop(event)">
-            <i class="fa-solid fa-cloud-arrow-up text-slate-500 text-3xl mb-2"></i>
-            <p class="text-slate-400 text-sm font-medium">Drop your JSON file here</p>
-            <p class="text-slate-600 text-xs mt-1">or click to browse</p>
-            <input type="file" id="json-import-file" accept=".json" class="hidden" onchange="handleFileSelect(event)" />
-          </div>
-          <div id="import-file-info" class="hidden bg-slate-800 rounded-lg p-3 flex items-center gap-3">
-            <i class="fa-solid fa-file-code text-indigo-400"></i>
-            <div class="flex-1 min-w-0">
-              <p id="import-file-name" class="text-white text-sm font-medium truncate"></p>
-              <p id="import-file-size" class="text-slate-400 text-xs"></p>
-            </div>
-            <button onclick="clearImportFile()" class="text-slate-500 hover:text-red-400 transition-colors">
-              <i class="fa-solid fa-xmark text-sm"></i>
-            </button>
-          </div>
-          <div id="import-validation" class="hidden text-xs rounded-lg p-3"></div>
-          <button id="import-btn" onclick="importDatabase()" disabled
-            class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-amber-600 hover:bg-amber-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl text-sm font-semibold transition-colors">
-            <i class="fa-solid fa-upload"></i> Run Import & Replace Database
-          </button>
-          <p class="text-slate-600 text-xs"><i class="fa-solid fa-triangle-exclamation text-amber-500 mr-1"></i>Warning: This will clear and replace all existing data.</p>
-        </div>
-
-        <!-- Danger Zone -->
-        <div class="cms-card border-red-900/50 space-y-3">
-          <div class="flex items-center gap-2 mb-1">
-            <i class="fa-solid fa-fire text-red-400"></i>
-            <h3 class="text-white font-semibold text-sm">Danger Zone</h3>
-          </div>
-          <button onclick="confirmResetDatabase()"
-            class="flex items-center gap-2 px-4 py-2.5 bg-red-700 hover:bg-red-600 text-white rounded-xl text-sm font-semibold transition-colors">
-            <i class="fa-solid fa-rotate-left"></i> Re-Run Seeding Routine
-          </button>
-          <p class="text-slate-600 text-xs">Deletes ALL current data and re-runs the seed to restore defaults. Irreversible.</p>
-        </div>
-      </div>
-    `;
-  }
-
-  window.exportDatabase = function() {
-    const state = window.__ADMIN;
-    const payload = {
-      _exported_at: new Date().toISOString(),
-      _version: '1.0',
-      layout_configuration: state.layout,
-      about: state.about,
-      experience: state.experience,
-      portfolio:  state.portfolio,
-      apps:       state.apps
+    window.openNewExperienceModal = function() {
+      currentModalType = 'experience-new';
+      currentModalDocId = null;
+      document.getElementById('admin-modal-title').textContent = 'Add Experience Entry';
+      document.getElementById('admin-modal-body').innerHTML = buildExperienceForm();
+      openAdminModal();
     };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href     = url;
-    a.download = `portfolio-backup-${new Date().toISOString().slice(0,10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    showAdminToast('Database exported successfully!', 'fa-solid fa-download');
-  };
 
-  let importFileData = null;
+    window.openEditExperienceModal = function(id) {
+      const data = state.experience.find(e => e.id === id);
+      if (!data) return;
+      currentModalType = 'experience-edit';
+      currentModalDocId = id;
+      document.getElementById('admin-modal-title').textContent = 'Edit Experience Entry';
+      document.getElementById('admin-modal-body').innerHTML = buildExperienceForm(data);
+      openAdminModal();
+    };
 
-  window.handleFileSelect = function(e) {
-    const file = e.target.files[0];
-    if (file) processImportFile(file);
-  };
+    window.openNewPortfolioModal = function() {
+      currentModalType = 'portfolio-new';
+      currentModalDocId = null;
+      document.getElementById('admin-modal-title').textContent = 'Add Portfolio Item';
+      document.getElementById('admin-modal-body').innerHTML = buildPortfolioForm();
+      openAdminModal();
+    };
 
-  window.handleFileDrop = function(e) {
-    e.preventDefault();
-    e.currentTarget.classList.remove('dragover');
-    const file = e.dataTransfer.files[0];
-    if (file) processImportFile(file);
-  };
+    window.openEditPortfolioModal = function(id) {
+      const data = state.portfolio.find(p => p.id === id);
+      if (!data) return;
+      currentModalType = 'portfolio-edit';
+      currentModalDocId = id;
+      document.getElementById('admin-modal-title').textContent = 'Edit Portfolio Item';
+      document.getElementById('admin-modal-body').innerHTML = buildPortfolioForm(data);
+      openAdminModal();
+    };
 
-  function processImportFile(file) {
-    const info = document.getElementById('import-file-info');
-    const btn  = document.getElementById('import-btn');
-    const validation = document.getElementById('import-validation');
+    window.openNewApplicationModal = function() {
+      currentModalType = 'application-new';
+      currentModalDocId = null;
+      document.getElementById('admin-modal-title').textContent = 'Add Skill / Application';
+      document.getElementById('admin-modal-body').innerHTML = buildApplicationForm();
+      openAdminModal();
+    };
 
-    document.getElementById('import-file-name').textContent = file.name;
-    document.getElementById('import-file-size').textContent = (file.size / 1024).toFixed(1) + ' KB';
-    info.classList.remove('hidden');
+    window.openEditApplicationModal = function(id) {
+      const data = state.applications.find(a => a.id === id);
+      if (!data) return;
+      currentModalType = 'application-edit';
+      currentModalDocId = id;
+      document.getElementById('admin-modal-title').textContent = 'Edit Skill / Application';
+      document.getElementById('admin-modal-body').innerHTML = buildApplicationForm(data);
+      openAdminModal();
+    };
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
+    function openAdminModal() {
+      document.getElementById('admin-modal').classList.add('active');
+    }
+
+    window.closeAdminModal = function() {
+      document.getElementById('admin-modal').classList.remove('active');
+      currentModalType = null;
+      currentModalDocId = null;
+    };
+
+    window.saveAdminModal = async function() {
+      const btn = document.getElementById('admin-modal-save-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…';
+
       try {
-        const data = JSON.parse(e.target.result);
-        const requiredKeys = ['layout_configuration','about','experience','portfolio','apps'];
-        const missing = requiredKeys.filter(k => !(k in data));
-        if (missing.length > 0) {
-          validation.className = 'text-xs rounded-lg p-3 bg-red-900/30 text-red-300 border border-red-800';
-          validation.innerHTML = `<i class="fa-solid fa-xmark-circle mr-1"></i>Invalid schema. Missing keys: ${missing.join(', ')}`;
-          validation.classList.remove('hidden');
-          btn.disabled = true;
-          importFileData = null;
-        } else {
-          importFileData = data;
-          validation.className = 'text-xs rounded-lg p-3 bg-emerald-900/30 text-emerald-300 border border-emerald-800';
-          validation.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i>Valid schema. ${data.experience?.length||0} experiences, ${data.portfolio?.length||0} projects, ${data.apps?.length||0} skills detected.`;
-          validation.classList.remove('hidden');
-          btn.disabled = false;
+        if (currentModalType === 'experience-new' || currentModalType === 'experience-edit') {
+          const data = {
+            role: getValue('ef-role'),
+            organization: getValue('ef-org'),
+            dateRange: getValue('ef-date'),
+            description: getValue('ef-desc'),
+            icon: getValue('ef-icon') || 'fa-solid fa-briefcase',
+            iconColor: getValue('ef-color') || '#6366f1',
+            tags: getValue('ef-tags').split(',').map(t => t.trim()).filter(Boolean),
+            order: parseInt(getValue('ef-order')) || 1
+          };
+          if (currentModalType === 'experience-new') {
+            const ref = await addDoc(collection(db, 'experience'), data);
+            state.experience.push({ id: ref.id, ...data });
+            state.experience.sort((a, b) => a.order - b.order);
+          } else {
+            await setDoc(doc(db, 'experience', currentModalDocId), data);
+            const idx = state.experience.findIndex(e => e.id === currentModalDocId);
+            if (idx > -1) state.experience[idx] = { id: currentModalDocId, ...data };
+          }
+          renderExperienceList();
         }
-      } catch(err) {
-        validation.className = 'text-xs rounded-lg p-3 bg-red-900/30 text-red-300 border border-red-800';
-        validation.innerHTML = `<i class="fa-solid fa-xmark-circle mr-1"></i>JSON parse error: ${err.message}`;
-        validation.classList.remove('hidden');
-        btn.disabled = true;
-        importFileData = null;
+
+        if (currentModalType === 'portfolio-new' || currentModalType === 'portfolio-edit') {
+          const data = {
+            title: getValue('pf-title'),
+            description: getValue('pf-desc'),
+            type: getValue('pf-type'),
+            url: getValue('pf-url'),
+            thumbnailUrl: getValue('pf-thumb'),
+            tags: getValue('pf-tags').split(',').map(t => t.trim()).filter(Boolean),
+            order: parseInt(getValue('pf-order')) || 1
+          };
+          if (currentModalType === 'portfolio-new') {
+            const ref = await addDoc(collection(db, 'portfolio'), data);
+            state.portfolio.push({ id: ref.id, ...data });
+            state.portfolio.sort((a, b) => a.order - b.order);
+          } else {
+            await setDoc(doc(db, 'portfolio', currentModalDocId), data);
+            const idx = state.portfolio.findIndex(p => p.id === currentModalDocId);
+            if (idx > -1) state.portfolio[idx] = { id: currentModalDocId, ...data };
+          }
+          renderPortfolioList();
+        }
+
+        if (currentModalType === 'application-new' || currentModalType === 'application-edit') {
+          const data = {
+            name: getValue('af-name'),
+            category: getValue('af-cat'),
+            icon: getValue('af-icon') || 'fa-solid fa-code',
+            iconBg: getValue('af-color') || '#6366f1',
+            proficiency: parseInt(getValue('af-prof')) || 80,
+            order: parseInt(getValue('af-order')) || 1
+          };
+          if (currentModalType === 'application-new') {
+            const ref = await addDoc(collection(db, 'applications'), data);
+            state.applications.push({ id: ref.id, ...data });
+            state.applications.sort((a, b) => a.order - b.order);
+          } else {
+            await setDoc(doc(db, 'applications', currentModalDocId), data);
+            const idx = state.applications.findIndex(a => a.id === currentModalDocId);
+            if (idx > -1) state.applications[idx] = { id: currentModalDocId, ...data };
+          }
+          renderApplicationsList();
+        }
+
+        closeAdminModal();
+        adminToast('Entry saved successfully!', 'success');
+        refreshPreview();
+      } catch (err) {
+        adminToast('Save error: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
       }
     };
-    reader.readAsText(file);
-  }
 
-  window.clearImportFile = function() {
-    importFileData = null;
-    document.getElementById('import-file-info').classList.add('hidden');
-    document.getElementById('import-validation').classList.add('hidden');
-    document.getElementById('import-btn').disabled = true;
-    document.getElementById('json-import-file').value = '';
-  };
+    // =============================================
+    // JSON EXPORT
+    // =============================================
+    window.exportDatabase = async function() {
+      try {
+        await loadAllData();
+        const exportObj = {
+          _exportMeta: {
+            exportedAt: new Date().toISOString(),
+            version: "1.0",
+            source: "EA Portfolio CMS"
+          },
+          profile: state.profile,
+          layout: state.layout,
+          experience: state.experience,
+          portfolio: state.portfolio,
+          applications: state.applications
+        };
 
-  window.importDatabase = function() {
-    if (!importFileData) return;
-    showConfirm('This will DELETE all current data and replace it with the imported file. Are you absolutely sure?', async () => {
-      showAdminToast('Importing… please wait.', 'fa-solid fa-spinner fa-spin');
+        const jsonStr = JSON.stringify(exportObj, null, 2);
+        document.getElementById('json-preview').textContent = jsonStr;
+
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `portfolio-export-${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        adminToast('Database exported successfully!', 'success');
+      } catch (err) {
+        adminToast('Export failed: ' + err.message, 'error');
+      }
+    };
+
+    // =============================================
+    // JSON IMPORT
+    // =============================================
+    window.handleImportFile = async function(input) {
+      if (!input.files.length) return;
+      const file = input.files[0];
+
+      if (!file.name.endsWith('.json')) {
+        adminToast('Please select a valid .json file.', 'error');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        let parsed;
+        try {
+          parsed = JSON.parse(e.target.result);
+        } catch {
+          adminToast('Invalid JSON format. Could not parse file.', 'error');
+          return;
+        }
+
+        // Schema validation
+        const required = ['profile', 'layout', 'experience', 'portfolio', 'applications'];
+        const missing = required.filter(k => !(k in parsed));
+        if (missing.length) {
+          adminToast(`Invalid schema. Missing keys: ${missing.join(', ')}`, 'error');
+          return;
+        }
+
+        if (!confirm(`This will COMPLETELY REPLACE all database content with the imported JSON data. Are you sure?`)) {
+          input.value = '';
+          return;
+        }
+
+        try {
+          adminToast('Importing data… Please wait.', 'info');
+
+          const batch = writeBatch(db);
+
+          // Clear existing collections and write new
+          const collectionsToReplace = ['experience', 'portfolio', 'applications', 'layout_configuration'];
+          for (const collName of collectionsToReplace) {
+            const snap = await getDocs(collection(db, collName));
+            snap.forEach(d => batch.delete(d.ref));
+          }
+
+          // Write profile
+          batch.set(doc(db, 'profile', 'main'), parsed.profile);
+
+          // Write layout
+          (parsed.layout || []).forEach(item => {
+            const id = item.id || item.sectionId || `section_${Math.random().toString(36).slice(2)}`;
+            batch.set(doc(db, 'layout_configuration', id), { ...item, id });
+          });
+
+          // Write experience
+          (parsed.experience || []).forEach((item, i) => {
+            const id = item.id || `exp_${i + 1}`;
+            batch.set(doc(db, 'experience', id), { ...item, id });
+          });
+
+          // Write portfolio
+          (parsed.portfolio || []).forEach((item, i) => {
+            const id = item.id || `port_${i + 1}`;
+            batch.set(doc(db, 'portfolio', id), { ...item, id });
+          });
+
+          // Write applications
+          (parsed.applications || []).forEach((item, i) => {
+            const id = item.id || `app_${i + 1}`;
+            batch.set(doc(db, 'applications', id), { ...item, id });
+          });
+
+          await batch.commit();
+          await loadAllData();
+          document.getElementById('json-preview').textContent = e.target.result;
+          adminToast('Import successful! Database updated.', 'success');
+          refreshPreview();
+        } catch (err) {
+          adminToast('Import failed: ' + err.message, 'error');
+          console.error(err);
+        }
+        input.value = '';
+      };
+      reader.readAsText(file);
+    };
+
+    // =============================================
+    // SEEDING UTILITIES
+    // =============================================
+    window.manualReseed = async function() {
+      if (!confirm('This will seed data into any empty collections only. Existing data will not be overwritten. Continue?')) return;
       try {
         const batch = writeBatch(db);
-        // Clear & rewrite layout and about
-        batch.set(doc(db, "layout_configuration", "main"), importFileData.layout_configuration);
-        batch.set(doc(db, "about", "main"), importFileData.about);
-        // Delete existing sub-collections then re-add
-        const deleteSnaps = await Promise.all([
-          getDocs(collection(db, "experience")),
-          getDocs(collection(db, "portfolio")),
-          getDocs(collection(db, "apps"))
-        ]);
-        deleteSnaps.flat().forEach ? deleteSnaps.forEach(snap => snap.docs.forEach(d => batch.delete(d.ref))) : null;
-        for (const snap of deleteSnaps) snap.docs.forEach(d => batch.delete(d.ref));
-        for (const exp  of (importFileData.experience || [])) batch.set(doc(collection(db, "experience")), exp);
-        for (const port of (importFileData.portfolio  || [])) batch.set(doc(collection(db, "portfolio")),  port);
-        for (const app  of (importFileData.apps       || [])) batch.set(doc(collection(db, "apps")),       app);
+        let seeded = 0;
+
+        const profileSnap = await getDoc(doc(db, 'profile', 'main'));
+        if (!profileSnap.exists()) { batch.set(doc(db, 'profile', 'main'), SEED_DATA.profile); seeded++; }
+
+        const layoutSnap = await getDocs(collection(db, 'layout_configuration'));
+        if (layoutSnap.empty) {
+          SEED_DATA.layout.forEach(item => { batch.set(doc(db, 'layout_configuration', item.id), item); seeded++; });
+        }
+
+        const expSnap = await getDocs(collection(db, 'experience'));
+        if (expSnap.empty) {
+          SEED_DATA.experience.forEach((item, i) => { batch.set(doc(db, 'experience', `exp_${i+1}`), item); seeded++; });
+        }
+
+        const portSnap = await getDocs(collection(db, 'portfolio'));
+        if (portSnap.empty) {
+          SEED_DATA.portfolio.forEach((item, i) => { batch.set(doc(db, 'portfolio', `port_${i+1}`), item); seeded++; });
+        }
+
+        const appsSnap = await getDocs(collection(db, 'applications'));
+        if (appsSnap.empty) {
+          SEED_DATA.applications.forEach((item, i) => { batch.set(doc(db, 'applications', `app_${i+1}`), item); seeded++; });
+        }
+
         await batch.commit();
         await loadAllData();
-        showAdminToast('Import complete! Database updated.', 'fa-solid fa-check');
-        clearImportFile();
-        reloadPreview();
-        renderActiveTab();
-      } catch(e) { showAdminToast('Import failed: ' + e.message, 'fa-solid fa-xmark', true); }
-    });
-  };
+        adminToast(`Re-seed complete. ${seeded} records written.`, 'success');
+        refreshPreview();
+      } catch (err) {
+        adminToast('Reseed failed: ' + err.message, 'error');
+      }
+    };
 
-  window.confirmResetDatabase = function() {
-    showConfirm('This will DELETE ALL EXISTING DATA and restore default seed data. This is irreversible.', async () => {
+    window.confirmNukeDatabase = async function() {
+      const confirmed = confirm('⚠️ WARNING: This will PERMANENTLY DELETE all database content and reseed with default data. This action cannot be undone. Type "CONFIRM" to proceed.');
+      if (!confirmed) return;
+      const input = prompt('Type "CONFIRM" to proceed:');
+      if (input !== 'CONFIRM') { adminToast('Operation cancelled.', 'info'); return; }
+
       try {
-        // Import SEED_DATA is not available in manage.html — fetch from index.html
-        // We signal user to reload index.html with empty DB
+        adminToast('Nuking database…', 'info');
         const batch = writeBatch(db);
-        const snaps = await Promise.all([
-          getDocs(collection(db, "experience")),
-          getDocs(collection(db, "portfolio")),
-          getDocs(collection(db, "apps")),
-          getDocs(collection(db, "messages"))
-        ]);
-        for (const snap of snaps) snap.docs.forEach(d => batch.delete(d.ref));
-        batch.delete(doc(db, "layout_configuration", "main"));
-        batch.delete(doc(db, "about", "main"));
+
+        const collections = ['profile', 'layout_configuration', 'experience', 'portfolio', 'applications', 'messages'];
+        for (const col of collections) {
+          const snap = await getDocs(collection(db, col));
+          snap.forEach(d => batch.delete(d.ref));
+        }
+
+        // Write fresh seed
+        batch.set(doc(db, 'profile', 'main'), SEED_DATA.profile);
+        SEED_DATA.layout.forEach(item => batch.set(doc(db, 'layout_configuration', item.id), item));
+        SEED_DATA.experience.forEach((item, i) => batch.set(doc(db, 'experience', `exp_${i+1}`), item));
+        SEED_DATA.portfolio.forEach((item, i) => batch.set(doc(db, 'portfolio', `port_${i+1}`), item));
+        SEED_DATA.applications.forEach((item, i) => batch.set(doc(db, 'applications', `app_${i+1}`), item));
+
         await batch.commit();
-        showAdminToast('Database cleared. Reload index.html to re-seed.', 'fa-solid fa-rotate-left');
-        reloadPreview();
-      } catch(e) { showAdminToast('Error: ' + e.message, 'fa-solid fa-xmark', true); }
-    });
-  };
+        await loadAllData();
+        adminToast('Database nuked and reseeded successfully!', 'success');
+        refreshPreview();
+      } catch (err) {
+        adminToast('Nuke failed: ' + err.message, 'error');
+      }
+    };
 
-  // ============================================================
-  // TAB RENDERING ENGINE
-  // ============================================================
-  const TAB_RENDERERS = {
-    layout:       renderLayoutTab,
-    about:        renderAboutTab,
-    experience:   renderExperienceTab,
-    portfolio:    renderPortfolioTab,
-    apps:         renderAppsTab,
-    messages:     renderMessagesTab,
-    'data-utils': renderDataUtilsTab,
-    'order-editor': renderOrderEditorTab,
-    'bg-canvas':  renderBgCanvasTab
-  };
+    // =============================================
+    // HELPER FUNCTIONS
+    // =============================================
+    function getValue(id) { return (document.getElementById(id)?.value || '').trim(); }
+    function setValue(id, val) { const el = document.getElementById(id); if (el) el.value = val || ''; }
 
-  function renderActiveTab() {
-    const panel = document.getElementById('cms-panels');
-    const renderer = TAB_RENDERERS[window.__ADMIN.currentTab];
-    panel.innerHTML = renderer ? renderer() : '<p class="text-slate-500 p-8">Select a section from the sidebar.</p>';
-  }
-  window.renderActiveTab = renderActiveTab;
+    window.adminToast = function(message, type = 'info') {
+      const container = document.getElementById('admin-toast-container');
+      const toast = document.createElement('div');
+      toast.className = `admin-toast ${type}`;
+      const icons = { success: 'fa-solid fa-circle-check', error: 'fa-solid fa-circle-xmark', info: 'fa-solid fa-circle-info' };
+      toast.innerHTML = `<i class="${icons[type] || icons.info}"></i><span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.animation = 'slide-in 0.3s ease reverse forwards';
+        setTimeout(() => toast.remove(), 300);
+      }, 4500);
+    };
 
-  // Sidebar nav clicks
-  document.querySelectorAll('.sidebar-nav-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      document.querySelectorAll('.sidebar-nav-btn').forEach(b => b.classList.remove('bg-slate-800','text-white'));
-      this.classList.add('bg-slate-800','text-white');
-      window.__ADMIN.currentTab = this.dataset.tab;
-      renderActiveTab();
-    });
-  });
+    window.refreshPreview = function() {
+      const frame = document.getElementById('preview-iframe');
+      const loading = document.getElementById('preview-loading');
+      loading.classList.remove('hidden');
+      frame.src = 'index.html?' + Date.now();
+    };
 
-  // Activate first tab
-  const firstBtn = document.querySelector('.sidebar-nav-btn[data-tab="layout"]');
-  if (firstBtn) { firstBtn.classList.add('bg-slate-800','text-white'); }
+    window.onPreviewLoaded = function() {
+      document.getElementById('preview-loading').classList.add('hidden');
+    };
 
-  // Bootstrap
-  init();
-</script>
+    window.switchPanel = function(panelId, el) {
+      document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.sidebar-nav-item').forEach(i => i.classList.remove('active'));
+      const panel = document.getElementById(`panel-${panelId}`);
+      if (panel) panel.classList.add('active');
+      if (el) el.classList.add('active');
 
-<!-- ===================== UTILITY SCRIPTS (non-module) ===================== -->
-<script>
-  // Theme
-  (function() {
-    const stored = localStorage.getItem('theme') || 'dark';
-    if (stored === 'light') document.documentElement.classList.remove('dark');
-  })();
+      const titles = {
+        profile: 'Profile Settings',
+        experience: 'Experience Entries',
+        portfolio: 'Portfolio Items',
+        applications: 'Skills & Applications',
+        layout: 'Layout Configuration',
+        messages: 'Contact Messages',
+        'data-utility': 'Data Utility Hub'
+      };
+      document.getElementById('panel-title').textContent = titles[panelId] || panelId;
+    };
 
-  document.getElementById('theme-toggle-admin').addEventListener('click', function() {
-    const isDark = document.documentElement.classList.toggle('dark');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    document.getElementById('admin-theme-icon').className = isDark
-      ? 'fa-solid fa-moon text-slate-400 text-xs'
-      : 'fa-solid fa-sun text-amber-400 text-xs';
-  });
+    window.toggleAdminTheme = function() {
+      const isDark = document.documentElement.classList.contains('dark');
+      const newTheme = isDark ? 'light' : 'dark';
+      document.documentElement.classList.remove('light', 'dark');
+      document.documentElement.classList.add(newTheme);
+      localStorage.setItem('admin-theme', newTheme);
+      document.getElementById('admin-theme-icon').className = newTheme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+    };
 
-  // Admin Toast
-  window.showAdminToast = function(msg, icon = 'fa-solid fa-check', isError = false) {
-    const t   = document.getElementById('admin-toast');
-    const m   = document.getElementById('admin-toast-msg');
-    const ico = document.getElementById('admin-toast-icon');
-    const box = t.querySelector('div');
-    m.textContent = msg;
-    ico.className = icon;
-    box.className = box.className.replace(/bg-\w+-\d+/, isError ? 'bg-red-600' : 'bg-indigo-600');
-    t.classList.remove('translate-y-24','opacity-0','pointer-events-none');
-    t.classList.add('translate-y-0','opacity-100');
-    setTimeout(() => {
-      t.classList.add('translate-y-24','opacity-0','pointer-events-none');
-      t.classList.remove('translate-y-0','opacity-100');
-    }, 4000);
-  };
-
-  // Confirm modal
-  let confirmCallback = null;
-  window.showConfirm = function(msg, callback) {
-    document.getElementById('confirm-modal-msg').textContent = msg;
-    document.getElementById('confirm-modal').classList.remove('opacity-0','pointer-events-none');
-    document.getElementById('confirm-modal').classList.add('opacity-100');
-    confirmCallback = callback;
-  };
-  window.hideConfirm = function() {
-    document.getElementById('confirm-modal').classList.add('opacity-0','pointer-events-none');
-    document.getElementById('confirm-modal').classList.remove('opacity-100');
-    confirmCallback = null;
-  };
-  document.getElementById('confirm-ok-btn').addEventListener('click', function() {
-    if (confirmCallback) confirmCallback();
-    hideConfirm();
-  });
-
-  // Preview controls
-  window.reloadPreview = function() {
-    const frame = document.getElementById('preview-frame');
-    if (frame) frame.src = frame.src;
-  };
-
-  let isMobile = false;
-  window.togglePreviewDevice = function() {
-    isMobile = !isMobile;
-    const frame = document.getElementById('preview-frame');
-    const right  = frame?.parentElement;
-    const icon   = document.getElementById('preview-device-icon');
-    if (isMobile) {
-      frame.style.width  = '375px';
-      frame.style.height = '812px';
-      frame.style.margin = 'auto';
-      frame.style.borderRadius = '24px';
-      frame.style.border = '2px solid #334155';
-      if (right) right.style.display = 'flex';
-      if (right) right.style.alignItems = 'center';
-      if (right) right.style.justifyContent = 'center';
-      if (right) right.style.overflow = 'auto';
-      icon.className = 'fa-solid fa-desktop text-xs';
-    } else {
-      frame.style.width  = '100%';
-      frame.style.height = '100%';
-      frame.style.margin = '0';
-      frame.style.borderRadius = '0';
-      frame.style.border = 'none';
-      if (right) right.style.display = 'block';
-      icon.className = 'fa-solid fa-mobile-screen text-xs';
+    // =============================================
+    // BOOTSTRAP
+    // =============================================
+    function initTheme() {
+      const saved = localStorage.getItem('admin-theme') || 'dark';
+      document.documentElement.classList.add(saved);
+      document.getElementById('admin-theme-icon').className = saved === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
     }
-  };
-</script>
+
+    async function bootstrap() {
+      initTheme();
+      await checkFirebaseConnection();
+      await loadAllData();
+    }
+
+    bootstrap();
+  </script>
 </body>
 </html>
