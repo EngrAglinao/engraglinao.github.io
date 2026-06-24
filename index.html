@@ -1204,17 +1204,17 @@
 
     @page {
       size: A4 portrait;
-      margin: 0;
+      margin: 0mm;
     }
 
     @media print {
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 
       html, body {
-        width: 210mm;
-        height: 297mm;
         margin: 0 !important;
         padding: 0 !important;
+        width: 210mm !important;
+        height: 297mm !important;
         overflow: hidden !important;
       }
 
@@ -1224,103 +1224,115 @@
 
       #resume-print-workspace {
         display: block !important;
-        width: 210mm;
-        height: 297mm;
-        overflow: hidden;
+        width: 210mm !important;
+        height: 297mm !important;
         margin: 0 !important;
         padding: 0 !important;
-        position: relative;
+        overflow: hidden !important;
       }
 
       #app-loader { display: none !important; }
 
-      /* The page itself is rendered at a natural size then
-         scaled down uniformly to fit A4 — all content is preserved */
+      /* Full-bleed page — stretches to fill 210mm × 297mm exactly */
       .resume-page {
         width: 210mm;
+        height: 297mm;
         display: flex;
         font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 8pt;
-        line-height: 1.35;
+        font-size: 9pt;
+        line-height: 1.4;
         color: #1e293b;
         background: #ffffff;
+        overflow: hidden;
         transform-origin: top left;
-        /* JS will set the exact scale at print-time via inline style */
       }
 
+      /* Sidebar fills full height, no external margins */
       .resume-sidebar {
-        width: 33%;
+        width: 32%;
         flex-shrink: 0;
         background: #1e2130 !important;
         color: #f1f5f9 !important;
-        padding: 20pt 14pt;
+        padding: 22pt 16pt;
         display: flex;
         flex-direction: column;
-        gap: 10pt;
+        gap: 0;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
+        height: 297mm;
+        box-sizing: border-box;
+        justify-content: space-between;
       }
 
+      /* Main panel fills full height */
       .resume-main {
-        width: 67%;
-        padding: 20pt 20pt;
+        width: 68%;
+        flex: 1;
+        padding: 22pt 22pt;
         display: flex;
         flex-direction: column;
-        gap: 9pt;
-        min-width: 0;
+        gap: 0;
+        height: 297mm;
+        box-sizing: border-box;
+        justify-content: space-between;
       }
 
+      /* ── SIDEBAR COMPONENTS ── */
       .resume-profile-pic-wrap {
         display: flex;
         justify-content: center;
-        margin-bottom: 4pt;
+        margin-bottom: 8pt;
       }
 
       .resume-profile-pic {
-        width: 64pt; height: 64pt;
+        width: 76pt; height: 76pt;
         border-radius: 50%;
         object-fit: cover;
-        border: 2pt solid #6366f1;
+        border: 2.5pt solid #6366f1;
       }
 
       .resume-profile-placeholder-print {
-        width: 64pt; height: 64pt;
+        width: 76pt; height: 76pt;
         border-radius: 50%;
         background: #2d3554 !important;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 22pt;
+        font-size: 28pt;
         color: #6366f1 !important;
-        border: 2pt solid #6366f1;
+        border: 2.5pt solid #6366f1;
         -webkit-print-color-adjust: exact !important;
       }
 
       .resume-sb-name {
-        font-size: 10.5pt;
+        font-size: 12pt;
         font-weight: 800;
         color: #f1f5f9 !important;
         text-align: center;
         letter-spacing: -0.02em;
+        line-height: 1.2;
       }
 
       .resume-sb-title {
-        font-size: 7pt;
+        font-size: 7.5pt;
         color: #94a3b8 !important;
         text-align: center;
         font-weight: 500;
-        margin-top: 2pt;
+        margin-top: 3pt;
+        line-height: 1.3;
       }
 
-      .resume-sb-section { }
+      .resume-sb-section {
+        margin-top: 12pt;
+      }
 
       .resume-sb-heading {
-        font-size: 6pt;
+        font-size: 6.5pt;
         font-weight: 700;
         letter-spacing: 0.1em;
         text-transform: uppercase;
         color: #6366f1 !important;
-        margin-bottom: 5pt;
+        margin-bottom: 7pt;
         padding-bottom: 3pt;
         border-bottom: 0.75pt solid #2d3554;
         -webkit-print-color-adjust: exact !important;
@@ -1329,9 +1341,9 @@
       .resume-contact-row {
         display: flex;
         align-items: flex-start;
-        gap: 5pt;
-        margin-bottom: 4pt;
-        font-size: 7pt;
+        gap: 6pt;
+        margin-bottom: 5pt;
+        font-size: 7.5pt;
         color: #cbd5e1 !important;
         word-break: break-all;
         overflow-wrap: break-word;
@@ -1339,7 +1351,7 @@
 
       .resume-contact-row i {
         color: #6366f1 !important;
-        width: 9pt;
+        width: 10pt;
         text-align: center;
         font-size: 7pt;
         flex-shrink: 0;
@@ -1352,16 +1364,16 @@
         padding: 0; margin: 0;
         display: flex;
         flex-direction: column;
-        gap: 3pt;
+        gap: 4pt;
       }
 
       .resume-qual-item {
-        font-size: 7pt;
+        font-size: 7.5pt;
         color: #cbd5e1 !important;
         display: flex;
         align-items: flex-start;
         gap: 5pt;
-        line-height: 1.3;
+        line-height: 1.35;
       }
 
       .resume-qual-item::before {
@@ -1370,45 +1382,47 @@
         border-radius: 50%;
         background: #6366f1 !important;
         flex-shrink: 0;
-        margin-top: 3pt;
+        margin-top: 3.5pt;
         -webkit-print-color-adjust: exact !important;
       }
 
       .resume-edu-item {
-        margin-bottom: 6pt;
+        margin-bottom: 8pt;
       }
 
       .resume-edu-degree {
-        font-size: 7.5pt;
+        font-size: 8pt;
         font-weight: 700;
         color: #f1f5f9 !important;
+        line-height: 1.3;
       }
 
       .resume-edu-school {
-        font-size: 6.5pt;
+        font-size: 7pt;
         color: #94a3b8 !important;
-        margin-top: 1pt;
+        margin-top: 1.5pt;
       }
 
       .resume-edu-year {
-        font-size: 6pt;
+        font-size: 6.5pt;
         color: #6366f1 !important;
         margin-top: 1pt;
         font-weight: 600;
         -webkit-print-color-adjust: exact !important;
       }
 
-      /* Main panel */
+      /* ── MAIN PANEL COMPONENTS ── */
       .resume-header-accent {
         background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%) !important;
-        padding: 12pt 16pt;
-        border-radius: 7pt;
+        padding: 16pt 20pt;
+        border-radius: 0;
+        margin: -22pt -22pt 0 -22pt; /* bleed to edges, no gap at top */
         flex-shrink: 0;
         -webkit-print-color-adjust: exact !important;
       }
 
       .resume-header-name {
-        font-size: 16pt;
+        font-size: 20pt;
         font-weight: 800;
         color: #fff !important;
         letter-spacing: -0.03em;
@@ -1416,10 +1430,16 @@
       }
 
       .resume-header-role {
-        font-size: 8pt;
-        color: rgba(255,255,255,0.85) !important;
+        font-size: 9pt;
+        color: rgba(255,255,255,0.88) !important;
         font-weight: 500;
-        margin-top: 2pt;
+        margin-top: 3pt;
+      }
+
+      .resume-section-block {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
       }
 
       .resume-section-title {
@@ -1428,13 +1448,13 @@
         color: #6366f1 !important;
         letter-spacing: 0.1em;
         text-transform: uppercase;
-        margin-bottom: 6pt;
+        margin-top: 10pt;
+        margin-bottom: 7pt;
         padding-bottom: 3pt;
         border-bottom: 1pt solid #e2e8f0;
         display: flex;
         align-items: center;
         gap: 5pt;
-        flex-shrink: 0;
         -webkit-print-color-adjust: exact !important;
       }
 
@@ -1444,15 +1464,15 @@
       }
 
       .resume-objective {
-        font-size: 7.5pt;
+        font-size: 8pt;
         color: #475569 !important;
-        line-height: 1.45;
+        line-height: 1.5;
       }
 
       .resume-skills-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 4pt;
+        gap: 5pt;
       }
 
       .resume-skill-chip {
@@ -1461,15 +1481,15 @@
         gap: 4pt;
         background: #f1f5f9 !important;
         border-radius: 4pt;
-        padding: 3pt 6pt;
-        font-size: 6.5pt;
+        padding: 4pt 7pt;
+        font-size: 7pt;
         font-weight: 600;
         color: #334155 !important;
         -webkit-print-color-adjust: exact !important;
       }
 
       .resume-skill-chip i {
-        font-size: 6.5pt;
+        font-size: 7pt;
         color: #6366f1 !important;
         flex-shrink: 0;
         -webkit-print-color-adjust: exact !important;
@@ -1477,8 +1497,8 @@
 
       .resume-exp-item {
         border-bottom: 0.5pt solid #e2e8f0;
-        padding-bottom: 6pt;
-        margin-bottom: 6pt;
+        padding-bottom: 7pt;
+        margin-bottom: 7pt;
       }
 
       .resume-exp-item:last-child {
@@ -1492,31 +1512,32 @@
         justify-content: space-between;
         align-items: flex-start;
         gap: 6pt;
-        margin-bottom: 1.5pt;
+        margin-bottom: 2pt;
       }
 
       .resume-exp-role {
-        font-size: 8pt;
+        font-size: 8.5pt;
         font-weight: 700;
         color: #1e293b !important;
         display: flex;
         align-items: center;
-        gap: 4pt;
+        gap: 5pt;
+        line-height: 1.2;
       }
 
       .resume-exp-role i {
         color: #6366f1 !important;
-        font-size: 7pt;
+        font-size: 7.5pt;
         flex-shrink: 0;
         -webkit-print-color-adjust: exact !important;
       }
 
       .resume-exp-date {
-        font-size: 6pt;
+        font-size: 6.5pt;
         color: #6366f1 !important;
         font-weight: 600;
         background: #eef2ff !important;
-        padding: 1.5pt 5pt;
+        padding: 2pt 6pt;
         border-radius: 3pt;
         white-space: nowrap;
         flex-shrink: 0;
@@ -1524,15 +1545,15 @@
       }
 
       .resume-exp-org {
-        font-size: 7pt;
+        font-size: 7.5pt;
         color: #6366f1 !important;
         font-weight: 600;
-        margin-bottom: 2pt;
+        margin-bottom: 3pt;
         -webkit-print-color-adjust: exact !important;
       }
 
       .resume-exp-desc {
-        font-size: 7pt;
+        font-size: 7.5pt;
         color: #475569 !important;
         line-height: 1.4;
       }
@@ -3187,17 +3208,17 @@
       workspace.innerHTML = `
         <div class="resume-page" id="resume-page-inner">
           <aside class="resume-sidebar">
-            <div class="resume-profile-pic-wrap">
-              ${profile.profileImageUrl
-                ? `<img class="resume-profile-pic" src="${profile.profileImageUrl}" alt="${profile.name || ''}" />`
-                : `<div class="resume-profile-placeholder-print"><i class="fa-solid fa-user"></i></div>`}
-            </div>
             <div>
+              <div class="resume-profile-pic-wrap">
+                ${profile.profileImageUrl
+                  ? `<img class="resume-profile-pic" src="${profile.profileImageUrl}" alt="${profile.name || ''}" />`
+                  : `<div class="resume-profile-placeholder-print"><i class="fa-solid fa-user"></i></div>`}
+              </div>
               <div class="resume-sb-name">${profile.name || 'Your Name'}</div>
               <div class="resume-sb-title">${profile.title || 'Professional Title'}</div>
             </div>
             <div class="resume-sb-section">
-              <div class="resume-sb-heading"><i class="fa-solid fa-address-card" style="margin-right:6pt"></i>Contact</div>
+              <div class="resume-sb-heading"><i class="fa-solid fa-address-card" style="margin-right:5pt"></i>Contact</div>
               ${profile.email ? `<div class="resume-contact-row"><i class="fa-solid fa-envelope"></i><span>${profile.email}</span></div>` : ''}
               ${profile.phone ? `<div class="resume-contact-row"><i class="fa-solid fa-phone"></i><span>${profile.phone}</span></div>` : ''}
               ${profile.location ? `<div class="resume-contact-row"><i class="fa-solid fa-location-dot"></i><span>${profile.location}</span></div>` : ''}
@@ -3205,11 +3226,11 @@
               ${profile.linkedin ? `<div class="resume-contact-row"><i class="fa-brands fa-linkedin"></i><span>${(profile.linkedin || '').replace('https://', '')}</span></div>` : ''}
             </div>
             <div class="resume-sb-section">
-              <div class="resume-sb-heading"><i class="fa-solid fa-star" style="margin-right:6pt"></i>Qualifications</div>
+              <div class="resume-sb-heading"><i class="fa-solid fa-star" style="margin-right:5pt"></i>Qualifications</div>
               <ul class="resume-qual-list">${qualsHTML}</ul>
             </div>
             <div class="resume-sb-section">
-              <div class="resume-sb-heading"><i class="fa-solid fa-graduation-cap" style="margin-right:6pt"></i>Education</div>
+              <div class="resume-sb-heading"><i class="fa-solid fa-graduation-cap" style="margin-right:5pt"></i>Education</div>
               ${eduHTML}
             </div>
           </aside>
@@ -3234,26 +3255,46 @@
         </div>
       `;
 
-      // Auto-scale: measure actual rendered height and scale down to fit
-      // exactly 297mm (A4) so all content is visible on one page.
+      // Auto-scale: measure tallest column, scale uniformly so everything
+      // fits in exactly 297mm — zero margins, full bleed, all content visible.
       setTimeout(() => {
-        const page = document.getElementById('resume-page-inner');
-        if (page) {
-          const A4_HEIGHT_PX = 297 * (96 / 25.4); // 297mm in px at 96dpi
-          const A4_WIDTH_PX  = 210 * (96 / 25.4);
-          const rendered = page.scrollHeight;
-          if (rendered > A4_HEIGHT_PX) {
-            const scale = A4_HEIGHT_PX / rendered;
-            page.style.transform = `scale(${scale})`;
+        const page     = document.getElementById('resume-page-inner');
+        const sidebar  = page ? page.querySelector('.resume-sidebar') : null;
+        const main     = page ? page.querySelector('.resume-main')    : null;
+
+        if (page && sidebar && main) {
+          const PX_PER_MM  = 96 / 25.4;
+          const A4_H_PX    = 297 * PX_PER_MM;  // 297mm in px @96dpi
+          const A4_W_PX    = 210 * PX_PER_MM;
+
+          // Reset any previous transform so we measure true height
+          page.style.transform = '';
+          page.style.width     = A4_W_PX + 'px';
+          page.style.height    = '';
+
+          // Measure the taller of the two columns
+          const tallest = Math.max(sidebar.scrollHeight, main.scrollHeight);
+
+          if (tallest > A4_H_PX) {
+            const scale = A4_H_PX / tallest;
+            page.style.transform      = `scale(${scale})`;
             page.style.transformOrigin = 'top left';
-            page.style.width = (A4_WIDTH_PX / scale) + 'px';
-            // keep workspace exactly one page tall
-            workspace.style.height = A4_HEIGHT_PX + 'px';
-            workspace.style.overflow = 'hidden';
+            // Widen the un-scaled content area so it still fills 210mm after scale
+            page.style.width  = (A4_W_PX / scale) + 'px';
+            page.style.height = (A4_H_PX / scale) + 'px';
+          } else {
+            // Content is shorter than A4 — stretch columns to fill the full page
+            page.style.height = A4_H_PX + 'px';
           }
+
+          // Lock workspace to exact A4 so nothing bleeds
+          workspace.style.width    = A4_W_PX  + 'px';
+          workspace.style.height   = A4_H_PX  + 'px';
+          workspace.style.overflow = 'hidden';
         }
+
         window.print();
-      }, 300);
+      }, 350);
     };
 
   </script>
